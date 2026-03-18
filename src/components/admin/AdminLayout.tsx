@@ -60,12 +60,32 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             );
           })}
         </nav>
-        <div className="p-4 border-t border-sidebar-border">
+        <div className="p-4 border-t border-sidebar-border space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">View as</span>
+          </div>
+          <div className="flex gap-1">
+            {(["super_admin", "team_lead", "agent"] as const).map(r => (
+              <button
+                key={r}
+                onClick={() => setRole(r)}
+                className={`text-[10px] px-2 py-1 rounded-md font-medium transition-colors ${
+                  role === r
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    : "text-sidebar-foreground/60 hover:bg-sidebar-accent/50"
+                }`}
+              >
+                {roleProfiles[r].label}
+              </button>
+            ))}
+          </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold">A</div>
+            <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold">
+              {roleProfiles[role].name[0]}
+            </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">Admin One</p>
-              <p className="text-xs text-sidebar-foreground/50">Super Admin</p>
+              <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
+              <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
             </div>
           </div>
         </div>
