@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, transactions } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
