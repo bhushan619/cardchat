@@ -23,6 +23,15 @@ export default function AdminChatView() {
   const [showWizard, setShowWizard] = useState(false);
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [escalatedTo, setEscalatedTo] = useState<number | null>(null);
+
+  const escalationTargets = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
+
+  const senderName = (sender: string) => {
+    if (sender === "customer") return "User-A7X3";
+    if (sender === "agent") return "You";
+    return "System";
+  };
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
