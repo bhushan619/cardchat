@@ -32,10 +32,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           <span className="status-badge bg-accent/10 text-accent text-[10px]">Settled</span>
         </div>
         <div className="flex gap-2 mt-2">
-          <Button size="sm" className="h-7 text-xs bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowCollect(true)}>
-            Collect Now
-          </Button>
-          <Button size="sm" variant="outline" className="h-7 text-xs">
+          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setShowOrder(true)}>
             View Order
           </Button>
         </div>
