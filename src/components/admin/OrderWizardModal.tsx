@@ -11,6 +11,8 @@ interface CardEntry {
   code: string;
   hasImage: boolean;
   cardType: string;
+  cardFormat: "Physical" | "E-Code";
+  currency: string;
   denomination: string;
   unitPrice: string;
   verificationStatus: VerificationStatus;
