@@ -13,6 +13,7 @@ import CustomerHome from "./pages/customer/CustomerHome";
 import CustomerChat from "./pages/customer/CustomerChat";
 import CustomerContacts from "./pages/customer/CustomerContacts";
 import CustomerMe from "./pages/customer/CustomerMe";
+import CustomerGuide from "./pages/customer/CustomerGuide";
 
 // Admin Panel
 import AdminMessages from "./pages/admin/AdminMessages";
