@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { chatMessages, orders, bankAccounts } from "@/data/mock";
+import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   completed:  { label: "Completed",  color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
