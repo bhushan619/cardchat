@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, UserPlus, Crown, Shield } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -11,14 +11,12 @@ import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderW
 type ChatMessage = {
   id: number;
   sender: string;
-  senderName?: string;
+  senderName: string;
   text: string;
   time: string;
   image?: boolean;
   isOrder?: boolean;
 };
-
-const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
@@ -29,6 +27,13 @@ const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; 
   pending_payment: { label: "Pending", color: "text-warning", bg: "bg-warning/10", icon: Clock },
 };
 
+const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
+
+const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
+  super_admin: { label: "Super Admin", icon: Crown },
+  team_lead: { label: "Team Lead", icon: Shield },
+};
+
 export default function AdminChatView() {
   const navigate = useNavigate();
   const { id } = useParams();
@@ -36,9 +41,50 @@ export default function AdminChatView() {
   const [showWizard, setShowWizard] = useState(false);
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
+  const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
+  const [escalateOpen, setEscalateOpen] = useState(false);
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
+    chatMessages.map(m => ({
+      ...m,
+      senderName: m.sender === "customer" ? "User-A7X3" : m.sender === "agent" ? "You" : "System",
+    }))
+  );
+
+  const isGroupChat = groupMembers.length > 0;
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
+  };
+
+  const addToGroup = (user: (typeof adminUsers)[0]) => {
+    if (groupMembers.find(m => m.id === user.id)) return;
+    setGroupMembers(prev => [...prev, user]);
+    // Add system message about joining
+    const newMsg: ChatMessage = {
+      id: Date.now(),
+      sender: "system",
+      senderName: "System",
+      text: `${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isOrder: true,
+    };
+    setLocalMessages(prev => [...prev, newMsg]);
+    setEscalateOpen(false);
+  };
+
+  const removeFromGroup = (userId: number) => {
+    const user = groupMembers.find(m => m.id === userId);
+    if (!user) return;
+    setGroupMembers(prev => prev.filter(m => m.id !== userId));
+    const newMsg: ChatMessage = {
+      id: Date.now(),
+      sender: "system",
+      senderName: "System",
+      text: `${user.name} has left the chat`,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isOrder: true,
+    };
+    setLocalMessages(prev => [...prev, newMsg]);
   };
 
   // Combine mock orders with completed ones for display
@@ -71,6 +117,15 @@ export default function AdminChatView() {
     ? allOrders.find(o => o.id === selectedOrderId)
     : null;
 
+  const getSenderColor = (sender: string, senderName: string) => {
+    if (sender === "customer") return "text-primary";
+    if (senderName === "You") return "text-accent";
+    // Group members get unique colors
+    const colors = ["text-orange-500", "text-emerald-500", "text-violet-500", "text-rose-500"];
+    const idx = groupMembers.findIndex(m => m.name === senderName);
+    return colors[idx % colors.length] || "text-accent";
+  };
+
   return (
     <AdminLayout>
       <div className="flex h-full">
@@ -81,23 +136,90 @@ export default function AdminChatView() {
               <button onClick={() => navigate("/admin")}><ArrowLeft className="w-4 h-4" /></button>
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">X3</div>
               <div>
-                <p className="text-sm font-semibold">User-A7X3</p>
-                <p className="text-[10px] text-muted-foreground">85% rate · ₦450,000 total · VIP, Repeat</p>
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-semibold">User-A7X3</p>
+                  {isGroupChat && (
+                    <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5">
+                      <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
+                    </span>
+                  )}
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  {isGroupChat
+                    ? `You, ${groupMembers.map(m => m.name).join(", ")}, User-A7X3`
+                    : "85% rate · ₦450,000 total · VIP, Repeat"
+                  }
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
               <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
                 Process Order
               </Button>
-              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-                <Users className="w-3.5 h-3.5" /> Escalate
-              </button>
+              <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
+                <PopoverTrigger asChild>
+                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                    <Users className="w-3.5 h-3.5" /> Escalate
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="w-64 p-0" align="end">
+                  <div className="p-3 border-b">
+                    <p className="text-xs font-semibold">Add to Group Chat</p>
+                    <p className="text-[10px] text-muted-foreground mt-0.5">Select a team lead or super admin</p>
+                  </div>
+                  <div className="p-1.5 space-y-0.5">
+                    {escalatableUsers.map(user => {
+                      const alreadyAdded = groupMembers.some(m => m.id === user.id);
+                      const roleMeta = ROLE_META[user.role];
+                      const RoleIcon = roleMeta?.icon || Shield;
+                      return (
+                        <button
+                          key={user.id}
+                          onClick={() => !alreadyAdded && addToGroup(user)}
+                          disabled={alreadyAdded}
+                          className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left transition-colors ${
+                            alreadyAdded ? "opacity-50 cursor-not-allowed" : "hover:bg-muted"
+                          }`}
+                        >
+                          <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                            <RoleIcon className="w-3.5 h-3.5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-xs font-medium truncate">{user.name}</p>
+                            <p className="text-[10px] text-muted-foreground">{roleMeta?.label} · {user.status}</p>
+                          </div>
+                          {alreadyAdded ? (
+                            <span className="text-[9px] text-muted-foreground">Added</span>
+                          ) : (
+                            <span className="text-[9px] text-primary font-medium">+ Add</span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </PopoverContent>
+              </Popover>
               <button><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
             </div>
           </header>
 
+          {/* Group members bar */}
+          {isGroupChat && (
+            <div className="flex items-center gap-1.5 px-5 py-2 border-b bg-muted/30 shrink-0 overflow-x-auto">
+              <span className="text-[10px] text-muted-foreground shrink-0">Members:</span>
+              {groupMembers.map(m => (
+                <span key={m.id} className="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full shrink-0">
+                  {m.name}
+                  <button onClick={() => removeFromGroup(m.id)} className="hover:text-destructive">
+                    <X className="w-2.5 h-2.5" />
+                  </button>
+                </span>
+              ))}
+            </div>
+          )}
+
           <div className="flex-1 overflow-y-auto p-5 space-y-3">
-            {chatMessages.map(msg => {
+            {localMessages.map(msg => {
               if (msg.isOrder) {
                 return (
                   <div key={msg.id} className="pinned-order animate-slide-up">
@@ -106,9 +228,15 @@ export default function AdminChatView() {
                   </div>
                 );
               }
+              const isCustomer = msg.sender === "customer";
               return (
-                <div key={msg.id} className={msg.sender === "customer" ? "flex justify-start" : "flex justify-end"}>
-                  <div className={msg.sender === "customer" ? "chat-bubble-other" : "chat-bubble-self"}>
+                <div key={msg.id} className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                  <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
+                    {(isGroupChat || true) && (
+                      <p className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}>
+                        {msg.senderName}
+                      </p>
+                    )}
                     {msg.image ? (
                       <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
                         <Image className="w-6 h-6 text-muted-foreground" />
