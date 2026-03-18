@@ -24,7 +24,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [role, setRole] = useState<string>("super_admin");
 
-  const visibleItems = navItems.filter(item => !item.role || item.role === role || role === "super_admin");
+  const visibleItems = navItems.filter(item => {
+    if (!item.role) return true;
+    if (role === "super_admin") return true;
+    if (role === "team_lead") return item.role === "team_lead" || !item.role;
+    return false; // agents see only non-role items
+  });
+
+  const roleProfiles: Record<string, { name: string; label: string }> = {
+    super_admin: { name: "Admin One", label: "Super Admin" },
+    team_lead: { name: "Sarah Lead", label: "Team Lead" },
+    agent: { name: "Mike Agent", label: "Agent" },
+  };
 
   return (
     <div className="flex h-screen">
