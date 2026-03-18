@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Paperclip, Send, Image as ImageIcon } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Image as ImageIcon, CheckCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
