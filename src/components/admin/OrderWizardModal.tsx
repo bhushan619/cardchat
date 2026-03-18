@@ -22,7 +22,7 @@ interface OrderWizardModalProps {
   onClose: () => void;
 }
 
-const STEPS = ["Create Order", "Auto-Bill", "Execute Transfer"];
+const STEPS = ["Create Order", "Verify", "Initiate Transfer"];
 
 const STATUS_CONFIG: Record<VerificationStatus, { label: string; icon: typeof Clock; color: string; bg: string }> = {
   pending:    { label: "Pending",    icon: Clock,        color: "text-muted-foreground", bg: "bg-muted" },
