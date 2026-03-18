@@ -6,6 +6,7 @@ import {
   BarChart3, Send, FileText
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
@@ -22,7 +23,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [role, setRole] = useState<string>("super_admin");
+  const { role, setRole } = useAdminRole();
 
   const visibleItems = navItems.filter(item => {
     if (!item.role) return true;
