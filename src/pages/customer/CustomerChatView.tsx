@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
-  const [showCollect, setShowCollect] = useState(false);
+  const [showOrder, setShowOrder] = useState(false);
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
