@@ -43,6 +43,11 @@ export default function AdminCardRates() {
               {filtered.map(r => (
                 <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium">{r.cardType}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.cardFormat === "E-Code" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {r.cardFormat}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{r.currency}</td>
                   <td className="px-4 py-3 text-sm text-right font-semibold text-accent">₦{r.buyRate}</td>
                   <td className="px-4 py-3 text-sm text-right font-semibold">₦{r.sellRate}</td>
