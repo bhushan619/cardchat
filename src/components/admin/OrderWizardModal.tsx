@@ -63,6 +63,8 @@ const makeCard = (): CardEntry => ({
   code: "",
   hasImage: false,
   cardType: "iTunes US",
+  cardFormat: "Physical",
+  currency: "USD",
   denomination: "100",
   unitPrice: "680",
   verificationStatus: "pending",
