@@ -32,6 +32,7 @@ export default function AdminCardRates() {
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Type</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Format</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Currency</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Buy Rate (₦)</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Sell Rate (₦)</th>
