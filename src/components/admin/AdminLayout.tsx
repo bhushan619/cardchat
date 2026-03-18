@@ -111,7 +111,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             </button>
             <div className="flex items-center gap-2 text-sm">
               <Shield className="w-4 h-4 text-accent" />
-              <span className="font-medium">Super Admin</span>
+              <span className="font-medium">{roleProfiles[role].label}</span>
             </div>
           </div>
         </header>
