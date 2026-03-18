@@ -44,6 +44,7 @@ const App = () => (
           <Route path="/customer/chat" element={<CustomerChat />} />
           <Route path="/customer/contacts" element={<CustomerContacts />} />
           <Route path="/customer/me" element={<CustomerMe />} />
+          <Route path="/customer/guide" element={<CustomerGuide />} />
 
           {/* Admin Panel - wrapped in role provider */}
           <Route path="/admin/*" element={
