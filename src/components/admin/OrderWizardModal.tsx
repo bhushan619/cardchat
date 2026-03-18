@@ -433,7 +433,7 @@ export default function OrderWizardModal({ open, onClose }: OrderWizardModalProp
               </Button>
             ) : (
               <Button disabled={!selectedBank} className="text-xs bg-accent text-accent-foreground hover:bg-accent/90">
-                Execute Transfer
+                Initiate Transfer
               </Button>
             )}
           </div>
