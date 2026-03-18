@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showAddBank, setShowAddBank] = useState(false);
+  const [selectedTxn, setSelectedTxn] = useState<typeof transactions[0] | null>(null);
 
   if (activeSection === "bank") {
     return (
