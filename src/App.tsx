@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { AdminRoleProvider } from "@/contexts/AdminRoleContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -42,16 +43,22 @@ const App = () => (
           <Route path="/customer/contacts" element={<CustomerContacts />} />
           <Route path="/customer/me" element={<CustomerMe />} />
 
-          {/* Admin Panel */}
-          <Route path="/admin" element={<AdminMessages />} />
-          <Route path="/admin/chat/:id" element={<AdminChatView />} />
-          <Route path="/admin/card-rates" element={<AdminCardRates />} />
-          <Route path="/admin/orders" element={<AdminOrders />} />
-          <Route path="/admin/naira-rate" element={<AdminNairaRate />} />
-          <Route path="/admin/users" element={<AdminUsers />} />
-          <Route path="/admin/team" element={<AdminTeam />} />
-          <Route path="/admin/api-config" element={<AdminApiConfig />} />
-          <Route path="/admin/broadcast" element={<AdminBroadcast />} />
+          {/* Admin Panel - wrapped in role provider */}
+          <Route path="/admin/*" element={
+            <AdminRoleProvider>
+              <Routes>
+                <Route path="/" element={<AdminMessages />} />
+                <Route path="/chat/:id" element={<AdminChatView />} />
+                <Route path="/card-rates" element={<AdminCardRates />} />
+                <Route path="/orders" element={<AdminOrders />} />
+                <Route path="/naira-rate" element={<AdminNairaRate />} />
+                <Route path="/users" element={<AdminUsers />} />
+                <Route path="/team" element={<AdminTeam />} />
+                <Route path="/api-config" element={<AdminApiConfig />} />
+                <Route path="/broadcast" element={<AdminBroadcast />} />
+              </Routes>
+            </AdminRoleProvider>
+          } />
 
           <Route path="*" element={<NotFound />} />
         </Routes>
