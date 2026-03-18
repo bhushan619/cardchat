@@ -67,39 +67,107 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         })}
       </div>
 
-      {/* Collect Now Modal */}
-      {showCollect && (
+      {/* Order Details Modal */}
+      {showOrder && (
         <div className="absolute inset-0 bg-foreground/40 flex items-end z-50">
-          <div className="w-full max-w-md mx-auto bg-card rounded-t-2xl p-5 space-y-4 animate-slide-up">
+          <div className="w-full max-w-md mx-auto bg-card rounded-t-2xl p-5 space-y-4 animate-slide-up max-h-[85vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <h3 className="font-heading font-bold">Collect Payment</h3>
-              <button onClick={() => setShowCollect(false)} className="text-muted-foreground">✕</button>
+              <h3 className="font-heading font-bold">Order Details</h3>
+              <button onClick={() => setShowOrder(false)} className="text-muted-foreground">✕</button>
             </div>
-            <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
-              <p className="text-xs text-muted-foreground">Total Amount</p>
-              <p className="text-2xl font-heading font-bold text-accent">₦215,200</p>
+
+            {/* Order ID & Status */}
+            <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-1 text-center">
+              <p className="text-xs text-muted-foreground">Order ID</p>
+              <p className="text-sm font-heading font-bold">#ORD-20260318-001</p>
+              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Settled</span>
             </div>
+
+            {/* Card Details */}
             <div className="space-y-2">
-              <p className="text-sm font-medium">Select Bank Account</p>
-              {[
-                { bank: "First Bank", acc: "****1234", name: "JOHN A. DOE" },
-                { bank: "GTBank", acc: "****5678", name: "JOHN ADEBAYO" },
-              ].map((a, i) => (
-                <label key={i} className="flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:bg-muted">
-                  <input type="radio" name="bank" defaultChecked={i === 0} className="accent-accent" />
-                  <div>
-                    <p className="text-sm font-medium">{a.bank} · {a.acc}</p>
-                    <p className="text-xs text-muted-foreground">{a.name}</p>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Card Details</p>
+              <div className="bg-muted/50 rounded-xl p-3 space-y-2">
+                {[
+                  { label: "Card Type", value: "iTunes US" },
+                  { label: "Denomination", value: "$100 x 2" },
+                  { label: "Total Face Value", value: "$200" },
+                  { label: "Rate (per $)", value: "₦680" },
+                  { label: "Naira Rate", value: "₦1,580/$" },
+                ].map(item => (
+                  <div key={item.label} className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                    <p className="text-xs font-medium">{item.value}</p>
                   </div>
-                </label>
-              ))}
+                ))}
+              </div>
             </div>
-            <div>
-              <label className="text-sm font-medium">Amount</label>
-              <Input defaultValue="215,200" className="mt-1" />
+
+            {/* Payout Summary */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payout Summary</p>
+              <div className="bg-muted/50 rounded-xl p-3 space-y-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Card Value (NGN)</p>
+                  <p className="text-xs font-medium">₦215,200</p>
+                </div>
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">Fee</p>
+                  <p className="text-xs font-medium">₦0</p>
+                </div>
+                <div className="border-t pt-2 flex items-center justify-between">
+                  <p className="text-sm font-semibold">Total Payout</p>
+                  <p className="text-sm font-heading font-bold text-accent">₦215,200</p>
+                </div>
+              </div>
             </div>
-            <p className="text-[10px] text-destructive">⚠ Transfer will be executed immediately. Verify account details.</p>
-            <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Confirm Collection</Button>
+
+            {/* Bank Transfer Status */}
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Transfer</p>
+              <div className="bg-muted/50 rounded-xl p-3 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
+                    <CheckCircle className="w-4 h-4 text-accent" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-xs font-medium">Transfer Completed</p>
+                    <p className="text-[10px] text-muted-foreground">Mar 18, 2026 · 10:42 AM</p>
+                  </div>
+                </div>
+                {[
+                  { label: "Bank", value: "First Bank · ****1234" },
+                  { label: "Account Name", value: "JOHN A. DOE" },
+                  { label: "Amount Sent", value: "₦215,200" },
+                  { label: "Reference", value: "TXN-001" },
+                ].map(item => (
+                  <div key={item.label} className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">{item.label}</p>
+                    <p className="text-xs font-medium">{    item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Timeline */}
+            <div className="space-y-2">
+              <or className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
+              <div className="space-y-3. pl-3 border-l-2 border-accent/20">
+                {[
+                  { time: "10:37 AM", event: "Order created", done: true },
+                  { time: "10:38 AM", event: "Cards verified", done: true },
+                  { time: "10:40 AM", event: "Billing processed", done: true },
+                  { time: "10:42 AM", event: "Payment sent", done: true },
+                ].map((step, i) => (
+                  <div key={i} className="relative pl-4">
+                    <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${step.done ? "bg-accent border-accent" : "bg-card border-muted-foreground"}`}>
+                      {step.done && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
+                    </div>
+                    <p className="text-xs font-medium">{step.event}</p>
+                    <p className="text-[10px] text-muted-foreground">{step.time}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       )}
