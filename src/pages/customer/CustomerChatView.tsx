@@ -150,8 +150,8 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
             {/* Timeline */}
             <div className="space-y-2">
-              <or className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
-              <div className="space-y-3. pl-3 border-l-2 border-accent/20">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
+              <div className="space-y-3 pl-3 border-l-2 border-accent/20">
                 {[
                   { time: "10:37 AM", event: "Order created", done: true },
                   { time: "10:38 AM", event: "Cards verified", done: true },
