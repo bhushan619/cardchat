@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { X, Plus, Trash2, CheckCircle2, AlertTriangle, ChevronRight, ChevronLeft, Upload, Loader2, XCircle, Clock, RefreshCw, ShieldCheck, ChevronDown, ChevronUp, PartyPopper } from "lucide-react";
+import { useState, useCallback, DragEvent } from "react";
+import { X, Plus, Trash2, CheckCircle2, AlertTriangle, ChevronRight, ChevronLeft, Upload, Loader2, XCircle, Clock, RefreshCw, ShieldCheck, ChevronDown, ChevronUp, PartyPopper, Image, GripVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cardRates, systemNairaRate, bankAccounts } from "@/data/mock";
