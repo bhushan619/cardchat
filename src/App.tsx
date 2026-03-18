@@ -24,6 +24,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminApiConfig from "./pages/admin/AdminApiConfig";
 import AdminBroadcast from "./pages/admin/AdminBroadcast";
+import AdminGuide from "./pages/admin/AdminGuide";
 
 const queryClient = new QueryClient();
 
