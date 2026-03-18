@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
-  const [role] = useState<string>("super_admin");
+  const [role, setRole] = useState<string>("super_admin");
 
   const visibleItems = navItems.filter(item => !item.role || item.role === role || role === "super_admin");
 
