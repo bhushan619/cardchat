@@ -11,6 +11,8 @@ interface CardEntry {
   code: string;
   hasImage: boolean;
   cardType: string;
+  cardFormat: "Physical" | "E-Code";
+  currency: string;
   denomination: string;
   unitPrice: string;
   verificationStatus: VerificationStatus;
@@ -61,6 +63,8 @@ const makeCard = (): CardEntry => ({
   code: "",
   hasImage: false,
   cardType: "iTunes US",
+  cardFormat: "Physical",
+  currency: "USD",
   denomination: "100",
   unitPrice: "680",
   verificationStatus: "pending",
@@ -395,22 +399,48 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
                             )}
                           </div>
                         </div>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-4 gap-2">
                           <select
                             value={card.cardType}
-                            onChange={e => updateCard(card.id, { cardType: e.target.value })}
-                            className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            onChange={e => {
+                              const selected = cardRates.find(r => r.cardType === e.target.value);
+                              updateCard(card.id, {
+                                cardType: e.target.value,
+                                currency: selected?.currency || card.currency,
+                                unitPrice: String(selected?.buyRate || card.unitPrice),
+                              });
+                            }}
+                            className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring col-span-2"
                           >
-                            {cardRates.map(r => (
-                              <option key={r.id} value={r.cardType}>{r.cardType}</option>
+                            {[...new Set(cardRates.map(r => r.cardType))].map(ct => (
+                              <option key={ct} value={ct}>{ct}</option>
                             ))}
                           </select>
+                          <select
+                            value={card.cardFormat}
+                            onChange={e => {
+                              const fmt = e.target.value as "Physical" | "E-Code";
+                              const matched = cardRates.find(r => r.cardType === card.cardType && r.cardFormat === fmt);
+                              updateCard(card.id, {
+                                cardFormat: fmt,
+                                unitPrice: String(matched?.buyRate || card.unitPrice),
+                              });
+                            }}
+                            className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            <option value="Physical">Physical</option>
+                            <option value="E-Code">E-Code</option>
+                          </select>
                           <Input
-                            placeholder="Denomination ($)"
+                            placeholder="Denom ($)"
                             value={card.denomination}
                             onChange={e => updateCard(card.id, { denomination: e.target.value })}
                             className="text-xs h-9"
                           />
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-medium">{card.currency}</span>
+                          <span className="text-[10px] text-muted-foreground">Rate: ₦{card.unitPrice}/$1</span>
                         </div>
                         <Input
                           placeholder="Enter card code / PIN"

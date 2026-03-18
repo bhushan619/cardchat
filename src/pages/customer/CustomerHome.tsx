@@ -83,7 +83,12 @@ export default function CustomerHome() {
             {filteredRates.map(rate => (
               <div key={rate.id} className="bg-card border rounded-xl p-3 flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium">{rate.cardType}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-sm font-medium">{rate.cardType}</p>
+                    <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${rate.cardFormat === "E-Code" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
+                      {rate.cardFormat}
+                    </span>
+                  </div>
                   <p className="text-xs text-muted-foreground">{rate.currency} · {rate.lastUpdated}</p>
                 </div>
                 <div className="text-right">

@@ -1,14 +1,17 @@
 // Mock data for Lightchat interactive prototypes
 
 export const cardRates = [
-  { id: 1, cardType: "iTunes US", currency: "USD", buyRate: 680, sellRate: 720, lastUpdated: "2 min ago" },
-  { id: 2, cardType: "Amazon US", currency: "USD", buyRate: 620, sellRate: 660, lastUpdated: "2 min ago" },
-  { id: 3, cardType: "Steam US", currency: "USD", buyRate: 600, sellRate: 640, lastUpdated: "3 min ago" },
-  { id: 4, cardType: "Google Play US", currency: "USD", buyRate: 590, sellRate: 630, lastUpdated: "2 min ago" },
-  { id: 5, cardType: "iTunes UK", currency: "GBP", buyRate: 850, sellRate: 900, lastUpdated: "5 min ago" },
-  { id: 6, cardType: "Amazon UK", currency: "GBP", buyRate: 780, sellRate: 830, lastUpdated: "3 min ago" },
-  { id: 7, cardType: "Vanilla Visa", currency: "USD", buyRate: 550, sellRate: 590, lastUpdated: "1 min ago" },
-  { id: 8, cardType: "eBay US", currency: "USD", buyRate: 570, sellRate: 610, lastUpdated: "4 min ago" },
+  { id: 1, cardType: "iTunes US", currency: "USD", cardFormat: "Physical" as const, buyRate: 680, sellRate: 720, lastUpdated: "2 min ago" },
+  { id: 2, cardType: "iTunes US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 700, sellRate: 740, lastUpdated: "2 min ago" },
+  { id: 3, cardType: "Amazon US", currency: "USD", cardFormat: "Physical" as const, buyRate: 620, sellRate: 660, lastUpdated: "2 min ago" },
+  { id: 4, cardType: "Amazon US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 640, sellRate: 680, lastUpdated: "2 min ago" },
+  { id: 5, cardType: "Steam US", currency: "USD", cardFormat: "Physical" as const, buyRate: 600, sellRate: 640, lastUpdated: "3 min ago" },
+  { id: 6, cardType: "Steam US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 620, sellRate: 660, lastUpdated: "3 min ago" },
+  { id: 7, cardType: "Google Play US", currency: "USD", cardFormat: "Physical" as const, buyRate: 590, sellRate: 630, lastUpdated: "2 min ago" },
+  { id: 8, cardType: "iTunes UK", currency: "GBP", cardFormat: "Physical" as const, buyRate: 850, sellRate: 900, lastUpdated: "5 min ago" },
+  { id: 9, cardType: "Amazon UK", currency: "GBP", cardFormat: "Physical" as const, buyRate: 780, sellRate: 830, lastUpdated: "3 min ago" },
+  { id: 10, cardType: "Vanilla Visa", currency: "USD", cardFormat: "Physical" as const, buyRate: 550, sellRate: 590, lastUpdated: "1 min ago" },
+  { id: 11, cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 570, sellRate: 610, lastUpdated: "4 min ago" },
 ];
 
 export const systemNairaRate = 1580;
