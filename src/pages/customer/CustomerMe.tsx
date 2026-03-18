@@ -65,6 +65,101 @@ export default function CustomerMe() {
     );
   }
 
+  if (activeSection === "transactions" && selectedTxn) {
+    return (
+      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+        <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
+          <button onClick={() => setSelectedTxn(null)} className="text-sm text-accent flex items-center gap-1">
+            <ArrowLeft className="w-4 h-4" /> Back
+          </button>
+          <h2 className="font-heading font-semibold">Transaction Details</h2>
+        </header>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Status Banner */}
+          <div className={`rounded-xl p-4 text-center space-y-1 ${selectedTxn.status === "success" ? "bg-accent/5 border border-accent/20" : "bg-destructive/5 border border-destructive/20"}`}>
+            <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center ${selectedTxn.status === "success" ? "bg-accent/10" : "bg-destructive/10"}`}>
+              <CheckCircle className={`w-6 h-6 ${selectedTxn.status === "success" ? "text-accent" : "text-destructive"}`} />
+            </div>
+            <p className="text-lg font-heading font-bold">{selectedTxn.amount}</p>
+            <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${selectedTxn.status === "success" ? "bg-accent/10 text-accent" : "bg-destructive/10 text-destructive"}`}>
+              {selectedTxn.status === "success" ? "Successful" : "Failed"}
+            </span>
+          </div>
+
+          {/* Transaction Info */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Transaction Info</p>
+            <div className="bg-muted/50 rounded-xl p-3 space-y-2">
+              {[
+                { label: "Transaction ID", value: selectedTxn.id },
+                { label: "Order ID", value: selectedTxn.orderId },
+                { label: "Date", value: selectedTxn.date },
+                { label: "Amount", value: selectedTxn.amount },
+              ].map(item => (
+                <div key={item.label} className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <div className="flex items-center gap-1">
+                    <p className="text-xs font-medium">{item.value}</p>
+                    {(item.label === "Transaction ID" || item.label === "Order ID") && (
+                      <Copy className="w-3 h-3 text-muted-foreground cursor-pointer hover:text-foreground" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Bank Details */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Details</p>
+            <div className="bg-muted/50 rounded-xl p-3 space-y-2">
+              {[
+                { label: "Bank Account", value: selectedTxn.bank },
+                { label: "Transfer Type", value: "Bank Transfer" },
+                { label: "Processing Time", value: selectedTxn.status === "success" ? "Instant" : "N/A" },
+              ].map(item => (
+                <div key={item.label} className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">{item.label}</p>
+                  <p className="text-xs font-medium">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Timeline */}
+          <div className="space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
+            <div className="space-y-3 pl-3 border-l-2 border-accent/20">
+              {[
+                { time: selectedTxn.date, event: "Order placed", done: true },
+                { time: selectedTxn.date, event: "Payment initiated", done: true },
+                { time: selectedTxn.date, event: selectedTxn.status === "success" ? "Payment completed" : "Payment failed", done: true },
+              ].map((step, i) => (
+                <div key={i} className="relative pl-4">
+                  <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${
+                    step.done
+                      ? (i === 2 && selectedTxn.status === "failed" ? "bg-destructive border-destructive" : "bg-accent border-accent")
+                      : "bg-card border-muted-foreground"
+                  }`}>
+                    {step.done && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
+                  </div>
+                  <p className="text-xs font-medium">{step.event}</p>
+                  <p className="text-[10px] text-muted-foreground">{step.time}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {selectedTxn.status === "failed" && (
+            <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+              Retry Transaction
+            </Button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   if (activeSection === "transactions") {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
@@ -79,7 +174,11 @@ export default function CustomerMe() {
             <Button size="sm" variant="ghost" className="text-xs h-7">Failed</Button>
           </div>
           {transactions.map(t => (
-            <div key={t.id} className="bg-card border rounded-xl p-3 flex items-center gap-3">
+            <button
+              key={t.id}
+              onClick={() => setSelectedTxn(t)}
+              className="w-full bg-card border rounded-xl p-3 flex items-center gap-3 hover:bg-muted/50 transition-colors text-left"
+            >
               <div className={`w-2 h-2 rounded-full ${t.status === "success" ? "bg-success" : "bg-destructive"}`} />
               <div className="flex-1">
                 <p className="text-sm font-medium">{t.amount}</p>
@@ -88,7 +187,8 @@ export default function CustomerMe() {
               <span className={`status-badge text-[10px] ${t.status === "success" ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"}`}>
                 {t.status}
               </span>
-            </div>
+              <ChevronRight className="w-4 h-4 text-muted-foreground" />
+            </button>
           ))}
         </div>
       </div>
