@@ -73,6 +73,9 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [completedOrder, setCompletedOrder] = useState<CompletedOrder | null>(null);
 
+  // Step 3 - Transfer
+  const [selectedBank, setSelectedBank] = useState<number | null>(null);
+
   // Drag-drop state
   const [draggingImage, setDraggingImage] = useState<string | null>(null);
   const [dropTargetCard, setDropTargetCard] = useState<number | null>(null);
