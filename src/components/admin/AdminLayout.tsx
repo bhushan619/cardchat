@@ -17,6 +17,7 @@ const navItems = [
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", role: "team_lead" },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", role: "super_admin" },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", role: "super_admin" },
+  { id: "guide", label: "User Guide", icon: BookOpen, path: "/admin/guide" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
