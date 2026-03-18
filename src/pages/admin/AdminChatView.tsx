@@ -1,11 +1,24 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { chatMessages, orders, bankAccounts } from "@/data/mock";
+import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, UserPlus, Crown, Shield } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
+
+type ChatMessage = {
+  id: number;
+  sender: string;
+  senderName?: string;
+  text: string;
+  time: string;
+  image?: boolean;
+  isOrder?: boolean;
+};
+
+const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
