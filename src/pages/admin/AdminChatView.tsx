@@ -2,16 +2,16 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, AlertTriangle, Users } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import OrderWizardModal from "@/components/admin/OrderWizardModal";
 
 export default function AdminChatView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const [message, setMessage] = useState("");
-  const [showBilling, setShowBilling] = useState(false);
-  const [showTransfer, setShowTransfer] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
 
   const order = orders[0];
 
@@ -31,9 +31,9 @@ export default function AdminChatView() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="outline" className="text-xs h-7">Create Order</Button>
-              <Button size="sm" variant="outline" className="text-xs h-7" onClick={() => setShowBilling(true)}>Auto-Bill</Button>
-              <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowTransfer(true)}>Execute Transfer</Button>
+              <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
+                Process Order
+              </Button>
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
                 <Users className="w-3.5 h-3.5" /> Escalate
               </button>
@@ -127,78 +127,7 @@ export default function AdminChatView() {
           </div>
         </div>
 
-        {/* Auto-Billing Modal */}
-        {showBilling && (
-          <div className="fixed inset-0 bg-foreground/40 flex items-center justify-center z-50">
-            <div className="bg-card rounded-xl p-6 w-[420px] space-y-4 animate-slide-up shadow-xl">
-              <div className="flex items-center justify-between">
-                <h3 className="font-heading font-bold">Auto-Billing</h3>
-                <button onClick={() => setShowBilling(false)} className="text-muted-foreground">✕</button>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="text-xs text-muted-foreground">Denomination</label>
-                  <Input value="$200" readOnly className="mt-1 bg-muted" />
-                  <p className="text-[10px] text-muted-foreground mt-1">= Settlement amount</p>
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground">Naira Rate</label>
-                  <Input value="₦1,580" readOnly className="mt-1 bg-muted" />
-                  <p className="text-[10px] text-accent mt-1">🔒 From system config</p>
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground">Unit Price</label>
-                  <Input defaultValue="680" className="mt-1" />
-                </div>
-                <div>
-                  <label className="text-xs text-muted-foreground">Cost Unit Price</label>
-                  <Input value="0.43038" readOnly className="mt-1 bg-muted" />
-                  <p className="text-[10px] text-muted-foreground mt-1">= Unit Price ÷ Naira Rate</p>
-                </div>
-              </div>
-              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-warning shrink-0" />
-                <p className="text-xs text-warning-foreground">This order will lose ₦2,400. Continue?</p>
-              </div>
-              <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => setShowBilling(false)}>Cancel</Button>
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90">Send Billing</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Transfer Execution Modal */}
-        {showTransfer && (
-          <div className="fixed inset-0 bg-foreground/40 flex items-center justify-center z-50">
-            <div className="bg-card rounded-xl p-6 w-[420px] space-y-4 animate-slide-up shadow-xl">
-              <div className="flex items-center justify-between">
-                <h3 className="font-heading font-bold">Execute Transfer</h3>
-                <button onClick={() => setShowTransfer(false)} className="text-muted-foreground">✕</button>
-              </div>
-              <p className="text-sm text-muted-foreground">Review verified bank details before executing transfer via merchant API.</p>
-              <div className="space-y-2">
-                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Customer</span><span className="font-medium">User-A7X3</span></div>
-                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Total Amount</span><span className="font-medium text-accent">₦215,200</span></div>
-              </div>
-              {bankAccounts.slice(0, 2).map((a, i) => (
-                <div key={a.id} className="border rounded-lg p-3 space-y-1">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">{a.bankName} · {a.accountNumber}</p>
-                    <span className="status-badge bg-success/10 text-success text-[10px]">Verified</span>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Holder: {a.holderName}</p>
-                  <Input defaultValue={i === 0 ? "150,000" : "65,200"} className="mt-1" />
-                </div>
-              ))}
-              <p className="text-[10px] text-destructive">⚠ Transfer will be executed immediately via 3rd-party merchant API. This action cannot be undone.</p>
-              <div className="flex gap-2 justify-end">
-                <Button variant="outline" onClick={() => setShowTransfer(false)}>Cancel</Button>
-                <Button className="bg-accent text-accent-foreground hover:bg-accent/90">Execute Transfer</Button>
-              </div>
-            </div>
-          </div>
-        )}
+        <OrderWizardModal open={showWizard} onClose={() => setShowWizard(false)} />
       </div>
     </AdminLayout>
   );
