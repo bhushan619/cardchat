@@ -13,6 +13,7 @@ import CustomerHome from "./pages/customer/CustomerHome";
 import CustomerChat from "./pages/customer/CustomerChat";
 import CustomerContacts from "./pages/customer/CustomerContacts";
 import CustomerMe from "./pages/customer/CustomerMe";
+import CustomerGuide from "./pages/customer/CustomerGuide";
 
 // Admin Panel
 import AdminMessages from "./pages/admin/AdminMessages";
@@ -24,6 +25,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminApiConfig from "./pages/admin/AdminApiConfig";
 import AdminBroadcast from "./pages/admin/AdminBroadcast";
+import AdminGuide from "./pages/admin/AdminGuide";
 
 const queryClient = new QueryClient();
 
@@ -42,6 +44,7 @@ const App = () => (
           <Route path="/customer/chat" element={<CustomerChat />} />
           <Route path="/customer/contacts" element={<CustomerContacts />} />
           <Route path="/customer/me" element={<CustomerMe />} />
+          <Route path="/customer/guide" element={<CustomerGuide />} />
 
           {/* Admin Panel - wrapped in role provider */}
           <Route path="/admin/*" element={
@@ -56,6 +59,7 @@ const App = () => (
                 <Route path="/team" element={<AdminTeam />} />
                 <Route path="/api-config" element={<AdminApiConfig />} />
                 <Route path="/broadcast" element={<AdminBroadcast />} />
+                <Route path="/guide" element={<AdminGuide />} />
               </Routes>
             </AdminRoleProvider>
           } />

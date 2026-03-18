@@ -1,5 +1,5 @@
 import { ReactNode, useState } from "react";
-import { Home, MessageCircle, Users, User } from "lucide-react";
+import { Home, MessageCircle, Users, User, BookOpen } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const tabs = [
@@ -7,6 +7,7 @@ const tabs = [
   { id: "chat", label: "Chat", icon: MessageCircle, path: "/customer/chat" },
   { id: "contacts", label: "Contacts", icon: Users, path: "/customer/contacts" },
   { id: "me", label: "Me", icon: User, path: "/customer/me" },
+  { id: "guide", label: "Guide", icon: BookOpen, path: "/customer/guide" },
 ];
 
 export default function CustomerLayout({ children }: { children: ReactNode }) {

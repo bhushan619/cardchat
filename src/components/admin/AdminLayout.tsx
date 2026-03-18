@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
-  BarChart3, Send, FileText
+  BarChart3, Send, FileText, BookOpen
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -17,6 +17,7 @@ const navItems = [
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", role: "team_lead" },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", role: "super_admin" },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", role: "super_admin" },
+  { id: "guide", label: "User Guide", icon: BookOpen, path: "/admin/guide" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
