@@ -133,6 +133,9 @@ export default function AdminChatView() {
               return (
                 <div key={msg.id} className={msg.sender === "customer" ? "flex justify-start" : "flex justify-end"}>
                   <div className={msg.sender === "customer" ? "chat-bubble-other" : "chat-bubble-self"}>
+                    <p className={`text-[9px] font-semibold mb-0.5 ${msg.sender === "customer" ? "text-primary" : "text-accent-foreground/70"}`}>
+                      {senderName(msg.sender)}
+                    </p>
                     {msg.image ? (
                       <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
                         <Image className="w-6 h-6 text-muted-foreground" />
