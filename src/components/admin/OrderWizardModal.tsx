@@ -47,6 +47,15 @@ const STATUS_CONFIG: Record<VerificationStatus, { label: string; icon: typeof Cl
   expired:    { label: "Expired",    icon: AlertTriangle, color: "text-warning",          bg: "bg-warning/10" },
 };
 
+// Mock chat images from conversation
+const chatImages = [
+  { id: "img-1", label: "Card front #1", time: "10:35 AM", thumbnail: "front" },
+  { id: "img-2", label: "Card back #1", time: "10:35 AM", thumbnail: "back" },
+  { id: "img-3", label: "Card front #2", time: "10:36 AM", thumbnail: "front" },
+  { id: "img-4", label: "Card back #2", time: "10:36 AM", thumbnail: "back" },
+  { id: "img-5", label: "Receipt photo", time: "10:37 AM", thumbnail: "receipt" },
+];
+
 const makeCard = (): CardEntry => ({
   id: Date.now() + Math.random(),
   code: "",
