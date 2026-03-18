@@ -1,5 +1,5 @@
-import { useState, useCallback } from "react";
-import { X, Plus, Trash2, CheckCircle2, AlertTriangle, ChevronRight, ChevronLeft, Upload, Loader2, XCircle, Clock, RefreshCw, ShieldCheck, ChevronDown, ChevronUp, PartyPopper } from "lucide-react";
+import { useState, useCallback, DragEvent } from "react";
+import { X, Plus, Trash2, CheckCircle2, AlertTriangle, ChevronRight, ChevronLeft, Upload, Loader2, XCircle, Clock, RefreshCw, ShieldCheck, ChevronDown, ChevronUp, PartyPopper, Image, GripVertical } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { cardRates, systemNairaRate, bankAccounts } from "@/data/mock";
@@ -47,6 +47,15 @@ const STATUS_CONFIG: Record<VerificationStatus, { label: string; icon: typeof Cl
   expired:    { label: "Expired",    icon: AlertTriangle, color: "text-warning",          bg: "bg-warning/10" },
 };
 
+// Mock chat images from conversation
+const chatImages = [
+  { id: "img-1", label: "Card front #1", time: "10:35 AM", thumbnail: "front" },
+  { id: "img-2", label: "Card back #1", time: "10:35 AM", thumbnail: "back" },
+  { id: "img-3", label: "Card front #2", time: "10:36 AM", thumbnail: "front" },
+  { id: "img-4", label: "Card back #2", time: "10:36 AM", thumbnail: "back" },
+  { id: "img-5", label: "Receipt photo", time: "10:37 AM", thumbnail: "receipt" },
+];
+
 const makeCard = (): CardEntry => ({
   id: Date.now() + Math.random(),
   code: "",
@@ -66,6 +75,13 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
 
   // Step 3 - Transfer
   const [selectedBank, setSelectedBank] = useState<number | null>(null);
+
+  // Drag-drop state
+  const [draggingImage, setDraggingImage] = useState<string | null>(null);
+  const [dropTargetCard, setDropTargetCard] = useState<number | null>(null);
+  const [cardImageMap, setCardImageMap] = useState<Record<number, string>>({});
+
+  // Derived
   const [transferAmount, setTransferAmount] = useState("");
 
   // Derived
@@ -98,6 +114,39 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
     unverified.forEach((card, i) => {
       setTimeout(() => simulateVerification(card.id), i * 300);
     });
+  };
+
+  // Drag-drop handlers
+  const handleDragStart = (imageId: string) => {
+    setDraggingImage(imageId);
+  };
+
+  const handleDragOver = (e: DragEvent, cardId: number) => {
+    e.preventDefault();
+    setDropTargetCard(cardId);
+  };
+
+  const handleDragLeave = () => {
+    setDropTargetCard(null);
+  };
+
+  const handleDrop = (e: DragEvent, cardId: number) => {
+    e.preventDefault();
+    if (draggingImage) {
+      setCardImageMap(prev => ({ ...prev, [cardId]: draggingImage }));
+      updateCard(cardId, { hasImage: true });
+    }
+    setDraggingImage(null);
+    setDropTargetCard(null);
+  };
+
+  const detachImage = (cardId: number) => {
+    setCardImageMap(prev => {
+      const copy = { ...prev };
+      delete copy[cardId];
+      return copy;
+    });
+    updateCard(cardId, { hasImage: false });
   };
 
   const updateCard = (id: number, updates: Partial<CardEntry>) => {
@@ -265,6 +314,45 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
                 <span className="text-xs font-semibold">Total: ${totalAmount}</span>
               </div>
 
+              {/* Chat Images Panel */}
+              <div className="border rounded-lg p-3 bg-muted/30">
+                <div className="flex items-center gap-1.5 mb-2">
+                  <Image className="w-3.5 h-3.5 text-muted-foreground" />
+                  <span className="text-xs font-medium">Chat Images</span>
+                  <span className="text-[10px] text-muted-foreground">— drag to attach to a card</span>
+                </div>
+                <div className="flex gap-2 overflow-x-auto pb-1">
+                  {chatImages.map(img => {
+                    const isUsed = Object.values(cardImageMap).includes(img.id);
+                    return (
+                      <div
+                        key={img.id}
+                        draggable={!isUsed}
+                        onDragStart={() => handleDragStart(img.id)}
+                        onDragEnd={() => { setDraggingImage(null); setDropTargetCard(null); }}
+                        className={`shrink-0 w-20 rounded-lg border overflow-hidden cursor-grab active:cursor-grabbing transition-all ${
+                          draggingImage === img.id ? "opacity-50 scale-95" : ""
+                        } ${isUsed ? "opacity-40 cursor-not-allowed grayscale" : "hover:border-accent"}`}
+                      >
+                        <div className="h-14 bg-muted flex items-center justify-center relative">
+                          <Image className="w-5 h-5 text-muted-foreground/60" />
+                          {!isUsed && <GripVertical className="w-3 h-3 text-muted-foreground/40 absolute top-0.5 right-0.5" />}
+                          {isUsed && (
+                            <div className="absolute inset-0 bg-success/10 flex items-center justify-center">
+                              <CheckCircle2 className="w-4 h-4 text-success" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="px-1.5 py-1">
+                          <p className="text-[9px] font-medium truncate">{img.label}</p>
+                          <p className="text-[8px] text-muted-foreground">{img.time}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
                   <label className="text-xs font-medium text-muted-foreground">Cards ({cards.length}/15)</label>
@@ -273,60 +361,87 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
                   </Button>
                 </div>
 
-                <div className="space-y-2 max-h-[400px] overflow-y-auto pr-1">
-                  {cards.map((card, idx) => (
-                    <div key={card.id} className="border rounded-lg p-3 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-medium">Card #{idx + 1}</span>
-                        <div className="flex items-center gap-1">
-                          {card.hasImage && (
-                            <span className="text-[10px] text-accent flex items-center gap-0.5">
-                              <CheckCircle2 className="w-3 h-3" /> Image
-                            </span>
-                          )}
-                          {cards.length > 1 && (
-                            <button onClick={() => removeCard(card.id)} className="text-muted-foreground hover:text-destructive">
-                              <Trash2 className="w-3.5 h-3.5" />
-                            </button>
-                          )}
-                        </div>
-                      </div>
-                      <div className="grid grid-cols-2 gap-2">
-                        <select
-                          value={card.cardType}
-                          onChange={e => updateCard(card.id, { cardType: e.target.value })}
-                          className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                        >
-                          {cardRates.map(r => (
-                            <option key={r.id} value={r.cardType}>{r.cardType}</option>
-                          ))}
-                        </select>
-                        <Input
-                          placeholder="Denomination ($)"
-                          value={card.denomination}
-                          onChange={e => updateCard(card.id, { denomination: e.target.value })}
-                          className="text-xs h-9"
-                        />
-                      </div>
-                      <Input
-                        placeholder="Enter card code / PIN"
-                        value={card.code}
-                        onChange={e => updateCard(card.id, { code: e.target.value })}
-                        className="text-sm"
-                      />
-                      <button
-                        onClick={() => updateCard(card.id, { hasImage: !card.hasImage })}
-                        className={`flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-md border border-dashed transition-colors w-full justify-center ${
-                          card.hasImage
-                            ? "border-accent bg-accent/5 text-accent"
-                            : "border-muted-foreground/30 text-muted-foreground hover:border-accent hover:text-accent"
+                <div className="space-y-2 max-h-[320px] overflow-y-auto pr-1">
+                  {cards.map((card, idx) => {
+                    const attachedImg = cardImageMap[card.id];
+                    const attachedLabel = attachedImg ? chatImages.find(i => i.id === attachedImg)?.label : null;
+                    const isDropTarget = dropTargetCard === card.id;
+
+                    return (
+                      <div
+                        key={card.id}
+                        onDragOver={(e) => handleDragOver(e, card.id)}
+                        onDragLeave={handleDragLeave}
+                        onDrop={(e) => handleDrop(e, card.id)}
+                        className={`border rounded-lg p-3 space-y-2 transition-all ${
+                          isDropTarget ? "border-accent bg-accent/5 ring-2 ring-accent/20" : "border-border"
                         }`}
                       >
-                        {card.hasImage ? <CheckCircle2 className="w-3.5 h-3.5" /> : <Upload className="w-3.5 h-3.5" />}
-                        {card.hasImage ? "Image attached" : "Attach card image"}
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-medium">Card #{idx + 1}</span>
+                          <div className="flex items-center gap-1">
+                            {card.hasImage && attachedLabel && (
+                              <span className="text-[10px] text-accent flex items-center gap-0.5">
+                                <CheckCircle2 className="w-3 h-3" /> {attachedLabel}
+                                <button onClick={() => detachImage(card.id)} className="ml-0.5 hover:text-destructive">
+                                  <X className="w-2.5 h-2.5" />
+                                </button>
+                              </span>
+                            )}
+                            {cards.length > 1 && (
+                              <button onClick={() => removeCard(card.id)} className="text-muted-foreground hover:text-destructive">
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <select
+                            value={card.cardType}
+                            onChange={e => updateCard(card.id, { cardType: e.target.value })}
+                            className="flex h-9 w-full rounded-md border border-input bg-background px-2 py-1 text-xs ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          >
+                            {cardRates.map(r => (
+                              <option key={r.id} value={r.cardType}>{r.cardType}</option>
+                            ))}
+                          </select>
+                          <Input
+                            placeholder="Denomination ($)"
+                            value={card.denomination}
+                            onChange={e => updateCard(card.id, { denomination: e.target.value })}
+                            className="text-xs h-9"
+                          />
+                        </div>
+                        <Input
+                          placeholder="Enter card code / PIN"
+                          value={card.code}
+                          onChange={e => updateCard(card.id, { code: e.target.value })}
+                          className="text-sm"
+                        />
+                        {/* Drop zone / attach area */}
+                        {!card.hasImage ? (
+                          <div
+                            className={`flex items-center gap-1.5 text-xs px-3 py-2.5 rounded-md border border-dashed transition-all w-full justify-center ${
+                              isDropTarget
+                                ? "border-accent bg-accent/10 text-accent scale-[1.02]"
+                                : "border-muted-foreground/30 text-muted-foreground"
+                            }`}
+                          >
+                            <Upload className="w-3.5 h-3.5" />
+                            {isDropTarget ? "Drop image here" : "Drag a chat image here to attach"}
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2 text-xs px-3 py-1.5 rounded-md border border-accent/30 bg-accent/5 text-accent">
+                            <Image className="w-3.5 h-3.5" />
+                            <span className="flex-1">{attachedLabel || "Image attached"}</span>
+                            <button onClick={() => detachImage(card.id)} className="hover:text-destructive">
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             </>
