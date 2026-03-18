@@ -142,7 +142,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
-                    <p className="text-xs font-medium">{    item.value}</p>
+                    <p className="text-xs font-medium">{item.value}</p>
                   </div>
                 ))}
               </div>
