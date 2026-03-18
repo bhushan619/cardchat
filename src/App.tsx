@@ -59,6 +59,7 @@ const App = () => (
                 <Route path="/team" element={<AdminTeam />} />
                 <Route path="/api-config" element={<AdminApiConfig />} />
                 <Route path="/broadcast" element={<AdminBroadcast />} />
+                <Route path="/guide" element={<AdminGuide />} />
               </Routes>
             </AdminRoleProvider>
           } />
