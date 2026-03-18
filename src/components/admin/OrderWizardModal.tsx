@@ -149,6 +149,7 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
     updateCard(cardId, { hasImage: false });
   };
 
+  const updateCard = (id: number, updates: Partial<CardEntry>) => {
     setCards(cards.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
