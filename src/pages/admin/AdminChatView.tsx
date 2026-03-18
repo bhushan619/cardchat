@@ -1,12 +1,12 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
+import { chatMessages, orders, bankAccounts } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Check } from "lucide-react";
+import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   completed:  { label: "Completed",  color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
@@ -23,15 +23,6 @@ export default function AdminChatView() {
   const [showWizard, setShowWizard] = useState(false);
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [escalatedTo, setEscalatedTo] = useState<number | null>(null);
-
-  const escalationTargets = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
-
-  const senderName = (sender: string) => {
-    if (sender === "customer") return "User-A7X3";
-    if (sender === "agent") return "You";
-    return "System";
-  };
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
@@ -85,37 +76,9 @@ export default function AdminChatView() {
               <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
                 Process Order
               </Button>
-              <Popover>
-                <PopoverTrigger asChild>
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-                    <Users className="w-3.5 h-3.5" /> {escalatedTo ? "Escalated" : "Escalate"}
-                  </button>
-                </PopoverTrigger>
-                <PopoverContent className="w-56 p-2" align="end">
-                  <p className="text-xs font-semibold text-muted-foreground mb-2 px-2">Escalate to</p>
-                  {escalationTargets.map(user => {
-                    const isSelected = escalatedTo === user.id;
-                    return (
-                      <button
-                        key={user.id}
-                        onClick={() => setEscalatedTo(isSelected ? null : user.id)}
-                        className={`w-full flex items-center gap-2 p-2 rounded-md text-left text-sm transition-colors ${
-                          isSelected ? "bg-accent/10 text-accent-foreground" : "hover:bg-muted"
-                        }`}
-                      >
-                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                          {user.name[0]}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-medium truncate">{user.name}</p>
-                          <p className="text-[10px] text-muted-foreground capitalize">{user.role.replace("_", " ")}</p>
-                        </div>
-                        {isSelected && <Check className="w-3.5 h-3.5 text-accent" />}
-                      </button>
-                    );
-                  })}
-                </PopoverContent>
-              </Popover>
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                <Users className="w-3.5 h-3.5" /> Escalate
+              </button>
               <button><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
             </div>
           </header>
@@ -133,9 +96,6 @@ export default function AdminChatView() {
               return (
                 <div key={msg.id} className={msg.sender === "customer" ? "flex justify-start" : "flex justify-end"}>
                   <div className={msg.sender === "customer" ? "chat-bubble-other" : "chat-bubble-self"}>
-                    <p className={`text-[9px] font-semibold mb-0.5 ${msg.sender === "customer" ? "text-primary" : "text-accent-foreground/70"}`}>
-                      {senderName(msg.sender)}
-                    </p>
                     {msg.image ? (
                       <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
                         <Image className="w-6 h-6 text-muted-foreground" />
