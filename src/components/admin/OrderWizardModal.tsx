@@ -116,7 +116,39 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
     });
   };
 
-  const updateCard = (id: number, updates: Partial<CardEntry>) => {
+  // Drag-drop handlers
+  const handleDragStart = (imageId: string) => {
+    setDraggingImage(imageId);
+  };
+
+  const handleDragOver = (e: DragEvent, cardId: number) => {
+    e.preventDefault();
+    setDropTargetCard(cardId);
+  };
+
+  const handleDragLeave = () => {
+    setDropTargetCard(null);
+  };
+
+  const handleDrop = (e: DragEvent, cardId: number) => {
+    e.preventDefault();
+    if (draggingImage) {
+      setCardImageMap(prev => ({ ...prev, [cardId]: draggingImage }));
+      updateCard(cardId, { hasImage: true });
+    }
+    setDraggingImage(null);
+    setDropTargetCard(null);
+  };
+
+  const detachImage = (cardId: number) => {
+    setCardImageMap(prev => {
+      const copy = { ...prev };
+      delete copy[cardId];
+      return copy;
+    });
+    updateCard(cardId, { hasImage: false });
+  };
+
     setCards(cards.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
