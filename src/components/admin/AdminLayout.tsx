@@ -1,9 +1,9 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
-  BarChart3, Send, FileText, BookOpen
+  BarChart3, Send, FileText, BookOpen, LogOut
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -25,6 +25,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const { role, setRole } = useAdminRole();
+
+  useEffect(() => {
+    const auth = sessionStorage.getItem("adminAuth");
+    if (!auth) {
+      navigate("/admin/login", { replace: true });
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminAuth");
+    navigate("/admin/login", { replace: true });
+  };
 
   const visibleItems = navItems.filter(item => {
     if (!item.role) return true;
@@ -89,6 +101,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
               <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
             </div>
+            <button onClick={handleLogout} className="text-sidebar-foreground/50 hover:text-destructive transition-colors" title="Sign out">
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>

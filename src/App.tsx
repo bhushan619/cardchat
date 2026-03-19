@@ -16,6 +16,7 @@ import CustomerMe from "./pages/customer/CustomerMe";
 import CustomerGuide from "./pages/customer/CustomerGuide";
 
 // Admin Panel
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminChatView from "./pages/admin/AdminChatView";
 import AdminCardRates from "./pages/admin/AdminCardRates";
@@ -45,6 +46,9 @@ const App = () => (
           <Route path="/customer/contacts" element={<CustomerContacts />} />
           <Route path="/customer/me" element={<CustomerMe />} />
           <Route path="/customer/guide" element={<CustomerGuide />} />
+
+          {/* Admin Login */}
+          <Route path="/admin/login" element={<AdminLogin />} />
 
           {/* Admin Panel - wrapped in role provider */}
           <Route path="/admin/*" element={
