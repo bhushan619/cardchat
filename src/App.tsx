@@ -16,6 +16,7 @@ import CustomerMe from "./pages/customer/CustomerMe";
 import CustomerGuide from "./pages/customer/CustomerGuide";
 
 // Admin Panel
+import AdminLogin from "./pages/admin/AdminLogin";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminChatView from "./pages/admin/AdminChatView";
 import AdminCardRates from "./pages/admin/AdminCardRates";
