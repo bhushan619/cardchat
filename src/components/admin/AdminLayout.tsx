@@ -26,6 +26,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const { role, setRole } = useAdminRole();
 
+  useEffect(() => {
+    const auth = sessionStorage.getItem("adminAuth");
+    if (!auth) {
+      navigate("/admin/login", { replace: true });
+    }
+  }, [navigate]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("adminAuth");
+    navigate("/admin/login", { replace: true });
+  };
+
   const visibleItems = navItems.filter(item => {
     if (!item.role) return true;
     if (role === "super_admin") return true;
