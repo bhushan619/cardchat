@@ -47,6 +47,9 @@ const App = () => (
           <Route path="/customer/me" element={<CustomerMe />} />
           <Route path="/customer/guide" element={<CustomerGuide />} />
 
+          {/* Admin Login */}
+          <Route path="/admin/login" element={<AdminLogin />} />
+
           {/* Admin Panel - wrapped in role provider */}
           <Route path="/admin/*" element={
             <AdminRoleProvider>

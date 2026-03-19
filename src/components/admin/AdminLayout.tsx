@@ -101,6 +101,9 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
               <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
             </div>
+            <button onClick={handleLogout} className="text-sidebar-foreground/50 hover:text-destructive transition-colors" title="Sign out">
+              <LogOut className="w-4 h-4" />
+            </button>
           </div>
         </div>
       </aside>
