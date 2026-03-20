@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from "react";
+import { ReactNode, useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { conversations, orders, cardRates } from "@/data/mock";
 
 const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
@@ -24,6 +25,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const { role, setRole } = useAdminRole();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     if (!item.role) return true;
     if (role === "super_admin") return true;
     if (role === "team_lead") return item.role === "team_lead" || !item.role;
-    return false; // agents see only non-role items
+    return false;
   });
 
   const roleProfiles: Record<string, { name: string; label: string }> = {
@@ -50,6 +52,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     team_lead: { name: "Sarah Lead", label: "Team Lead" },
     agent: { name: "Mike Agent", label: "Agent" },
   };
+
+  // Search results
+  const searchResults = useMemo(() => {
+    if (searchQuery.length < 2) return null;
+    const q = searchQuery.toLowerCase();
+    const customers = conversations.filter(c => c.alias.toLowerCase().includes(q));
+    const matchedOrders = orders.filter(o => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q));
+    const rates = cardRates.filter(r => r.cardType.toLowerCase().includes(q) || r.currency.toLowerCase().includes(q));
+    const total = customers.length + matchedOrders.length + rates.length;
+    return { customers, orders: matchedOrders, rates, total };
+  }, [searchQuery]);
 
   return (
     <div className="flex h-screen">
@@ -117,8 +130,10 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             <Input
               placeholder="Search customers, orders, transactions..."
               className="max-w-md border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
-              onBlur={() => setTimeout(() => setSearchOpen(false), 200)}
+              onBlur={() => setTimeout(() => { setSearchOpen(false); }, 200)}
             />
           </div>
           <div className="flex items-center gap-4">
@@ -137,27 +152,84 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         {searchOpen && (
           <div className="absolute top-14 left-60 right-0 z-50 bg-card border-b shadow-lg p-4 animate-slide-up">
             <div className="max-w-2xl mx-auto space-y-3">
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recent Searches</p>
-              {["User-A7X3", "ORD-20260318-001", "iTunes"].map(q => (
-                <button key={q} className="flex items-center gap-2 text-sm text-foreground/80 hover:text-foreground">
-                  <Search className="w-3 h-3" /> {q}
-                </button>
-              ))}
-              <div className="border-t pt-3 mt-3">
-                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">Quick Results</p>
-                <div className="space-y-2">
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                    <span className="status-badge bg-accent/10 text-accent">Customer</span>
-                    <span className="text-sm">User-A7X3</span>
-                    <span className="text-xs text-muted-foreground ml-auto">VIP · ₦450,000</span>
-                  </div>
-                  <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer">
-                    <span className="status-badge bg-primary/10 text-primary">Order</span>
-                    <span className="text-sm">ORD-20260318-001</span>
-                    <span className="text-xs text-muted-foreground ml-auto">Settled · iTunes US</span>
-                  </div>
+              {!searchResults ? (
+                <>
+                  <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recent Searches</p>
+                  {["User-A7X3", "ORD-20260318-001", "iTunes"].map(q => (
+                    <button key={q} onClick={() => setSearchQuery(q)} className="flex items-center gap-2 text-sm text-foreground/80 hover:text-foreground">
+                      <Search className="w-3 h-3" /> {q}
+                    </button>
+                  ))}
+                </>
+              ) : searchResults.total === 0 ? (
+                <div className="text-center py-6">
+                  <Search className="w-8 h-8 text-muted-foreground/40 mx-auto mb-2" />
+                  <p className="text-sm text-muted-foreground">No results found for "{searchQuery}"</p>
                 </div>
-              </div>
+              ) : (
+                <>
+                  {searchResults.customers.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
+                        Customers ({searchResults.customers.length})
+                      </p>
+                      <div className="space-y-1">
+                        {searchResults.customers.map(c => (
+                          <button
+                            key={c.id}
+                            onMouseDown={() => navigate(`/admin/chat/${c.id}`)}
+                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer text-left"
+                          >
+                            <span className="status-badge bg-accent/10 text-accent text-[10px]">Customer</span>
+                            <span className="text-sm font-medium">{c.alias}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">{c.tags.join(", ")} · {c.totalValue}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {searchResults.orders.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
+                        Orders ({searchResults.orders.length})
+                      </p>
+                      <div className="space-y-1">
+                        {searchResults.orders.map(o => (
+                          <button
+                            key={o.id}
+                            onMouseDown={() => navigate("/admin/orders")}
+                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer text-left"
+                          >
+                            <span className="status-badge bg-primary/10 text-primary text-[10px]">Order</span>
+                            <span className="text-sm font-medium">{o.id}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">{o.status.replace("_", " ")} · {o.cardType}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  {searchResults.rates.length > 0 && (
+                    <div>
+                      <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mb-2">
+                        Card Rates ({searchResults.rates.length})
+                      </p>
+                      <div className="space-y-1">
+                        {searchResults.rates.map(r => (
+                          <button
+                            key={r.id}
+                            onMouseDown={() => navigate("/admin/card-rates")}
+                            className="w-full flex items-center gap-3 p-2 rounded-lg hover:bg-muted cursor-pointer text-left"
+                          >
+                            <span className="status-badge bg-warning/10 text-warning text-[10px]">Rate</span>
+                            <span className="text-sm font-medium">{r.cardType}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">{r.cardFormat} · ₦{r.buyRate}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </>
+              )}
             </div>
           </div>
         )}

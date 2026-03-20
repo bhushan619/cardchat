@@ -1,14 +1,36 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { nairaRateHistory, systemNairaRate } from "@/data/mock";
-import { DollarSign, Clock, Edit, Save } from "lucide-react";
+import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/hooks/use-toast";
 
 export default function AdminNairaRate() {
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
   const [reason, setReason] = useState("");
+  const [broadcasting, setBroadcasting] = useState<"idle" | "broadcasting" | "done">("idle");
+
+  const handleSave = () => {
+    setBroadcasting("broadcasting");
+    toast({
+      title: "Rate Updated",
+      description: `Rate updated to ₦${Number(rate).toLocaleString()} — broadcasting to all sessions...`,
+    });
+    setTimeout(() => {
+      setBroadcasting("done");
+      toast({
+        title: "Broadcast Complete",
+        description: "✓ All sessions updated successfully",
+      });
+    }, 2000);
+    setTimeout(() => {
+      setBroadcasting("idle");
+      setEditing(false);
+      setReason("");
+    }, 4000);
+  };
 
   return (
     <AdminLayout>
@@ -25,7 +47,19 @@ export default function AdminNairaRate() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Active System Rate</p>
-                <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / USD</span></p>
+                <div className="flex items-center gap-2">
+                  <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / USD</span></p>
+                  {broadcasting === "broadcasting" && (
+                    <span className="status-badge bg-warning/10 text-warning gap-1 animate-pulse">
+                      <Loader2 className="w-3 h-3 animate-spin" /> Broadcasting...
+                    </span>
+                  )}
+                  {broadcasting === "done" && (
+                    <span className="status-badge bg-success/10 text-success gap-1 animate-slide-up">
+                      <CheckCircle2 className="w-3 h-3" /> All sessions updated
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setEditing(!editing)} className="gap-2">
@@ -48,8 +82,16 @@ export default function AdminNairaRate() {
               <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
                 <p className="text-xs text-warning-foreground">⚠ This rate will be broadcast to all active sessions and the Customer App immediately. All new orders will use this rate.</p>
               </div>
-              <Button className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2">
-                <Save className="w-3.5 h-3.5" /> Save & Broadcast
+              <Button
+                className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
+                onClick={handleSave}
+                disabled={broadcasting !== "idle"}
+              >
+                {broadcasting === "broadcasting" ? (
+                  <><Loader2 className="w-3.5 h-3.5 animate-spin" /> Broadcasting...</>
+                ) : (
+                  <><Save className="w-3.5 h-3.5" /> Save & Broadcast</>
+                )}
               </Button>
             </div>
           )}

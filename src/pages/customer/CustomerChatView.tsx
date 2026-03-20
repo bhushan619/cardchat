@@ -1,12 +1,29 @@
 import { useState } from "react";
-import { ArrowLeft, Paperclip, Send, Image as ImageIcon, CheckCircle } from "lucide-react";
+import { ArrowLeft, Paperclip, Send, Image as ImageIcon, CheckCircle, Clock, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
 
+type OrderStatus = "order_created" | "settled" | "billing_sent" | "transfer_processing" | "transfer_complete";
+
+const ORDER_STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+  order_created:       { label: "Order Created",       color: "text-primary",     bg: "bg-primary/10",     icon: Clock },
+  settled:             { label: "Settled",              color: "text-accent",      bg: "bg-accent/10",      icon: CheckCircle },
+  billing_sent:        { label: "Billing Sent",         color: "text-warning",     bg: "bg-warning/10",     icon: CheckCircle },
+  transfer_processing: { label: "Transfer Processing",  color: "text-warning",     bg: "bg-warning/10",     icon: Loader2 },
+  transfer_complete:   { label: "Transfer Complete",     color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
+};
+
+const STATUS_ORDER: OrderStatus[] = ["order_created", "settled", "billing_sent", "transfer_processing", "transfer_complete"];
+
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<OrderStatus>("transfer_complete");
+
+  const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
+  const StatusIcon = statusConfig.icon;
+  const currentIdx = STATUS_ORDER.indexOf(orderStatus);
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
@@ -22,18 +39,39 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       </header>
 
-      {/* Pinned Order */}
+      {/* Pinned Order — Read-only status display */}
       <div className="pinned-order mx-4 mt-3 animate-slide-up">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
             <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580</p>
           </div>
-          <span className="status-badge bg-accent/10 text-accent text-[10px]">Settled</span>
+          <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
+            <StatusIcon className={`w-3 h-3 ${orderStatus === "transfer_processing" ? "animate-spin" : ""}`} />
+            {statusConfig.label}
+          </span>
         </div>
-        <div className="flex gap-2 mt-2">
+        {/* Status progression dots */}
+        <div className="flex items-center gap-1 mb-2">
+          {STATUS_ORDER.map((s, i) => (
+            <div key={s} className="flex items-center gap-1 flex-1">
+              <div className={`w-2 h-2 rounded-full shrink-0 ${i <= currentIdx ? "bg-accent" : "bg-muted-foreground/30"}`} />
+              {i < STATUS_ORDER.length - 1 && (
+                <div className={`h-0.5 flex-1 rounded ${i < currentIdx ? "bg-accent" : "bg-muted-foreground/20"}`} />
+              )}
+            </div>
+          ))}
+        </div>
+        <div className="flex gap-2">
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setShowOrder(true)}>
-            View Order
+            View Details
+          </Button>
+          {/* Demo: cycle status */}
+          <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => {
+            const next = STATUS_ORDER[(currentIdx + 1) % STATUS_ORDER.length];
+            setOrderStatus(next);
+          }}>
+            Demo: Next Status →
           </Button>
         </div>
       </div>
@@ -65,6 +103,34 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             </div>
           );
         })}
+
+        {/* Billing notification system message */}
+        <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
+          <p className="text-xs text-accent font-medium">💰 Billing processed — ₦215,200 total payout</p>
+          <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
+        </div>
+
+        {/* Transfer complete system message */}
+        {orderStatus === "transfer_complete" && (
+          <>
+            <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center animate-slide-up">
+              <p className="text-xs text-success font-semibold">✅ Transfer Complete — ₦215,200 sent to First Bank ****1234</p>
+              <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
+            </div>
+            {/* Proof screenshot placeholder */}
+            <div className="flex justify-start">
+              <div className="chat-bubble-other">
+                <p className="text-[9px] font-semibold mb-1 text-accent">System</p>
+                <div className="w-56 h-36 bg-muted rounded-lg flex flex-col items-center justify-center border border-dashed border-muted-foreground/30">
+                  <ImageIcon className="w-8 h-8 text-muted-foreground/50 mb-1" />
+                  <span className="text-[10px] text-muted-foreground">Transfer Proof Screenshot</span>
+                  <span className="text-[9px] text-muted-foreground/60">First Bank · ₦215,200</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Order Details Modal */}
@@ -76,14 +142,14 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <button onClick={() => setShowOrder(false)} className="text-muted-foreground">✕</button>
             </div>
 
-            {/* Order ID & Status */}
             <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-1 text-center">
               <p className="text-xs text-muted-foreground">Order ID</p>
               <p className="text-sm font-heading font-bold">#ORD-20260318-001</p>
-              <span className="inline-block mt-1 px-2.5 py-0.5 rounded-full bg-accent/10 text-accent text-xs font-medium">Settled</span>
+              <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full ${statusConfig.bg} ${statusConfig.color} text-xs font-medium`}>
+                {statusConfig.label}
+              </span>
             </div>
 
-            {/* Card Details */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Card Details</p>
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
@@ -102,7 +168,6 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
 
-            {/* Payout Summary */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payout Summary</p>
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
@@ -121,22 +186,28 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
 
-            {/* Bank Transfer Status */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Transfer</p>
               <div className="bg-muted/50 rounded-xl p-3 space-y-3">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-accent/10 flex items-center justify-center shrink-0">
-                    <CheckCircle className="w-4 h-4 text-accent" />
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                    orderStatus === "transfer_complete" ? "bg-success/10" : "bg-muted"
+                  }`}>
+                    {orderStatus === "transfer_complete" ? (
+                      <CheckCircle className="w-4 h-4 text-success" />
+                    ) : (
+                      <Clock className="w-4 h-4 text-muted-foreground" />
+                    )}
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-medium">Transfer Completed</p>
+                    <p className="text-xs font-medium">
+                      {orderStatus === "transfer_complete" ? "Transfer Completed" : "Transfer Pending"}
+                    </p>
                     <p className="text-[10px] text-muted-foreground">Mar 18, 2026 · 10:42 AM</p>
                   </div>
                 </div>
                 {[
                   { label: "Bank", value: "First Bank · ****1234" },
-                  { label: "Account Name", value: "JOHN A. DOE" },
                   { label: "Amount Sent", value: "₦215,200" },
                   { label: "Reference", value: "TXN-001" },
                 ].map(item => (
@@ -148,15 +219,15 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
 
-            {/* Timeline */}
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
               <div className="space-y-3 pl-3 border-l-2 border-accent/20">
                 {[
-                  { time: "10:37 AM", event: "Order created", done: true },
-                  { time: "10:38 AM", event: "Cards verified", done: true },
-                  { time: "10:40 AM", event: "Billing processed", done: true },
-                  { time: "10:42 AM", event: "Payment sent", done: true },
+                  { time: "10:37 AM", event: "Order created", done: currentIdx >= 0 },
+                  { time: "10:38 AM", event: "Cards verified & settled", done: currentIdx >= 1 },
+                  { time: "10:40 AM", event: "Billing sent", done: currentIdx >= 2 },
+                  { time: "10:41 AM", event: "Transfer processing", done: currentIdx >= 3 },
+                  { time: "10:42 AM", event: "Transfer complete", done: currentIdx >= 4 },
                 ].map((step, i) => (
                   <div key={i} className="relative pl-4">
                     <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${step.done ? "bg-accent border-accent" : "bg-card border-muted-foreground"}`}>
