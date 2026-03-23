@@ -23,12 +23,7 @@ export default function Index() {
           >
             <Smartphone className="w-5 h-5" /> Customer App
           </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            className="gap-2 h-12 px-6"
-            onClick={() => navigate("/admin")}
-          >
+          <Button size="lg" variant="outline" className="gap-2 h-12 px-6" onClick={() => navigate("/admin/login")}>
             <Monitor className="w-5 h-5" /> Admin Panel
           </Button>
         </div>
