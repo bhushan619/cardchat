@@ -495,13 +495,14 @@ export default function AdminMessages() {
                       </div>
                     </PopoverContent>
                   </Popover>
-                  <button
+                  <Button
+                    size="sm"
+                    variant="outline"
                     onClick={() => setShowWizard(true)}
-                    className="w-9 h-9 rounded-full hover:bg-accent/10 flex items-center justify-center shrink-0 text-accent hover:text-accent/80 transition-colors"
-                    title="Create Order"
+                    className="h-9 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
                   >
-                    <FileTextIcon className="w-4 h-4" />
-                  </button>
+                    <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+                  </Button>
                   <button
                     className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
                     onClick={() => {
