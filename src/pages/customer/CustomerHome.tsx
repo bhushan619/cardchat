@@ -108,7 +108,7 @@ export default function CustomerHome() {
               </button>
             </div>
           </>
-        )}
+
       </div>
 
       {/* Beginner Guide Overlay */}
