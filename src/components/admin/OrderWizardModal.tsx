@@ -673,7 +673,7 @@ export default function OrderWizardModal({ open, onClose, onComplete }: OrderWiz
             <>
               <p className="text-sm text-muted-foreground">Select a verified bank account to initiate the transfer.</p>
               <div className="space-y-2">
-                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Customer</span><span className="font-medium">User-A7X3</span></div>
+                <div className="flex justify-between text-xs"><span className="text-muted-foreground">Customer</span><span className="font-medium">A7X3KP</span></div>
                 <div className="flex justify-between text-xs"><span className="text-muted-foreground">Total Payout</span><span className="font-medium text-accent">₦{nairaTotal.toLocaleString()}</span></div>
               </div>
               <div className="space-y-2">

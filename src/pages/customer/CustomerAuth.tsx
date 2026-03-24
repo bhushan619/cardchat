@@ -180,7 +180,7 @@ export default function CustomerAuth() {
         For your privacy, support agents will only see your alias — never your real name.
       </p>
       <div className="bg-muted rounded-xl px-6 py-4 mb-6 w-full">
-        <p className="font-heading text-2xl font-bold tracking-wider">User-A7X3</p>
+        <p className="font-heading text-2xl font-bold tracking-wider">A7X3KP</p>
       </div>
       <p className="text-[11px] text-muted-foreground mb-8 leading-relaxed">
         This alias is used across all support interactions. Only system administrators can see your real identity.

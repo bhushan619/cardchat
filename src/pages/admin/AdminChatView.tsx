@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck } from "lucide-react";
+import { ArrowLeft, Send, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -58,7 +58,7 @@ export default function AdminChatView() {
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
       ...m,
-      senderName: m.sender === "customer" ? "User-A7X3" : m.sender === "agent" ? "You" : "System",
+      senderName: m.sender === "customer" ? "A7X3KP" : m.sender === "agent" ? "You" : "System",
     }))
   );
 
@@ -184,7 +184,7 @@ export default function AdminChatView() {
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">X3</div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold">User-A7X3</p>
+                  <p className="text-sm font-semibold">A7X3KP</p>
                   {isGroupChat && (
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5">
                       <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
@@ -193,7 +193,7 @@ export default function AdminChatView() {
                 </div>
                 <p className="text-[10px] text-muted-foreground">
                   {isGroupChat
-                    ? `You, ${groupMembers.map(m => m.name).join(", ")}, User-A7X3`
+                    ? `You, ${groupMembers.map(m => m.name).join(", ")}, A7X3KP`
                     : "85% rate · ₦450,000 total · VIP, Repeat"
                   }
                 </p>
@@ -278,7 +278,7 @@ export default function AdminChatView() {
                       <div className="p-3 space-y-3">
                         <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
                           <p className="text-xs text-warning-foreground">
-                            Reassign <strong>User-A7X3</strong> to <strong>{reassignTarget.name}</strong>?
+                            Reassign <strong>A7X3KP</strong> to <strong>{reassignTarget.name}</strong>?
                           </p>
                           <p className="text-[10px] text-muted-foreground mt-1">Full chat history and order context will be transferred.</p>
                         </div>
@@ -344,17 +344,35 @@ export default function AdminChatView() {
             })}
           </div>
 
-          <div className="flex items-center gap-2 p-4 border-t bg-card shrink-0">
-            <button><Paperclip className="w-5 h-5 text-muted-foreground" /></button>
-            <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 border-0 bg-muted"
-            />
-            <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center">
-              <Send className="w-4 h-4 text-accent-foreground" />
-            </button>
+          <div className="border-t bg-card shrink-0">
+            <div className="flex items-center gap-1 px-4 pt-2 pb-1">
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Type className="w-3.5 h-3.5" /> Text
+              </button>
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Camera className="w-3.5 h-3.5" /> Image
+              </button>
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Smile className="w-3.5 h-3.5" /> Emoji
+              </button>
+              <button
+                className="flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/80 px-2 py-1 rounded-md hover:bg-accent/10 transition-colors ml-auto"
+                onClick={() => setShowWizard(true)}
+              >
+                <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+              </button>
+            </div>
+            <div className="flex items-center gap-2 px-4 pb-3">
+              <Input
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 border-0 bg-muted"
+              />
+              <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+                <Send className="w-4 h-4 text-accent-foreground" />
+              </button>
+            </div>
           </div>
         </div>
 
@@ -442,7 +460,7 @@ export default function AdminChatView() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-muted-foreground">Customer: User-A7X3 · Select bank accounts and enter amounts</p>
+              <p className="text-[10px] text-muted-foreground">Customer: A7X3KP · Select bank accounts and enter amounts</p>
 
               {/* Running balance */}
               <div className="bg-muted rounded-lg p-3 space-y-1">
@@ -498,7 +516,7 @@ export default function AdminChatView() {
           {!paymentMode && (
             <div className="p-4 border-b">
               <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
-              <p className="text-[10px] text-muted-foreground mb-2">Customer: User-A7X3</p>
+              <p className="text-[10px] text-muted-foreground mb-2">Customer: A7X3KP</p>
               {bankAccounts.map(a => (
                 <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
                   <div className="w-1.5 h-1.5 rounded-full bg-success" />
@@ -517,7 +535,7 @@ export default function AdminChatView() {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Alias</span>
-                <span className="font-medium">User-A7X3</span>
+                <span className="font-medium">A7X3KP</span>
               </div>
 
               {/* Super Admin identity toggle */}

@@ -104,10 +104,10 @@ const guides: GuideSection[] = [
     id: "naira-rate",
     title: "Setting the System Naira Rate",
     icon: DollarSign,
-    description: "Update the global NGN/USD rate used for all order calculations.",
-    roles: ["Super Admin"],
+    description: "Update the global NGN/CNY rate used for all order calculations.",
+    roles: ["Super Admin", "Team Lead"],
     steps: [
-      { text: "Navigate to 'Naira Rate' from the sidebar (Super Admin only)." },
+      { text: "Navigate to 'Naira Rate' from the sidebar (Super Admin and Team Lead)." },
       { text: "View the current system rate prominently displayed at the top." },
       { text: "Enter a new rate in the input field and provide a reason for the change." },
       { text: "Click 'Update Rate' to apply — the change takes effect immediately for all new orders." },
@@ -176,8 +176,8 @@ const guides: GuideSection[] = [
     description: "Learn what each admin role can see and do.",
     roles: ["All Roles"],
     steps: [
-      { text: "Super Admin: Full access to all features including Naira Rate, User Management, API Config, and SMS Broadcast." },
-      { text: "Team Lead: Access to Messages, Card Rates, Orders, and the Team Dashboard for monitoring agents." },
+      { text: "Super Admin: Full access to all features including Naira Rate, User Management, IP & Country Restrictions, Sensitive Words, API Config, and SMS Broadcast." },
+      { text: "Team Lead: Access to Messages, Card Rates, Orders, Naira Rate, and the Team Dashboard for monitoring agents." },
       { text: "Agent: Access to Messages, Card Rates, and Orders — focused on customer interaction and order processing." },
       { text: "Use the 'View as' switcher at the bottom of the sidebar to preview the experience for each role.", tip: "The 'View as' switcher is for demo purposes — in production, roles are assigned by a Super Admin." },
       { text: "Navigation items are automatically hidden based on your role — you'll only see what you have access to." },
@@ -191,7 +191,7 @@ const guides: GuideSection[] = [
     roles: ["All Roles"],
     steps: [
       { text: "Click on the search bar in the top header (visible on all pages)." },
-      { text: "Type a customer alias (e.g., 'User-A7X3'), order ID, or card type." },
+      { text: "Type a customer alias (e.g., 'A7X3KP'), order ID, or card type." },
       { text: "Recent searches appear immediately for quick access." },
       { text: "Quick results show matching customers and orders with status badges." },
       { text: "Click on any result to navigate directly to that customer's chat or order details." },

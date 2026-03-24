@@ -27,6 +27,9 @@ import AdminTeam from "./pages/admin/AdminTeam";
 import AdminApiConfig from "./pages/admin/AdminApiConfig";
 import AdminBroadcast from "./pages/admin/AdminBroadcast";
 import AdminGuide from "./pages/admin/AdminGuide";
+import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
+import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
+import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 
 const queryClient = new QueryClient();
 
@@ -64,6 +67,9 @@ const App = () => (
                 <Route path="/api-config" element={<AdminApiConfig />} />
                 <Route path="/broadcast" element={<AdminBroadcast />} />
                 <Route path="/guide" element={<AdminGuide />} />
+                <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
+                <Route path="/customer-guide" element={<AdminCustomerGuide />} />
+                <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
               </Routes>
             </AdminRoleProvider>
           } />

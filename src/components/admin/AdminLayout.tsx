@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
-  BarChart3, Send, FileText, BookOpen, LogOut
+  BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -13,12 +13,15 @@ const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
   { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates" },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
-  { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", role: "super_admin" },
-  { id: "users", label: "User Management", icon: Users, path: "/admin/users", role: "super_admin" },
-  { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", role: "team_lead" },
-  { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", role: "super_admin" },
-  { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", role: "super_admin" },
-  { id: "guide", label: "User Guide", icon: BookOpen, path: "/admin/guide" },
+  { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead"] },
+  { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
+  { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
+  { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
+  { id: "sensitive-words", label: "Sensitive Words", icon: ShieldAlert, path: "/admin/sensitive-words", roles: ["super_admin"] },
+  { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
+  { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
+  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide" },
+  { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide" },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -41,10 +44,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   };
 
   const visibleItems = navItems.filter(item => {
-    if (!item.role) return true;
-    if (role === "super_admin") return true;
-    if (role === "team_lead") return item.role === "team_lead" || !item.role;
-    return false;
+    if (!item.roles) return true;
+    return item.roles.includes(role);
   });
 
   const roleProfiles: Record<string, { name: string; label: string }> = {
@@ -155,7 +156,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               {!searchResults ? (
                 <>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recent Searches</p>
-                  {["User-A7X3", "ORD-20260318-001", "iTunes"].map(q => (
+                  {["A7X3KP", "ORD-20260318-001", "iTunes"].map(q => (
                     <button key={q} onClick={() => setSearchQuery(q)} className="flex items-center gap-2 text-sm text-foreground/80 hover:text-foreground">
                       <Search className="w-3 h-3" /> {q}
                     </button>
