@@ -197,7 +197,7 @@ export default function AdminMessages() {
               >
                 {col.label} ({count})
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
+                  <span className="ml-2 inline-flex min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold items-center justify-center animate-pulse">
                     {unreadCount}
                   </span>
                 )}
