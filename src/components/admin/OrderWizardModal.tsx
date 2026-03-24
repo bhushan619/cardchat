@@ -612,6 +612,16 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="flex flex-col h-full overflow-hidden">{content}</div>;
+  }
+
+  return (
+    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
+      {content}
     </div>
   );
 }
