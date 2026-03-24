@@ -176,7 +176,7 @@ const guides: GuideSection[] = [
     description: "Learn what each admin role can see and do.",
     roles: ["All Roles"],
     steps: [
-      { text: "Super Admin: Full access to all features including Naira Rate, User Management, API Config, and SMS Broadcast." },
+      { text: "Super Admin: Full access to all features including Naira Rate, User Management, IP & Country Restrictions, Sensitive Words, API Config, and SMS Broadcast." },
       { text: "Team Lead: Access to Messages, Card Rates, Orders, and the Team Dashboard for monitoring agents." },
       { text: "Agent: Access to Messages, Card Rates, and Orders — focused on customer interaction and order processing." },
       { text: "Use the 'View as' switcher at the bottom of the sidebar to preview the experience for each role.", tip: "The 'View as' switcher is for demo purposes — in production, roles are assigned by a Super Admin." },
