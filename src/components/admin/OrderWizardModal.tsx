@@ -102,6 +102,11 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   const totalPages = Math.ceil(orderList.length / pageSize);
   const pagedOrders = orderList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
+  // Seller modal state
+  const [sellerModalOpen, setSellerModalOpen] = useState(false);
+  const [saleOrderId, setSaleOrderId] = useState<string | null>(null);
+  const [confirmSeller, setConfirmSeller] = useState<SellerEntry | null>(null);
+
   const handleLogin = () => {
     if (!account.trim() || !password.trim()) return;
     setLoginLoading(true);
