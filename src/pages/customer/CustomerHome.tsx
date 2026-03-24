@@ -1,6 +1,5 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import ProviderProfile from "@/components/customer/ProviderProfile";
 import BeginnerGuide from "@/components/customer/BeginnerGuide";
 import { cardRates } from "@/data/mock";
 import { Search, Gift, TrendingUp, MessageCircle, BookOpen, ArrowRight } from "lucide-react";
@@ -10,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 export default function CustomerHome() {
   const [search, setSearch] = useState("");
   const [showGuide, setShowGuide] = useState(true); // first login
-  const [showProvider, setShowProvider] = useState(false);
   const navigate = useNavigate();
   const filteredRates = cardRates.filter(r => r.cardType.toLowerCase().includes(search.toLowerCase()));
 
