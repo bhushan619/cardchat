@@ -286,9 +286,7 @@ export default function AdminMessages() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
-                    Process Order
-                  </Button>
+                  
                   <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
                     <PopoverTrigger asChild>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
@@ -431,31 +429,93 @@ export default function AdminMessages() {
 
               {/* Chat input */}
               <div className="border-t bg-card shrink-0">
-                <div className="flex items-center gap-1 px-4 pt-2 pb-1">
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-                    <Type className="w-3.5 h-3.5" /> Text
-                  </button>
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-                    <Camera className="w-3.5 h-3.5" /> Image
-                  </button>
-                  <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-                    <Smile className="w-3.5 h-3.5" /> Emoji
-                  </button>
-                  <button
-                    className="flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/80 px-2 py-1 rounded-md hover:bg-accent/10 transition-colors ml-auto"
-                    onClick={() => setShowWizard(true)}
-                  >
-                    <FileTextIcon className="w-3.5 h-3.5" /> Create Order
-                  </button>
-                </div>
-                <div className="flex items-center gap-2 px-4 pb-3">
+                <div className="flex items-center gap-2 px-4 py-3">
                   <Input
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     placeholder="Type a message..."
                     className="flex-1 border-0 bg-muted"
+                    onKeyDown={e => {
+                      if (e.key === "Enter" && message.trim()) {
+                        const newMsg: ChatMessage = {
+                          id: Date.now(), sender: "agent", senderName: "You",
+                          text: message.trim(),
+                          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                        };
+                        setLocalMessages(prev => [...prev, newMsg]);
+                        setMessage("");
+                      }
+                    }}
                   />
-                  <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    id="admin-chat-image"
+                    className="hidden"
+                    onChange={e => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        const newMsg: ChatMessage = {
+                          id: Date.now(), sender: "agent", senderName: "You",
+                          text: file.name, image: true,
+                          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                        };
+                        setLocalMessages(prev => [...prev, newMsg]);
+                      }
+                      e.target.value = "";
+                    }}
+                  />
+                  <button
+                    onClick={() => document.getElementById("admin-chat-image")?.click()}
+                    className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                    title="Send image"
+                  >
+                    <Camera className="w-4 h-4" />
+                  </button>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <button
+                        className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                        title="Emoji"
+                      >
+                        <Smile className="w-4 h-4" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-64 p-3" align="end" side="top">
+                      <div className="grid grid-cols-8 gap-1">
+                        {["😀","😂","😍","👍","🎉","🔥","✅","❤️","😊","🙏","💯","😎","👏","💪","⭐","😢"].map(emoji => (
+                          <button
+                            key={emoji}
+                            className="text-xl hover:bg-muted rounded p-1 transition-colors"
+                            onClick={() => setMessage(prev => prev + emoji)}
+                          >
+                            {emoji}
+                          </button>
+                        ))}
+                      </div>
+                    </PopoverContent>
+                  </Popover>
+                  <button
+                    onClick={() => setShowWizard(true)}
+                    className="w-9 h-9 rounded-full hover:bg-accent/10 flex items-center justify-center shrink-0 text-accent hover:text-accent/80 transition-colors"
+                    title="Create Order"
+                  >
+                    <FileTextIcon className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
+                    onClick={() => {
+                      if (message.trim()) {
+                        const newMsg: ChatMessage = {
+                          id: Date.now(), sender: "agent", senderName: "You",
+                          text: message.trim(),
+                          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                        };
+                        setLocalMessages(prev => [...prev, newMsg]);
+                        setMessage("");
+                      }
+                    }}
+                  >
                     <Send className="w-4 h-4 text-accent-foreground" />
                   </button>
                 </div>
