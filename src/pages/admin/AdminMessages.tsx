@@ -754,6 +754,7 @@ export default function AdminMessages() {
               <p className="text-xs text-center">Select a conversation to view orders</p>
             </div>
           )}
+          </div>
         </div>
 
         <OrderWizardModal
