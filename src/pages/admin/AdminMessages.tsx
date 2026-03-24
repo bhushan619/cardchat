@@ -256,23 +256,11 @@ export default function AdminMessages() {
                         </span>
                       )}
                     </div>
-                    <div className="flex items-center justify-between mt-1.5">
-                      <div className="flex items-center gap-1" />
-                      <div className="flex items-center gap-1">
-                        <span className="text-[10px] text-accent font-medium">{c.goodRate}% rate</span>
-                        <span className="text-[10px] text-muted-foreground">· {c.totalValue}</span>
-                      </div>
-                      {(hoveredId === c.id || isStarred) && (
+                    {(hoveredId === c.id || isStarred) && (
+                      <div className="flex justify-end mt-1">
                         <button onClick={(e) => toggleStar(e, c.id)} className="text-muted-foreground hover:text-warning transition-colors">
                           <Star className={`w-3 h-3 ${isStarred ? "text-warning fill-warning" : ""}`} />
                         </button>
-                      )}
-                    </div>
-                    {c.tags.length > 0 && (
-                      <div className="flex gap-1 mt-1">
-                        {c.tags.map(t => (
-                          <span key={t} className="status-badge bg-primary/5 text-primary text-[10px]">{t}</span>
-                        ))}
                       </div>
                     )}
                   </button>
