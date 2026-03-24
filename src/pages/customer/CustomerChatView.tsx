@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Type, Camera } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
@@ -238,26 +238,21 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       )}
 
-      {/* Chat Toolbar + Input */}
+      {/* Chat Input */}
       <div className="border-t bg-card shrink-0">
-        <div className="flex items-center gap-1 px-3 pt-2 pb-1">
-          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-            <Type className="w-3.5 h-3.5" /> Text
-          </button>
-          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-            <Camera className="w-3.5 h-3.5" /> Image
-          </button>
-          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-            <Smile className="w-3.5 h-3.5" /> Emoji
-          </button>
-        </div>
-        <div className="flex items-center gap-2 px-3 pb-3">
+        <div className="flex items-center gap-2 px-3 py-3">
           <Input
             placeholder="Type a message..."
             value={message}
             onChange={e => setMessage(e.target.value)}
             className="flex-1 border-0 bg-muted"
           />
+          <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
+            <Camera className="w-4 h-4" />
+          </button>
+          <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
+            <Smile className="w-4 h-4" />
+          </button>
           <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
             <Send className="w-4 h-4 text-accent-foreground" />
           </button>
