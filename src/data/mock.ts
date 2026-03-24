@@ -17,13 +17,13 @@ export const cardRates = [
 export const systemNairaRate = 1580;
 
 export const conversations = [
-  { id: "c1", alias: "User-A7X3", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },
-  { id: "c2", alias: "User-K9M2", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"] },
-  { id: "c3", alias: "User-R4P8", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "pending" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"] },
-  { id: "c4", alias: "User-B5N1", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [] },
-  { id: "c5", alias: "User-H2L6", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"] },
-  { id: "c6", alias: "User-W8T4", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "pending" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"] },
-  { id: "c7", alias: "User-D3F9", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [] },
+  { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },
+  { id: "c2", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"] },
+  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "pending" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"] },
+  { id: "c4", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [] },
+  { id: "c5", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"] },
+  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "pending" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"] },
+  { id: "c7", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [] },
 ];
 
 export const chatMessages = [
@@ -31,14 +31,14 @@ export const chatMessages = [
   { id: 2, sender: "agent", text: "Hello! Sure, please send clear images of both cards (front and back)", time: "10:33 AM" },
   { id: 3, sender: "customer", text: "", time: "10:35 AM", image: true },
   { id: 4, sender: "agent", text: "Cards received. Let me verify them now.", time: "10:36 AM" },
-  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦1,580/USD.", time: "10:37 AM", isOrder: true },
+  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦1,580/CNY.", time: "10:37 AM", isOrder: true },
   { id: 6, sender: "agent", text: "Cards verified ✅ Order created. Processing your billing now.", time: "10:38 AM" },
 ];
 
 export const orders = [
-  { id: "ORD-20260318-001", customer: "User-A7X3", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 1580, unitPrice: 680, status: "settled" as const, created: "10:37 AM" },
-  { id: "ORD-20260318-002", customer: "User-K9M2", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 1580, unitPrice: 620, status: "trading" as const, created: "09:15 AM" },
-  { id: "ORD-20260318-003", customer: "User-R4P8", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 1580, unitPrice: 600, status: "pending_payment" as const, created: "08:45 AM" },
+  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 1580, unitPrice: 680, status: "settled" as const, created: "10:37 AM" },
+  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 1580, unitPrice: 620, status: "trading" as const, created: "09:15 AM" },
+  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 1580, unitPrice: 600, status: "pending_payment" as const, created: "08:45 AM" },
 ];
 
 export const bankAccounts = [
