@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Paperclip, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck } from "lucide-react";
+import { ArrowLeft, Send, Image, MoreVertical, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
