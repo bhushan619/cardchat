@@ -460,7 +460,7 @@ export default function AdminChatView() {
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[10px] text-muted-foreground">Customer: User-A7X3 · Select bank accounts and enter amounts</p>
+              <p className="text-[10px] text-muted-foreground">Customer: A7X3KP · Select bank accounts and enter amounts</p>
 
               {/* Running balance */}
               <div className="bg-muted rounded-lg p-3 space-y-1">
