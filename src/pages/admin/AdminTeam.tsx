@@ -73,7 +73,7 @@ export default function AdminTeam() {
                 <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center text-xs font-bold text-warning">MA</div>
                 <div>
                   <p className="text-sm font-medium">Mike Agent → You</p>
-                  <p className="text-xs text-muted-foreground">User-K9M2 · Card validation issue</p>
+                  <p className="text-xs text-muted-foreground">K9M2BL · Card validation issue</p>
                 </div>
               </div>
               <span className="status-badge bg-warning/10 text-warning text-[10px]">Active</span>
