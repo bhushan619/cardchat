@@ -63,9 +63,9 @@ export default function AdminMessages() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
-  const [paymentMode, setPaymentMode] = useState(false);
-  const [paymentAmounts, setPaymentAmounts] = useState<Record<number, string>>({});
-  const [transferComplete, setTransferComplete] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
+  const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
+  const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(new Set());
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
@@ -145,18 +145,14 @@ export default function AdminMessages() {
   ];
 
   const selectedOrder = selectedOrderId ? allOrders.find(o => o.id === selectedOrderId) : null;
-  const totalPaymentEntered = Object.values(paymentAmounts).reduce(
-    (sum, v) => sum + (Number(v.replace(/,/g, "")) || 0), 0
-  );
-  const billingTotal = selectedOrder ? selectedOrder.payout : 0;
-  const remainingBalance = billingTotal - totalPaymentEntered;
 
-  const handleExecuteTransfer = () => {
-    setTransferComplete(true);
-    setPaymentMode(false);
+  const handleExecuteTransfer = (orderId: string, payout: number) => {
+    setTransferCompletedOrders(prev => new Set(prev).add(orderId));
+    setPaymentOrderId(null);
+    setSelectedBankId(null);
     const newMsg: ChatMessage = {
       id: Date.now(), sender: "system", senderName: "System",
-      text: `💸 Transfer executed — ₦${billingTotal.toLocaleString()} sent to customer's verified accounts`,
+      text: `💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       isOrder: true,
     };
@@ -647,20 +643,81 @@ export default function AdminMessages() {
                                     </div>
                                   ))}
                                 </div>
-                                {o.status === "settled" && !paymentMode && !transferComplete && (
+
+                                {/* Process Payment button */}
+                                {o.status === "settled" && paymentOrderId !== o.id && !transferCompletedOrders.has(o.id) && (
                                   <Button
                                     size="sm"
                                     className="w-full mt-2 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-                                    onClick={() => setPaymentMode(true)}
+                                    onClick={() => { setPaymentOrderId(o.id); setSelectedBankId(null); }}
                                   >
                                     <Banknote className="w-3.5 h-3.5" /> Process Payment
                                   </Button>
                                 )}
-                                {transferComplete && (
+
+                                {/* Inline payment flow */}
+                                {paymentOrderId === o.id && (
+                                  <div className="mt-2 space-y-2 border-t pt-2">
+                                    <div className="flex items-center justify-between">
+                                      <h4 className="font-heading font-semibold text-xs">Execute Transfer</h4>
+                                      <button onClick={() => { setPaymentOrderId(null); setSelectedBankId(null); }} className="text-muted-foreground hover:text-foreground">
+                                        <X className="w-3.5 h-3.5" />
+                                      </button>
+                                    </div>
+                                    <div className="bg-muted rounded-lg p-2.5 space-y-1">
+                                      <div className="flex justify-between text-xs">
+                                        <span className="text-muted-foreground">Total Billing</span>
+                                        <span className="font-semibold">₦{o.payout.toLocaleString()}</span>
+                                      </div>
+                                    </div>
+                                    <p className="text-[10px] text-muted-foreground">Select bank account:</p>
+                                    {bankAccounts.map(a => (
+                                      <button
+                                        key={a.id}
+                                        onClick={() => setSelectedBankId(a.id)}
+                                        className={`w-full text-left rounded-lg p-2.5 transition-colors ${
+                                          selectedBankId === a.id
+                                            ? "bg-accent/10 border border-accent/30"
+                                            : "bg-muted border border-transparent hover:bg-muted/80"
+                                        }`}
+                                      >
+                                        <div className="flex items-center gap-2">
+                                          <div className={`w-1.5 h-1.5 rounded-full ${selectedBankId === a.id ? "bg-accent" : "bg-success"}`} />
+                                          <div>
+                                            <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
+                                            <p className="text-[10px] text-muted-foreground">{a.holderName} · Verified</p>
+                                          </div>
+                                        </div>
+                                      </button>
+                                    ))}
+                                    {selectedBankId && (
+                                      <div className="bg-muted rounded-lg p-2.5">
+                                        <div className="flex justify-between text-xs">
+                                          <span className="text-muted-foreground">Amount</span>
+                                          <span className="font-semibold">₦{o.payout.toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between text-xs mt-1">
+                                          <span className="text-muted-foreground">To</span>
+                                          <span className="font-medium">{bankAccounts.find(b => b.id === selectedBankId)?.bankName} · {bankAccounts.find(b => b.id === selectedBankId)?.accountNumber}</span>
+                                        </div>
+                                      </div>
+                                    )}
+                                    <Button
+                                      className="w-full h-8 text-xs bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
+                                      disabled={!selectedBankId}
+                                      onClick={() => handleExecuteTransfer(o.id, o.payout)}
+                                    >
+                                      <Banknote className="w-3.5 h-3.5" /> Execute Transfer
+                                    </Button>
+                                  </div>
+                                )}
+
+                                {/* Transfer complete */}
+                                {transferCompletedOrders.has(o.id) && (
                                   <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
                                     <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
                                     <p className="text-xs font-medium text-success">Transfer Complete</p>
-                                    <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
+                                    <p className="text-[10px] text-muted-foreground">₦{o.payout.toLocaleString()} sent</p>
                                   </div>
                                 )}
                               </div>
@@ -671,73 +728,19 @@ export default function AdminMessages() {
                     </div>
                   </div>
 
-                  {/* Payment flow */}
-                  {paymentMode && selectedOrder && (
-                    <div className="p-4 border-b space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h3 className="font-heading font-semibold text-sm">Execute Transfer</h3>
-                        <button onClick={() => setPaymentMode(false)} className="text-muted-foreground hover:text-foreground">
-                          <X className="w-4 h-4" />
-                        </button>
-                      </div>
-                      <div className="bg-muted rounded-lg p-3 space-y-1">
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Total Billing</span>
-                          <span className="font-semibold">₦{billingTotal.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between text-xs">
-                          <span className="text-muted-foreground">Entered</span>
-                          <span className="font-medium">₦{totalPaymentEntered.toLocaleString()}</span>
-                        </div>
-                        <div className="flex justify-between text-xs border-t pt-1">
-                          <span className="text-muted-foreground">Remaining</span>
-                          <span className={`font-semibold ${remainingBalance === 0 ? "text-success" : remainingBalance < 0 ? "text-destructive" : "text-warning"}`}>
-                            ₦{remainingBalance.toLocaleString()}
-                          </span>
-                        </div>
-                      </div>
-                      {bankAccounts.map(a => (
-                        <div key={a.id} className="border rounded-lg p-3 space-y-2">
-                          <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                            <div className="flex-1">
-                              <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                              <p className="text-[10px] text-muted-foreground">{a.holderName} · Verified</p>
-                            </div>
-                          </div>
-                          <Input
-                            placeholder="₦ Amount"
-                            className="h-8 text-xs"
-                            value={paymentAmounts[a.id] || ""}
-                            onChange={e => setPaymentAmounts(prev => ({ ...prev, [a.id]: e.target.value }))}
-                          />
-                        </div>
-                      ))}
-                      <Button
-                        className="w-full h-8 text-xs bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
-                        disabled={remainingBalance !== 0 || totalPaymentEntered === 0}
-                        onClick={handleExecuteTransfer}
-                      >
-                        <Banknote className="w-3.5 h-3.5" /> Execute Transfer
-                      </Button>
-                    </div>
-                  )}
-
                   {/* Bank accounts */}
-                  {!paymentMode && (
-                    <div className="p-4 border-b">
-                      <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
-                      {bankAccounts.map(a => (
-                        <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
-                          <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                          <div>
-                            <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                            <p className="text-[10px] text-muted-foreground">{a.holderName}</p>
-                          </div>
+                  <div className="p-4 border-b">
+                    <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
+                    {bankAccounts.map(a => (
+                      <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
+                        <div className="w-1.5 h-1.5 rounded-full bg-success" />
+                        <div>
+                          <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
+                          <p className="text-[10px] text-muted-foreground">{a.holderName}</p>
                         </div>
-                      ))}
-                    </div>
-                  )}
+                      </div>
+                    ))}
+                  </div>
 
                   {/* Customer info */}
                   <div className="p-4">
