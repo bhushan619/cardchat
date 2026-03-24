@@ -188,7 +188,7 @@ export default function AdminMessages() {
                 <button
                   key={col.id}
                   onClick={() => setActiveTab(col.id)}
-                  className={`relative flex-1 py-2.5 text-xs font-semibold text-center transition-colors ${
+                  className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
                     isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
                   }`}
                 >
