@@ -577,7 +577,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Right panel: Orders & Customer info */}
-        <div className="w-[286px] border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
+        <div className="w-[372px] border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
           {selectedId && selectedConvo ? (
             <>
               {/* Orders */}
