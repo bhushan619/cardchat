@@ -171,7 +171,12 @@ export default function AdminMessages() {
   };
 
   const [activeTab, setActiveTab] = useState("consulting");
-  const filteredConversations = conversations.filter(c => c.status === activeTab);
+  const [customerSearch, setCustomerSearch] = useState("");
+  const filteredConversations = conversations.filter(c => {
+    const matchesTab = c.status === activeTab;
+    const matchesSearch = !customerSearch || c.alias.toLowerCase().includes(customerSearch.toLowerCase()) || c.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
+    return matchesTab && matchesSearch;
+  });
 
   return (
     <AdminLayout>
