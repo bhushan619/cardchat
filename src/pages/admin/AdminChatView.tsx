@@ -58,7 +58,7 @@ export default function AdminChatView() {
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
       ...m,
-      senderName: m.sender === "customer" ? "User-A7X3" : m.sender === "agent" ? "You" : "System",
+      senderName: m.sender === "customer" ? "A7X3KP" : m.sender === "agent" ? "You" : "System",
     }))
   );
 
