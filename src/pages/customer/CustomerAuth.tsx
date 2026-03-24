@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Apple, Chrome, Shield } from "lucide-react";
 
-type Step = "welcome" | "method" | "otp" | "alias";
+type Step = "welcome" | "method" | "otp" | "invite" | "alias";
 
 export default function CustomerAuth() {
   const [step, setStep] = useState<Step>("welcome");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [inviteCode, setInviteCode] = useState("");
   const navigate = useNavigate();
 
   if (step === "welcome") {
