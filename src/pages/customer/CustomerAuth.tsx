@@ -1,22 +1,37 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Apple, Chrome, Shield } from "lucide-react";
+import SplashScreen from "@/components/customer/SplashScreen";
+import OnboardingSlides from "@/components/customer/OnboardingSlides";
 
+type Phase = "splash" | "onboarding" | "auth";
 type Step = "welcome" | "method" | "otp" | "invite" | "alias";
 
 export default function CustomerAuth() {
+  const [phase, setPhase] = useState<Phase>("splash");
   const [step, setStep] = useState<Step>("welcome");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
   const [inviteCode, setInviteCode] = useState("");
   const navigate = useNavigate();
 
+  const handleSplashComplete = useCallback(() => setPhase("onboarding"), []);
+  const handleOnboardingComplete = useCallback(() => setPhase("auth"), []);
+
+  if (phase === "splash") {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
+
+  if (phase === "onboarding") {
+    return <OnboardingSlides onComplete={handleOnboardingComplete} />;
+  }
+
   if (step === "welcome") {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x items-center justify-center p-8 text-center">
-        <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mb-6">
+        <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mb-6 shadow-lg shadow-accent/20">
           <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
         </div>
         <h1 className="font-heading text-3xl font-bold mb-2">LightChat</h1>
@@ -37,18 +52,10 @@ export default function CustomerAuth() {
         <h2 className="font-heading text-2xl font-bold mb-2">Sign In</h2>
         <p className="text-muted-foreground text-sm mb-8">Choose your preferred method</p>
         <div className="space-y-3">
-          <Button
-            variant="outline"
-            className="w-full h-12 justify-start gap-3 text-sm"
-            onClick={() => setStep("otp")}
-          >
+          <Button variant="outline" className="w-full h-12 justify-start gap-3 text-sm" onClick={() => setStep("otp")}>
             <Apple className="w-5 h-5" /> Continue with Apple
           </Button>
-          <Button
-            variant="outline"
-            className="w-full h-12 justify-start gap-3 text-sm"
-            onClick={() => setStep("otp")}
-          >
+          <Button variant="outline" className="w-full h-12 justify-start gap-3 text-sm" onClick={() => setStep("otp")}>
             <Chrome className="w-5 h-5" /> Continue with Google
           </Button>
           <div className="flex items-center gap-3 my-4">
@@ -58,18 +65,9 @@ export default function CustomerAuth() {
           </div>
           <div>
             <label className="text-sm font-medium">Email Address</label>
-            <Input
-              className="mt-1"
-              placeholder="Enter your email"
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-            />
+            <Input className="mt-1" placeholder="Enter your email" type="email" value={email} onChange={e => setEmail(e.target.value)} />
           </div>
-          <Button
-            className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-            onClick={() => setStep("otp")}
-          >
+          <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12" onClick={() => setStep("otp")}>
             <Mail className="w-4 h-4 mr-2" /> Send OTP
           </Button>
         </div>
@@ -81,9 +79,7 @@ export default function CustomerAuth() {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x p-8">
         <h2 className="font-heading text-2xl font-bold mb-2">Enter OTP</h2>
-        <p className="text-muted-foreground text-sm mb-8">
-          We sent a 4-digit code to your email
-        </p>
+        <p className="text-muted-foreground text-sm mb-8">We sent a 4-digit code to your email</p>
         <div className="flex gap-3 justify-center mb-8">
           {otp.map((d, i) => (
             <Input
@@ -91,18 +87,11 @@ export default function CustomerAuth() {
               className="w-14 h-14 text-center text-2xl font-heading font-bold"
               maxLength={1}
               value={d}
-              onChange={e => {
-                const next = [...otp];
-                next[i] = e.target.value;
-                setOtp(next);
-              }}
+              onChange={e => { const next = [...otp]; next[i] = e.target.value; setOtp(next); }}
             />
           ))}
         </div>
-        <Button
-          className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-          onClick={() => setStep("invite")}
-        >
+        <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12" onClick={() => setStep("invite")}>
           Verify
         </Button>
         <p className="text-center text-xs text-muted-foreground mt-4">
@@ -118,16 +107,8 @@ export default function CustomerAuth() {
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x p-8">
         <h2 className="font-heading text-2xl font-bold mb-2">Got an Invite Code?</h2>
         <p className="text-muted-foreground text-sm mb-8">Enter a 6-character code or WS alias (optional)</p>
-        <Input
-          placeholder="e.g. ABC123 or WS alias"
-          value={inviteCode}
-          onChange={e => setInviteCode(e.target.value)}
-          className="mb-4"
-        />
-        <Button
-          className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-          onClick={() => setStep("alias")}
-        >
+        <Input placeholder="e.g. ABC123 or WS alias" value={inviteCode} onChange={e => setInviteCode(e.target.value)} className="mb-4" />
+        <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12" onClick={() => setStep("alias")}>
           {inviteCode ? "Submit & Continue" : "Skip for Now"}
         </Button>
         {!inviteCode && (
@@ -139,26 +120,20 @@ export default function CustomerAuth() {
     );
   }
 
-  // Alias confirmation
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x items-center justify-center p-8 text-center">
-      <div className="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center mb-6">
-        <Shield className="w-10 h-10 text-primary" />
+      <div className="w-20 h-20 rounded-2xl bg-accent/10 flex items-center justify-center mb-6">
+        <Shield className="w-10 h-10 text-accent" />
       </div>
       <h2 className="font-heading text-2xl font-bold mb-2">Your Alias</h2>
-      <p className="text-muted-foreground text-sm mb-6">
-        For your privacy, support agents will only see your alias — never your real name.
-      </p>
+      <p className="text-muted-foreground text-sm mb-6">For your privacy, support agents will only see your alias — never your real name.</p>
       <div className="bg-muted rounded-xl px-6 py-4 mb-6 w-full">
         <p className="font-heading text-2xl font-bold tracking-wider">A7X3KP</p>
       </div>
       <p className="text-[11px] text-muted-foreground mb-8 leading-relaxed">
         This alias is used across all support interactions. Only system administrators can see your real identity.
       </p>
-      <Button
-        className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-        onClick={() => navigate("/customer")}
-      >
+      <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12" onClick={() => navigate("/customer")}>
         Continue to Home
       </Button>
     </div>
