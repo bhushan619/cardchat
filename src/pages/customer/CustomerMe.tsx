@@ -1,7 +1,9 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, transactions } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon } from "lucide-react";
+import { useTheme } from "@/hooks/use-theme";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -9,6 +11,8 @@ export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showAddBank, setShowAddBank] = useState(false);
   const [selectedTxn, setSelectedTxn] = useState<typeof transactions[0] | null>(null);
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   if (activeSection === "bank") {
     return (
@@ -260,10 +264,11 @@ export default function CustomerMe() {
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
+            { icon: BookOpen, label: "User Guide", desc: "How to use LightChat", key: "guide" },
           ].map(item => (
             <button
               key={item.key}
-              onClick={() => setActiveSection(item.key)}
+              onClick={() => item.key === "guide" ? navigate("/customer/guide") : setActiveSection(item.key)}
               className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors"
             >
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
@@ -277,6 +282,20 @@ export default function CustomerMe() {
             </button>
           ))}
         </div>
+
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors"
+        >
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+            {theme === "dark" ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</p>
+            <p className="text-xs text-muted-foreground">Switch appearance</p>
+          </div>
+        </button>
 
         <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-destructive/5 transition-colors text-destructive">
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
