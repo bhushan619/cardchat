@@ -1,11 +1,26 @@
-import { useState } from "react";
-import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart } from "lucide-react";
+import { useState, useRef } from "react";
+import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates } from "@/data/mock";
+
+// Card brands with their available currencies
+const cardBrands: { name: string; currencies: string[] }[] = [
+  { name: "AMEX", currencies: ["USD", "CAD", "AED", "INR", "NGN"] },
+  { name: "VISA", currencies: ["USD", "CAD", "GBP", "EUR", "AUD"] },
+  { name: "Sephora", currencies: ["USD", "CAD"] },
+  { name: "Nordstrom", currencies: ["USD"] },
+  { name: "Nike", currencies: ["USD", "GBP", "EUR"] },
+  { name: "iTunes", currencies: ["USD", "GBP", "CAD", "AUD", "EUR"] },
+  { name: "Amazon", currencies: ["USD", "GBP", "CAD", "EUR"] },
+  { name: "Steam", currencies: ["USD", "EUR", "GBP"] },
+  { name: "Google Play", currencies: ["USD", "GBP"] },
+  { name: "eBay", currencies: ["USD"] },
+];
 
 interface CardEntry {
   id: number;
