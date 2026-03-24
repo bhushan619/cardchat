@@ -1,6 +1,5 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import ProviderProfile from "@/components/customer/ProviderProfile";
 import BeginnerGuide from "@/components/customer/BeginnerGuide";
 import { cardRates } from "@/data/mock";
 import { Search, Gift, TrendingUp, MessageCircle, BookOpen, ArrowRight } from "lucide-react";
@@ -10,7 +9,6 @@ import { useNavigate } from "react-router-dom";
 export default function CustomerHome() {
   const [search, setSearch] = useState("");
   const [showGuide, setShowGuide] = useState(true); // first login
-  const [showProvider, setShowProvider] = useState(false);
   const navigate = useNavigate();
   const filteredRates = cardRates.filter(r => r.cardType.toLowerCase().includes(search.toLowerCase()));
 
@@ -24,35 +22,28 @@ export default function CustomerHome() {
   return (
     <CustomerLayout>
       <div className="p-4 space-y-5">
-        {/* Header — Minimalist */}
+        {/* Header */}
         <div className="flex items-center gap-3">
-          <button
-            className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center shrink-0 shadow-lg shadow-accent/20"
-            onClick={() => setShowProvider(!showProvider)}
-          >
+          <div className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center shrink-0 shadow-lg shadow-accent/20">
             <span className="text-accent-foreground font-heading font-bold text-lg">LC</span>
-          </button>
+          </div>
           <div className="flex-1">
             <h1 className="font-heading text-lg font-bold">LightChat</h1>
-            <p className="text-[10px] text-muted-foreground">Tap logo to view provider info</p>
+            <p className="text-[10px] text-muted-foreground">Your trusted gift card trading platform</p>
           </div>
         </div>
 
-        {/* Provider Profile (toggle) */}
-        {showProvider && <ProviderProfile />}
-
         {/* Search */}
-        {!showProvider && (
-          <>
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-              <Input
-                placeholder="Search cards, rates..."
-                className="pl-10 bg-muted border-0"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-              />
-            </div>
+        <>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search cards, rates..."
+              className="pl-10 bg-muted border-0"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
 
             {/* Core Actions — iOS Modular Grid */}
             <div className="grid grid-cols-4 gap-3">
@@ -117,7 +108,7 @@ export default function CustomerHome() {
               </button>
             </div>
           </>
-        )}
+
       </div>
 
       {/* Beginner Guide Overlay */}

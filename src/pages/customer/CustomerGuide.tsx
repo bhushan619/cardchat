@@ -40,10 +40,8 @@ const guides: GuideSection[] = [
     steps: [
       { text: "The Home tab features a clean, modular grid layout inspired by iOS — four core action tiles are front and center." },
       { text: "The four core actions are: 'Sell Cards' (start a trade), 'Live Rates' (real-time pricing), 'Chat' (talk to agents), and 'Guide' (how-to reference)." },
-      { text: "Tap the LightChat logo at the top-left to toggle the Provider Profile — this shows KYB verification, ratings, payout speed, and transaction volume." },
       { text: "Use the search bar to quickly filter cards by name (e.g., 'iTunes', 'Amazon')." },
       { text: "Below the grid, 'Live Rates' displays current buy rates for supported gift cards with card type, format, currency, and rate per $1.", tip: "Rates auto-refresh every 60 seconds — always check the latest rate before initiating a trade." },
-      { text: "Tap the LightChat logo to view the Provider Profile — showing KYB verification, 4.9/5 rating, payout speed, and trust badges.", tip: "Check the Provider Profile to confirm platform legitimacy before trading." },
       { text: "At the bottom, the 'Ready to trade?' banner provides a quick shortcut to start chatting with an agent." },
     ],
   },
