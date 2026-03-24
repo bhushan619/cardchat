@@ -106,7 +106,7 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
 
   // Order list
-  const [orderList, setOrderList] = useState<OrderEntry[]>(mockOrders);
+  const [orderList, setOrderList] = useState<OrderEntry[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
   const totalPages = Math.ceil(orderList.length / pageSize);
