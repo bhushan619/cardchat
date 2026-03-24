@@ -177,7 +177,7 @@ export default function AdminMessages() {
     <AdminLayout>
       <div className="flex h-full">
         {/* Left panel: tabs + customer list */}
-        <div className="w-80 shrink-0 border-r flex flex-col min-w-0">
+        <div className="w-[400px] shrink-0 border-r flex flex-col min-w-0">
           {/* Tab headers */}
           <div className="flex shrink-0">
             {columns.map(col => {
@@ -570,7 +570,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Right panel: Orders & Customer info */}
-        <div className="w-64 border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
+        <div className="w-[220px] border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
           {selectedId && selectedConvo ? (
             <>
               {/* Orders */}
