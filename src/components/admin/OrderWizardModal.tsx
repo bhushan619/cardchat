@@ -92,7 +92,6 @@ const mockSellers: SellerEntry[] = [
   { id: "s4", seller: "GRTEAM", rate: 5, information: "Physical||Single Card Only||Fast card||Vertical Cards Only", transactions: 1344793 },
 ];
 
-const cardTypes = [...new Set(cardRates.map(r => r.cardType))];
 const cardSources = ["W", "E", "M"];
 
 export default function CardlightPanel({ open, onClose, onComplete }: CardlightPanelProps) {
