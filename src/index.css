@@ -4,6 +4,60 @@
 
 @layer base {
   :root {
+    --background: 0 0% 98%;
+    --foreground: 225 20% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 225 20% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 225 20% 12%;
+
+    --primary: 160 65% 38%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14% 94%;
+    --secondary-foreground: 225 20% 18%;
+
+    --muted: 220 14% 95%;
+    --muted-foreground: 215 12% 45%;
+
+    --accent: 160 65% 38%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 38 92% 14%;
+
+    --success: 160 65% 38%;
+    --success-foreground: 0 0% 100%;
+
+    --border: 220 13% 90%;
+    --input: 220 13% 90%;
+    --ring: 160 65% 38%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 220 14% 96%;
+    --sidebar-foreground: 225 20% 18%;
+    --sidebar-primary: 160 65% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 14% 92%;
+    --sidebar-accent-foreground: 225 20% 18%;
+    --sidebar-border: 220 13% 90%;
+    --sidebar-ring: 160 65% 38%;
+
+    --chat-bubble-self: 160 40% 92%;
+    --chat-bubble-other: 220 14% 96%;
+    --chat-pinned: 38 60% 95%;
+
+    --font-heading: 'Space Grotesk', sans-serif;
+    --font-body: 'Inter', sans-serif;
+  }
+
+  .dark {
     --background: 225 20% 7%;
     --foreground: 210 20% 92%;
 
@@ -38,8 +92,6 @@
     --input: 225 15% 16%;
     --ring: 160 65% 42%;
 
-    --radius: 0.75rem;
-
     --sidebar-background: 225 20% 5%;
     --sidebar-foreground: 210 20% 90%;
     --sidebar-primary: 160 65% 50%;
@@ -52,9 +104,6 @@
     --chat-bubble-self: 160 40% 15%;
     --chat-bubble-other: 225 20% 12%;
     --chat-pinned: 38 60% 12%;
-
-    --font-heading: 'Space Grotesk', sans-serif;
-    --font-body: 'Inter', sans-serif;
   }
 }
 
