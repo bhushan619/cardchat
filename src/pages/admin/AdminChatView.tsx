@@ -535,7 +535,7 @@ export default function AdminChatView() {
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Alias</span>
-                <span className="font-medium">User-A7X3</span>
+                <span className="font-medium">A7X3KP</span>
               </div>
 
               {/* Super Admin identity toggle */}
