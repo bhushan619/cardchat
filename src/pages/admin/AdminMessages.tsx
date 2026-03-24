@@ -4,8 +4,9 @@ import { conversations, chatMessages, orders, bankAccounts, adminUsers } from "@
 import {
   MessageCircle, Star, Send, Image, ArrowLeft, MoreVertical, Users,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon
+  AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon, Info
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -182,15 +183,21 @@ export default function AdminMessages() {
             {columns.map(col => {
               const isActive = activeTab === col.id;
               const count = conversations.filter(c => c.status === col.id).length;
+              const unreadCount = conversations.filter(c => c.status === col.id && c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
               return (
                 <button
                   key={col.id}
                   onClick={() => setActiveTab(col.id)}
-                  className={`flex-1 py-2.5 text-xs font-semibold text-center transition-colors ${
+                  className={`relative flex-1 py-2.5 text-xs font-semibold text-center transition-colors ${
                     isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
                   }`}
                 >
                   {col.label} ({count})
+                  {unreadCount > 0 && (
+                    <span className="absolute top-1 right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center animate-pulse">
+                      {unreadCount}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -231,6 +238,7 @@ export default function AdminMessages() {
                     )}
                   </div>
                   <div className="flex items-center justify-between mt-1.5">
+                    <div className="flex items-center gap-1" />
                     <div className="flex items-center gap-1">
                       <span className="text-[10px] text-accent font-medium">{c.goodRate}% rate</span>
                       <span className="text-[10px] text-muted-foreground">· {c.totalValue}</span>
@@ -285,8 +293,36 @@ export default function AdminMessages() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  
+                <div className="flex items-center gap-3">
+                  <TooltipProvider>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] font-semibold text-muted-foreground">TTV</span>
+                      <span className="text-[10px] font-bold text-foreground">₦4,850,000</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-3 h-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="text-xs max-w-[180px]">
+                          <p className="font-semibold">Total Transaction Volume</p>
+                          <p className="text-muted-foreground">Lifetime transaction total for this customer</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] font-semibold text-muted-foreground">TMTV</span>
+                      <span className="text-[10px] font-bold text-foreground">₦1,250,000</span>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-3 h-3 text-muted-foreground cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent side="bottom" className="text-xs max-w-[180px]">
+                          <p className="font-semibold">Total Monthly Transaction Volume</p>
+                          <p className="text-muted-foreground">Transaction total for this customer in the current month</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </div>
+                  </TooltipProvider>
+
                   <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
                     <PopoverTrigger asChild>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
