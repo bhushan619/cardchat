@@ -324,21 +324,8 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                 </div>
               </div>
 
-              {/* Row 2: Suppliers, Naira Price, Card Rate */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Suppliers</label>
-                  <div className="flex gap-1">
-                    <Input
-                      value={supplier}
-                      onChange={e => setSupplier(e.target.value)}
-                      className="h-8 text-xs flex-1"
-                    />
-                    <button className="w-8 h-8 rounded-md border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted">
-                      <RefreshCw className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
+              {/* Row 2: Naira Price, Card Rate */}
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
                   <Input
