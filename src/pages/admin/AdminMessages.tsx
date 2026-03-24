@@ -4,8 +4,9 @@ import { conversations, chatMessages, orders, bankAccounts, adminUsers } from "@
 import {
   MessageCircle, Star, Send, Image, ArrowLeft, MoreVertical, Users,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon
+  AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon, Info
 } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
