@@ -1,14 +1,12 @@
 import { ReactNode, useState } from "react";
-import { Home, MessageCircle, Users, User, BookOpen, Sun, Moon } from "lucide-react";
+import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useTheme } from "@/hooks/use-theme";
 
 const tabs = [
   { id: "home", label: "Home", icon: Home, path: "/customer" },
   { id: "chat", label: "Chat", icon: MessageCircle, path: "/customer/chat" },
   { id: "contacts", label: "Contacts", icon: Users, path: "/customer/contacts" },
   { id: "me", label: "Me", icon: User, path: "/customer/me" },
-  { id: "guide", label: "Guide", icon: BookOpen, path: "/customer/guide" },
 ];
 
 export default function CustomerLayout({ children }: { children: ReactNode }) {
