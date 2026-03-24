@@ -60,7 +60,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     if (searchQuery.length < 2) return null;
     const q = searchQuery.toLowerCase();
     const customers = conversations.filter(c => c.alias.toLowerCase().includes(q));
-    const matchedOrders = orders.filter(o => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q));
+    const matchedOrders = orders.filter(o => o.id.toLowerCase().includes(q) || o.customerAlias.toLowerCase().includes(q));
     const rates = cardRates.filter(r => r.cardType.toLowerCase().includes(q) || r.currency.toLowerCase().includes(q));
     const total = customers.length + matchedOrders.length + rates.length;
     return { customers, orders: matchedOrders, rates, total };
