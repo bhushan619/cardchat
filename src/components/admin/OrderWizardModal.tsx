@@ -486,6 +486,64 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
           </div>
         )}
       </div>
+
+      {/* Choose Seller Modal */}
+      <Dialog open={sellerModalOpen} onOpenChange={(open) => { if (!open) { setSellerModalOpen(false); setSaleOrderId(null); } }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Choose seller and sell</DialogTitle>
+          </DialogHeader>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/50 border-b">
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Seller</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Rate</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Information</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Transactions</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Operate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockSellers.map(seller => (
+                  <tr key={seller.id} className="border-b last:border-0 hover:bg-muted/30">
+                    <td className="py-3 px-4 font-medium">{seller.seller}</td>
+                    <td className="py-3 px-4">{seller.rate}</td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground max-w-[200px]">
+                      {seller.information.split("||").join(" | ")}
+                    </td>
+                    <td className="py-3 px-4">{seller.transactions || "—"}</td>
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => handleChooseSeller(seller)}
+                        className="text-primary hover:text-primary/80 font-medium text-sm"
+                      >
+                        Choose &amp; Sell
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Alert */}
+      <AlertDialog open={!!confirmSeller} onOpenChange={(open) => { if (!open) setConfirmSeller(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to sell?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will sell to <span className="font-semibold text-foreground">{confirmSeller?.seller}</span> at rate <span className="font-semibold text-foreground">{confirmSeller?.rate}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSell}>Yes</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
