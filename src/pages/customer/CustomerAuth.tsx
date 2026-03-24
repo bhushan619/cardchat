@@ -101,7 +101,7 @@ export default function CustomerAuth() {
         </div>
         <Button
           className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-          onClick={() => setStep("alias")}
+          onClick={() => setStep("invite")}
         >
           Verify
         </Button>
