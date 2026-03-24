@@ -438,12 +438,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                         </td>
                         <td className="py-2 px-1">
                           {o.status === "Wait For Sale" && (
-                            <button
+                            <Button
+                              size="sm"
+                              variant="outline"
                               onClick={() => handleSale(o.id)}
-                              className="text-primary hover:text-primary/80 font-medium"
+                              className="h-6 px-3 text-[10px]"
                             >
                               Sale
-                            </button>
+                            </Button>
                           )}
                         </td>
                       </tr>
