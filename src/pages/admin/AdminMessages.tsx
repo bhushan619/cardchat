@@ -133,13 +133,17 @@ export default function AdminMessages() {
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
       denomination: `${o.cards.length} cards`, amount: o.totalFaceValue,
-      nairaRate: 1580, unitPrice: 0, status: o.status as string,
-      payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
+      nairaRate: o.dailyRate, unitPrice: 0, status: o.status as string,
+      payout: o.totalPayout, customerAlias: o.customerAlias,
       timestamp: o.timestamp, isNew: true,
+      settlement: o.settlement, dispute: o.dispute,
     })),
     ...orders.map(o => ({
-      ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
-      timestamp: o.created, isNew: false,
+      id: o.id, cardType: o.cardType, denomination: o.denomination,
+      amount: o.amount, nairaRate: o.nairaRate, unitPrice: o.unitPrice,
+      status: o.status as string, payout: o.amount * o.unitPrice,
+      customerAlias: o.customerAlias, timestamp: o.created, isNew: false,
+      settlement: o.settlement, dispute: o.dispute,
     })),
   ];
 
