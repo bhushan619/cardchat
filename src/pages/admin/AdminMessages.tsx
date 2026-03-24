@@ -472,14 +472,16 @@ export default function AdminMessages() {
 
               {/* Chat input */}
               <div className="border-t bg-card shrink-0">
-                <div className="flex items-center gap-2 px-4 py-3">
-                  <Input
+                <div className="flex flex-col gap-2 px-4 py-3">
+                  <textarea
                     value={message}
                     onChange={e => setMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 border-0 bg-muted"
+                    className="w-full rounded-md border-0 bg-muted px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
+                    style={{ height: "7rem" }}
                     onKeyDown={e => {
-                      if (e.key === "Enter" && message.trim()) {
+                      if (e.key === "Enter" && !e.shiftKey && message.trim()) {
+                        e.preventDefault();
                         const newMsg: ChatMessage = {
                           id: Date.now(), sender: "agent", senderName: "You",
                           text: message.trim(),
@@ -508,60 +510,66 @@ export default function AdminMessages() {
                       e.target.value = "";
                     }}
                   />
-                  <button
-                    onClick={() => document.getElementById("admin-chat-image")?.click()}
-                    className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                    title="Send image"
-                  >
-                    <Camera className="w-4 h-4" />
-                  </button>
-                  <Popover>
-                    <PopoverTrigger asChild>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1">
                       <button
-                        className="w-9 h-9 rounded-full hover:bg-muted flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
-                        title="Emoji"
+                        onClick={() => document.getElementById("admin-chat-image")?.click()}
+                        className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                        title="Send image"
                       >
-                        <Smile className="w-4 h-4" />
+                        <Camera className="w-4 h-4" />
                       </button>
-                    </PopoverTrigger>
-                    <PopoverContent className="w-64 p-3" align="end" side="top">
-                      <div className="grid grid-cols-8 gap-1">
-                        {["😀","😂","😍","👍","🎉","🔥","✅","❤️","😊","🙏","💯","😎","👏","💪","⭐","😢"].map(emoji => (
+                      <Popover>
+                        <PopoverTrigger asChild>
                           <button
-                            key={emoji}
-                            className="text-xl hover:bg-muted rounded p-1 transition-colors"
-                            onClick={() => setMessage(prev => prev + emoji)}
+                            className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                            title="Emoji"
                           >
-                            {emoji}
+                            <Smile className="w-4 h-4" />
                           </button>
-                        ))}
-                      </div>
-                    </PopoverContent>
-                  </Popover>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setShowWizard(true)}
-                    className="h-9 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
-                  >
-                    <FileTextIcon className="w-3.5 h-3.5" /> Create Order
-                  </Button>
-                  <button
-                    className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
-                    onClick={() => {
-                      if (message.trim()) {
-                        const newMsg: ChatMessage = {
-                          id: Date.now(), sender: "agent", senderName: "You",
-                          text: message.trim(),
-                          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                        };
-                        setLocalMessages(prev => [...prev, newMsg]);
-                        setMessage("");
-                      }
-                    }}
-                  >
-                    <Send className="w-4 h-4 text-accent-foreground" />
-                  </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 p-3" align="start" side="top">
+                          <div className="grid grid-cols-8 gap-1">
+                            {["😀","😂","😍","👍","🎉","🔥","✅","❤️","😊","🙏","💯","😎","👏","💪","⭐","😢"].map(emoji => (
+                              <button
+                                key={emoji}
+                                className="text-xl hover:bg-muted rounded p-1 transition-colors"
+                                onClick={() => setMessage(prev => prev + emoji)}
+                              >
+                                {emoji}
+                              </button>
+                            ))}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setShowWizard(true)}
+                        className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
+                      >
+                        <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+                      </Button>
+                      <button
+                        className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
+                        onClick={() => {
+                          if (message.trim()) {
+                            const newMsg: ChatMessage = {
+                              id: Date.now(), sender: "agent", senderName: "You",
+                              text: message.trim(),
+                              time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+                            };
+                            setLocalMessages(prev => [...prev, newMsg]);
+                            setMessage("");
+                          }
+                        }}
+                      >
+                        <Send className="w-4 h-4 text-accent-foreground" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
               </div>
             </>
