@@ -286,9 +286,7 @@ export default function AdminMessages() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
-                    Process Order
-                  </Button>
+                  
                   <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
                     <PopoverTrigger asChild>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
