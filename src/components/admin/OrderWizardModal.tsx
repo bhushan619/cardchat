@@ -103,11 +103,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
 
   // Order form state
   const [cardType, setCardType] = useState("");
+  const [cardCurrency, setCardCurrency] = useState("");
   const [cardSource, setCardSource] = useState("W");
   const [supplier, setSupplier] = useState("");
   const [nairaPrice, setNairaPrice] = useState("");
   const [cardRate, setCardRate] = useState("");
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
+  const [cardTypeOpen, setCardTypeOpen] = useState(false);
+  const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
 
   // Order list
   const [orderList, setOrderList] = useState<OrderEntry[]>(mockOrders);
