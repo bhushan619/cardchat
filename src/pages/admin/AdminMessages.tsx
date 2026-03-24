@@ -14,9 +14,9 @@ import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderW
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 const columns = [
-  { id: "consulting", label: "Consulting", color: "text-amber-900", bg: "bg-amber-400", activeBg: "bg-amber-500" },
-  { id: "trading", label: "Trading", color: "text-green-900", bg: "bg-green-400", activeBg: "bg-green-500" },
-  { id: "pending", label: "Pending Payment", color: "text-cyan-900", bg: "bg-cyan-400", activeBg: "bg-cyan-500" },
+  { id: "consulting", label: "Consulting", color: "text-white", bg: "bg-gradient-to-r from-amber-500 to-orange-400", activeBg: "bg-gradient-to-r from-amber-600 to-orange-500" },
+  { id: "trading", label: "Trading", color: "text-white", bg: "bg-gradient-to-r from-emerald-500 to-teal-400", activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500" },
+  { id: "pending", label: "Pending Payment", color: "text-white", bg: "bg-gradient-to-r from-blue-500 to-indigo-400", activeBg: "bg-gradient-to-r from-blue-600 to-indigo-500" },
 ];
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
