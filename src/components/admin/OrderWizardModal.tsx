@@ -169,7 +169,21 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   };
 
   const handleSale = (orderId: string) => {
-    setOrderList(prev => prev.map(o => o.id === orderId ? { ...o, status: "Selling" } : o));
+    setSaleOrderId(orderId);
+    setSellerModalOpen(true);
+  };
+
+  const handleChooseSeller = (seller: SellerEntry) => {
+    setConfirmSeller(seller);
+  };
+
+  const handleConfirmSell = () => {
+    if (saleOrderId) {
+      setOrderList(prev => prev.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+    }
+    setConfirmSeller(null);
+    setSellerModalOpen(false);
+    setSaleOrderId(null);
   };
 
   if (!open) return null;
