@@ -104,10 +104,10 @@ const guides: GuideSection[] = [
     id: "naira-rate",
     title: "Setting the System Naira Rate",
     icon: DollarSign,
-    description: "Update the global NGN/USD rate used for all order calculations.",
-    roles: ["Super Admin"],
+    description: "Update the global NGN/CNY rate used for all order calculations.",
+    roles: ["Super Admin", "Team Lead"],
     steps: [
-      { text: "Navigate to 'Naira Rate' from the sidebar (Super Admin only)." },
+      { text: "Navigate to 'Naira Rate' from the sidebar (Super Admin and Team Lead)." },
       { text: "View the current system rate prominently displayed at the top." },
       { text: "Enter a new rate in the input field and provide a reason for the change." },
       { text: "Click 'Update Rate' to apply — the change takes effect immediately for all new orders." },
