@@ -89,7 +89,7 @@ const mockSellers: SellerEntry[] = [
 
 const cardSources = ["W", "E", "M"];
 
-export default function CardlightPanel({ open, onClose, onComplete, customerAlias }: CardlightPanelProps) {
+export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded }: CardlightPanelProps) {
   // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState("");
