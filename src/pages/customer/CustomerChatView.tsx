@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Type, Camera } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
