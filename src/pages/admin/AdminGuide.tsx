@@ -191,7 +191,7 @@ const guides: GuideSection[] = [
     roles: ["All Roles"],
     steps: [
       { text: "Click on the search bar in the top header (visible on all pages)." },
-      { text: "Type a customer alias (e.g., 'User-A7X3'), order ID, or card type." },
+      { text: "Type a customer alias (e.g., 'A7X3KP'), order ID, or card type." },
       { text: "Recent searches appear immediately for quick access." },
       { text: "Quick results show matching customers and orders with status badges." },
       { text: "Click on any result to navigate directly to that customer's chat or order details." },
