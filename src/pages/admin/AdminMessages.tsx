@@ -548,7 +548,7 @@ export default function AdminMessages() {
                       <Button
                         size="sm"
                         variant="outline"
-                        onClick={() => setShowWizard(true)}
+                        onClick={() => setRightTab("sales")}
                         className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
                       >
                         <FileTextIcon className="w-3.5 h-3.5" /> Create Order
