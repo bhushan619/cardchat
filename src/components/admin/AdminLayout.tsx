@@ -33,6 +33,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { role, setRole } = useAdminRole();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const auth = sessionStorage.getItem("adminAuth");
