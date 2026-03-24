@@ -201,23 +201,21 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   if (!open) return null;
 
-  return (
-    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
-        <div className="flex items-center gap-2">
-          <ShoppingCart className="w-4 h-4 text-primary" />
-          <h3 className="font-heading font-semibold text-sm">Sales Order</h3>
-        </div>
-        <div className="flex items-center gap-2">
-          {isLoggedIn && (
+  if (embedded) {
+    return (
+      <div className="flex flex-col h-full overflow-hidden">
+        {isLoggedIn && (
+          <div className="flex items-center justify-end px-4 py-1.5 border-b bg-muted/30">
             <span className="text-[10px] text-success font-medium">● Connected</span>
-          )}
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
+          </div>
+        )}
+        <div className="flex-1 overflow-y-auto">
+          {!isLoggedIn ? (
+            <div className="p-6 space-y-6">
+              <div className="text-center space-y-1">
+                <h4 className="font-heading font-bold text-base">Login Sales System</h4>
+                <p className="text-xs text-muted-foreground">Connect to Cardlight to create orders</p>
+              </div>
 
       <div className="flex-1 overflow-y-auto">
         {/* Login Screen */}
