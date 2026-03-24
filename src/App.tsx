@@ -30,6 +30,7 @@ import AdminGuide from "./pages/admin/AdminGuide";
 import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
 import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
 import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
                 <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
                 <Route path="/customer-guide" element={<AdminCustomerGuide />} />
                 <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
+                <Route path="/customers" element={<AdminCustomers />} />
               </Routes>
             </AdminRoleProvider>
           } />

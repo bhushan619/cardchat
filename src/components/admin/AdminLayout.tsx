@@ -11,6 +11,7 @@ import { conversations, orders, cardRates } from "@/data/mock";
 
 const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
+  { id: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
   { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates" },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead"] },
