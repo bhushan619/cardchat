@@ -768,15 +768,15 @@ export default function AdminMessages() {
             </div>
           )}
           </div>
-        </div>
 
-        {showWizard && (
-          <CardlightPanel
-            open={showWizard}
-            onClose={() => setShowWizard(false)}
-            onComplete={handleOrderComplete}
-          />
-        )}
+          {showWizard && (
+            <CardlightPanel
+              open={showWizard}
+              onClose={() => setShowWizard(false)}
+              onComplete={handleOrderComplete}
+            />
+          )}
+        </div>
       </div>
     </AdminLayout>
   );
