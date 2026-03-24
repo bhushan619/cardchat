@@ -238,6 +238,7 @@ export default function AdminMessages() {
                     )}
                   </div>
                   <div className="flex items-center justify-between mt-1.5">
+                    <div className="flex items-center gap-1" />
                     <div className="flex items-center gap-1">
                       <span className="text-[10px] text-accent font-medium">{c.goodRate}% rate</span>
                       <span className="text-[10px] text-muted-foreground">· {c.totalValue}</span>
