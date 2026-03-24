@@ -11,6 +11,8 @@ export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showAddBank, setShowAddBank] = useState(false);
   const [selectedTxn, setSelectedTxn] = useState<typeof transactions[0] | null>(null);
+  const { theme, toggleTheme } = useTheme();
+  const navigate = useNavigate();
 
   if (activeSection === "bank") {
     return (
