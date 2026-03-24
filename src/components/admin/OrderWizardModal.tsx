@@ -3,6 +3,8 @@ import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart } f
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { cardRates } from "@/data/mock";
 
 interface CardEntry {
@@ -60,6 +62,21 @@ const mockOrders: OrderEntry[] = [
   { id: "5", cardCode: "18673837295407321B", description: "AMEX / CAG", denom: 5, purchaseRate: 5, supplier: "T10043", status: "Negotiation", date: "2024-12-13 07:09:10" },
 ];
 
+interface SellerEntry {
+  id: string;
+  seller: string;
+  rate: number;
+  information: string;
+  transactions: number;
+}
+
+const mockSellers: SellerEntry[] = [
+  { id: "s1", seller: "GRTEAM", rate: 5.88, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||and One Card Only||Cards Only", transactions: 0 },
+  { id: "s2", seller: "GRTEAM", rate: 5.65, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||Horizontal Cards Only", transactions: 1344793 },
+  { id: "s3", seller: "GRTEAM", rate: 5.25, information: "E-codes||Fast card||Accepts Multiples of 5", transactions: 0 },
+  { id: "s4", seller: "GRTEAM", rate: 5, information: "Physical||Single Card Only||Fast card||Vertical Cards Only", transactions: 1344793 },
+];
+
 const cardTypes = [...new Set(cardRates.map(r => r.cardType))];
 const cardSources = ["W", "E", "M"];
 
@@ -84,6 +101,11 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   const pageSize = 5;
   const totalPages = Math.ceil(orderList.length / pageSize);
   const pagedOrders = orderList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+
+  // Seller modal state
+  const [sellerModalOpen, setSellerModalOpen] = useState(false);
+  const [saleOrderId, setSaleOrderId] = useState<string | null>(null);
+  const [confirmSeller, setConfirmSeller] = useState<SellerEntry | null>(null);
 
   const handleLogin = () => {
     if (!account.trim() || !password.trim()) return;
@@ -147,7 +169,21 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   };
 
   const handleSale = (orderId: string) => {
-    setOrderList(prev => prev.map(o => o.id === orderId ? { ...o, status: "Selling" } : o));
+    setSaleOrderId(orderId);
+    setSellerModalOpen(true);
+  };
+
+  const handleChooseSeller = (seller: SellerEntry) => {
+    setConfirmSeller(seller);
+  };
+
+  const handleConfirmSell = () => {
+    if (saleOrderId) {
+      setOrderList(prev => prev.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+    }
+    setConfirmSeller(null);
+    setSellerModalOpen(false);
+    setSaleOrderId(null);
   };
 
   if (!open) return null;
@@ -450,6 +486,64 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
           </div>
         )}
       </div>
+
+      {/* Choose Seller Modal */}
+      <Dialog open={sellerModalOpen} onOpenChange={(open) => { if (!open) { setSellerModalOpen(false); setSaleOrderId(null); } }}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Choose seller and sell</DialogTitle>
+          </DialogHeader>
+          <div className="border rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-muted/50 border-b">
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Seller</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Rate</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Information</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Transactions</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Operate</th>
+                </tr>
+              </thead>
+              <tbody>
+                {mockSellers.map(seller => (
+                  <tr key={seller.id} className="border-b last:border-0 hover:bg-muted/30">
+                    <td className="py-3 px-4 font-medium">{seller.seller}</td>
+                    <td className="py-3 px-4">{seller.rate}</td>
+                    <td className="py-3 px-4 text-xs text-muted-foreground max-w-[200px]">
+                      {seller.information.split("||").join(" | ")}
+                    </td>
+                    <td className="py-3 px-4">{seller.transactions || "—"}</td>
+                    <td className="py-3 px-4">
+                      <button
+                        onClick={() => handleChooseSeller(seller)}
+                        className="text-primary hover:text-primary/80 font-medium text-sm"
+                      >
+                        Choose &amp; Sell
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Confirmation Alert */}
+      <AlertDialog open={!!confirmSeller} onOpenChange={(open) => { if (!open) setConfirmSeller(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to sell?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will sell to <span className="font-semibold text-foreground">{confirmSeller?.seller}</span> at rate <span className="font-semibold text-foreground">{confirmSeller?.rate}</span>.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>No</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmSell}>Yes</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
