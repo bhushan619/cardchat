@@ -279,7 +279,7 @@ export default function AdminMessages() {
         <div className="flex-1 flex flex-col min-w-0">
           {selectedId && selectedConvo ? (
             <>
-              <header className="flex items-center justify-between px-5 py-3 border-b bg-card shrink-0">
+              <header className="flex items-center justify-between px-5 border-b bg-card shrink-0 h-12">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                     {selectedConvo.alias.slice(-2)}
