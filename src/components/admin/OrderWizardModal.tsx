@@ -59,6 +59,7 @@ interface CardlightPanelProps {
   onClose: () => void;
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
+  embedded?: boolean;
 }
 
 const makeCard = (): CardEntry => ({
