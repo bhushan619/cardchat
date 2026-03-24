@@ -153,7 +153,7 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   if (!open) return null;
 
   return (
-    <div className="w-[420px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
+    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
         <div className="flex items-center gap-2">
