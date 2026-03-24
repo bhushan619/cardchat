@@ -30,6 +30,7 @@ import AdminGuide from "./pages/admin/AdminGuide";
 import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
 import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
 import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
+import AdminCustomers from "./pages/admin/AdminCustomers";
 
 const queryClient = new QueryClient();
 
