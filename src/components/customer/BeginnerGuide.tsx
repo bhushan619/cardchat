@@ -6,7 +6,7 @@ const steps = [
   {
     icon: Search,
     title: "Connect with an Agent",
-    desc: "Browse verified agents on the Contacts page. Look for the ✓ badge — it means they're platform-verified.",
+    desc: "Browse verified agents on the Contacts page and start a conversation to begin trading.",
   },
   {
     icon: MessageCircle,
