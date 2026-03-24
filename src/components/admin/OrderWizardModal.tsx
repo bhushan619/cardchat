@@ -1,11 +1,26 @@
-import { useState } from "react";
-import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart } from "lucide-react";
+import { useState, useRef } from "react";
+import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates } from "@/data/mock";
+
+// Card brands with their available currencies
+const cardBrands: { name: string; currencies: string[] }[] = [
+  { name: "AMEX", currencies: ["USD", "CAD", "AED", "INR", "NGN"] },
+  { name: "VISA", currencies: ["USD", "CAD", "GBP", "EUR", "AUD"] },
+  { name: "Sephora", currencies: ["USD", "CAD"] },
+  { name: "Nordstrom", currencies: ["USD"] },
+  { name: "Nike", currencies: ["USD", "GBP", "EUR"] },
+  { name: "iTunes", currencies: ["USD", "GBP", "CAD", "AUD", "EUR"] },
+  { name: "Amazon", currencies: ["USD", "GBP", "CAD", "EUR"] },
+  { name: "Steam", currencies: ["USD", "EUR", "GBP"] },
+  { name: "Google Play", currencies: ["USD", "GBP"] },
+  { name: "eBay", currencies: ["USD"] },
+];
 
 interface CardEntry {
   id: number;
@@ -77,7 +92,6 @@ const mockSellers: SellerEntry[] = [
   { id: "s4", seller: "GRTEAM", rate: 5, information: "Physical||Single Card Only||Fast card||Vertical Cards Only", transactions: 1344793 },
 ];
 
-const cardTypes = [...new Set(cardRates.map(r => r.cardType))];
 const cardSources = ["W", "E", "M"];
 
 export default function CardlightPanel({ open, onClose, onComplete }: CardlightPanelProps) {
@@ -89,11 +103,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
 
   // Order form state
   const [cardType, setCardType] = useState("");
+  const [cardCurrency, setCardCurrency] = useState("");
   const [cardSource, setCardSource] = useState("W");
   const [supplier, setSupplier] = useState("");
   const [nairaPrice, setNairaPrice] = useState("");
   const [cardRate, setCardRate] = useState("");
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
+  const [cardTypeOpen, setCardTypeOpen] = useState(false);
+  const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
 
   // Order list
   const [orderList, setOrderList] = useState<OrderEntry[]>(mockOrders);
@@ -254,16 +271,50 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-destructive">* Card Type</label>
-                  <Select value={cardType} onValueChange={setCardType}>
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cardTypes.map(t => (
-                        <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={cardTypeOpen} onOpenChange={setCardTypeOpen}>
+                    <PopoverTrigger asChild>
+                      <button className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-xs ring-offset-background hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        <span className={cardType ? "text-foreground" : "text-muted-foreground"}>
+                          {cardType ? `${cardType} / ${cardCurrency}` : "Select"}
+                        </span>
+                        <ChevronRight className="h-3 w-3 opacity-50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start" sideOffset={4}>
+                      <div className="flex">
+                        {/* Brand list */}
+                        <div className="w-[130px] border-r max-h-[240px] overflow-y-auto">
+                          {cardBrands.map(brand => (
+                            <button
+                              key={brand.name}
+                              onMouseEnter={() => setHoveredBrand(brand.name)}
+                              onClick={() => setHoveredBrand(brand.name)}
+                              className={`flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors ${hoveredBrand === brand.name ? "bg-accent text-primary font-semibold" : "text-foreground"}`}
+                            >
+                              {brand.name}
+                              <ChevronRight className="h-3 w-3 opacity-50" />
+                            </button>
+                          ))}
+                        </div>
+                        {/* Currency list */}
+                        <div className="w-[90px] max-h-[240px] overflow-y-auto">
+                          {(cardBrands.find(b => b.name === (hoveredBrand || cardBrands[0].name))?.currencies || []).map(cur => (
+                            <button
+                              key={cur}
+                              onClick={() => {
+                                setCardType(hoveredBrand || cardBrands[0].name);
+                                setCardCurrency(cur);
+                                setCardTypeOpen(false);
+                              }}
+                              className={`flex w-full items-center px-3 py-2 text-xs hover:bg-accent transition-colors ${cardType === (hoveredBrand || cardBrands[0].name) && cardCurrency === cur ? "text-primary font-semibold" : "text-foreground"}`}
+                            >
+                              {cur}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-destructive">* Card Source</label>
