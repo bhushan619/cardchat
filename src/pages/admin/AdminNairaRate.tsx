@@ -5,12 +5,24 @@ import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2 } from "lucide-rea
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 export default function AdminNairaRate() {
+  const { role } = useAdminRole();
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
   const [reason, setReason] = useState("");
   const [broadcasting, setBroadcasting] = useState<"idle" | "broadcasting" | "done">("idle");
+
+  if (role === "agent") {
+    return (
+      <AdminLayout>
+        <div className="p-6 flex items-center justify-center h-full">
+          <p className="text-muted-foreground">You do not have access to this page.</p>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   const handleSave = () => {
     setBroadcasting("broadcasting");
@@ -48,7 +60,7 @@ export default function AdminNairaRate() {
               <div>
                 <p className="text-sm text-muted-foreground">Active System Rate</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / USD</span></p>
+                  <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / CNY</span></p>
                   {broadcasting === "broadcasting" && (
                     <span className="status-badge bg-warning/10 text-warning gap-1 animate-pulse">
                       <Loader2 className="w-3 h-3 animate-spin" /> Broadcasting...
@@ -71,7 +83,7 @@ export default function AdminNairaRate() {
             <div className="border-t pt-4 space-y-3 animate-slide-up">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per USD)</label>
+                  <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per CNY)</label>
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
                 </div>
                 <div>
