@@ -792,6 +792,7 @@ export default function AdminMessages() {
             </TabsContent>
           </Tabs>
         </div>
+        </div>
       </div>
     </AdminLayout>
   );
