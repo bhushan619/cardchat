@@ -55,7 +55,7 @@ export default function AdminMessages() {
 
   // Chat state
   const [message, setMessage] = useState("");
-  const [showWizard, setShowWizard] = useState(false);
+  const [rightTab, setRightTab] = useState<string>("orders");
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
