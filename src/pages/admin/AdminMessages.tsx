@@ -585,199 +585,212 @@ export default function AdminMessages() {
           )}
         </div>
 
-        {/* Right panel: Orders & Customer info */}
-        <div className={`w-[372px] border-l bg-card overflow-y-auto shrink-0 ${showWizard ? 'hidden' : 'hidden xl:block'}`}>
-          {selectedId && selectedConvo ? (
-            <>
-              {/* Orders */}
-              <div className="p-4 border-b">
-                <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
-                <div className="space-y-1.5">
-                  {allOrders.map(o => {
-                    const st = STATUS_STYLES[o.status] || STATUS_STYLES.trading;
-                    const Icon = st.icon;
-                    const isSelected = selectedOrderId === o.id;
-                    return (
-                      <button
-                        key={o.id}
-                        onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
-                        className={`w-full text-left rounded-lg p-2.5 transition-colors ${
-                          isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between mb-1">
-                          <span className="text-[11px] font-semibold">{o.id}</span>
-                          <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${st.bg} ${st.color} flex items-center gap-0.5`}>
-                            <Icon className="w-2.5 h-2.5" /> {st.label}
-                          </span>
-                        </div>
-                        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                          <span>{o.cardType}</span>
-                          <span>${o.amount}</span>
-                        </div>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
+        {/* Right panel: Tabbed Orders & Sales Order */}
+        <div className="w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
+          <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
+            <TabsList className="w-full rounded-none border-b bg-muted/30 h-10 p-0">
+              <TabsTrigger value="orders" className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent">
+                Orders
+              </TabsTrigger>
+              <TabsTrigger value="sales" className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent">
+                Sales Order
+              </TabsTrigger>
+            </TabsList>
 
-              {/* Selected order details */}
-              {selectedOrder && (
-                <div className="p-4 border-b">
-                  <h3 className="font-heading font-semibold text-sm mb-3">Order Details</h3>
-                  <div className="space-y-2">
-                    {[
-                      ["Order ID", selectedOrder.id],
-                      ["Card", selectedOrder.cardType],
-                      ["Denomination", selectedOrder.denomination],
-                      ["Amount", `$${selectedOrder.amount}`],
-                      ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
-                      ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                      ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
-                      ["Time", selectedOrder.timestamp],
-                    ].map(([k, v]) => (
-                      <div key={k} className="flex justify-between text-xs">
-                        <span className="text-muted-foreground">{k}</span>
-                        <span className="font-medium">{v}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {selectedOrder.status === "settled" && !paymentMode && !transferComplete && (
-                    <Button
-                      size="sm"
-                      className="w-full mt-3 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-                      onClick={() => setPaymentMode(true)}
-                    >
-                      <Banknote className="w-3.5 h-3.5" /> Process Payment
-                    </Button>
-                  )}
-                  {transferComplete && (
-                    <div className="mt-3 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                      <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                      <p className="text-xs font-medium text-success">Transfer Complete</p>
-                      <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
-                    </div>
-                  )}
-                </div>
-              )}
-
-              {/* Payment flow */}
-              {paymentMode && selectedOrder && (
-                <div className="p-4 border-b space-y-3">
-                  <div className="flex items-center justify-between">
-                    <h3 className="font-heading font-semibold text-sm">Execute Transfer</h3>
-                    <button onClick={() => setPaymentMode(false)} className="text-muted-foreground hover:text-foreground">
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-                  <div className="bg-muted rounded-lg p-3 space-y-1">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Total Billing</span>
-                      <span className="font-semibold">₦{billingTotal.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Entered</span>
-                      <span className="font-medium">₦{totalPaymentEntered.toLocaleString()}</span>
-                    </div>
-                    <div className="flex justify-between text-xs border-t pt-1">
-                      <span className="text-muted-foreground">Remaining</span>
-                      <span className={`font-semibold ${remainingBalance === 0 ? "text-success" : remainingBalance < 0 ? "text-destructive" : "text-warning"}`}>
-                        ₦{remainingBalance.toLocaleString()}
-                      </span>
+            <TabsContent value="orders" className="flex-1 overflow-y-auto mt-0">
+              {selectedId && selectedConvo ? (
+                <>
+                  {/* Orders */}
+                  <div className="p-4 border-b">
+                    <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
+                    <div className="space-y-1.5">
+                      {allOrders.map(o => {
+                        const st = STATUS_STYLES[o.status] || STATUS_STYLES.trading;
+                        const Icon = st.icon;
+                        const isSelected = selectedOrderId === o.id;
+                        return (
+                          <button
+                            key={o.id}
+                            onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
+                            className={`w-full text-left rounded-lg p-2.5 transition-colors ${
+                              isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
+                            }`}
+                          >
+                            <div className="flex items-center justify-between mb-1">
+                              <span className="text-[11px] font-semibold">{o.id}</span>
+                              <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${st.bg} ${st.color} flex items-center gap-0.5`}>
+                                <Icon className="w-2.5 h-2.5" /> {st.label}
+                              </span>
+                            </div>
+                            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                              <span>{o.cardType}</span>
+                              <span>${o.amount}</span>
+                            </div>
+                          </button>
+                        );
+                      })}
                     </div>
                   </div>
-                  {bankAccounts.map(a => (
-                    <div key={a.id} className="border rounded-lg p-3 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                        <div className="flex-1">
-                          <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                          <p className="text-[10px] text-muted-foreground">{a.holderName} · Verified</p>
-                        </div>
-                      </div>
-                      <Input
-                        placeholder="₦ Amount"
-                        className="h-8 text-xs"
-                        value={paymentAmounts[a.id] || ""}
-                        onChange={e => setPaymentAmounts(prev => ({ ...prev, [a.id]: e.target.value }))}
-                      />
-                    </div>
-                  ))}
-                  <Button
-                    className="w-full h-8 text-xs bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
-                    disabled={remainingBalance !== 0 || totalPaymentEntered === 0}
-                    onClick={handleExecuteTransfer}
-                  >
-                    <Banknote className="w-3.5 h-3.5" /> Execute Transfer
-                  </Button>
-                </div>
-              )}
 
-              {/* Bank accounts */}
-              {!paymentMode && (
-                <div className="p-4 border-b">
-                  <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
-                  {bankAccounts.map(a => (
-                    <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
-                      <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                      <div>
-                        <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                        <p className="text-[10px] text-muted-foreground">{a.holderName}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-
-              {/* Customer info */}
-              <div className="p-4">
-                <h3 className="font-heading font-semibold text-sm mb-3">Customer Info</h3>
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Alias</span>
-                    <span className="font-medium">{selectedConvo.alias}</span>
-                  </div>
-                  {role === "super_admin" && (
-                    <div className="border rounded-lg p-2.5 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <span className="text-[10px] text-muted-foreground flex items-center gap-1">
-                          {showIdentity ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
-                          Show Real Identity
-                        </span>
-                        <Switch checked={showIdentity} onCheckedChange={setShowIdentity} className="scale-75" />
-                      </div>
-                      {showIdentity && (
-                        <div className="space-y-1.5 animate-slide-up">
-                          <div className="flex justify-between text-[11px]"><span className="text-muted-foreground">Name</span><span className="font-medium">John Adebayo Doe</span></div>
-                          <div className="flex justify-between text-[11px]"><span className="text-muted-foreground">Email</span><span className="font-medium">john.doe@email.com</span></div>
-                          <div className="flex items-center gap-1 text-[10px] text-warning mt-1">
-                            <AlertTriangle className="w-3 h-3" /><span>This access is logged</span>
+                  {/* Selected order details */}
+                  {selectedOrder && (
+                    <div className="p-4 border-b">
+                      <h3 className="font-heading font-semibold text-sm mb-3">Order Details</h3>
+                      <div className="space-y-2">
+                        {[
+                          ["Order ID", selectedOrder.id],
+                          ["Card", selectedOrder.cardType],
+                          ["Denomination", selectedOrder.denomination],
+                          ["Amount", `$${selectedOrder.amount}`],
+                          ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
+                          ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
+                          ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
+                          ["Time", selectedOrder.timestamp],
+                        ].map(([k, v]) => (
+                          <div key={k} className="flex justify-between text-xs">
+                            <span className="text-muted-foreground">{k}</span>
+                            <span className="font-medium">{v}</span>
                           </div>
+                        ))}
+                      </div>
+                      {selectedOrder.status === "settled" && !paymentMode && !transferComplete && (
+                        <Button
+                          size="sm"
+                          className="w-full mt-3 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                          onClick={() => setPaymentMode(true)}
+                        >
+                          <Banknote className="w-3.5 h-3.5" /> Process Payment
+                        </Button>
+                      )}
+                      {transferComplete && (
+                        <div className="mt-3 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                          <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                          <p className="text-xs font-medium text-success">Transfer Complete</p>
+                          <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
                         </div>
                       )}
                     </div>
                   )}
-                  <div className="flex justify-between"><span className="text-muted-foreground">Good Rate</span><span className="font-medium">{selectedConvo.goodRate}%</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Monthly Value</span><span className="font-medium">{selectedConvo.totalValue}</span></div>
-                  <div className="flex justify-between"><span className="text-muted-foreground">Tags</span><span className="font-medium">{selectedConvo.tags.join(", ") || "None"}</span></div>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
-              <p className="text-xs text-center">Select a conversation to view orders</p>
-            </div>
-          )}
-          </div>
 
-          {showWizard && (
-            <CardlightPanel
-              open={showWizard}
-              onClose={() => setShowWizard(false)}
-              onComplete={handleOrderComplete}
-              customerAlias={selectedConvo?.alias}
-            />
-          )}
+                  {/* Payment flow */}
+                  {paymentMode && selectedOrder && (
+                    <div className="p-4 border-b space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-heading font-semibold text-sm">Execute Transfer</h3>
+                        <button onClick={() => setPaymentMode(false)} className="text-muted-foreground hover:text-foreground">
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                      <div className="bg-muted rounded-lg p-3 space-y-1">
+                        <div className="flex justify-between text-xs">
+                          <span className="text-muted-foreground">Total Billing</span>
+                          <span className="font-semibold">₦{billingTotal.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-xs">
+                          <span className="text-muted-foreground">Entered</span>
+                          <span className="font-medium">₦{totalPaymentEntered.toLocaleString()}</span>
+                        </div>
+                        <div className="flex justify-between text-xs border-t pt-1">
+                          <span className="text-muted-foreground">Remaining</span>
+                          <span className={`font-semibold ${remainingBalance === 0 ? "text-success" : remainingBalance < 0 ? "text-destructive" : "text-warning"}`}>
+                            ₦{remainingBalance.toLocaleString()}
+                          </span>
+                        </div>
+                      </div>
+                      {bankAccounts.map(a => (
+                        <div key={a.id} className="border rounded-lg p-3 space-y-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-success" />
+                            <div className="flex-1">
+                              <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
+                              <p className="text-[10px] text-muted-foreground">{a.holderName} · Verified</p>
+                            </div>
+                          </div>
+                          <Input
+                            placeholder="₦ Amount"
+                            className="h-8 text-xs"
+                            value={paymentAmounts[a.id] || ""}
+                            onChange={e => setPaymentAmounts(prev => ({ ...prev, [a.id]: e.target.value }))}
+                          />
+                        </div>
+                      ))}
+                      <Button
+                        className="w-full h-8 text-xs bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
+                        disabled={remainingBalance !== 0 || totalPaymentEntered === 0}
+                        onClick={handleExecuteTransfer}
+                      >
+                        <Banknote className="w-3.5 h-3.5" /> Execute Transfer
+                      </Button>
+                    </div>
+                  )}
+
+                  {/* Bank accounts */}
+                  {!paymentMode && (
+                    <div className="p-4 border-b">
+                      <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
+                      {bankAccounts.map(a => (
+                        <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
+                          <div className="w-1.5 h-1.5 rounded-full bg-success" />
+                          <div>
+                            <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
+                            <p className="text-[10px] text-muted-foreground">{a.holderName}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Customer info */}
+                  <div className="p-4">
+                    <h3 className="font-heading font-semibold text-sm mb-3">Customer Info</h3>
+                    <div className="space-y-2 text-xs">
+                      <div className="flex justify-between">
+                        <span className="text-muted-foreground">Alias</span>
+                        <span className="font-medium">{selectedConvo.alias}</span>
+                      </div>
+                      {role === "super_admin" && (
+                        <div className="border rounded-lg p-2.5 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                              {showIdentity ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                              Show Real Identity
+                            </span>
+                            <Switch checked={showIdentity} onCheckedChange={setShowIdentity} className="scale-75" />
+                          </div>
+                          {showIdentity && (
+                            <div className="space-y-1.5 animate-slide-up">
+                              <div className="flex justify-between text-[11px]"><span className="text-muted-foreground">Name</span><span className="font-medium">John Adebayo Doe</span></div>
+                              <div className="flex justify-between text-[11px]"><span className="text-muted-foreground">Email</span><span className="font-medium">john.doe@email.com</span></div>
+                              <div className="flex items-center gap-1 text-[10px] text-warning mt-1">
+                                <AlertTriangle className="w-3 h-3" /><span>This access is logged</span>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="flex justify-between"><span className="text-muted-foreground">Good Rate</span><span className="font-medium">{selectedConvo.goodRate}%</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Monthly Value</span><span className="font-medium">{selectedConvo.totalValue}</span></div>
+                      <div className="flex justify-between"><span className="text-muted-foreground">Tags</span><span className="font-medium">{selectedConvo.tags.join(", ") || "None"}</span></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
+                  <p className="text-xs text-center">Select a conversation to view orders</p>
+                </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="sales" className="flex-1 overflow-hidden mt-0">
+              <CardlightPanel
+                open={rightTab === "sales"}
+                onClose={() => setRightTab("orders")}
+                onComplete={handleOrderComplete}
+                customerAlias={selectedConvo?.alias}
+                embedded
+              />
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
     </AdminLayout>
