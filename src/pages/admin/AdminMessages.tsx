@@ -774,6 +774,7 @@ export default function AdminMessages() {
               open={showWizard}
               onClose={() => setShowWizard(false)}
               onComplete={handleOrderComplete}
+              customerAlias={selectedConvo?.alias}
             />
           )}
         </div>

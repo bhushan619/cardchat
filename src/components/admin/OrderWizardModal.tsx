@@ -143,13 +143,14 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   const handleCreateOrder = () => {
     if (!cardType) return;
 
+    const alias = customerAlias || supplier || "";
     const newOrder: OrderEntry = {
       id: Date.now().toString(),
       cardCode: Math.random().toString().slice(2, 22),
       description: `${cardType} / ${cardSource}`,
       denom: cards.length,
       purchaseRate: Number(cardRate) || 0,
-      supplier: customerAlias || supplier,
+      supplier: alias,
       status: "Wait For Sale",
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
     };
