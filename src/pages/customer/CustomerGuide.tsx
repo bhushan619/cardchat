@@ -43,20 +43,8 @@ const guides: GuideSection[] = [
       { text: "Tap the LightChat logo at the top-left to toggle the Provider Profile — this shows KYB verification, ratings, payout speed, and transaction volume." },
       { text: "Use the search bar to quickly filter cards by name (e.g., 'iTunes', 'Amazon')." },
       { text: "Below the grid, 'Live Rates' displays current buy rates for supported gift cards with card type, format, currency, and rate per $1.", tip: "Rates auto-refresh every 60 seconds — always check the latest rate before initiating a trade." },
+      { text: "Tap the LightChat logo to view the Provider Profile — showing KYB verification, 4.9/5 rating, payout speed, and trust badges.", tip: "Check the Provider Profile to confirm platform legitimacy before trading." },
       { text: "At the bottom, the 'Ready to trade?' banner provides a quick shortcut to start chatting with an agent." },
-    ],
-  },
-  {
-    id: "provider",
-    title: "Viewing the Provider Profile",
-    icon: ShieldCheck,
-    description: "Verify the platform's credentials and build trust before trading.",
-    steps: [
-      { text: "Tap the LightChat logo on the Home screen to open the Provider Profile." },
-      { text: "The profile displays the platform's verification badge (✓) and 'Platform Verified · Since 2019' status." },
-      { text: "Trust badges show: KYB Verified (business registration confirmed), Rating (4.9/5), and Average Payout (< 5 minutes)." },
-      { text: "Stats section highlights Total Traded ($50M+) and Completed Orders (200K+)." },
-      { text: "The Trust & Compliance section lists: Identity Verified (KYB), Escrow Protection, Licensed Operator, and Dispute Resolution (24h response guarantee).", tip: "Always check the verification badge when trading — it confirms the platform is legitimate." },
     ],
   },
   {
