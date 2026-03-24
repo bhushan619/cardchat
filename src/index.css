@@ -4,94 +4,57 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 220 25% 10%;
+    --background: 225 20% 7%;
+    --foreground: 210 20% 92%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 220 25% 10%;
+    --card: 225 20% 10%;
+    --card-foreground: 210 20% 92%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 220 25% 10%;
+    --popover: 225 20% 10%;
+    --popover-foreground: 210 20% 92%;
 
-    --primary: 220 60% 18%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 160 65% 45%;
+    --primary-foreground: 225 20% 7%;
 
-    --secondary: 210 25% 93%;
-    --secondary-foreground: 220 25% 10%;
+    --secondary: 225 15% 15%;
+    --secondary-foreground: 210 20% 90%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 215 15% 48%;
+    --muted: 225 15% 13%;
+    --muted-foreground: 215 12% 50%;
 
-    --accent: 160 65% 40%;
+    --accent: 160 65% 42%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 72% 51%;
+    --destructive: 0 62% 45%;
     --destructive-foreground: 0 0% 100%;
 
     --warning: 38 92% 50%;
     --warning-foreground: 38 92% 14%;
 
-    --success: 160 65% 40%;
+    --success: 160 65% 42%;
     --success-foreground: 0 0% 100%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 220 60% 18%;
+    --border: 225 15% 16%;
+    --input: 225 15% 16%;
+    --ring: 160 65% 42%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    --sidebar-background: 220 25% 10%;
+    --sidebar-background: 225 20% 5%;
     --sidebar-foreground: 210 20% 90%;
     --sidebar-primary: 160 65% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 16%;
+    --sidebar-accent: 225 15% 12%;
     --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 20% 18%;
+    --sidebar-border: 225 15% 12%;
     --sidebar-ring: 160 65% 50%;
 
-    --chat-bubble-self: 160 50% 94%;
-    --chat-bubble-other: 0 0% 100%;
-    --chat-pinned: 38 92% 95%;
+    --chat-bubble-self: 160 40% 15%;
+    --chat-bubble-other: 225 20% 12%;
+    --chat-pinned: 38 60% 12%;
 
     --font-heading: 'Space Grotesk', sans-serif;
     --font-body: 'Inter', sans-serif;
-  }
-
-  .dark {
-    --background: 220 25% 7%;
-    --foreground: 210 20% 95%;
-    --card: 220 25% 10%;
-    --card-foreground: 210 20% 95%;
-    --popover: 220 25% 10%;
-    --popover-foreground: 210 20% 95%;
-    --primary: 160 65% 50%;
-    --primary-foreground: 220 25% 7%;
-    --secondary: 220 20% 16%;
-    --secondary-foreground: 210 20% 95%;
-    --muted: 220 20% 14%;
-    --muted-foreground: 215 15% 55%;
-    --accent: 160 65% 40%;
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 30%;
-    --destructive-foreground: 0 0% 100%;
-    --warning: 38 92% 50%;
-    --warning-foreground: 38 92% 14%;
-    --success: 160 65% 40%;
-    --success-foreground: 0 0% 100%;
-    --border: 220 20% 18%;
-    --input: 220 20% 18%;
-    --ring: 160 65% 50%;
-    --sidebar-background: 220 25% 5%;
-    --sidebar-foreground: 210 20% 90%;
-    --sidebar-primary: 160 65% 50%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 220 20% 12%;
-    --sidebar-accent-foreground: 210 20% 90%;
-    --sidebar-border: 220 20% 12%;
-    --sidebar-ring: 160 65% 50%;
-    --chat-bubble-self: 160 40% 15%;
-    --chat-bubble-other: 220 25% 12%;
-    --chat-pinned: 38 60% 15%;
   }
 }
 
@@ -102,6 +65,8 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
@@ -109,6 +74,15 @@
 }
 
 @layer components {
+  /* Global button feedback */
+  button, [role="button"], a {
+    @apply transition-all duration-150;
+  }
+  button:active, [role="button"]:active {
+    transform: scale(0.96);
+    opacity: 0.85;
+  }
+
   .tab-bar-item {
     @apply flex flex-col items-center gap-1 text-xs text-muted-foreground transition-colors;
   }
@@ -144,4 +118,9 @@
 @keyframes rate-flash {
   0% { background-color: hsl(var(--accent) / 0.15); }
   100% { background-color: transparent; }
+}
+
+@keyframes scale-in {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
