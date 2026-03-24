@@ -324,21 +324,8 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                 </div>
               </div>
 
-              {/* Row 2: Suppliers, Naira Price, Card Rate */}
-              <div className="grid grid-cols-3 gap-2">
-                <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Suppliers</label>
-                  <div className="flex gap-1">
-                    <Input
-                      value={supplier}
-                      onChange={e => setSupplier(e.target.value)}
-                      className="h-8 text-xs flex-1"
-                    />
-                    <button className="w-8 h-8 rounded-md border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted">
-                      <RefreshCw className="w-3 h-3" />
-                    </button>
-                  </div>
-                </div>
+              {/* Row 2: Naira Price, Card Rate */}
+              <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
                   <Input
@@ -475,10 +462,10 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                 <table className="w-full text-[10px]">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="text-left py-2 px-2 font-medium text-muted-foreground">Card Code</th>
+                      <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
+                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Denom.</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Rate</th>
-                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Supplier</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
                     </tr>
@@ -486,14 +473,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                   <tbody>
                     {pagedOrders.map(o => (
                       <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30">
-                        <td className="py-2 px-2">
+                        <td className="py-2 px-2">{o.supplier || "—"}</td>
+                        <td className="py-2 px-1">
                           <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
                           <div className="text-muted-foreground">{o.description}</div>
                           <div className="text-muted-foreground">{o.date}</div>
                         </td>
                         <td className="py-2 px-1">{o.denom}</td>
                         <td className="py-2 px-1">{o.purchaseRate}</td>
-                        <td className="py-2 px-1">{o.supplier || "—"}</td>
                         <td className="py-2 px-1">
                           <span className={`text-[9px] font-medium ${
                             o.status === "Negotiation" ? "text-warning" :
