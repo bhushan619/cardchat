@@ -3,11 +3,13 @@ import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
-  BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck
+  BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
+  Sun, Moon
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { conversations, orders, cardRates } from "@/data/mock";
+import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
@@ -31,6 +33,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const { role, setRole } = useAdminRole();
+  const { theme, toggleTheme } = useTheme();
 
   useEffect(() => {
     const auth = sessionStorage.getItem("adminAuth");
@@ -139,6 +142,13 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggleTheme}
+              className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
+            >
+              {theme === "dark" ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
             <button className="relative">
               <Bell className="w-5 h-5 text-muted-foreground" />
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] text-destructive-foreground flex items-center justify-center">3</span>

@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminRoleProvider } from "@/contexts/AdminRoleContext";
+import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 
@@ -35,52 +36,54 @@ import AdminCustomers from "./pages/admin/AdminCustomers";
 const queryClient = new QueryClient();
 
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
+  <ThemeProvider defaultTheme="dark">
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
 
-          {/* Customer App */}
-          <Route path="/customer/auth" element={<CustomerAuth />} />
-          <Route path="/customer" element={<CustomerHome />} />
-          <Route path="/customer/chat" element={<CustomerChat />} />
-          <Route path="/customer/contacts" element={<CustomerContacts />} />
-          <Route path="/customer/me" element={<CustomerMe />} />
-          <Route path="/customer/guide" element={<CustomerGuide />} />
+            {/* Customer App */}
+            <Route path="/customer/auth" element={<CustomerAuth />} />
+            <Route path="/customer" element={<CustomerHome />} />
+            <Route path="/customer/chat" element={<CustomerChat />} />
+            <Route path="/customer/contacts" element={<CustomerContacts />} />
+            <Route path="/customer/me" element={<CustomerMe />} />
+            <Route path="/customer/guide" element={<CustomerGuide />} />
 
-          {/* Admin Login */}
-          <Route path="/admin/login" element={<AdminLogin />} />
+            {/* Admin Login */}
+            <Route path="/admin/login" element={<AdminLogin />} />
 
-          {/* Admin Panel - wrapped in role provider */}
-          <Route path="/admin/*" element={
-            <AdminRoleProvider>
-              <Routes>
-                <Route path="/" element={<AdminMessages />} />
-                <Route path="/chat/:id" element={<AdminChatView />} />
-                <Route path="/card-rates" element={<AdminCardRates />} />
-                <Route path="/orders" element={<AdminOrders />} />
-                <Route path="/naira-rate" element={<AdminNairaRate />} />
-                <Route path="/users" element={<AdminUsers />} />
-                <Route path="/team" element={<AdminTeam />} />
-                <Route path="/api-config" element={<AdminApiConfig />} />
-                <Route path="/broadcast" element={<AdminBroadcast />} />
-                <Route path="/guide" element={<AdminGuide />} />
-                <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
-                <Route path="/customer-guide" element={<AdminCustomerGuide />} />
-                <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
-                <Route path="/customers" element={<AdminCustomers />} />
-              </Routes>
-            </AdminRoleProvider>
-          } />
+            {/* Admin Panel - wrapped in role provider */}
+            <Route path="/admin/*" element={
+              <AdminRoleProvider>
+                <Routes>
+                  <Route path="/" element={<AdminMessages />} />
+                  <Route path="/chat/:id" element={<AdminChatView />} />
+                  <Route path="/card-rates" element={<AdminCardRates />} />
+                  <Route path="/orders" element={<AdminOrders />} />
+                  <Route path="/naira-rate" element={<AdminNairaRate />} />
+                  <Route path="/users" element={<AdminUsers />} />
+                  <Route path="/team" element={<AdminTeam />} />
+                  <Route path="/api-config" element={<AdminApiConfig />} />
+                  <Route path="/broadcast" element={<AdminBroadcast />} />
+                  <Route path="/guide" element={<AdminGuide />} />
+                  <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
+                  <Route path="/customer-guide" element={<AdminCustomerGuide />} />
+                  <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
+                  <Route path="/customers" element={<AdminCustomers />} />
+                </Routes>
+              </AdminRoleProvider>
+            } />
 
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </ThemeProvider>
 );
 
 export default App;
