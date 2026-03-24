@@ -268,7 +268,7 @@ export default function CustomerMe() {
           ].map(item => (
             <button
               key={item.key}
-              onClick={() => setActiveSection(item.key)}
+              onClick={() => item.key === "guide" ? navigate("/customer/guide") : setActiveSection(item.key)}
               className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors"
             >
               <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
