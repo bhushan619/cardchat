@@ -62,6 +62,21 @@ const mockOrders: OrderEntry[] = [
   { id: "5", cardCode: "18673837295407321B", description: "AMEX / CAG", denom: 5, purchaseRate: 5, supplier: "T10043", status: "Negotiation", date: "2024-12-13 07:09:10" },
 ];
 
+interface SellerEntry {
+  id: string;
+  seller: string;
+  rate: number;
+  information: string;
+  transactions: number;
+}
+
+const mockSellers: SellerEntry[] = [
+  { id: "s1", seller: "GRTEAM", rate: 5.88, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||and One Card Only||Cards Only", transactions: 0 },
+  { id: "s2", seller: "GRTEAM", rate: 5.65, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||Horizontal Cards Only", transactions: 1344793 },
+  { id: "s3", seller: "GRTEAM", rate: 5.25, information: "E-codes||Fast card||Accepts Multiples of 5", transactions: 0 },
+  { id: "s4", seller: "GRTEAM", rate: 5, information: "Physical||Single Card Only||Fast card||Vertical Cards Only", transactions: 1344793 },
+];
+
 const cardTypes = [...new Set(cardRates.map(r => r.cardType))];
 const cardSources = ["W", "E", "M"];
 
