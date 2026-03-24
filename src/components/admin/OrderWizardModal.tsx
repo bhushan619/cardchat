@@ -438,12 +438,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                         </td>
                         <td className="py-2 px-1">
                           {o.status === "Wait For Sale" && (
-                            <button
+                            <Button
+                              size="sm"
+                              variant="outline"
                               onClick={() => handleSale(o.id)}
-                              className="text-primary hover:text-primary/80 font-medium"
+                              className="h-6 px-3 text-[10px]"
                             >
                               Sale
-                            </button>
+                            </Button>
                           )}
                         </td>
                       </tr>
@@ -514,12 +516,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                     </td>
                     <td className="py-3 px-4">{seller.transactions || "—"}</td>
                     <td className="py-3 px-4">
-                      <button
+                      <Button
+                        size="sm"
+                        variant="outline"
                         onClick={() => handleChooseSeller(seller)}
-                        className="text-primary hover:text-primary/80 font-medium text-sm"
+                        className="h-7 px-3 text-xs"
                       >
                         Choose &amp; Sell
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}
