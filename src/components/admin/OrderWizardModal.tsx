@@ -58,6 +58,7 @@ interface CardlightPanelProps {
   open: boolean;
   onClose: () => void;
   onComplete?: (order: CompletedOrder) => void;
+  customerAlias?: string;
 }
 
 const makeCard = (): CardEntry => ({
