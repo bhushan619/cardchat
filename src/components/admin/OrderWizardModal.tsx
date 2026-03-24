@@ -462,10 +462,10 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                 <table className="w-full text-[10px]">
                   <thead>
                     <tr className="bg-muted/50 border-b">
-                      <th className="text-left py-2 px-2 font-medium text-muted-foreground">Card Code</th>
+                      <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
+                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Denom.</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Rate</th>
-                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Supplier</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
                     </tr>
