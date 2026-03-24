@@ -21,10 +21,15 @@ const columns = [
 ];
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+  created: { label: "Created", color: "text-muted-foreground", bg: "bg-muted", icon: Clock },
+  submitted: { label: "Submitted", color: "text-primary", bg: "bg-primary/10", icon: Clock },
+  under_review: { label: "Under Review", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   completed: { label: "Completed", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
   failed: { label: "Failed", color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
   settled: { label: "Settled", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
+  disputed: { label: "Disputed", color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
+  cancelled: { label: "Cancelled", color: "text-muted-foreground", bg: "bg-muted", icon: Clock },
   trading: { label: "Trading", color: "text-primary", bg: "bg-primary/10", icon: Clock },
   pending_payment: { label: "Pending", color: "text-warning", bg: "bg-warning/10", icon: Clock },
 };
