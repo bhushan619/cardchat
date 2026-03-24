@@ -283,6 +283,20 @@ export default function CustomerMe() {
           ))}
         </div>
 
+        {/* Theme Toggle */}
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors"
+        >
+          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
+            {theme === "dark" ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
+          </div>
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</p>
+            <p className="text-xs text-muted-foreground">Switch appearance</p>
+          </div>
+        </button>
+
         <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-destructive/5 transition-colors text-destructive">
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
             <LogOut className="w-5 h-5" />
