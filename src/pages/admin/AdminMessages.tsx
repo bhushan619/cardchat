@@ -177,7 +177,7 @@ export default function AdminMessages() {
     <AdminLayout>
       <div className="flex h-full">
         {/* Left panel: tabs + customer list */}
-        <div className="w-[512px] shrink-0 border-r flex flex-col min-w-0">
+        <div className="w-80 shrink-0 border-r flex flex-col min-w-0">
           {/* Tab headers */}
           <div className="flex shrink-0">
             {columns.map(col => {
@@ -188,13 +188,13 @@ export default function AdminMessages() {
                 <button
                   key={col.id}
                   onClick={() => setActiveTab(col.id)}
-                  className={`relative flex-1 py-2.5 text-xs font-semibold text-center transition-colors ${
+                  className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
                     isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
                   }`}
                 >
                   {col.label} ({count})
                   {unreadCount > 0 && (
-                    <span className="absolute top-1 right-2 min-w-[16px] h-4 px-1 rounded-full bg-destructive text-destructive-foreground text-[9px] font-bold flex items-center justify-center animate-pulse">
+                     <span className="absolute -top-1 -right-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
                       {unreadCount}
                     </span>
                   )}
@@ -570,7 +570,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Right panel: Orders & Customer info */}
-        <div className="w-72 border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
+        <div className="w-64 border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
           {selectedId && selectedConvo ? (
             <>
               {/* Orders */}
