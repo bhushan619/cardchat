@@ -197,7 +197,7 @@ export default function AdminMessages() {
               >
                 {col.label} ({count})
                 {unreadCount > 0 && (
-                  <span className="absolute -top-1 -right-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
+                  <span className="ml-2 inline-flex min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold items-center justify-center animate-pulse">
                     {unreadCount}
                   </span>
                 )}
@@ -209,7 +209,7 @@ export default function AdminMessages() {
         {/* Below: customer list | chat | orders */}
         <div className="flex flex-1 min-h-0">
           {/* Left panel: customer list */}
-          <div className="w-[280px] shrink-0 border-r flex flex-col min-w-0">
+          <div className="w-[336px] shrink-0 border-r flex flex-col min-w-0">
             {/* Search bar */}
             <div className="p-2 border-b shrink-0">
               <div className="relative">
@@ -577,7 +577,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Right panel: Orders & Customer info */}
-        <div className="w-[286px] border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
+        <div className="w-[372px] border-l bg-card overflow-y-auto shrink-0 hidden xl:block">
           {selectedId && selectedConvo ? (
             <>
               {/* Orders */}
