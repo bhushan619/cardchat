@@ -609,68 +609,67 @@ export default function AdminMessages() {
                         const Icon = st.icon;
                         const isSelected = selectedOrderId === o.id;
                         return (
-                          <button
-                            key={o.id}
-                            onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
-                            className={`w-full text-left rounded-lg p-2.5 transition-colors ${
-                              isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
-                            }`}
-                          >
-                            <div className="flex items-center justify-between mb-1">
-                              <span className="text-[11px] font-semibold">{o.id}</span>
-                              <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${st.bg} ${st.color} flex items-center gap-0.5`}>
-                                <Icon className="w-2.5 h-2.5" /> {st.label}
-                              </span>
-                            </div>
-                            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                              <span>{o.cardType}</span>
-                              <span>${o.amount}</span>
-                            </div>
-                          </button>
+                          <div key={o.id}>
+                            <button
+                              onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
+                              className={`w-full text-left rounded-lg p-2.5 transition-colors ${
+                                isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
+                              }`}
+                            >
+                              <div className="flex items-center justify-between mb-1">
+                                <span className="text-[11px] font-semibold">{o.id}</span>
+                                <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${st.bg} ${st.color} flex items-center gap-0.5`}>
+                                  <Icon className="w-2.5 h-2.5" /> {st.label}
+                                </span>
+                              </div>
+                              <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                                <span>{o.cardType}</span>
+                                <span>${o.amount}</span>
+                              </div>
+                            </button>
+                            {isSelected && (
+                              <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
+                                <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                                <div className="space-y-1.5">
+                                  {[
+                                    ["Order ID", o.id],
+                                    ["Card", o.cardType],
+                                    ["Denomination", o.denomination],
+                                    ["Amount", `$${o.amount}`],
+                                    ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
+                                    ["Payout", `₦${o.payout.toLocaleString()}`],
+                                    ...(o.bank ? [["Bank", `${o.bank} ${o.bankAccount}`]] : []),
+                                    ["Time", o.timestamp],
+                                  ].map(([k, v]) => (
+                                    <div key={k} className="flex justify-between text-xs">
+                                      <span className="text-muted-foreground">{k}</span>
+                                      <span className="font-medium">{v}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                                {o.status === "settled" && !paymentMode && !transferComplete && (
+                                  <Button
+                                    size="sm"
+                                    className="w-full mt-2 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                                    onClick={() => setPaymentMode(true)}
+                                  >
+                                    <Banknote className="w-3.5 h-3.5" /> Process Payment
+                                  </Button>
+                                )}
+                                {transferComplete && (
+                                  <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                    <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                    <p className="text-xs font-medium text-success">Transfer Complete</p>
+                                    <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
                   </div>
-
-                  {/* Selected order details */}
-                  {selectedOrder && (
-                    <div className="p-4 border-b">
-                      <h3 className="font-heading font-semibold text-sm mb-3">Order Details</h3>
-                      <div className="space-y-2">
-                        {[
-                          ["Order ID", selectedOrder.id],
-                          ["Card", selectedOrder.cardType],
-                          ["Denomination", selectedOrder.denomination],
-                          ["Amount", `$${selectedOrder.amount}`],
-                          ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
-                          ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                          ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
-                          ["Time", selectedOrder.timestamp],
-                        ].map(([k, v]) => (
-                          <div key={k} className="flex justify-between text-xs">
-                            <span className="text-muted-foreground">{k}</span>
-                            <span className="font-medium">{v}</span>
-                          </div>
-                        ))}
-                      </div>
-                      {selectedOrder.status === "settled" && !paymentMode && !transferComplete && (
-                        <Button
-                          size="sm"
-                          className="w-full mt-3 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-                          onClick={() => setPaymentMode(true)}
-                        >
-                          <Banknote className="w-3.5 h-3.5" /> Process Payment
-                        </Button>
-                      )}
-                      {transferComplete && (
-                        <div className="mt-3 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                          <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                          <p className="text-xs font-medium text-success">Transfer Complete</p>
-                          <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
-                        </div>
-                      )}
-                    </div>
-                  )}
 
                   {/* Payment flow */}
                   {paymentMode && selectedOrder && (
