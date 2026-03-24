@@ -356,7 +356,7 @@ export default function AdminChatView() {
                 <Smile className="w-3.5 h-3.5" /> Emoji
               </button>
               <button
-                className="flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/80 px-2 py-1 rounded-md hover:bg-accent/10 transition-colors ml-auto"
+                className="flex items-center gap-1 text-xs text-accent font-medium px-3 py-1.5 rounded-md bg-accent/10 hover:bg-accent/20 transition-colors ml-auto"
                 onClick={() => setShowWizard(true)}
               >
                 <FileTextIcon className="w-3.5 h-3.5" /> Create Order
