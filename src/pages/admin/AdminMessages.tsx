@@ -145,18 +145,14 @@ export default function AdminMessages() {
   ];
 
   const selectedOrder = selectedOrderId ? allOrders.find(o => o.id === selectedOrderId) : null;
-  const totalPaymentEntered = Object.values(paymentAmounts).reduce(
-    (sum, v) => sum + (Number(v.replace(/,/g, "")) || 0), 0
-  );
-  const billingTotal = selectedOrder ? selectedOrder.payout : 0;
-  const remainingBalance = billingTotal - totalPaymentEntered;
 
-  const handleExecuteTransfer = () => {
-    setTransferComplete(true);
-    setPaymentMode(false);
+  const handleExecuteTransfer = (orderId: string, payout: number) => {
+    setTransferCompletedOrders(prev => new Set(prev).add(orderId));
+    setPaymentOrderId(null);
+    setSelectedBankId(null);
     const newMsg: ChatMessage = {
       id: Date.now(), sender: "system", senderName: "System",
-      text: `💸 Transfer executed — ₦${billingTotal.toLocaleString()} sent to customer's verified accounts`,
+      text: `💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       isOrder: true,
     };
