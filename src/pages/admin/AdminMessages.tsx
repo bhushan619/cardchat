@@ -209,7 +209,7 @@ export default function AdminMessages() {
         {/* Below: customer list | chat | orders */}
         <div className="flex flex-1 min-h-0">
           {/* Left panel: customer list */}
-          <div className="w-[280px] shrink-0 border-r flex flex-col min-w-0">
+          <div className="w-[336px] shrink-0 border-r flex flex-col min-w-0">
             {/* Search bar */}
             <div className="p-2 border-b shrink-0">
               <div className="relative">
