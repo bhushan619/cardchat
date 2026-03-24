@@ -175,97 +175,99 @@ export default function AdminMessages() {
 
   return (
     <AdminLayout>
-      <div className="flex h-full">
-        {/* Left panel: tabs + customer list */}
-        <div className="w-[400px] shrink-0 border-r flex flex-col min-w-0">
-          {/* Tab headers */}
-          <div className="flex shrink-0">
-            {columns.map(col => {
-              const isActive = activeTab === col.id;
-              const count = conversations.filter(c => c.status === col.id).length;
-              const unreadCount = conversations.filter(c => c.status === col.id && c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
-              return (
-                <button
-                  key={col.id}
-                  onClick={() => setActiveTab(col.id)}
-                  className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
-                    isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
-                  }`}
-                >
-                  {col.label} ({count})
-                  {unreadCount > 0 && (
-                     <span className="absolute -top-1 -right-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
-                      {unreadCount}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-          {/* Customer list */}
-          <div className="flex-1 overflow-y-auto">
-            {filteredConversations.map(c => {
-              const isActive = selectedId === c.id;
-              const isStarred = starred.has(c.id);
-              return (
-                <button
-                  key={c.id}
-                  onClick={() => setSelectedId(c.id)}
-                  onMouseEnter={() => setHoveredId(c.id)}
-                  onMouseLeave={() => setHoveredId(null)}
-                  className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
-                    isActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
-                  }`}
-                >
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                      {c.alias.slice(-2)}
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="text-xs font-semibold">{c.alias}</span>
-                        <div className="flex items-center gap-1">
-                          {isStarred && <Star className="w-3 h-3 text-warning fill-warning" />}
-                          <span className="text-[10px] text-muted-foreground">{c.time}</span>
-                        </div>
-                      </div>
-                      <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
-                    </div>
-                    {c.unread > 0 && (
-                      <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
-                        {c.unread}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between mt-1.5">
-                    <div className="flex items-center gap-1" />
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] text-accent font-medium">{c.goodRate}% rate</span>
-                      <span className="text-[10px] text-muted-foreground">· {c.totalValue}</span>
-                    </div>
-                    {(hoveredId === c.id || isStarred) && (
-                      <button onClick={(e) => toggleStar(e, c.id)} className="text-muted-foreground hover:text-warning transition-colors">
-                        <Star className={`w-3 h-3 ${isStarred ? "text-warning fill-warning" : ""}`} />
-                      </button>
-                    )}
-                  </div>
-                  {c.tags.length > 0 && (
-                    <div className="flex gap-1 mt-1">
-                      {c.tags.map(t => (
-                        <span key={t} className="status-badge bg-primary/5 text-primary text-[10px]">{t}</span>
-                      ))}
-                    </div>
-                  )}
-                </button>
-              );
-            })}
-            {filteredConversations.length === 0 && (
-              <div className="flex items-center justify-center h-32 text-xs text-muted-foreground">
-                No conversations
-              </div>
-            )}
-          </div>
+      <div className="flex flex-col h-full">
+        {/* Full-width tab headers */}
+        <div className="flex shrink-0">
+          {columns.map(col => {
+            const isActive = activeTab === col.id;
+            const count = conversations.filter(c => c.status === col.id).length;
+            const unreadCount = conversations.filter(c => c.status === col.id && c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
+            return (
+              <button
+                key={col.id}
+                onClick={() => setActiveTab(col.id)}
+                className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
+                  isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
+                }`}
+              >
+                {col.label} ({count})
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-0 min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold flex items-center justify-center animate-pulse">
+                    {unreadCount}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </div>
+
+        {/* Below: customer list | chat | orders */}
+        <div className="flex flex-1 min-h-0">
+          {/* Left panel: customer list */}
+          <div className="w-[400px] shrink-0 border-r flex flex-col min-w-0">
+            <div className="flex-1 overflow-y-auto">
+              {filteredConversations.map(c => {
+                const isActive = selectedId === c.id;
+                const isStarred = starred.has(c.id);
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedId(c.id)}
+                    onMouseEnter={() => setHoveredId(c.id)}
+                    onMouseLeave={() => setHoveredId(null)}
+                    className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
+                      isActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
+                    }`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                        {c.alias.slice(-2)}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs font-semibold">{c.alias}</span>
+                          <div className="flex items-center gap-1">
+                            {isStarred && <Star className="w-3 h-3 text-warning fill-warning" />}
+                            <span className="text-[10px] text-muted-foreground">{c.time}</span>
+                          </div>
+                        </div>
+                        <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                      </div>
+                      {c.unread > 0 && (
+                        <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
+                          {c.unread}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <div className="flex items-center gap-1" />
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] text-accent font-medium">{c.goodRate}% rate</span>
+                        <span className="text-[10px] text-muted-foreground">· {c.totalValue}</span>
+                      </div>
+                      {(hoveredId === c.id || isStarred) && (
+                        <button onClick={(e) => toggleStar(e, c.id)} className="text-muted-foreground hover:text-warning transition-colors">
+                          <Star className={`w-3 h-3 ${isStarred ? "text-warning fill-warning" : ""}`} />
+                        </button>
+                      )}
+                    </div>
+                    {c.tags.length > 0 && (
+                      <div className="flex gap-1 mt-1">
+                        {c.tags.map(t => (
+                          <span key={t} className="status-badge bg-primary/5 text-primary text-[10px]">{t}</span>
+                        ))}
+                      </div>
+                    )}
+                  </button>
+                );
+              })}
+              {filteredConversations.length === 0 && (
+                <div className="flex items-center justify-center h-32 text-xs text-muted-foreground">
+                  No conversations
+                </div>
+              )}
+            </div>
+          </div>
 
         {/* Middle: Chat window */}
         <div className="flex-1 flex flex-col min-w-0">
