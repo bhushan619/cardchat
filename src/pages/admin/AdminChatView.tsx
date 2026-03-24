@@ -193,7 +193,7 @@ export default function AdminChatView() {
                 </div>
                 <p className="text-[10px] text-muted-foreground">
                   {isGroupChat
-                    ? `You, ${groupMembers.map(m => m.name).join(", ")}, User-A7X3`
+                    ? `You, ${groupMembers.map(m => m.name).join(", ")}, A7X3KP`
                     : "85% rate · ₦450,000 total · VIP, Repeat"
                   }
                 </p>
