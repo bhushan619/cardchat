@@ -212,7 +212,7 @@ export default function AdminMessages() {
           {/* Left panel: customer list */}
           <div className="w-[336px] shrink-0 border-r flex flex-col min-w-0">
             {/* Search bar */}
-            <div className="p-2 border-b shrink-0">
+            <div className="px-2 border-b shrink-0 h-12 flex items-center">
               <div className="relative">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <Input
@@ -279,7 +279,7 @@ export default function AdminMessages() {
         <div className="flex-1 flex flex-col min-w-0">
           {selectedId && selectedConvo ? (
             <>
-              <header className="flex items-center justify-between px-5 py-3 border-b bg-card shrink-0">
+              <header className="flex items-center justify-between px-5 border-b bg-card shrink-0 h-12">
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                     {selectedConvo.alias.slice(-2)}
@@ -588,7 +588,7 @@ export default function AdminMessages() {
         {/* Right panel: Tabbed Orders & Sales Order */}
         <div className="w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
           <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
-            <TabsList className="w-full rounded-none border-b bg-muted/30 h-10 p-0">
+            <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
               <TabsTrigger value="orders" className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent">
                 Orders
               </TabsTrigger>
