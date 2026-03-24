@@ -63,9 +63,9 @@ export default function AdminMessages() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
-  const [paymentMode, setPaymentMode] = useState(false);
-  const [paymentAmounts, setPaymentAmounts] = useState<Record<number, string>>({});
-  const [transferComplete, setTransferComplete] = useState(false);
+  const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
+  const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
+  const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(new Set());
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
