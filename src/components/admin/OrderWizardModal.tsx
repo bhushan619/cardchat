@@ -271,16 +271,50 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-destructive">* Card Type</label>
-                  <Select value={cardType} onValueChange={setCardType}>
-                    <SelectTrigger className="h-8 text-xs">
-                      <SelectValue placeholder="Select" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {cardTypes.map(t => (
-                        <SelectItem key={t} value={t} className="text-xs">{t}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover open={cardTypeOpen} onOpenChange={setCardTypeOpen}>
+                    <PopoverTrigger asChild>
+                      <button className="flex h-8 w-full items-center justify-between rounded-md border border-input bg-background px-3 text-xs ring-offset-background hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2">
+                        <span className={cardType ? "text-foreground" : "text-muted-foreground"}>
+                          {cardType ? `${cardType} / ${cardCurrency}` : "Select"}
+                        </span>
+                        <ChevronRight className="h-3 w-3 opacity-50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0" align="start" sideOffset={4}>
+                      <div className="flex">
+                        {/* Brand list */}
+                        <div className="w-[130px] border-r max-h-[240px] overflow-y-auto">
+                          {cardBrands.map(brand => (
+                            <button
+                              key={brand.name}
+                              onMouseEnter={() => setHoveredBrand(brand.name)}
+                              onClick={() => setHoveredBrand(brand.name)}
+                              className={`flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors ${hoveredBrand === brand.name ? "bg-accent text-primary font-semibold" : "text-foreground"}`}
+                            >
+                              {brand.name}
+                              <ChevronRight className="h-3 w-3 opacity-50" />
+                            </button>
+                          ))}
+                        </div>
+                        {/* Currency list */}
+                        <div className="w-[90px] max-h-[240px] overflow-y-auto">
+                          {(cardBrands.find(b => b.name === (hoveredBrand || cardBrands[0].name))?.currencies || []).map(cur => (
+                            <button
+                              key={cur}
+                              onClick={() => {
+                                setCardType(hoveredBrand || cardBrands[0].name);
+                                setCardCurrency(cur);
+                                setCardTypeOpen(false);
+                              }}
+                              className={`flex w-full items-center px-3 py-2 text-xs hover:bg-accent transition-colors ${cardType === (hoveredBrand || cardBrands[0].name) && cardCurrency === cur ? "text-primary font-semibold" : "text-foreground"}`}
+                            >
+                              {cur}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </PopoverContent>
+                  </Popover>
                 </div>
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-destructive">* Card Source</label>
