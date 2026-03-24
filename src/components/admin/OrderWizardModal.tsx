@@ -373,7 +373,7 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                       </button>
                     )}
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-[35%_1fr] gap-3">
                       {/* Left: Square image upload (50%) */}
                       <div>
                         <input
