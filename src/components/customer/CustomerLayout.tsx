@@ -1,5 +1,7 @@
 import { ReactNode, useState } from "react";
-import { Home, MessageCircle, Users, User, BookOpen } from "lucide-react";
+import { Home, MessageCircle, Users, User, BookOpen, Sun, Moon } from "lucide-react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
 
 const tabs = [
