@@ -419,10 +419,11 @@ export default function AdminChatView() {
                   ["Card", `${selectedOrder.cardType}`],
                   ["Denomination", selectedOrder.denomination],
                   ["Amount", `$${selectedOrder.amount}`],
-                  ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
-                  ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                  ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
-                  ["Time", selectedOrder.timestamp],
+                   ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
+                   ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
+                   ...(selectedOrder.settlement ? [["Settlement (CNY)", `¥${selectedOrder.settlement.amountCNY}`]] : []),
+                   ["Customer", selectedOrder.customerAlias],
+                   ["Time", selectedOrder.timestamp],
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between text-xs">
                     <span className="text-muted-foreground">{k}</span>
