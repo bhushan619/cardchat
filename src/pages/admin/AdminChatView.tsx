@@ -278,7 +278,7 @@ export default function AdminChatView() {
                       <div className="p-3 space-y-3">
                         <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
                           <p className="text-xs text-warning-foreground">
-                            Reassign <strong>User-A7X3</strong> to <strong>{reassignTarget.name}</strong>?
+                            Reassign <strong>A7X3KP</strong> to <strong>{reassignTarget.name}</strong>?
                           </p>
                           <p className="text-[10px] text-muted-foreground mt-1">Full chat history and order context will be transferred.</p>
                         </div>
