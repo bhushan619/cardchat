@@ -68,14 +68,7 @@ const makeCard = (): CardEntry => ({
   cardAmount: "",
 });
 
-// Mock order list data
-const mockOrders: OrderEntry[] = [
-  { id: "1", cardCode: "20059177365113287297", description: "Sephora / 美国", denom: 1, purchaseRate: 1, supplier: "", status: "Wait For Sale", date: "2025-12-30 13:53:31" },
-  { id: "2", cardCode: "20091703274184962", description: "VISA / E8", denom: 1, purchaseRate: 1, supplier: "", status: "Wait For Sale", date: "2025-12-30 13:51:05" },
-  { id: "3", cardCode: "20012853814944849944", description: "Nordstrom / 美国", denom: 2, purchaseRate: 232, supplier: "", status: "Wait For Sale", date: "2025-12-17 19:06:32" },
-  { id: "4", cardCode: "20012780197192130058", description: "Sephora / 美国", denom: 1, purchaseRate: 1, supplier: "1", status: "Wait For Sale", date: "2025-12-17 18:37:17" },
-  { id: "5", cardCode: "18673837295407321B", description: "AMEX / CAG", denom: 5, purchaseRate: 5, supplier: "T10043", status: "Negotiation", date: "2024-12-13 07:09:10" },
-];
+// Order list starts empty — only orders created via "Create Now" appear here
 
 interface SellerEntry {
   id: string;
@@ -113,7 +106,7 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
 
   // Order list
-  const [orderList, setOrderList] = useState<OrderEntry[]>(mockOrders);
+  const [orderList, setOrderList] = useState<OrderEntry[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
   const totalPages = Math.ceil(orderList.length / pageSize);
