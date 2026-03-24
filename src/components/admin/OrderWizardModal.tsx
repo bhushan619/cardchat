@@ -363,39 +363,53 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                 <p className="text-[9px] text-muted-foreground -mt-1">Accept JPG, PNG, WebP formats only. Max 10MB per image, up to 10 images at once.</p>
 
                 {cards.map((card, idx) => (
-                  <div key={card.id} className="border rounded-lg p-3 space-y-2 relative">
+                  <div key={card.id} className="border rounded-lg p-3 relative">
                     {cards.length > 1 && (
                       <button
                         onClick={() => removeCard(card.id)}
-                        className="absolute top-2 right-2 text-muted-foreground hover:text-destructive"
+                        className="absolute top-2 right-2 z-10 text-muted-foreground hover:text-destructive"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     )}
 
-                    <div className="grid grid-cols-[1fr_auto] gap-3">
-                      {/* Left: Image upload + Card No */}
-                      <div className="space-y-2">
-                        <div className="border-2 border-dashed rounded-lg h-20 flex items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors">
-                          <Plus className="w-5 h-5" />
-                        </div>
-                        <div className="space-y-1">
-                          <label className="text-[10px] text-muted-foreground">Card No.</label>
-                          <Input
-                            placeholder="Please enter the card No."
-                            value={card.cardNo}
-                            onChange={e => updateCard(card.id, { cardNo: e.target.value })}
-                            className="h-7 text-xs"
-                          />
-                        </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      {/* Left: Square image upload (50%) */}
+                      <div>
+                        <input
+                          type="file"
+                          accept="image/jpeg,image/png,image/webp"
+                          className="hidden"
+                          id={`card-image-${card.id}`}
+                          onChange={e => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const url = URL.createObjectURL(file);
+                              updateCard(card.id, { cardImage: url });
+                            }
+                          }}
+                        />
+                        <label
+                          htmlFor={`card-image-${card.id}`}
+                          className="block aspect-square w-full border-2 border-dashed rounded-lg flex items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors overflow-hidden"
+                        >
+                          {card.cardImage ? (
+                            <img src={card.cardImage} alt="Card" className="w-full h-full object-cover rounded-md" />
+                          ) : (
+                            <div className="flex flex-col items-center gap-1">
+                              <ImageIcon className="w-6 h-6" />
+                              <span className="text-[9px]">Click to upload</span>
+                            </div>
+                          )}
+                        </label>
                       </div>
 
-                      {/* Right: Card Rate + Card Amount */}
-                      <div className="w-[140px] space-y-2">
+                      {/* Right: Card Rate + Card Amount + Card No stacked */}
+                      <div className="space-y-2 flex flex-col justify-center">
                         <div className="space-y-1">
                           <label className="text-[10px] font-medium text-destructive">Card Rate *</label>
                           <Input
-                            placeholder="Please enter the rate"
+                            placeholder="Enter rate"
                             value={card.cardRate}
                             onChange={e => updateCard(card.id, { cardRate: e.target.value })}
                             className="h-7 text-xs"
@@ -404,9 +418,18 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                         <div className="space-y-1">
                           <label className="text-[10px] font-medium text-destructive">Card Amount *</label>
                           <Input
-                            placeholder="Please enter amount"
+                            placeholder="Enter amount"
                             value={card.cardAmount}
                             onChange={e => updateCard(card.id, { cardAmount: e.target.value })}
+                            className="h-7 text-xs"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <label className="text-[10px] text-muted-foreground">Card No.</label>
+                          <Input
+                            placeholder="Enter card No."
+                            value={card.cardNo}
+                            onChange={e => updateCard(card.id, { cardNo: e.target.value })}
                             className="h-7 text-xs"
                           />
                         </div>
