@@ -149,7 +149,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       description: `${cardType} / ${cardSource}`,
       denom: cards.length,
       purchaseRate: Number(cardRate) || 0,
-      supplier: supplier,
+      supplier: customerAlias || supplier,
       status: "Wait For Sale",
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
     };
