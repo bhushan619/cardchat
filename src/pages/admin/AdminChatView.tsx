@@ -184,7 +184,7 @@ export default function AdminChatView() {
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">X3</div>
               <div>
                 <div className="flex items-center gap-2">
-                  <p className="text-sm font-semibold">User-A7X3</p>
+                  <p className="text-sm font-semibold">A7X3KP</p>
                   {isGroupChat && (
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5">
                       <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
