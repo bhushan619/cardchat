@@ -59,6 +59,7 @@ interface CardlightPanelProps {
   onClose: () => void;
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
+  embedded?: boolean;
 }
 
 const makeCard = (): CardEntry => ({
@@ -88,7 +89,7 @@ const mockSellers: SellerEntry[] = [
 
 const cardSources = ["W", "E", "M"];
 
-export default function CardlightPanel({ open, onClose, onComplete, customerAlias }: CardlightPanelProps) {
+export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded }: CardlightPanelProps) {
   // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState("");
@@ -200,23 +201,30 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   if (!open) return null;
 
-  return (
-    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
-        <div className="flex items-center gap-2">
-          <ShoppingCart className="w-4 h-4 text-primary" />
-          <h3 className="font-heading font-semibold text-sm">Sales Order</h3>
+  const content = (
+    <>
+      {/* Header - only shown in standalone mode */}
+      {!embedded && (
+        <div className="flex items-center justify-between px-4 py-3 border-b bg-muted/30">
+          <div className="flex items-center gap-2">
+            <ShoppingCart className="w-4 h-4 text-primary" />
+            <h3 className="font-heading font-semibold text-sm">Sales Order</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            {isLoggedIn && (
+              <span className="text-[10px] text-success font-medium">● Connected</span>
+            )}
+            <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          {isLoggedIn && (
-            <span className="text-[10px] text-success font-medium">● Connected</span>
-          )}
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
-            <X className="w-4 h-4" />
-          </button>
+      )}
+      {embedded && isLoggedIn && (
+        <div className="flex items-center justify-end px-4 py-1.5 border-b bg-muted/30">
+          <span className="text-[10px] text-success font-medium">● Connected</span>
         </div>
-      </div>
+      )}
 
       <div className="flex-1 overflow-y-auto">
         {/* Login Screen */}
@@ -604,6 +612,16 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+    </>
+  );
+
+  if (embedded) {
+    return <div className="flex flex-col h-full overflow-hidden">{content}</div>;
+  }
+
+  return (
+    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
+      {content}
     </div>
   );
 }
