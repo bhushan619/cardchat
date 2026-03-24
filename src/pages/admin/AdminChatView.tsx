@@ -582,6 +582,7 @@ export default function AdminChatView() {
           open={showWizard}
           onClose={() => setShowWizard(false)}
           onComplete={handleOrderComplete}
+          customerAlias="A7X3KP"
         />
       </div>
     </AdminLayout>

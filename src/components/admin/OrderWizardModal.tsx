@@ -58,6 +58,7 @@ interface CardlightPanelProps {
   open: boolean;
   onClose: () => void;
   onComplete?: (order: CompletedOrder) => void;
+  customerAlias?: string;
 }
 
 const makeCard = (): CardEntry => ({
@@ -87,7 +88,7 @@ const mockSellers: SellerEntry[] = [
 
 const cardSources = ["W", "E", "M"];
 
-export default function CardlightPanel({ open, onClose, onComplete }: CardlightPanelProps) {
+export default function CardlightPanel({ open, onClose, onComplete, customerAlias }: CardlightPanelProps) {
   // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState("");
@@ -148,7 +149,7 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
       description: `${cardType} / ${cardSource}`,
       denom: cards.length,
       purchaseRate: Number(cardRate) || 0,
-      supplier: supplier,
+      supplier: customerAlias || supplier,
       status: "Wait For Sale",
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
     };
