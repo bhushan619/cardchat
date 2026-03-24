@@ -344,17 +344,35 @@ export default function AdminChatView() {
             })}
           </div>
 
-          <div className="flex items-center gap-2 p-4 border-t bg-card shrink-0">
-            <button><Paperclip className="w-5 h-5 text-muted-foreground" /></button>
-            <Input
-              value={message}
-              onChange={e => setMessage(e.target.value)}
-              placeholder="Type a message..."
-              className="flex-1 border-0 bg-muted"
-            />
-            <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center">
-              <Send className="w-4 h-4 text-accent-foreground" />
-            </button>
+          <div className="border-t bg-card shrink-0">
+            <div className="flex items-center gap-1 px-4 pt-2 pb-1">
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Type className="w-3.5 h-3.5" /> Text
+              </button>
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Camera className="w-3.5 h-3.5" /> Image
+              </button>
+              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+                <Smile className="w-3.5 h-3.5" /> Emoji
+              </button>
+              <button
+                className="flex items-center gap-1 text-xs text-accent font-medium hover:text-accent/80 px-2 py-1 rounded-md hover:bg-accent/10 transition-colors ml-auto"
+                onClick={() => setShowWizard(true)}
+              >
+                <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+              </button>
+            </div>
+            <div className="flex items-center gap-2 px-4 pb-3">
+              <Input
+                value={message}
+                onChange={e => setMessage(e.target.value)}
+                placeholder="Type a message..."
+                className="flex-1 border-0 bg-muted"
+              />
+              <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+                <Send className="w-4 h-4 text-accent-foreground" />
+              </button>
+            </div>
           </div>
         </div>
 
