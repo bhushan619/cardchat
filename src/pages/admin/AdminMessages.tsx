@@ -636,7 +636,12 @@ export default function AdminMessages() {
                       ["Amount", `$${selectedOrder.amount}`],
                       ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
                       ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                      ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
+                      ...(selectedOrder.settlement ? [
+                        ["Settlement (CNY)", `¥${selectedOrder.settlement.amountCNY}`],
+                        ["Converted (NGN)", `₦${selectedOrder.settlement.convertedNGN.toLocaleString()}`],
+                      ] : []),
+                      ...(selectedOrder.dispute ? [["Dispute", selectedOrder.dispute.reason.replace("_", " ")]] : []),
+                      ["Customer", selectedOrder.customerAlias],
                       ["Time", selectedOrder.timestamp],
                     ].map(([k, v]) => (
                       <div key={k} className="flex justify-between text-xs">
