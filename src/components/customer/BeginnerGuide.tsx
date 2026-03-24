@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 const steps = [
   {
     icon: Search,
-    title: "Find a Service Provider",
-    desc: "Browse verified providers on the Contacts page. Look for the ✓ badge — it means they're platform-verified.",
+    title: "Connect with an Agent",
+    desc: "Browse verified agents on the Contacts page. Look for the ✓ badge — it means they're platform-verified.",
   },
   {
     icon: MessageCircle,
