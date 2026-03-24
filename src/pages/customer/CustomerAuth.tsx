@@ -4,12 +4,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Mail, Apple, Chrome, Shield } from "lucide-react";
 
-type Step = "welcome" | "method" | "otp" | "alias";
+type Step = "welcome" | "method" | "otp" | "invite" | "alias";
 
 export default function CustomerAuth() {
   const [step, setStep] = useState<Step>("welcome");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [inviteCode, setInviteCode] = useState("");
   const navigate = useNavigate();
 
   if (step === "welcome") {
@@ -100,7 +101,7 @@ export default function CustomerAuth() {
         </div>
         <Button
           className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
-          onClick={() => setStep("alias")}
+          onClick={() => setStep("invite")}
         >
           Verify
         </Button>
@@ -108,6 +109,32 @@ export default function CustomerAuth() {
           Didn't receive? <button className="text-accent font-medium">Resend in 60s</button>
         </p>
         <p className="text-center text-[10px] text-muted-foreground mt-2">OTP expires in 5 minutes · Max 3 attempts</p>
+      </div>
+    );
+  }
+
+  if (step === "invite") {
+    return (
+      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x p-8">
+        <h2 className="font-heading text-2xl font-bold mb-2">Got an Invite Code?</h2>
+        <p className="text-muted-foreground text-sm mb-8">Enter a 6-character code or WS alias (optional)</p>
+        <Input
+          placeholder="e.g. ABC123 or WS alias"
+          value={inviteCode}
+          onChange={e => setInviteCode(e.target.value)}
+          className="mb-4"
+        />
+        <Button
+          className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12"
+          onClick={() => setStep("alias")}
+        >
+          {inviteCode ? "Submit & Continue" : "Skip for Now"}
+        </Button>
+        {!inviteCode && (
+          <p className="text-center text-[10px] text-muted-foreground mt-4">
+            You can enter a code within 7 days. After that, source defaults to "App Ad".
+          </p>
+        )}
       </div>
     );
   }
