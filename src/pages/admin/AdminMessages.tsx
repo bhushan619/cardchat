@@ -21,15 +21,10 @@ const columns = [
 ];
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  created: { label: "Created", color: "text-muted-foreground", bg: "bg-muted", icon: Clock },
-  submitted: { label: "Submitted", color: "text-primary", bg: "bg-primary/10", icon: Clock },
-  under_review: { label: "Under Review", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
   completed: { label: "Completed", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
   failed: { label: "Failed", color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
   settled: { label: "Settled", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
-  disputed: { label: "Disputed", color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
-  cancelled: { label: "Cancelled", color: "text-muted-foreground", bg: "bg-muted", icon: Clock },
   trading: { label: "Trading", color: "text-primary", bg: "bg-primary/10", icon: Clock },
   pending_payment: { label: "Pending", color: "text-warning", bg: "bg-warning/10", icon: Clock },
 };
@@ -138,17 +133,13 @@ export default function AdminMessages() {
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
       denomination: `${o.cards.length} cards`, amount: o.totalFaceValue,
-      nairaRate: o.dailyRate, unitPrice: 0, status: o.status as string,
-      payout: o.totalPayout, customerAlias: o.customerAlias,
+      nairaRate: 1580, unitPrice: 0, status: o.status as string,
+      payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
-      settlement: o.settlement, dispute: o.dispute,
     })),
     ...orders.map(o => ({
-      id: o.id, cardType: o.cardType, denomination: o.denomination,
-      amount: o.amount, nairaRate: o.nairaRate, unitPrice: o.unitPrice,
-      status: o.status as string, payout: o.amount * o.unitPrice,
-      customerAlias: o.customerAlias, timestamp: o.created, isNew: false,
-      settlement: o.settlement, dispute: o.dispute,
+      ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
+      timestamp: o.created, isNew: false,
     })),
   ];
 
@@ -641,12 +632,7 @@ export default function AdminMessages() {
                       ["Amount", `$${selectedOrder.amount}`],
                       ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
                       ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                      ...(selectedOrder.settlement ? [
-                        ["Settlement (CNY)", `¥${selectedOrder.settlement.amountCNY}`],
-                        ["Converted (NGN)", `₦${selectedOrder.settlement.convertedNGN.toLocaleString()}`],
-                      ] : []),
-                      ...(selectedOrder.dispute ? [["Dispute", selectedOrder.dispute.reason.replace("_", " ")]] : []),
-                      ["Customer", selectedOrder.customerAlias],
+                      ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
                       ["Time", selectedOrder.timestamp],
                     ].map(([k, v]) => (
                       <div key={k} className="flex justify-between text-xs">

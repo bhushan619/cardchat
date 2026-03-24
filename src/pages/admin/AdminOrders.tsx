@@ -1,17 +1,50 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { orders, type OrderStatus } from "@/data/mock";
-import { Search, ChevronDown, ChevronUp, Download, Calendar, CheckCircle2, Clock, AlertTriangle, Ban, Eye, Send as SendIcon } from "lucide-react";
+import { orders } from "@/data/mock";
+import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-const statusConfig: Record<OrderStatus, { label: string; color: string; icon: typeof Clock }> = {
-  created: { label: "Created", color: "bg-muted text-muted-foreground", icon: Clock },
-  submitted: { label: "Submitted", color: "bg-primary/10 text-primary", icon: SendIcon },
-  under_review: { label: "Under Review", color: "bg-warning/10 text-warning", icon: Eye },
-  settled: { label: "Settled", color: "bg-success/10 text-success", icon: CheckCircle2 },
-  disputed: { label: "Disputed", color: "bg-destructive/10 text-destructive", icon: AlertTriangle },
-  cancelled: { label: "Cancelled", color: "bg-muted text-muted-foreground", icon: Ban },
+const statusColors: Record<string, string> = {
+  trading: "bg-warning/10 text-warning",
+  settled: "bg-accent/10 text-accent",
+  pending_payment: "bg-destructive/10 text-destructive",
+};
+
+const mockOrderDetails: Record<string, {
+  cardFormat: string;
+  agent: string;
+  timeline: { event: string; time: string }[];
+  bankTransfer?: { bank: string; account: string; amount: string; ref: string };
+}> = {
+  "ORD-20260318-001": {
+    cardFormat: "Physical",
+    agent: "Mike Agent",
+    timeline: [
+      { event: "Order created", time: "10:37 AM" },
+      { event: "Cards verified", time: "10:38 AM" },
+      { event: "Settled", time: "10:40 AM" },
+      { event: "Payment sent", time: "10:42 AM" },
+    ],
+    bankTransfer: { bank: "First Bank", account: "****1234", amount: "₦215,200", ref: "TXN-001" },
+  },
+  "ORD-20260318-002": {
+    cardFormat: "E-Code",
+    agent: "Tunde Agent",
+    timeline: [
+      { event: "Order created", time: "09:15 AM" },
+      { event: "Cards submitted", time: "09:20 AM" },
+    ],
+  },
+  "ORD-20260318-003": {
+    cardFormat: "Physical",
+    agent: "Mike Agent",
+    timeline: [
+      { event: "Order created", time: "08:45 AM" },
+      { event: "Cards verified", time: "08:50 AM" },
+      { event: "Settled", time: "09:00 AM" },
+    ],
+  },
 };
 
 export default function AdminOrders() {
@@ -22,17 +55,19 @@ export default function AdminOrders() {
 
   const filtered = orders.filter(o =>
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.customerAlias.toLowerCase().includes(searchQuery.toLowerCase())
+    o.customer.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleExportCSV = () => {
     const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "Created"];
-    const rows = filtered.map(o => [o.id, o.customerAlias, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.nairaRate}`, o.status, o.created]);
+    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.nairaRate}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `orders_export_${new Date().toISOString().slice(0, 10)}.csv`; a.click();
+    a.href = url;
+    a.download = `orders_export_${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
   };
 
@@ -81,8 +116,7 @@ export default function AdminOrders() {
             <tbody>
               {filtered.map(o => {
                 const isExpanded = expandedId === o.id;
-                const stCfg = statusConfig[o.status];
-                const StIcon = stCfg.icon;
+                const details = mockOrderDetails[o.id];
                 return (
                   <>
                     <tr
@@ -94,18 +128,18 @@ export default function AdminOrders() {
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-accent">{o.id}</td>
-                      <td className="px-4 py-3 text-sm">{o.customerAlias}</td>
+                      <td className="px-4 py-3 text-sm">{o.customer}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType} {o.denomination}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-center">
-                        <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full ${stCfg.color}`}>
-                          <StIcon className="w-3 h-3" /> {stCfg.label}
+                        <span className={`status-badge ${statusColors[o.status] || ""}`}>
+                          {o.status.replace("_", " ")}
                         </span>
                       </td>
                       <td className="px-4 py-3 text-xs text-right text-muted-foreground">{o.created}</td>
                     </tr>
-                    {isExpanded && (
+                    {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
                         <td colSpan={8} className="px-6 py-4 bg-muted/20">
                           <div className="grid grid-cols-3 gap-6 animate-slide-up">
@@ -113,65 +147,59 @@ export default function AdminOrders() {
                             <div className="space-y-2">
                               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Card Details</p>
                               <div className="space-y-1.5">
-                                {o.cards.map((c, i) => (
-                                  <div key={c.id} className="flex justify-between text-xs border-b pb-1 last:border-0">
-                                    <span className="text-muted-foreground">Card #{i + 1}: {c.cardType} ({c.cardFormat})</span>
-                                    <span className="font-medium">${c.denomination}</span>
+                                {[
+                                  ["Type", o.cardType],
+                                  ["Format", details.cardFormat],
+                                  ["Denomination", o.denomination],
+                                  ["Unit Price", `₦${o.unitPrice}`],
+                                  ["Rate", `₦${o.nairaRate}`],
+                                ].map(([k, v]) => (
+                                  <div key={k} className="flex justify-between text-xs">
+                                    <span className="text-muted-foreground">{k}</span>
+                                    <span className="font-medium">{v}</span>
                                   </div>
                                 ))}
                               </div>
-                              {o.adListing && (
-                                <div className="flex justify-between text-xs mt-2">
-                                  <span className="text-muted-foreground">AD Listing</span>
-                                  <span className="font-medium">{o.adListing}</span>
-                                </div>
-                              )}
                             </div>
 
-                            {/* Settlement/Dispute */}
+                            {/* Assignment */}
                             <div className="space-y-2">
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                                {o.settlement ? "Settlement" : o.dispute ? "Dispute" : "Info"}
-                              </p>
+                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assignment</p>
                               <div className="space-y-1.5">
                                 <div className="flex justify-between text-xs">
                                   <span className="text-muted-foreground">Customer</span>
-                                  <span className="font-medium">{o.customerAlias}</span>
+                                  <span className="font-medium">{o.customer}</span>
                                 </div>
-                                {o.settlement && (
-                                  <>
-                                    <div className="flex justify-between text-xs">
-                                      <span className="text-muted-foreground">Settlement (CNY)</span>
-                                      <span className="font-medium">¥{o.settlement.amountCNY}</span>
-                                    </div>
-                                    <div className="flex justify-between text-xs">
-                                      <span className="text-muted-foreground">Converted (NGN)</span>
-                                      <span className="font-medium text-success">₦{o.settlement.convertedNGN.toLocaleString()}</span>
-                                    </div>
-                                  </>
-                                )}
-                                {o.dispute && (
-                                  <>
-                                    <div className="flex justify-between text-xs">
-                                      <span className="text-muted-foreground">Reason</span>
-                                      <span className="font-medium text-destructive">{o.dispute.reason.replace("_", " ")}</span>
-                                    </div>
-                                    {o.dispute.buyerAmount && (
-                                      <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Buyer Amount</span>
-                                        <span className="font-medium">${o.dispute.buyerAmount}</span>
-                                      </div>
-                                    )}
-                                  </>
-                                )}
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-muted-foreground">Agent</span>
+                                  <span className="font-medium">{details.agent}</span>
+                                </div>
                               </div>
+                              {details.bankTransfer && (
+                                <>
+                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-3">Bank Transfer</p>
+                                  <div className="space-y-1.5">
+                                    {[
+                                      ["Bank", details.bankTransfer.bank],
+                                      ["Account", details.bankTransfer.account],
+                                      ["Amount", details.bankTransfer.amount],
+                                      ["Ref", details.bankTransfer.ref],
+                                    ].map(([k, v]) => (
+                                      <div key={k} className="flex justify-between text-xs">
+                                        <span className="text-muted-foreground">{k}</span>
+                                        <span className="font-medium">{v}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </>
+                              )}
                             </div>
 
                             {/* Timeline */}
                             <div className="space-y-2">
                               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
                               <div className="space-y-2 pl-3 border-l-2 border-accent/20">
-                                {o.timeline.map((step, i) => (
+                                {details.timeline.map((step, i) => (
                                   <div key={i} className="relative pl-3">
                                     <div className="absolute -left-[7px] top-0.5 w-3 h-3 rounded-full bg-accent border-2 border-accent" />
                                     <p className="text-xs font-medium">{step.event}</p>
