@@ -473,14 +473,14 @@ export default function CardlightPanel({ open, onClose, onComplete }: CardlightP
                   <tbody>
                     {pagedOrders.map(o => (
                       <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30">
-                        <td className="py-2 px-2">
+                        <td className="py-2 px-2">{o.supplier || "—"}</td>
+                        <td className="py-2 px-1">
                           <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
                           <div className="text-muted-foreground">{o.description}</div>
                           <div className="text-muted-foreground">{o.date}</div>
                         </td>
                         <td className="py-2 px-1">{o.denom}</td>
                         <td className="py-2 px-1">{o.purchaseRate}</td>
-                        <td className="py-2 px-1">{o.supplier || "—"}</td>
                         <td className="py-2 px-1">
                           <span className={`text-[9px] font-medium ${
                             o.status === "Negotiation" ? "text-warning" :
