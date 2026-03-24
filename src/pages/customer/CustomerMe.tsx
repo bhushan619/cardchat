@@ -75,7 +75,6 @@ export default function CustomerMe() {
           <h2 className="font-heading font-semibold">Transaction Details</h2>
         </header>
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
-          {/* Status Banner */}
           <div className={`rounded-xl p-4 text-center space-y-1 ${selectedTxn.status === "success" ? "bg-accent/5 border border-accent/20" : "bg-destructive/5 border border-destructive/20"}`}>
             <div className={`w-12 h-12 mx-auto rounded-full flex items-center justify-center ${selectedTxn.status === "success" ? "bg-accent/10" : "bg-destructive/10"}`}>
               <CheckCircle className={`w-6 h-6 ${selectedTxn.status === "success" ? "text-accent" : "text-destructive"}`} />
@@ -86,7 +85,6 @@ export default function CustomerMe() {
             </span>
           </div>
 
-          {/* Transaction Info */}
           <div className="space-y-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Transaction Info</p>
             <div className="bg-muted/50 rounded-xl p-3 space-y-2">
@@ -109,7 +107,6 @@ export default function CustomerMe() {
             </div>
           </div>
 
-          {/* Bank Details */}
           <div className="space-y-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Details</p>
             <div className="bg-muted/50 rounded-xl p-3 space-y-2">
@@ -126,7 +123,6 @@ export default function CustomerMe() {
             </div>
           </div>
 
-          {/* Timeline */}
           <div className="space-y-2">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
             <div className="space-y-3 pl-3 border-l-2 border-accent/20">
@@ -249,8 +245,10 @@ export default function CustomerMe() {
           </div>
           <div>
             <h2 className="font-heading font-bold text-lg">John Doe</h2>
-            <p className="text-sm text-muted-foreground">+234 *** *** 4567</p>
-            <p className="text-xs text-muted-foreground">johndoe@email.com</p>
+            <div className="flex items-center gap-2 mt-0.5">
+              <span className="text-xs font-mono font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md">J4D9KP</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5">+234 *** *** 4567</p>
           </div>
         </div>
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Paperclip, Send, Image as ImageIcon, CheckCircle, Clock, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Type, Camera } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
@@ -39,19 +39,18 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       </header>
 
-      {/* Pinned Order — Read-only status display */}
+      {/* Pinned Order */}
       <div className="pinned-order mx-4 mt-3 animate-slide-up">
         <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
-            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580</p>
+            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580/CNY</p>
           </div>
           <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
             <StatusIcon className={`w-3 h-3 ${orderStatus === "transfer_processing" ? "animate-spin" : ""}`} />
             {statusConfig.label}
           </span>
         </div>
-        {/* Status progression dots */}
         <div className="flex items-center gap-1 mb-2">
           {STATUS_ORDER.map((s, i) => (
             <div key={s} className="flex items-center gap-1 flex-1">
@@ -66,7 +65,6 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setShowOrder(true)}>
             View Details
           </Button>
-          {/* Demo: cycle status */}
           <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => {
             const next = STATUS_ORDER[(currentIdx + 1) % STATUS_ORDER.length];
             setOrderStatus(next);
@@ -104,20 +102,17 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           );
         })}
 
-        {/* Billing notification system message */}
         <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
           <p className="text-xs text-accent font-medium">💰 Billing processed — ₦215,200 total payout</p>
           <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
         </div>
 
-        {/* Transfer complete system message */}
         {orderStatus === "transfer_complete" && (
           <>
             <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center animate-slide-up">
               <p className="text-xs text-success font-semibold">✅ Transfer Complete — ₦215,200 sent to First Bank ****1234</p>
               <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
             </div>
-            {/* Proof screenshot placeholder */}
             <div className="flex justify-start">
               <div className="chat-bubble-other">
                 <p className="text-[9px] font-semibold mb-1 text-accent">System</p>
@@ -158,7 +153,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                   { label: "Denomination", value: "$100 x 2" },
                   { label: "Total Face Value", value: "$200" },
                   { label: "Rate (per $)", value: "₦680" },
-                  { label: "Naira Rate", value: "₦1,580/$" },
+                  { label: "Naira Rate", value: "₦1,580/CNY" },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -243,18 +238,30 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       )}
 
-      {/* Input */}
-      <div className="flex items-center gap-2 p-3 border-t bg-card shrink-0">
-        <button><Paperclip className="w-5 h-5 text-muted-foreground" /></button>
-        <Input
-          placeholder="Type a message..."
-          value={message}
-          onChange={e => setMessage(e.target.value)}
-          className="flex-1 border-0 bg-muted"
-        />
-        <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center">
-          <Send className="w-4 h-4 text-accent-foreground" />
-        </button>
+      {/* Chat Toolbar + Input */}
+      <div className="border-t bg-card shrink-0">
+        <div className="flex items-center gap-1 px-3 pt-2 pb-1">
+          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+            <Type className="w-3.5 h-3.5" /> Text
+          </button>
+          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+            <Camera className="w-3.5 h-3.5" /> Image
+          </button>
+          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
+            <Smile className="w-3.5 h-3.5" /> Emoji
+          </button>
+        </div>
+        <div className="flex items-center gap-2 px-3 pb-3">
+          <Input
+            placeholder="Type a message..."
+            value={message}
+            onChange={e => setMessage(e.target.value)}
+            className="flex-1 border-0 bg-muted"
+          />
+          <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+            <Send className="w-4 h-4 text-accent-foreground" />
+          </button>
+        </div>
       </div>
     </div>
   );
