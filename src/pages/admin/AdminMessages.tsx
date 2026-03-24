@@ -588,7 +588,7 @@ export default function AdminMessages() {
         {/* Right panel: Tabbed Orders & Sales Order */}
         <div className="w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
           <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
-            <TabsList className="w-full rounded-none border-b bg-muted/30 h-10 p-0">
+            <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
               <TabsTrigger value="orders" className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent">
                 Orders
               </TabsTrigger>
