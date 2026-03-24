@@ -177,7 +177,7 @@ const guides: GuideSection[] = [
     roles: ["All Roles"],
     steps: [
       { text: "Super Admin: Full access to all features including Naira Rate, User Management, IP & Country Restrictions, Sensitive Words, API Config, and SMS Broadcast." },
-      { text: "Team Lead: Access to Messages, Card Rates, Orders, and the Team Dashboard for monitoring agents." },
+      { text: "Team Lead: Access to Messages, Card Rates, Orders, Naira Rate, and the Team Dashboard for monitoring agents." },
       { text: "Agent: Access to Messages, Card Rates, and Orders — focused on customer interaction and order processing." },
       { text: "Use the 'View as' switcher at the bottom of the sidebar to preview the experience for each role.", tip: "The 'View as' switcher is for demo purposes — in production, roles are assigned by a Super Admin." },
       { text: "Navigation items are automatically hidden based on your role — you'll only see what you have access to." },
