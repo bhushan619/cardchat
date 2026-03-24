@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import {
-  MessageCircle, Star, Send, Image, ArrowLeft, MoreVertical, Users,
+  MessageCircle, Star, Send, Image, ArrowLeft, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
   AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon, Info
 } from "lucide-react";

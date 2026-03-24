@@ -71,6 +71,7 @@ const App = () => (
                 <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
                 <Route path="/customer-guide" element={<AdminCustomerGuide />} />
                 <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
+                <Route path="/customers" element={<AdminCustomers />} />
               </Routes>
             </AdminRoleProvider>
           } />
