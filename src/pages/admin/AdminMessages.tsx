@@ -176,7 +176,7 @@ export default function AdminMessages() {
     <AdminLayout>
       <div className="flex h-full">
         {/* Left panel: tabs + customer list */}
-        <div className="w-96 shrink-0 border-r flex flex-col min-w-0">
+        <div className="w-[512px] shrink-0 border-r flex flex-col min-w-0">
           {/* Tab headers */}
           <div className="flex shrink-0">
             {columns.map(col => {
