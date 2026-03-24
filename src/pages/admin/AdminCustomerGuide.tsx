@@ -37,7 +37,7 @@ const guides: GuideSection[] = [
     description: "Minimalist dashboard with modular grid layout.",
     steps: [
       { text: "The Home tab features a clean, iOS-inspired modular grid with four core actions: Sell Cards, Live Rates, Chat, and Guide." },
-      { text: "Tapping the LightChat logo toggles the Provider Profile — showing KYB verification, 4.9/5 rating, <5 min payout, $50M+ traded, and 200K+ completed orders." },
+      { text: "A search bar allows filtering cards by name (e.g., 'iTunes', 'Amazon')." },
       { text: "A search bar allows filtering cards by name (e.g., 'iTunes', 'Amazon')." },
       { text: "Live Rates section below the grid displays current buy rates with card type, format, currency, and ₦ per $1." },
       { text: "A 'Ready to trade?' CTA at the bottom directs customers to start chatting with an agent.", tip: "If a customer can't find a card, remind them to use the search bar — it filters in real-time." },
