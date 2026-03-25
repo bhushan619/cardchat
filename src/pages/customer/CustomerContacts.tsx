@@ -1,6 +1,6 @@
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { customerContacts } from "@/data/mock";
-import { Search, Phone } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
