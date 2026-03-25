@@ -20,6 +20,8 @@ import {
   agentStatusLabels,
   agentStatusStyles,
   getTabForStatus,
+  toCustomerStatus,
+  customerStatusLabels,
 } from "@/lib/orderStateMachine";
 
 const columns = [
@@ -119,16 +121,27 @@ export default function AdminMessages() {
     setLocalMessages(prev => [...prev, newMsg]);
   };
 
-  // Order status actions
+  // Order status actions — only send chat message when customer-visible status changes
   const handleStatusTransition = (conversationId: string, newStatus: AgentOrderStatus) => {
+    const currentStatus = orderStatus.getStatus(conversationId);
+    const prevCustomerStatus = currentStatus ? toCustomerStatus(currentStatus) : null;
     const msg = orderStatus.transitionStatus(conversationId, newStatus);
     if (msg) {
-      addSystemMessage(msg);
+      const newCustomerStatus = toCustomerStatus(newStatus);
+      // Only notify in chat if the customer-facing status actually changed
+      if (newCustomerStatus !== prevCustomerStatus) {
+        addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
+      }
       // Auto-transition: Success → Pending Payment
       if (newStatus === "success") {
         setTimeout(() => {
           const msg2 = orderStatus.transitionStatus(conversationId, "pending_payment");
-          if (msg2) addSystemMessage(msg2);
+          if (msg2) {
+            const pendingCustomerStatus = toCustomerStatus("pending_payment");
+            if (pendingCustomerStatus !== newCustomerStatus) {
+              addSystemMessage(`📌 Order status: ${customerStatusLabels[pendingCustomerStatus]}`);
+            }
+          }
         }, 500);
       }
     }
@@ -137,9 +150,8 @@ export default function AdminMessages() {
   const handleCreateOrderFromChat = () => {
     if (!selectedId) return;
     const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
-    const msg = orderStatus.createOrder(selectedId, orderId);
-    if (msg) addSystemMessage(msg);
-    // Switch to trading tab
+    orderStatus.createOrder(selectedId, orderId);
+    addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
     setActiveTab("trading");
   };
 
@@ -154,10 +166,9 @@ export default function AdminMessages() {
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
-    // When order is created via the Sales Order panel, set status to pending_sale
     if (selectedId) {
-      const msg = orderStatus.createOrder(selectedId, order.orderId);
-      if (msg) addSystemMessage(msg);
+      orderStatus.createOrder(selectedId, order.orderId);
+      addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
       setActiveTab("trading");
     }
   };
@@ -204,12 +215,11 @@ export default function AdminMessages() {
     setPaymentOrderId(null);
     setSelectedBankId(null);
     addSystemMessage(`💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`);
-    // Mark as payment completed
     if (selectedId) {
       const currentStatus = orderStatus.getStatus(selectedId);
       if (currentStatus === "pending_payment") {
-        const msg = orderStatus.transitionStatus(selectedId, "payment_completed");
-        if (msg) addSystemMessage(msg);
+        orderStatus.transitionStatus(selectedId, "payment_completed");
+        addSystemMessage(`📌 Order status: ${customerStatusLabels["payment_completed"]}`);
       }
     }
   };
