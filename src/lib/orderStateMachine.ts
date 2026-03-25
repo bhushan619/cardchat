@@ -72,8 +72,9 @@ export function getTabForStatus(status: AgentOrderStatus | null): ConversationTa
     case "success":
       return "trading";
     case "pending_payment":
-    case "payment_completed":
       return "pending";
+    case "payment_completed":
+      return "consulting";
     default:
       return "consulting";
   }
