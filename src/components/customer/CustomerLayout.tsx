@@ -1,4 +1,4 @@
-import { ReactNode, useState, useCallback } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BeginnerGuide, { guideSteps } from "./BeginnerGuide";
@@ -10,30 +10,49 @@ const tabs = [
   { id: "me", label: "Me", icon: User, path: "/customer/me" },
 ];
 
+const GUIDE_DONE_KEY = "beginner_guide_done";
+const GUIDE_STEP_KEY = "beginner_guide_step";
+
+const getInitialGuideStep = () => {
+  const raw = Number(localStorage.getItem(GUIDE_STEP_KEY) ?? "0");
+  if (!Number.isFinite(raw)) return 0;
+  return Math.min(Math.max(raw, 0), guideSteps.length - 1);
+};
+
 export default function CustomerLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = tabs.find(t => location.pathname.startsWith(t.path))?.id || "home";
 
-  const [showGuide, setShowGuide] = useState(() => {
-    return !localStorage.getItem("beginner_guide_done");
-  });
-  const [guideStep, setGuideStep] = useState(0);
+  const [showGuide, setShowGuide] = useState(() => !localStorage.getItem(GUIDE_DONE_KEY));
+  const [guideStep, setGuideStep] = useState(getInitialGuideStep);
+
+  useEffect(() => {
+    if (!showGuide) return;
+    const expectedPath = guideSteps[guideStep]?.path;
+    if (expectedPath && location.pathname !== expectedPath) {
+      navigate(expectedPath, { replace: true });
+    }
+  }, [guideStep, location.pathname, navigate, showGuide]);
 
   const handleGuideComplete = useCallback(() => {
     setShowGuide(false);
-    localStorage.setItem("beginner_guide_done", "1");
+    setGuideStep(0);
+    localStorage.setItem(GUIDE_DONE_KEY, "1");
+    localStorage.removeItem(GUIDE_STEP_KEY);
     navigate("/customer", { replace: true });
   }, [navigate]);
 
   const handleGuideNext = useCallback(() => {
     if (guideStep >= guideSteps.length - 1) {
       handleGuideComplete();
-    } else {
-      const nextStep = guideStep + 1;
-      setGuideStep(nextStep);
-      navigate(guideSteps[nextStep].path, { replace: true });
+      return;
     }
+
+    const nextStep = guideStep + 1;
+    setGuideStep(nextStep);
+    localStorage.setItem(GUIDE_STEP_KEY, String(nextStep));
+    navigate(guideSteps[nextStep].path, { replace: true });
   }, [guideStep, handleGuideComplete, navigate]);
 
   return (
