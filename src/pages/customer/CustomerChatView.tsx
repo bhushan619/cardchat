@@ -3,10 +3,6 @@ import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
-import {
-  type CustomerOrderStatus,
-  customerStatusLabels,
-} from "@/lib/orderStateMachine";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -32,7 +28,7 @@ const TIMELINE_STEPS: { event: string; time: string }[] = [
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
-  const [orderStatus, setOrderStatus] = useState<CustomerOrderStatus>("payment_completed");
+  const [orderStatus, setOrderStatus] = useState<CustomerVisibleStatus>("success");
 
   const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
   const StatusIcon = statusConfig.icon;
