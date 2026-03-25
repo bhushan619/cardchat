@@ -66,7 +66,7 @@ export default function BeginnerGuide({ onComplete }: { onComplete: () => void }
   return (
     <>
       {/* Overlay above content but below nav */}
-      <div className="fixed inset-0 z-40 bg-foreground/30" />
+      <div className="fixed inset-0 z-40 bg-foreground/20" />
 
       {/* Highlight + tooltip above nav */}
       <div className="fixed inset-0 z-[60] pointer-events-none">
@@ -74,12 +74,11 @@ export default function BeginnerGuide({ onComplete }: { onComplete: () => void }
 
         {tooltipPos && (
           <div
-            className="absolute pointer-events-auto animate-[scale-in_0.2s_ease-out]"
+            className="pointer-events-auto animate-[scale-in_0.2s_ease-out] fixed left-4 right-4"
             style={{
-              left: `clamp(16px, ${tooltipPos.left}px, calc(100vw - 16px))`,
               bottom: `${tooltipPos.bottom}px`,
-              transform: "translateX(-50%)",
-              width: "min(288px, calc(100vw - 32px))",
+              maxWidth: "320px",
+              margin: "0 auto",
             }}
           >
             <div className="bg-card border border-border rounded-xl p-4 shadow-lg space-y-2.5">
