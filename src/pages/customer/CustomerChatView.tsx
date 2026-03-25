@@ -1,25 +1,42 @@
 import { useState } from "react";
-import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera } from "lucide-react";
+import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import {
+  type CustomerOrderStatus,
+  customerStatusLabels,
+} from "@/lib/orderStateMachine";
 
-type OrderStatus = "order_created" | "settled" | "billing_sent" | "transfer_processing" | "transfer_complete";
-
-const ORDER_STATUS_CONFIG: Record<OrderStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  order_created:       { label: "Order Created",       color: "text-primary",     bg: "bg-primary/10",     icon: Clock },
-  settled:             { label: "Settled",              color: "text-accent",      bg: "bg-accent/10",      icon: CheckCircle },
-  billing_sent:        { label: "Billing Sent",         color: "text-warning",     bg: "bg-warning/10",     icon: CheckCircle },
-  transfer_processing: { label: "Transfer Processing",  color: "text-warning",     bg: "bg-warning/10",     icon: Loader2 },
-  transfer_complete:   { label: "Transfer Complete",     color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
+const ORDER_STATUS_CONFIG: Record<CustomerOrderStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+  order_created:      { label: customerStatusLabels.order_created,      color: "text-primary",     bg: "bg-primary/10",     icon: Clock },
+  order_processing:   { label: customerStatusLabels.order_processing,   color: "text-warning",     bg: "bg-warning/10",     icon: Loader2 },
+  failed:             { label: customerStatusLabels.failed,             color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
+  success:            { label: customerStatusLabels.success,            color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
+  pending_payment:    { label: customerStatusLabels.pending_payment,    color: "text-warning",     bg: "bg-warning/10",     icon: Clock },
+  payment_completed:  { label: customerStatusLabels.payment_completed,  color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
 };
 
-const STATUS_ORDER: OrderStatus[] = ["order_created", "settled", "billing_sent", "transfer_processing", "transfer_complete"];
+const STATUS_ORDER: CustomerOrderStatus[] = [
+  "order_created",
+  "order_processing",
+  "success",
+  "pending_payment",
+  "payment_completed",
+];
+
+const TIMELINE_STEPS: { event: string; time: string }[] = [
+  { event: "Order created",       time: "10:37 AM" },
+  { event: "Order processing",    time: "10:38 AM" },
+  { event: "Trade successful",    time: "10:40 AM" },
+  { event: "Pending payment",     time: "10:41 AM" },
+  { event: "Payment completed",   time: "10:42 AM" },
+];
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
-  const [orderStatus, setOrderStatus] = useState<OrderStatus>("transfer_complete");
+  const [orderStatus, setOrderStatus] = useState<CustomerOrderStatus>("payment_completed");
 
   const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
   const StatusIcon = statusConfig.icon;
@@ -47,7 +64,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580/CNY</p>
           </div>
           <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
-            <StatusIcon className={`w-3 h-3 ${orderStatus === "transfer_processing" ? "animate-spin" : ""}`} />
+            <StatusIcon className={`w-3 h-3 ${orderStatus === "order_processing" ? "animate-spin" : ""}`} />
             {statusConfig.label}
           </span>
         </div>
@@ -102,15 +119,17 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           );
         })}
 
-        <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
-          <p className="text-xs text-accent font-medium">💰 Billing processed — ₦215,200 total payout</p>
-          <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
-        </div>
+        {(currentIdx >= 2) && (
+          <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
+            <p className="text-xs text-accent font-medium">✅ Trade successful — ₦215,200 total payout</p>
+            <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
+          </div>
+        )}
 
-        {orderStatus === "transfer_complete" && (
+        {orderStatus === "payment_completed" && (
           <>
             <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center animate-slide-up">
-              <p className="text-xs text-success font-semibold">✅ Transfer Complete — ₦215,200 sent to First Bank ****1234</p>
+              <p className="text-xs text-success font-semibold">✅ Payment Completed — ₦215,200 sent to First Bank ****1234</p>
               <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
             </div>
             <div className="flex justify-start">
@@ -125,6 +144,13 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
           </>
+        )}
+
+        {orderStatus === "failed" && (
+          <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-center animate-slide-up">
+            <p className="text-xs text-destructive font-semibold">❌ Order Failed — Please contact support</p>
+            <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
+          </div>
         )}
       </div>
 
@@ -186,9 +212,9 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <div className="bg-muted/50 rounded-xl p-3 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    orderStatus === "transfer_complete" ? "bg-success/10" : "bg-muted"
+                    orderStatus === "payment_completed" ? "bg-success/10" : "bg-muted"
                   }`}>
-                    {orderStatus === "transfer_complete" ? (
+                    {orderStatus === "payment_completed" ? (
                       <CheckCircle className="w-4 h-4 text-success" />
                     ) : (
                       <Clock className="w-4 h-4 text-muted-foreground" />
@@ -196,7 +222,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium">
-                      {orderStatus === "transfer_complete" ? "Transfer Completed" : "Transfer Pending"}
+                      {orderStatus === "payment_completed" ? "Payment Completed" : "Payment Pending"}
                     </p>
                     <p className="text-[10px] text-muted-foreground">Mar 18, 2026 · 10:42 AM</p>
                   </div>
@@ -217,16 +243,10 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
               <div className="space-y-3 pl-3 border-l-2 border-accent/20">
-                {[
-                  { time: "10:37 AM", event: "Order created", done: currentIdx >= 0 },
-                  { time: "10:38 AM", event: "Cards verified & settled", done: currentIdx >= 1 },
-                  { time: "10:40 AM", event: "Billing sent", done: currentIdx >= 2 },
-                  { time: "10:41 AM", event: "Transfer processing", done: currentIdx >= 3 },
-                  { time: "10:42 AM", event: "Transfer complete", done: currentIdx >= 4 },
-                ].map((step, i) => (
+                {TIMELINE_STEPS.map((step, i) => (
                   <div key={i} className="relative pl-4">
-                    <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${step.done ? "bg-accent border-accent" : "bg-card border-muted-foreground"}`}>
-                      {step.done && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
+                    <div className={`absolute -left-[9px] top-0.5 w-4 h-4 rounded-full border-2 flex items-center justify-center ${i <= currentIdx ? "bg-accent border-accent" : "bg-card border-muted-foreground"}`}>
+                      {i <= currentIdx && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
                     </div>
                     <p className="text-xs font-medium">{step.event}</p>
                     <p className="text-[10px] text-muted-foreground">{step.time}</p>
