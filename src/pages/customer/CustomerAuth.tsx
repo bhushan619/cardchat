@@ -131,7 +131,7 @@ export default function CustomerAuth() {
         <p className="font-heading text-2xl font-bold tracking-wider">A7X3KP</p>
       </div>
       <p className="text-[11px] text-muted-foreground mb-8 leading-relaxed">
-        This alias is used across all support interactions. Only system administrators can see your real identity.
+        This alias is used across all support interactions.
       </p>
       <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12" onClick={() => navigate("/customer")}>
         Continue to Home
