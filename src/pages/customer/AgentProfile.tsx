@@ -53,7 +53,7 @@ export default function AgentProfile() {
       {/* Action buttons */}
       <div className="flex items-center justify-center gap-6 py-4 px-4">
         <Button
-          onClick={() => navigate("/customer/chat")}
+          onClick={() => navigate("/customer/chat", { state: { chatId: id } })}
           className="flex-1 gap-2 rounded-xl h-12"
         >
           <MessageCircle className="w-5 h-5" />

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLocation } from "react-router-dom";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import CustomerChatView from "@/pages/customer/CustomerChatView";
 import { MessageCircle, Search } from "lucide-react";
@@ -10,7 +11,9 @@ const chatList = [
 ];
 
 export default function CustomerChat() {
-  const [selectedChat, setSelectedChat] = useState<string | null>(null);
+  const location = useLocation();
+  const agentChatId = (location.state as any)?.chatId ?? null;
+  const [selectedChat, setSelectedChat] = useState<string | null>(agentChatId);
 
   if (selectedChat) {
     return <CustomerChatView onBack={() => setSelectedChat(null)} />;
