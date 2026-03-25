@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const steps = [
   {
@@ -22,103 +21,83 @@ const steps = [
   },
 ];
 
-export default function BeginnerGuide({ onComplete }: { onComplete: () => void }) {
-  const [step, setStep] = useState(0);
-  const [tooltipPos, setTooltipPos] = useState<{ left: number; bottom: number } | null>(null);
-  const current = steps[step];
-  const isLast = step === steps.length - 1;
-  const navigate = useNavigate();
+export { steps as guideSteps };
 
-  useEffect(() => {
-    // Navigate to the current step's page
-    navigate(current.path);
-  }, [step, current.path, navigate]);
+interface BeginnerGuideProps {
+  step: number;
+  onNext: () => void;
+  onSkip: () => void;
+}
+
+export default function BeginnerGuide({ step, onNext, onSkip }: BeginnerGuideProps) {
+  const [tooltipBottom, setTooltipBottom] = useState(80);
+  const current = steps[step] || steps[0];
+  const isLast = step === steps.length - 1;
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      const allTabs = document.querySelectorAll<HTMLButtonElement>(".tab-bar-item");
-      const tabLabels = ["home", "chat", "contacts", "me"];
-      const targetIndex = tabLabels.indexOf(current.tabId);
-      const tabEl = allTabs[targetIndex];
-
-      if (tabEl) {
-        const rect = tabEl.getBoundingClientRect();
-        const parentRect = tabEl.closest("nav")?.getBoundingClientRect();
-        const navHeight = parentRect ? parentRect.height : 56;
-        setTooltipPos({
-          left: rect.left + rect.width / 2,
-          bottom: navHeight + 16,
-        });
+      const nav = document.querySelector("nav");
+      if (nav) {
+        const navRect = nav.getBoundingClientRect();
+        setTooltipBottom(window.innerHeight - navRect.top + 12);
       }
-    }, 50);
+    }, 100);
     return () => clearTimeout(timer);
-  }, [step, current.tabId]);
-
-  const handleNext = () => {
-    if (isLast) {
-      onComplete();
-      navigate("/customer");
-    } else {
-      setStep((s) => s + 1);
-    }
-  };
+  }, [step]);
 
   return (
     <>
-      {/* Overlay above content but below nav */}
-      <div className="fixed inset-0 z-40 bg-foreground/20" />
+      {/* Overlay — covers content but NOT the nav (nav has higher z) */}
+      <div className="fixed inset-0 z-40 bg-foreground/20 pointer-events-none" />
 
-      {/* Highlight + tooltip above nav */}
-      <div className="fixed inset-0 z-[60] pointer-events-none">
-        <HighlightTab tabId={current.tabId} />
+      {/* Highlight ring on the active tab */}
+      <HighlightTab tabId={current.tabId} />
 
-        {tooltipPos && (
-          <div
-            className="pointer-events-auto animate-[scale-in_0.2s_ease-out] fixed left-4 right-4"
-            style={{
-              bottom: `${tooltipPos.bottom}px`,
-              maxWidth: "320px",
-              margin: "0 auto",
-            }}
-          >
-            <div className="bg-card border border-border rounded-xl p-4 shadow-lg space-y-2.5">
-              <div className="flex gap-1.5">
-                {steps.map((_, i) => (
-                  <div
-                    key={i}
-                    className={`h-1 rounded-full transition-all duration-300 ${
-                      i <= step ? "w-6 bg-accent" : "w-3 bg-muted-foreground/20"
-                    }`}
-                  />
-                ))}
-              </div>
-
-              <div>
-                <h3 className="font-heading text-sm font-bold">{current.title}</h3>
-                <p className="text-xs text-muted-foreground leading-relaxed mt-1">{current.desc}</p>
-              </div>
-
-              <div className="flex items-center justify-between pt-1">
-                <button
-                  onClick={onComplete}
-                  className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  Skip
-                </button>
-                <button
-                  onClick={handleNext}
-                  className="text-[11px] font-semibold text-accent hover:text-accent/80 transition-colors"
-                >
-                  {isLast ? "Got it!" : "Next →"}
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-center -mt-[1px]">
-              <div className="w-3 h-3 bg-card border-b border-r border-border rotate-45 -translate-y-1.5" />
-            </div>
+      {/* Tooltip */}
+      <div
+        className="fixed left-3 right-3 z-[70] pointer-events-auto"
+        style={{
+          bottom: `${tooltipBottom}px`,
+          maxWidth: "320px",
+          margin: "0 auto",
+        }}
+      >
+        <div className="bg-card border border-border rounded-xl p-4 shadow-lg space-y-2.5">
+          <div className="flex gap-1.5">
+            {steps.map((_, i) => (
+              <div
+                key={i}
+                className={`h-1 rounded-full transition-all duration-300 ${
+                  i <= step ? "w-6 bg-accent" : "w-3 bg-muted-foreground/20"
+                }`}
+              />
+            ))}
           </div>
-        )}
+
+          <div>
+            <h3 className="font-heading text-sm font-bold">{current.title}</h3>
+            <p className="text-xs text-muted-foreground leading-relaxed mt-1">{current.desc}</p>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            <button
+              onClick={onSkip}
+              className="text-[11px] text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Skip
+            </button>
+            <button
+              onClick={onNext}
+              className="text-[11px] font-semibold text-accent hover:text-accent/80 transition-colors"
+            >
+              {isLast ? "Got it!" : "Next →"}
+            </button>
+          </div>
+        </div>
+
+        <div className="flex justify-center -mt-[1px]">
+          <div className="w-3 h-3 bg-card border-b border-r border-border rotate-45 -translate-y-1.5" />
+        </div>
       </div>
     </>
   );
@@ -136,7 +115,7 @@ function HighlightTab({ tabId }: { tabId: string }) {
       if (tabEl) {
         setRect(tabEl.getBoundingClientRect());
       }
-    }, 50);
+    }, 100);
     return () => clearTimeout(timer);
   }, [tabId]);
 
@@ -144,7 +123,7 @@ function HighlightTab({ tabId }: { tabId: string }) {
 
   return (
     <div
-      className="absolute z-[55] rounded-xl ring-2 ring-accent/60 bg-card/90 shadow-[0_0_20px_hsl(var(--accent)/0.3)]"
+      className="fixed z-[55] rounded-xl ring-2 ring-accent/60 bg-card/80 pointer-events-none"
       style={{
         left: rect.left - 4,
         top: rect.top - 4,
