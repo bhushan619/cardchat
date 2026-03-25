@@ -1,6 +1,7 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
+import BeginnerGuide from "./BeginnerGuide";
 
 const tabs = [
   { id: "home", label: "Home", icon: Home, path: "/customer" },
@@ -13,6 +14,15 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const activeTab = tabs.find(t => location.pathname.startsWith(t.path))?.id || "home";
+
+  const [showGuide, setShowGuide] = useState(() => {
+    return !localStorage.getItem("beginner_guide_done");
+  });
+
+  const handleGuideComplete = () => {
+    setShowGuide(false);
+    localStorage.setItem("beginner_guide_done", "1");
+  };
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
@@ -29,6 +39,7 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
           </button>
         ))}
       </nav>
+      {showGuide && <BeginnerGuide onComplete={handleGuideComplete} />}
     </div>
   );
 }

@@ -57,6 +57,7 @@ export default function BeginnerGuide({ onComplete }: { onComplete: () => void }
   const handleNext = () => {
     if (isLast) {
       onComplete();
+      navigate("/customer");
     } else {
       setStep((s) => s + 1);
     }
@@ -73,11 +74,12 @@ export default function BeginnerGuide({ onComplete }: { onComplete: () => void }
 
         {tooltipPos && (
           <div
-            className="absolute pointer-events-auto w-72 animate-[scale-in_0.2s_ease-out]"
+            className="absolute pointer-events-auto animate-[scale-in_0.2s_ease-out]"
             style={{
-              left: `${tooltipPos.left}px`,
+              left: `clamp(16px, ${tooltipPos.left}px, calc(100vw - 16px))`,
               bottom: `${tooltipPos.bottom}px`,
               transform: "translateX(-50%)",
+              width: "min(288px, calc(100vw - 32px))",
             }}
           >
             <div className="bg-card border border-border rounded-xl p-4 shadow-lg space-y-2.5">
