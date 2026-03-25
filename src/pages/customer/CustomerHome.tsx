@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import BeginnerGuide from "@/components/customer/BeginnerGuide";
+import { cardRates } from "@/data/mock";
 import { cardRates } from "@/data/mock";
 import { Search, Gift, TrendingUp, MessageCircle, BookOpen, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -8,7 +8,6 @@ import { useNavigate } from "react-router-dom";
 
 export default function CustomerHome() {
   const [search, setSearch] = useState("");
-  const [showGuide, setShowGuide] = useState(true); // first login
   const navigate = useNavigate();
   const filteredRates = cardRates.filter(r => r.cardType.toLowerCase().includes(search.toLowerCase()));
 
@@ -111,8 +110,6 @@ export default function CustomerHome() {
 
       </div>
 
-      {/* Beginner Guide Overlay */}
-      {showGuide && <BeginnerGuide onComplete={() => setShowGuide(false)} />}
     </CustomerLayout>
   );
 }
