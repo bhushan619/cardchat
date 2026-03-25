@@ -228,11 +228,12 @@ export default function AdminMessages() {
 
   // Handle buyer selection callback from OrderWizardModal
   const handleBuyerSelected = (conversationId: string) => {
-    handleStatusTransition(conversationId, "pending");
-    // Auto-advance to in_trade after a brief delay (simulating buyer receiving order)
+    // Skip pending and go directly to in_trade so the agent can act immediately
+    orderStatus.transitionStatus(conversationId, "pending");
+    // Use a microtask to ensure state updates, then advance
     setTimeout(() => {
-      handleStatusTransition(conversationId, "in_trade");
-    }, 1000);
+      orderStatus.transitionStatus(conversationId, "in_trade");
+    }, 500);
   };
 
   // Status action buttons renderer
