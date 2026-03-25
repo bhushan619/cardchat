@@ -14,9 +14,7 @@ export type CustomerOrderStatus =
   | "order_created"
   | "order_processing"
   | "failed"
-  | "success"
-  | "pending_payment"
-  | "payment_completed";
+  | "success";
 
 export type ConversationTab = "consulting" | "trading" | "pending";
 
@@ -52,11 +50,9 @@ export function toCustomerStatus(status: AgentOrderStatus): CustomerOrderStatus 
     case "order_cancelled":
       return "failed";
     case "success":
-      return "success";
     case "pending_payment":
-      return "pending_payment";
     case "payment_completed":
-      return "payment_completed";
+      return "success";
   }
 }
 
@@ -98,8 +94,6 @@ export const customerStatusLabels: Record<CustomerOrderStatus, string> = {
   order_processing: "Order Processing",
   failed: "Failed",
   success: "Success",
-  pending_payment: "Pending Payment",
-  payment_completed: "Payment Completed",
 };
 
 // Status styling for UI
