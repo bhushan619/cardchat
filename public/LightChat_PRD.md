@@ -1,6 +1,6 @@
 # LightChat — Product Requirements Document (PRD)
 
-**Version:** 4.0  
+**Version:** 4.1  
 **Date:** March 25, 2026  
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -199,7 +199,7 @@ Five sequential steps managed by `step` state:
 - Title: "You're all set!"
 - System-generated **6-character alphanumeric alias** displayed prominently (e.g., "J4D9KP")
 - Monospace font, accent-colored badge
-- Privacy explanation: "This is your unique trading identity. Support agents will only see your alias — never your real name."
+- Usage explanation: "This is your unique trading identity. This alias is used across all support interactions."
 - Shield icon for trust reinforcement
 - "Continue to Home" button → navigates to `/customer`
 
@@ -313,7 +313,15 @@ A minimalist, iOS-inspired layout:
     - Green dot (`bg-success`) = Online
     - Yellow dot (`bg-warning`) = Away
   - Agent name and last seen text
-  - Phone button (muted circle with Phone icon)
+  - Message button (muted circle with MessageCircle icon)
+  - Clicking an agent navigates to their **Agent Profile** page (`/customer/agent/:id`)
+
+#### Agent Profile Page
+**Component:** `src/pages/customer/AgentProfile.tsx`
+
+- Agent avatar, name, online status
+- **"Message" button** — navigates directly to the agent's chat window (passes `chatId` via router state to `/customer/chat`, which auto-opens the chat view instead of showing the chat list)
+- Agent details and stats
 - Empty state: "No agents match your search"
 
 ### 4.5 Profile / Me Tab (`/customer/me`)
@@ -894,8 +902,8 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 
 | Agent Status | Tab |
 |-------------|-----|
-| No order / `payment_completed` | Consulting |
-| `pending_sale` through `success` | Trading |
+| No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` | Consulting |
+| `in_trade` / `negotiation` / `success` | Trading |
 | `pending_payment` | Pending Payment |
 
 ### 6.4 Status Persistence
@@ -1244,7 +1252,16 @@ src/
 
 ## 12. Full Changelog
 
-### v3 → v4 (Current)
+### v4 → v4.1 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Alias Privacy Text Updated** | Removed "Only system administrators can see your real identity" — alias screen now says "This alias is used across all support interactions" |
+| **Agent Profile → Direct Chat** | Clicking "Message" on an agent's profile navigates directly to that agent's chat window (via router state `chatId`), bypassing the chat list |
+| **Tab Mapping Fix** | Corrected `getTabForStatus`: `pending_sale`, `pending`, and `order_cancelled` now route to Consulting tab; `in_trade`, `negotiation`, and `success` route to Trading tab |
+| **Agent Profile Documented** | Added Agent Profile page section under Contacts |
+
+### v3 → v4
 
 | Change | Description |
 |--------|-------------|
