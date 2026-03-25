@@ -380,7 +380,7 @@ export default function AdminMessages() {
         {/* Below: customer list | chat | orders */}
         <div className="flex flex-1 min-h-0">
           {/* Left panel: customer list */}
-          <div className="w-[336px] shrink-0 border-r flex flex-col min-w-0">
+          <div className="w-[25%] min-w-[240px] max-w-[336px] shrink-0 border-r flex flex-col">
             {/* Search bar */}
             <div className="px-2 border-b shrink-0 h-12 flex items-center">
               <div className="relative">
@@ -769,7 +769,7 @@ export default function AdminMessages() {
         </div>
 
         {/* Right panel: Tabbed Orders & Sales Order */}
-        <div className="w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
+        <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
           <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
             <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
               <TabsTrigger value="orders" className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent">
