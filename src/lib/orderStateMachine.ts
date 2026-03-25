@@ -65,6 +65,7 @@ export function getTabForStatus(status: AgentOrderStatus | null): ConversationTa
     case "in_trade":
     case "negotiation":
     case "order_cancelled":
+      return "consulting";
     case "success":
       return "trading";
     case "pending_payment":
