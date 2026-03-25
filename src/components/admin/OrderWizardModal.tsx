@@ -553,17 +553,17 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
         )}
       </div>
 
-      {/* Choose Seller Modal */}
+      {/* Choose Buyer Modal */}
       <Dialog open={sellerModalOpen} onOpenChange={(open) => { if (!open) { setSellerModalOpen(false); setSaleOrderId(null); } }}>
         <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Choose seller and sell</DialogTitle>
+            <DialogTitle>Choose buyer and sell</DialogTitle>
           </DialogHeader>
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-muted/50 border-b">
-                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Seller</th>
+                  <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Buyer</th>
                   <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Rate</th>
                   <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Information</th>
                   <th className="text-left py-2.5 px-4 font-medium text-muted-foreground">Transactions</th>
