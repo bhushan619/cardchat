@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { conversations, chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
+import { conversations as rawConversations, chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import {
-  MessageCircle, Star, Send, Image, ArrowLeft, MoreVertical, Users, Search,
+  MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Type, Camera, Smile, FileText as FileTextIcon, Info
+  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -14,21 +14,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Switch } from "@/components/ui/switch";
 import CardlightPanel, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { useOrderStatus } from "@/hooks/useOrderStatus";
+import {
+  AgentOrderStatus,
+  agentStatusLabels,
+  agentStatusStyles,
+  getTabForStatus,
+} from "@/lib/orderStateMachine";
 
 const columns = [
   { id: "consulting", label: "Consulting", color: "text-white", bg: "bg-gradient-to-r from-amber-500 to-orange-400", activeBg: "bg-gradient-to-r from-amber-600 to-orange-500" },
   { id: "trading", label: "Trading", color: "text-white", bg: "bg-gradient-to-r from-emerald-500 to-teal-400", activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500" },
   { id: "pending", label: "Pending Payment", color: "text-white", bg: "bg-gradient-to-r from-blue-500 to-indigo-400", activeBg: "bg-gradient-to-r from-blue-600 to-indigo-500" },
 ];
-
-const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
-  completed: { label: "Completed", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
-  failed: { label: "Failed", color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
-  settled: { label: "Settled", color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
-  trading: { label: "Trading", color: "text-primary", bg: "bg-primary/10", icon: Clock },
-  pending_payment: { label: "Pending", color: "text-warning", bg: "bg-warning/10", icon: Clock },
-};
 
 const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
 
@@ -49,6 +47,7 @@ type ChatMessage = {
 
 export default function AdminMessages() {
   const { role } = useAdminRole();
+  const orderStatus = useOrderStatus();
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -74,9 +73,75 @@ export default function AdminMessages() {
     }))
   );
 
-  const selectedConvo = conversations.find(c => c.id === selectedId);
+  const selectedConvo = rawConversations.find(c => c.id === selectedId);
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
+
+  // Dynamic tab assignment based on order status
+  const conversationsWithTabs = useMemo(() => {
+    return rawConversations.map(c => ({
+      ...c,
+      dynamicTab: orderStatus.getConversationTab(c.id),
+    }));
+  }, [orderStatus]);
+
+  const [activeTab, setActiveTab] = useState("consulting");
+  const [customerSearch, setCustomerSearch] = useState("");
+
+  const filteredConversations = useMemo(() => {
+    return conversationsWithTabs.filter(c => {
+      const matchesTab = c.dynamicTab === activeTab;
+      const matchesSearch = !customerSearch || c.alias.toLowerCase().includes(customerSearch.toLowerCase()) || c.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
+      return matchesTab && matchesSearch;
+    });
+  }, [conversationsWithTabs, activeTab, customerSearch]);
+
+  const tabCounts = useMemo(() => {
+    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    conversationsWithTabs.forEach(c => { counts[c.dynamicTab] = (counts[c.dynamicTab] || 0) + 1; });
+    return counts;
+  }, [conversationsWithTabs]);
+
+  const tabUnreadCounts = useMemo(() => {
+    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    conversationsWithTabs.forEach(c => { if (c.unread > 0) counts[c.dynamicTab] += c.unread; });
+    return counts;
+  }, [conversationsWithTabs]);
+
+  // Helper: add system message
+  const addSystemMessage = (text: string) => {
+    const newMsg: ChatMessage = {
+      id: Date.now(), sender: "system", senderName: "System",
+      text,
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      isOrder: true,
+    };
+    setLocalMessages(prev => [...prev, newMsg]);
+  };
+
+  // Order status actions
+  const handleStatusTransition = (conversationId: string, newStatus: AgentOrderStatus) => {
+    const msg = orderStatus.transitionStatus(conversationId, newStatus);
+    if (msg) {
+      addSystemMessage(msg);
+      // Auto-transition: Success → Pending Payment
+      if (newStatus === "success") {
+        setTimeout(() => {
+          const msg2 = orderStatus.transitionStatus(conversationId, "pending_payment");
+          if (msg2) addSystemMessage(msg2);
+        }, 500);
+      }
+    }
+  };
+
+  const handleCreateOrderFromChat = () => {
+    if (!selectedId) return;
+    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
+    const msg = orderStatus.createOrder(selectedId, orderId);
+    if (msg) addSystemMessage(msg);
+    // Switch to trading tab
+    setActiveTab("trading");
+  };
 
   const toggleStar = (e: React.MouseEvent, id: string) => {
     e.stopPropagation();
@@ -89,18 +154,18 @@ export default function AdminMessages() {
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
+    // When order is created via the Sales Order panel, set status to pending_sale
+    if (selectedId) {
+      const msg = orderStatus.createOrder(selectedId, order.orderId);
+      if (msg) addSystemMessage(msg);
+      setActiveTab("trading");
+    }
   };
 
   const addToGroup = (user: (typeof adminUsers)[0]) => {
     if (groupMembers.find(m => m.id === user.id)) return;
     setGroupMembers(prev => [...prev, user]);
-    const newMsg: ChatMessage = {
-      id: Date.now(), sender: "system", senderName: "System",
-      text: `${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isOrder: true,
-    };
-    setLocalMessages(prev => [...prev, newMsg]);
+    addSystemMessage(`${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`);
     setEscalateOpen(false);
   };
 
@@ -108,24 +173,12 @@ export default function AdminMessages() {
     const user = groupMembers.find(m => m.id === userId);
     if (!user) return;
     setGroupMembers(prev => prev.filter(m => m.id !== userId));
-    const newMsg: ChatMessage = {
-      id: Date.now(), sender: "system", senderName: "System",
-      text: `${user.name} has left the chat`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isOrder: true,
-    };
-    setLocalMessages(prev => [...prev, newMsg]);
+    addSystemMessage(`${user.name} has left the chat`);
   };
 
   const handleReassign = () => {
     if (!reassignTarget) return;
-    const newMsg: ChatMessage = {
-      id: Date.now(), sender: "system", senderName: "System",
-      text: `Customer reassigned from You to ${reassignTarget.name}`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isOrder: true,
-    };
-    setLocalMessages(prev => [...prev, newMsg]);
+    addSystemMessage(`Customer reassigned from You to ${reassignTarget.name}`);
     setReassignTarget(null);
     setReassignOpen(false);
   };
@@ -150,13 +203,15 @@ export default function AdminMessages() {
     setTransferCompletedOrders(prev => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
-    const newMsg: ChatMessage = {
-      id: Date.now(), sender: "system", senderName: "System",
-      text: `💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isOrder: true,
-    };
-    setLocalMessages(prev => [...prev, newMsg]);
+    addSystemMessage(`💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`);
+    // Mark as payment completed
+    if (selectedId) {
+      const currentStatus = orderStatus.getStatus(selectedId);
+      if (currentStatus === "pending_payment") {
+        const msg = orderStatus.transitionStatus(selectedId, "payment_completed");
+        if (msg) addSystemMessage(msg);
+      }
+    }
   };
 
   const getSenderColor = (sender: string, senderName: string) => {
@@ -167,13 +222,121 @@ export default function AdminMessages() {
     return colors[idx % colors.length] || "text-accent";
   };
 
-  const [activeTab, setActiveTab] = useState("consulting");
-  const [customerSearch, setCustomerSearch] = useState("");
-  const filteredConversations = conversations.filter(c => {
-    const matchesTab = c.status === activeTab;
-    const matchesSearch = !customerSearch || c.alias.toLowerCase().includes(customerSearch.toLowerCase()) || c.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
-    return matchesTab && matchesSearch;
-  });
+  // Current order status for selected conversation
+  const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
+  const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
+
+  // Handle buyer selection callback from OrderWizardModal
+  const handleBuyerSelected = (conversationId: string) => {
+    handleStatusTransition(conversationId, "pending");
+    // Auto-advance to in_trade after a brief delay (simulating buyer receiving order)
+    setTimeout(() => {
+      handleStatusTransition(conversationId, "in_trade");
+    }, 1000);
+  };
+
+  // Status action buttons renderer
+  const renderStatusActions = () => {
+    if (!selectedId || !currentOrderStatus) return null;
+
+    switch (currentOrderStatus) {
+      case "pending_sale":
+        return (
+          <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+            <p className="text-xs font-medium text-warning mb-2">⏳ Pending Sale</p>
+            <p className="text-[10px] text-muted-foreground mb-2">Select a buyer from the Sales Order panel to proceed.</p>
+            <Button size="sm" className="w-full h-7 text-xs" onClick={() => setRightTab("sales")}>
+              Open Sales Order Panel
+            </Button>
+          </div>
+        );
+      case "pending":
+        return (
+          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+            <p className="text-xs font-medium text-primary">⏳ Waiting for buyer...</p>
+            <p className="text-[10px] text-muted-foreground mt-1">The buyer is reviewing the order.</p>
+          </div>
+        );
+      case "in_trade":
+        return (
+          <div className="p-3 bg-accent/5 border border-accent/20 rounded-lg space-y-2">
+            <p className="text-xs font-medium">🔄 In Trade — Card Decision</p>
+            <p className="text-[10px] text-muted-foreground">The buyer has received the order. What's the result?</p>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
+                onClick={() => handleStatusTransition(selectedId, "success")}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
+                onClick={() => handleStatusTransition(selectedId, "negotiation")}
+              >
+                <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
+              </Button>
+            </div>
+          </div>
+        );
+      case "negotiation":
+        return (
+          <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg space-y-2">
+            <p className="text-xs font-medium text-warning">⚠️ Negotiation in Progress</p>
+            <p className="text-[10px] text-muted-foreground">The card was flagged. What's the negotiation result?</p>
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
+                onClick={() => handleStatusTransition(selectedId, "success")}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="flex-1 h-8 text-xs"
+                onClick={() => handleStatusTransition(selectedId, "order_cancelled")}
+              >
+                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
+              </Button>
+            </div>
+          </div>
+        );
+      case "order_cancelled":
+        return (
+          <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+            <p className="text-xs font-medium text-destructive">❌ Order Cancelled</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Negotiation failed. This order has been cancelled.</p>
+          </div>
+        );
+      case "success":
+        return (
+          <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
+            <p className="text-xs font-medium text-success">✅ Trade Successful</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Moving to Pending Payment...</p>
+          </div>
+        );
+      case "pending_payment":
+        return (
+          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+            <p className="text-xs font-medium text-primary">💰 Pending Payment</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Process payment to the customer using the order details above.</p>
+          </div>
+        );
+      case "payment_completed":
+        return (
+          <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
+            <p className="text-xs font-medium text-success">✅ Payment Completed</p>
+            <p className="text-[10px] text-muted-foreground mt-1">This order is fully resolved.</p>
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <AdminLayout>
@@ -182,8 +345,8 @@ export default function AdminMessages() {
         <div className="flex shrink-0">
           {columns.map(col => {
             const isActive = activeTab === col.id;
-            const count = conversations.filter(c => c.status === col.id).length;
-            const unreadCount = conversations.filter(c => c.status === col.id && c.unread > 0).reduce((sum, c) => sum + c.unread, 0);
+            const count = tabCounts[col.id] || 0;
+            const unreadCount = tabUnreadCounts[col.id] || 0;
             return (
               <button
                 key={col.id}
@@ -223,6 +386,7 @@ export default function AdminMessages() {
               {filteredConversations.map(c => {
                 const isActive = selectedId === c.id;
                 const isStarred = starred.has(c.id);
+                const cStatus = orderStatus.getStatus(c.id);
                 return (
                   <button
                     key={c.id}
@@ -241,6 +405,11 @@ export default function AdminMessages() {
                         <div className="flex items-center justify-between">
                           <span className="text-xs font-semibold">{c.alias}</span>
                           <div className="flex items-center gap-1">
+                            {cStatus && (
+                              <span className={`text-[8px] font-medium px-1 py-0.5 rounded ${agentStatusStyles[cStatus].bg} ${agentStatusStyles[cStatus].color}`}>
+                                {agentStatusLabels[cStatus]}
+                              </span>
+                            )}
                             {isStarred && <Star className="w-3 h-3 text-warning fill-warning" />}
                             <span className="text-[10px] text-muted-foreground">{c.time}</span>
                           </div>
@@ -283,6 +452,11 @@ export default function AdminMessages() {
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold">{selectedConvo.alias}</p>
+                      {currentOrderStatus && (
+                        <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${agentStatusStyles[currentOrderStatus].bg} ${agentStatusStyles[currentOrderStatus].color}`}>
+                          {agentStatusLabels[currentOrderStatus]}
+                        </span>
+                      )}
                       {isGroupChat && (
                         <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5">
                           <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
@@ -541,14 +715,16 @@ export default function AdminMessages() {
                       </Popover>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => setRightTab("sales")}
-                        className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
-                      >
-                        <FileTextIcon className="w-3.5 h-3.5" /> Create Order
-                      </Button>
+                      {!currentOrderStatus && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={handleCreateOrderFromChat}
+                          className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
+                        >
+                          <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+                        </Button>
+                      )}
                       <button
                         className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
                         onClick={() => {
@@ -596,13 +772,22 @@ export default function AdminMessages() {
             <TabsContent value="orders" className="flex-1 overflow-y-auto mt-0">
               {selectedId && selectedConvo ? (
                 <>
+                  {/* Status action buttons */}
+                  {currentOrderStatus && (
+                    <div className="p-4 border-b">
+                      <h3 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
+                        Order Status
+                        {currentOrderId && <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>}
+                      </h3>
+                      {renderStatusActions()}
+                    </div>
+                  )}
+
                   {/* Orders */}
                   <div className="p-4 border-b">
                     <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
                     <div className="space-y-1.5">
                       {allOrders.map(o => {
-                        const st = STATUS_STYLES[o.status] || STATUS_STYLES.trading;
-                        const Icon = st.icon;
                         const isSelected = selectedOrderId === o.id;
                         return (
                           <div key={o.id}>
@@ -614,8 +799,8 @@ export default function AdminMessages() {
                             >
                               <div className="flex items-center justify-between mb-1">
                                 <span className="text-[11px] font-semibold">{o.id}</span>
-                                <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${st.bg} ${st.color} flex items-center gap-0.5`}>
-                                  <Icon className="w-2.5 h-2.5" /> {st.label}
+                                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">
+                                  {o.status}
                                 </span>
                               </div>
                               <div className="flex items-center justify-between text-[10px] text-muted-foreground">
@@ -645,7 +830,7 @@ export default function AdminMessages() {
                                 </div>
 
                                 {/* Process Payment button */}
-                                {o.status === "settled" && paymentOrderId !== o.id && !transferCompletedOrders.has(o.id) && (
+                                {(currentOrderStatus === "pending_payment") && paymentOrderId !== o.id && !transferCompletedOrders.has(o.id) && (
                                   <Button
                                     size="sm"
                                     className="w-full mt-2 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
@@ -790,6 +975,7 @@ export default function AdminMessages() {
                 onComplete={handleOrderComplete}
                 customerAlias={selectedConvo?.alias}
                 embedded
+                onBuyerSelected={selectedId ? () => handleBuyerSelected(selectedId) : undefined}
               />
             </TabsContent>
           </Tabs>
