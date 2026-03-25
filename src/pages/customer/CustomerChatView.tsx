@@ -118,10 +118,10 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           </div>
         )}
 
-        {orderStatus === "payment_completed" && (
+        {orderStatus === "success" && (
           <>
             <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center animate-slide-up">
-              <p className="text-xs text-success font-semibold">✅ Payment Completed — ₦215,200 sent to First Bank ****1234</p>
+              <p className="text-xs text-success font-semibold">✅ Success — ₦215,200 sent to First Bank ****1234</p>
               <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
             </div>
             <div className="flex justify-start">
@@ -204,9 +204,9 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <div className="bg-muted/50 rounded-xl p-3 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    orderStatus === "payment_completed" ? "bg-success/10" : "bg-muted"
+                    orderStatus === "success" ? "bg-success/10" : "bg-muted"
                   }`}>
-                    {orderStatus === "payment_completed" ? (
+                    {orderStatus === "success" ? (
                       <CheckCircle className="w-4 h-4 text-success" />
                     ) : (
                       <Clock className="w-4 h-4 text-muted-foreground" />
@@ -214,7 +214,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                   </div>
                   <div className="flex-1">
                     <p className="text-xs font-medium">
-                      {orderStatus === "payment_completed" ? "Payment Completed" : "Payment Pending"}
+                      {orderStatus === "success" ? "Transfer Completed" : "Transfer Pending"}
                     </p>
                     <p className="text-[10px] text-muted-foreground">Mar 18, 2026 · 10:42 AM</p>
                   </div>
