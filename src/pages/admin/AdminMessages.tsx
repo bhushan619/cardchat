@@ -166,10 +166,9 @@ export default function AdminMessages() {
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
-    // When order is created via the Sales Order panel, set status to pending_sale
     if (selectedId) {
-      const msg = orderStatus.createOrder(selectedId, order.orderId);
-      if (msg) addSystemMessage(msg);
+      orderStatus.createOrder(selectedId, order.orderId);
+      addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
       setActiveTab("trading");
     }
   };
