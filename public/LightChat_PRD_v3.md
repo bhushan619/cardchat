@@ -141,7 +141,7 @@ Redesigned with a **minimalist, iOS-inspired modular layout** that reduces visua
 - Conversation list with active/past chats
 - Full chat view with message input
 - **Image and emoji icons placed inline beside the send button** (streamlined input)
-- System messages for order confirmations, status updates, and payout notifications
+- System messages display only **customer-facing status updates**: Order Created, Order Processing, Success, Pending Payment, Payment Completed. Internal agent transitions are suppressed. ✨ UPDATED
 - **Group chat support:** When escalated, shows sender names on messages
 
 ### 3.4 Contacts (`/customer/contacts`)
@@ -240,9 +240,9 @@ Redesigned with a **minimalist, iOS-inspired modular layout** that reduces visua
 - **Full chat interface** with message history
 - **Message bubbles** with sender name labels in small colored font (customer, agent, group members)
 - **Sender color coding:** Customer = primary, Agent = accent, Group members = unique colors (orange, emerald, violet)
-- System messages styled differently (centered, muted)
+- System messages styled differently (centered, muted) — only **customer-facing statuses** are shown (Order Created, Order Processing, Success, Pending Payment, Payment Completed); internal agent transitions are suppressed ✨ UPDATED
 - Image messages with placeholder thumbnails
-- **504px tabbed right sidebar** with "Orders" and "Sales Order" (Cardlight) tabs ✨ UPDATED
+- **Responsive tabbed right sidebar** with "Orders" and "Sales Order" (Cardlight) tabs. Panel widths are fluid: left panel 25% (240–336px), right panel 35% (320–504px), chat fills remaining space. Right panel hidden below `xl` breakpoint. ✨ UPDATED
 
 #### 4.4.1 Escalation & Group Chat
 - **Escalate button** in chat header opens a popover
@@ -290,8 +290,9 @@ Redesigned with a **minimalist, iOS-inspired modular layout** that reduces visua
   - Rate display (auto-set: ₦X/$1)
   - Denomination input ($)
   - Card code/PIN input
-  - Drop zone for image attachment
-  - Attached image label with detach (X) button
+  - **Multi-image support:** Each card entry supports up to 10 image thumbnails in a gallery layout. Hover any thumbnail to remove it. ✨ UPDATED
+  - **Compact input layout:** Card Rate, Card Amount, and Card No. arranged in a 3-column grid below the image gallery ✨ UPDATED
+  - Drop zone for image attachment (drag from chat images panel)
   - Remove card button (trash icon)
 - **Summary bar:** Card count, total face value ($)
 - Add Card button (max 15)
@@ -572,6 +573,9 @@ Redesigned with a **minimalist, iOS-inspired modular layout** that reduces visua
 | **Chat Input Streamlined** | Image and emoji icons inline beside send button |
 | **Updated User Guides** | All 3 guides (Customer, Admin, Admin-Customer) updated to reflect all v3 changes |
 | **Naira Rate Access** | Team Lead now has access (previously Super Admin only) |
+| **Multi-Image Card Entries** | Each card entry in the order wizard supports up to 10 image thumbnails with hover-to-remove |
+| **Customer-Facing Status Only** | Chat system messages now only show customer-relevant status changes; internal agent transitions are suppressed |
+| **Responsive Admin Panels** | Messages 3-column layout uses fluid percentage widths with min/max constraints instead of fixed pixel values |
 
 ### v1 → v2
 
