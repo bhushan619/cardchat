@@ -51,7 +51,7 @@ const guides: GuideSection[] = [
     steps: [
       { text: "Customer checks the current rate on the Home screen under 'Live Rates'." },
       { text: "They tap 'Sell Cards' or go to the Chat tab and select an agent from Contacts." },
-      { text: "They tell the agent what card they want to sell and send clear photos using the image icon beside the send button." },
+      { text: "They tell the agent what card they want to sell and send multiple clear photos per card using the image icon beside the send button (up to 10 images per card entry)." },
       { text: "The agent (you) verifies the cards, creates an order, and locks the rate." },
       { text: "A system message confirms the order details. The agent processes payout to the customer's registered bank account." },
       { text: "Customer receives a confirmation and funds typically arrive within minutes.", tip: "Remind customers to send clear, well-lit photos with visible codes/PINs for faster verification." },
@@ -66,7 +66,7 @@ const guides: GuideSection[] = [
       { text: "The Chat tab lists all active and past conversations." },
       { text: "Customers type messages in the input field and tap Send." },
       { text: "Image and emoji icons are placed inline beside the send button for quick access." },
-      { text: "System messages (styled differently) show order confirmations, status updates, and payout notifications." },
+      { text: "System messages (styled differently) show only customer-relevant updates: Order Created, Order Processing, Success, Pending Payment, and Payment Completed. Internal agent transitions are not shown." },
       { text: "Escalated chats show multiple agent names above message bubbles." },
       { text: "All interactive buttons provide immediate visual feedback (scale-down animation) on tap.", tip: "If a customer reports the app feels unresponsive, verify they're on the latest version." },
     ],
