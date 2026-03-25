@@ -150,9 +150,8 @@ export default function AdminMessages() {
   const handleCreateOrderFromChat = () => {
     if (!selectedId) return;
     const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
-    const msg = orderStatus.createOrder(selectedId, orderId);
-    if (msg) addSystemMessage(msg);
-    // Switch to trading tab
+    orderStatus.createOrder(selectedId, orderId);
+    addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
     setActiveTab("trading");
   };
 
