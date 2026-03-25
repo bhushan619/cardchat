@@ -66,22 +66,26 @@ export function useOrderStatus() {
 
   const transitionStatus = useCallback(
     (conversationId: string, newStatus: AgentOrderStatus): string | null => {
-      const current = entries[conversationId];
-      if (!current) return null;
-      if (!canTransition(current.status, newStatus)) return null;
+      let result: string | null = null;
+      setEntries((prev) => {
+        const current = prev[conversationId];
+        if (!current) return prev;
+        if (!canTransition(current.status, newStatus)) return prev;
 
-      setEntries((prev) => ({
-        ...prev,
-        [conversationId]: {
-          ...prev[conversationId],
-          status: newStatus,
-          updatedAt: new Date().toISOString(),
-        },
-      }));
+        result = `📌 Order #${current.orderId} status changed to ${agentStatusLabels[newStatus]}.`;
+        return {
+          ...prev,
+          [conversationId]: {
+            ...prev[conversationId],
+            status: newStatus,
+            updatedAt: new Date().toISOString(),
+          },
+        };
+      });
 
-      return `📌 Order #${current.orderId} status changed to ${agentStatusLabels[newStatus]}.`;
+      return result;
     },
-    [entries]
+    []
   );
 
   const getConversationTab = useCallback(
