@@ -125,7 +125,7 @@ function HighlightTab({ tabId }: { tabId: string }) {
 
   return (
     <div
-      className="fixed z-[55] rounded-xl ring-2 ring-accent/60 bg-card/80 pointer-events-none"
+      className="fixed z-[55] rounded-xl ring-2 ring-accent bg-card pointer-events-none shadow-[0_0_12px_hsl(var(--accent)/0.4)]"
       style={{
         left: rect.left - 4,
         top: rect.top - 4,
