@@ -1,6 +1,6 @@
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { customerContacts } from "@/data/mock";
-import { Search, Phone } from "lucide-react";
+import { Search, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +48,7 @@ export default function CustomerContacts() {
                   <p className="text-xs text-muted-foreground">{c.lastSeen}</p>
                 </div>
                 <button className="w-9 h-9 rounded-full bg-muted flex items-center justify-center">
-                  <Phone className="w-4 h-4 text-muted-foreground" />
+                  <MessageCircle className="w-4 h-4 text-muted-foreground" />
                 </button>
               </div>
             ))}
