@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { customerContacts } from "@/data/mock";
-import { ArrowLeft, MessageCircle, Phone, Star, Clock, Shield } from "lucide-react";
+import { ArrowLeft, MessageCircle, Star, Clock, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
@@ -59,9 +59,6 @@ export default function AgentProfile() {
           <MessageCircle className="w-5 h-5" />
           Message
         </Button>
-        <button className="w-12 h-12 rounded-xl bg-muted flex items-center justify-center shrink-0">
-          <Phone className="w-5 h-5 text-muted-foreground" />
-        </button>
       </div>
 
       <Separator />
