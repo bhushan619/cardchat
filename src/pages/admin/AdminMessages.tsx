@@ -20,6 +20,8 @@ import {
   agentStatusLabels,
   agentStatusStyles,
   getTabForStatus,
+  toCustomerStatus,
+  customerStatusLabels,
 } from "@/lib/orderStateMachine";
 
 const columns = [
@@ -119,16 +121,27 @@ export default function AdminMessages() {
     setLocalMessages(prev => [...prev, newMsg]);
   };
 
-  // Order status actions
+  // Order status actions — only send chat message when customer-visible status changes
   const handleStatusTransition = (conversationId: string, newStatus: AgentOrderStatus) => {
+    const currentStatus = orderStatus.getStatus(conversationId);
+    const prevCustomerStatus = currentStatus ? toCustomerStatus(currentStatus) : null;
     const msg = orderStatus.transitionStatus(conversationId, newStatus);
     if (msg) {
-      addSystemMessage(msg);
+      const newCustomerStatus = toCustomerStatus(newStatus);
+      // Only notify in chat if the customer-facing status actually changed
+      if (newCustomerStatus !== prevCustomerStatus) {
+        addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
+      }
       // Auto-transition: Success → Pending Payment
       if (newStatus === "success") {
         setTimeout(() => {
           const msg2 = orderStatus.transitionStatus(conversationId, "pending_payment");
-          if (msg2) addSystemMessage(msg2);
+          if (msg2) {
+            const pendingCustomerStatus = toCustomerStatus("pending_payment");
+            if (pendingCustomerStatus !== newCustomerStatus) {
+              addSystemMessage(`📌 Order status: ${customerStatusLabels[pendingCustomerStatus]}`);
+            }
+          }
         }, 500);
       }
     }
