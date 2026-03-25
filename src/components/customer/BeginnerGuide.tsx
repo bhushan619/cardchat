@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
 const steps = [
   {
@@ -31,6 +31,7 @@ interface BeginnerGuideProps {
 
 export default function BeginnerGuide({ step, onNext, onSkip }: BeginnerGuideProps) {
   const [tooltipBottom, setTooltipBottom] = useState(80);
+  const [navHeight, setNavHeight] = useState(72);
   const current = steps[step] || steps[0];
   const isLast = step === steps.length - 1;
 
@@ -39,7 +40,8 @@ export default function BeginnerGuide({ step, onNext, onSkip }: BeginnerGuidePro
       const nav = document.querySelector("nav");
       if (nav) {
         const navRect = nav.getBoundingClientRect();
-        setTooltipBottom(window.innerHeight - navRect.top + 12);
+        setNavHeight(navRect.height);
+        setTooltipBottom(navRect.height + 12);
       }
     }, 100);
     return () => clearTimeout(timer);
@@ -47,17 +49,17 @@ export default function BeginnerGuide({ step, onNext, onSkip }: BeginnerGuidePro
 
   return (
     <>
-      {/* Overlay — covers content but NOT the nav (nav has higher z) */}
-      <div className="fixed inset-0 z-40 bg-foreground/20 pointer-events-none" />
+      <div
+        className="fixed inset-x-0 top-0 z-40 bg-foreground/15 pointer-events-none"
+        style={{ bottom: `${navHeight}px` }}
+      />
 
-      {/* Highlight ring on the active tab */}
       <HighlightTab tabId={current.tabId} />
 
-      {/* Tooltip */}
       <div
         className="fixed left-3 right-3 z-[70] pointer-events-auto"
         style={{
-          bottom: `${tooltipBottom}px`,
+          bottom: `${Math.max(tooltipBottom, navHeight + 10)}px`,
           maxWidth: "320px",
           margin: "0 auto",
         }}
