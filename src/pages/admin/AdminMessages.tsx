@@ -215,12 +215,11 @@ export default function AdminMessages() {
     setPaymentOrderId(null);
     setSelectedBankId(null);
     addSystemMessage(`💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`);
-    // Mark as payment completed
     if (selectedId) {
       const currentStatus = orderStatus.getStatus(selectedId);
       if (currentStatus === "pending_payment") {
-        const msg = orderStatus.transitionStatus(selectedId, "payment_completed");
-        if (msg) addSystemMessage(msg);
+        orderStatus.transitionStatus(selectedId, "payment_completed");
+        addSystemMessage(`📌 Order status: ${customerStatusLabels["payment_completed"]}`);
       }
     }
   };
