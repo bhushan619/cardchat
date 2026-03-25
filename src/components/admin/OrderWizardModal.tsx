@@ -60,6 +60,7 @@ interface CardlightPanelProps {
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
   embedded?: boolean;
+  onBuyerSelected?: () => void;
 }
 
 const makeCard = (): CardEntry => ({
@@ -89,7 +90,7 @@ const mockSellers: SellerEntry[] = [
 
 const cardSources = ["W", "E", "M"];
 
-export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded }: CardlightPanelProps) {
+export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded, onBuyerSelected }: CardlightPanelProps) {
   // Login state
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [account, setAccount] = useState("");
@@ -197,6 +198,8 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     setConfirmSeller(null);
     setSellerModalOpen(false);
     setSaleOrderId(null);
+    // Notify parent that buyer was selected → triggers status transition
+    onBuyerSelected?.();
   };
 
   if (!open) return null;
