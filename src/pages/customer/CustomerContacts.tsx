@@ -3,9 +3,11 @@ import { customerContacts } from "@/data/mock";
 import { Search, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CustomerContacts() {
   const [filter, setFilter] = useState("");
+  const navigate = useNavigate();
   const filtered = customerContacts.filter(c =>
     c.name.toLowerCase().includes(filter.toLowerCase())
   );
@@ -32,7 +34,7 @@ export default function CustomerContacts() {
               <p className="text-sm text-muted-foreground text-center py-6">No agents match your search</p>
             )}
             {filtered.map(c => (
-              <div key={c.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors">
+              <div key={c.id} onClick={() => navigate(`/customer/agent/${c.id}`)} className="flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors cursor-pointer">
                 <div className="relative">
                   <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                     <span className="text-primary font-bold text-sm">{c.name[0]}</span>
