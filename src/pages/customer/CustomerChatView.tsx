@@ -8,29 +8,25 @@ import {
   customerStatusLabels,
 } from "@/lib/orderStateMachine";
 
-const ORDER_STATUS_CONFIG: Record<CustomerOrderStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
-  order_created:      { label: customerStatusLabels.order_created,      color: "text-primary",     bg: "bg-primary/10",     icon: Clock },
-  order_processing:   { label: customerStatusLabels.order_processing,   color: "text-warning",     bg: "bg-warning/10",     icon: Loader2 },
-  failed:             { label: customerStatusLabels.failed,             color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
-  success:            { label: customerStatusLabels.success,            color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
-  pending_payment:    { label: customerStatusLabels.pending_payment,    color: "text-warning",     bg: "bg-warning/10",     icon: Clock },
-  payment_completed:  { label: customerStatusLabels.payment_completed,  color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
+type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
+
+const ORDER_STATUS_CONFIG: Record<CustomerVisibleStatus, { label: string; color: string; bg: string; icon: typeof Clock }> = {
+  order_created:    { label: "Order Created",    color: "text-primary",     bg: "bg-primary/10",     icon: Clock },
+  order_processing: { label: "Order Processing", color: "text-warning",     bg: "bg-warning/10",     icon: Loader2 },
+  success:          { label: "Success",           color: "text-success",     bg: "bg-success/10",     icon: CheckCircle },
+  failed:           { label: "Failed",            color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
 };
 
-const STATUS_ORDER: CustomerOrderStatus[] = [
+const STATUS_ORDER: CustomerVisibleStatus[] = [
   "order_created",
   "order_processing",
   "success",
-  "pending_payment",
-  "payment_completed",
 ];
 
 const TIMELINE_STEPS: { event: string; time: string }[] = [
-  { event: "Order created",       time: "10:37 AM" },
-  { event: "Order processing",    time: "10:38 AM" },
-  { event: "Trade successful",    time: "10:40 AM" },
-  { event: "Pending payment",     time: "10:41 AM" },
-  { event: "Payment completed",   time: "10:42 AM" },
+  { event: "Order created",    time: "10:37 AM" },
+  { event: "Order processing", time: "10:38 AM" },
+  { event: "Success",          time: "10:40 AM" },
 ];
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
