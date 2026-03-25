@@ -3,6 +3,7 @@ import { customerContacts } from "@/data/mock";
 import { Search, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function CustomerContacts() {
   const [filter, setFilter] = useState("");
