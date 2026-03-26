@@ -63,21 +63,21 @@ const App = () => (
             <Route path="/admin/*" element={
               <AdminRoleProvider>
                 <Routes>
-                  <Route path="/" element={<AdminMessages />} />
-                  <Route path="/chat/:id" element={<AdminChatView />} />
-                  <Route path="/card-rates" element={<AdminCardRates />} />
-                  <Route path="/orders" element={<AdminOrders />} />
-                  <Route path="/naira-rate" element={<AdminNairaRate />} />
-                  <Route path="/users" element={<AdminUsers />} />
-                  <Route path="/team" element={<AdminTeam />} />
-                  <Route path="/api-config" element={<AdminApiConfig />} />
-                  <Route path="/broadcast" element={<AdminBroadcast />} />
-                  <Route path="/guide" element={<AdminGuide />} />
-                  <Route path="/ip-restrictions" element={<AdminIpRestrictions />} />
-                  <Route path="/customer-guide" element={<AdminCustomerGuide />} />
-                  <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
-                  <Route path="/customers" element={<AdminCustomers />} />
-                  <Route path="/wallets" element={<AdminWallets />} />
+                  <Route path="" element={<AdminMessages />} />
+                  <Route path="chat/:id" element={<AdminChatView />} />
+                  <Route path="card-rates" element={<AdminCardRates />} />
+                  <Route path="orders" element={<AdminOrders />} />
+                  <Route path="naira-rate" element={<AdminNairaRate />} />
+                  <Route path="users" element={<AdminUsers />} />
+                  <Route path="team" element={<AdminTeam />} />
+                  <Route path="api-config" element={<AdminApiConfig />} />
+                  <Route path="broadcast" element={<AdminBroadcast />} />
+                  <Route path="guide" element={<AdminGuide />} />
+                  <Route path="ip-restrictions" element={<AdminIpRestrictions />} />
+                  <Route path="customer-guide" element={<AdminCustomerGuide />} />
+                  <Route path="sensitive-words" element={<AdminSensitiveWords />} />
+                  <Route path="customers" element={<AdminCustomers />} />
+                  <Route path="wallets" element={<AdminWallets />} />
                 </Routes>
               </AdminRoleProvider>
             } />
