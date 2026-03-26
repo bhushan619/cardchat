@@ -159,6 +159,7 @@ export default function AdminCustomers() {
                 ["Good Rate", `${selectedCustomer.goodRate}%`],
                 ["Total Orders", `${selectedCustomer.totalOrders}`],
                 ["Total Value", selectedCustomer.totalValue],
+                ["Wallet Balance", `₦${selectedCustomer.walletBalance.toLocaleString()}`],
                 ["Last Active", `${selectedCustomer.lastActive} ago`],
                 ["Joined", selectedCustomer.joinedDate],
                 ["Tags", selectedCustomer.tags.join(", ") || "None"],
