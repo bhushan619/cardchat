@@ -1,7 +1,7 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -49,8 +49,36 @@ export default function CustomerMe() {
   const [showAddBank, setShowAddBank] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CustomerVisibleStatus>("all");
+  const [showEditProfile, setShowEditProfile] = useState(false);
+  const [editStep, setEditStep] = useState<"info" | "otp">("info");
+  const [editName, setEditName] = useState("John Doe");
+  const [editEmail, setEditEmail] = useState("johndoe@gmail.com");
+  const [otp, setOtp] = useState("");
+  const [savedName, setSavedName] = useState("John Doe");
+  const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  const handleEditSave = () => {
+    if (editEmail !== savedEmail) {
+      setEditStep("otp");
+    } else {
+      setSavedName(editName);
+      setShowEditProfile(false);
+    }
+  };
+
+  const handleOtpVerify = () => {
+    if (otp.length === 4) {
+      setSavedName(editName);
+      setSavedEmail(editEmail);
+      setShowEditProfile(false);
+      setEditStep("info");
+      setOtp("");
+    }
+  };
+
+  const initials = savedName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
 
   // ── Bank Accounts ──
   if (activeSection === "bank") {
@@ -396,18 +424,99 @@ export default function CustomerMe() {
     <CustomerLayout>
       <div className="p-4 space-y-5">
         {/* Profile Card */}
-        <div className="bg-card border rounded-xl p-5 flex items-center gap-4">
-          <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
-            <span className="text-primary-foreground font-heading font-bold text-xl">JD</span>
-          </div>
-          <div>
-            <h2 className="font-heading font-bold text-lg">John Doe</h2>
-            <div className="flex items-center gap-2 mt-0.5">
-              <span className="text-xs font-mono font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md">J4D9KP</span>
+        <div className="bg-card border rounded-xl p-5">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center">
+              <span className="text-primary-foreground font-heading font-bold text-xl">{initials}</span>
             </div>
-            <p className="text-xs text-muted-foreground mt-0.5">+234 *** *** 4567</p>
+            <div className="flex-1">
+              <h2 className="font-heading font-bold text-lg">{savedName}</h2>
+              <div className="flex items-center gap-2 mt-0.5">
+                <span className="text-xs font-mono font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md">J4D9KP</span>
+              </div>
+              <div className="flex items-center gap-1 mt-0.5">
+                <Mail className="w-3 h-3 text-muted-foreground" />
+                <p className="text-xs text-muted-foreground">{savedEmail}</p>
+              </div>
+            </div>
+            <button
+              onClick={() => { setShowEditProfile(true); setEditName(savedName); setEditEmail(savedEmail); setEditStep("info"); setOtp(""); }}
+              className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
+            >
+              <Pencil className="w-4 h-4 text-muted-foreground" />
+            </button>
           </div>
         </div>
+
+        {/* Edit Profile Modal */}
+        {showEditProfile && (
+          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowEditProfile(false)}>
+            <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 animate-slide-up" onClick={e => e.stopPropagation()}>
+              {editStep === "info" ? (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-heading font-semibold text-lg">Edit Profile</h3>
+                    <button onClick={() => setShowEditProfile(false)} className="text-muted-foreground text-sm">✕</button>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground font-medium">Name</label>
+                    <Input value={editName} onChange={e => setEditName(e.target.value)} className="mt-1" />
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground font-medium">Email</label>
+                    <Input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value)} className="mt-1" />
+                    {editEmail !== savedEmail && (
+                      <p className="text-[10px] text-warning mt-1 flex items-center gap-1">
+                        <ShieldCheck className="w-3 h-3" /> Email change requires OTP verification
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <Button variant="outline" className="flex-1" onClick={() => setShowEditProfile(false)}>Cancel</Button>
+                    <Button className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleEditSave}>Save Changes</Button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <button onClick={() => setEditStep("info")} className="text-sm text-accent flex items-center gap-1">
+                      <ArrowLeft className="w-4 h-4" /> Back
+                    </button>
+                    <button onClick={() => setShowEditProfile(false)} className="text-muted-foreground text-sm">✕</button>
+                  </div>
+                  <div className="text-center space-y-2 py-2">
+                    <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
+                      <ShieldCheck className="w-6 h-6 text-accent" />
+                    </div>
+                    <h3 className="font-heading font-semibold">Verify Your Email</h3>
+                    <p className="text-xs text-muted-foreground">Enter the 4-digit code sent to <span className="font-medium text-foreground">{editEmail}</span></p>
+                  </div>
+                  <div className="flex justify-center gap-2">
+                    {[0, 1, 2, 3].map(i => (
+                      <Input
+                        key={i}
+                        maxLength={1}
+                        value={otp[i] || ""}
+                        onChange={e => {
+                          const val = e.target.value.replace(/\D/g, "");
+                          const newOtp = otp.split("");
+                          newOtp[i] = val;
+                          setOtp(newOtp.join(""));
+                          if (val && e.target.nextElementSibling) (e.target.nextElementSibling as HTMLInputElement).focus?.();
+                        }}
+                        className="w-12 h-12 text-center text-lg font-bold"
+                      />
+                    ))}
+                  </div>
+                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleOtpVerify} disabled={otp.length < 4}>
+                    Verify & Update
+                  </Button>
+                  <p className="text-[10px] text-muted-foreground text-center">Didn't receive a code? <button className="text-accent font-medium">Resend</button></p>
+                </>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Menu Items */}
         <div className="space-y-1">
