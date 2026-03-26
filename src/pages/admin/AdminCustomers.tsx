@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets } from "@/data/mock";
-import { Search, Users, Eye, Wallet } from "lucide-react";
+import { Search, Users, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,22 +11,17 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
-const customers = conversations.map(c => {
-  const wallet = customerWallets.find(w => w.alias === c.alias);
-  return {
-    id: c.id,
-    alias: c.alias,
-    status: c.status,
-    goodRate: c.goodRate,
-    totalValue: c.totalValue,
-    tags: c.tags,
-    lastMessage: c.lastMessage,
-    lastActive: c.time,
-    totalOrders: Math.floor(Math.random() * 20) + 1,
-    joinedDate: "Mar 2026",
-    walletBalance: wallet?.balance ?? 0,
-  };
-});
+const customers = conversations.map(c => ({
+  id: c.id,
+  alias: c.alias,
+  status: c.status,
+  goodRate: c.goodRate,
+  totalValue: c.totalValue,
+  tags: c.tags,
+  lastMessage: c.lastMessage,
+  lastActive: c.time,
+  totalOrders: Math.floor(Math.random() * 20) + 1,
+}));
 
 const statusColors: Record<string, string> = {
   consulting: "bg-amber-500/10 text-amber-600",
