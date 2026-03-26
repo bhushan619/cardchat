@@ -148,17 +148,20 @@ export default function AdminCustomers() {
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-3 py-2">
-              {[
-                ["Status", selectedCustomer.status],
-                ["Good Rate", `${selectedCustomer.goodRate}%`],
-                ["Total Orders", `${selectedCustomer.totalOrders}`],
-                ["Total Value", selectedCustomer.totalValue],
-                ["Wallet Balance", `₦${selectedCustomer.walletBalance.toLocaleString()}`],
-                ["Last Active", `${selectedCustomer.lastActive} ago`],
-                ["Joined", selectedCustomer.joinedDate],
-                ["Tags", selectedCustomer.tags.join(", ") || "None"],
-                ["Last Message", selectedCustomer.lastMessage],
-              ].map(([label, value]) => (
+              {(() => {
+                const wallet = customerWallets.find(w => w.alias === selectedCustomer.alias);
+                return [
+                  ["Status", selectedCustomer.status],
+                  ["Good Rate", `${selectedCustomer.goodRate}%`],
+                  ["Total Orders", `${selectedCustomer.totalOrders}`],
+                  ["Total Value", selectedCustomer.totalValue],
+                  ["Wallet Balance", `₦${(wallet?.balance ?? 0).toLocaleString()}`],
+                  ["Total Credits", `₦${(wallet?.totalCredits ?? 0).toLocaleString()}`],
+                  ["Total Withdrawals", `₦${(wallet?.totalWithdrawals ?? 0).toLocaleString()}`],
+                  ["Last Active", `${selectedCustomer.lastActive} ago`],
+                  ["Tags", selectedCustomer.tags.join(", ") || "None"],
+                  ["Last Message", selectedCustomer.lastMessage],
+                ].map(([label, value]) => (
                 <div key={label} className="flex justify-between text-sm">
                   <span className="text-muted-foreground">{label}</span>
                   <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
