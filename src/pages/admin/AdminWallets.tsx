@@ -1,9 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { customerWallets, walletTransactions } from "@/data/mock";
-import { Wallet, Search, Eye, ArrowUpRight, ArrowDownLeft, Plus } from "lucide-react";
+import { Wallet, Plus, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -11,68 +9,57 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-type TopUpRecord = {
+type PlatformRecord = {
   id: string;
-  alias: string;
+  type: "deposit" | "disbursement";
   amount: number;
   description: string;
   date: string;
   time: string;
 };
 
+const initialRecords: PlatformRecord[] = [
+  { id: "PW-001", type: "deposit", amount: 2000000, description: "Admin deposit — operational funding", date: "Mar 18, 2026", time: "08:00 AM" },
+  { id: "PW-002", type: "disbursement", amount: 215200, description: "Auto-credit → A7X3KP — Order #ORD-20260318-001", date: "Mar 18, 2026", time: "10:42 AM" },
+  { id: "PW-003", type: "disbursement", amount: 93000, description: "Auto-credit → K9M2BL — Order #ORD-20260317-005", date: "Mar 17, 2026", time: "03:20 PM" },
+  { id: "PW-004", type: "deposit", amount: 1500000, description: "Admin deposit — weekly top-up", date: "Mar 15, 2026", time: "09:00 AM" },
+  { id: "PW-005", type: "disbursement", amount: 62000, description: "Auto-credit → B5N1QW — Order #ORD-20260315-008", date: "Mar 15, 2026", time: "02:10 PM" },
+  { id: "PW-006", type: "disbursement", amount: 186000, description: "Auto-credit → R4P8TN — Order #ORD-20260316-003", date: "Mar 16, 2026", time: "09:30 AM" },
+];
+
 export default function AdminWallets() {
-  const [search, setSearch] = useState("");
-  const [selectedWallet, setSelectedWallet] = useState<(typeof customerWallets)[0] | null>(null);
-  const [showTopUp, setShowTopUp] = useState(false);
-  const [topUpAlias, setTopUpAlias] = useState("");
-  const [topUpAmount, setTopUpAmount] = useState("");
-  const [topUpDescription, setTopUpDescription] = useState("");
-  const [topUpRecords, setTopUpRecords] = useState<TopUpRecord[]>([]);
+  const [records, setRecords] = useState<PlatformRecord[]>(initialRecords);
+  const [showDeposit, setShowDeposit] = useState(false);
+  const [depositAmount, setDepositAmount] = useState("");
+  const [depositDescription, setDepositDescription] = useState("");
 
-  const totalBalance = customerWallets.reduce((sum, w) => sum + w.balance, 0);
-  const filtered = customerWallets.filter(w =>
-    w.alias.toLowerCase().includes(search.toLowerCase())
-  );
+  const totalDeposits = records.filter(r => r.type === "deposit").reduce((s, r) => s + r.amount, 0);
+  const totalDisbursements = records.filter(r => r.type === "disbursement").reduce((s, r) => s + r.amount, 0);
+  const platformBalance = totalDeposits - totalDisbursements;
 
-  const handleTopUp = () => {
-    const amount = Number(topUpAmount.replace(/,/g, ""));
-    if (!topUpAlias || !amount || amount <= 0) {
-      toast.error("Please select a customer and enter a valid amount");
+  const handleDeposit = () => {
+    const amount = Number(depositAmount.replace(/,/g, ""));
+    if (!amount || amount <= 0) {
+      toast.error("Please enter a valid amount");
       return;
     }
-    const record: TopUpRecord = {
-      id: `TU-${Date.now().toString(36).toUpperCase()}`,
-      alias: topUpAlias,
+    const record: PlatformRecord = {
+      id: `PW-${Date.now().toString(36).toUpperCase()}`,
+      type: "deposit",
       amount,
-      description: topUpDescription || "Manual top-up by admin",
+      description: depositDescription || "Admin deposit",
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-    setTopUpRecords(prev => [record, ...prev]);
-    toast.success(`₦${amount.toLocaleString()} credited to ${topUpAlias}'s wallet`);
-    setTopUpAlias("");
-    setTopUpAmount("");
-    setTopUpDescription("");
-    setShowTopUp(false);
+    setRecords(prev => [record, ...prev]);
+    toast.success(`₦${amount.toLocaleString()} added to platform wallet`);
+    setDepositAmount("");
+    setDepositDescription("");
+    setShowDeposit(false);
   };
-
-  // Merge top-up records into transactions for display
-  const allTransactions = [
-    ...topUpRecords.map(r => ({
-      id: r.id,
-      type: "credit" as const,
-      amount: r.amount,
-      description: r.description,
-      date: r.date,
-      time: r.time,
-    })),
-    ...walletTransactions,
-  ];
 
   return (
     <AdminLayout>
@@ -80,120 +67,71 @@ export default function AdminWallets() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-accent" /> Customer Wallets
+              <Wallet className="w-5 h-5 text-accent" /> Platform Wallet
             </h1>
-            <p className="text-sm text-muted-foreground">View all customer wallet balances and transactions</p>
+            <p className="text-sm text-muted-foreground">
+              Funds used to auto-credit customer wallets on successful orders
+            </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Button size="sm" className="gap-1.5" onClick={() => setShowTopUp(true)}>
-              <Plus className="w-3.5 h-3.5" /> Add Money
-            </Button>
-            <div className="text-right">
-              <p className="text-xs text-muted-foreground">Total Platform Balance</p>
-              <p className="text-lg font-heading font-bold text-accent">₦{totalBalance.toLocaleString()}</p>
-            </div>
+          <Button size="sm" className="gap-1.5" onClick={() => setShowDeposit(true)}>
+            <Plus className="w-3.5 h-3.5" /> Add Money
+          </Button>
+        </div>
+
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div className="bg-card border rounded-xl p-4 text-center">
+            <p className="text-2xl font-heading font-bold text-accent">₦{platformBalance.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Platform Balance</p>
+          </div>
+          <div className="bg-card border rounded-xl p-4 text-center">
+            <p className="text-2xl font-heading font-bold text-success">₦{totalDeposits.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Total Deposits</p>
+          </div>
+          <div className="bg-card border rounded-xl p-4 text-center">
+            <p className="text-2xl font-heading font-bold text-warning">₦{totalDisbursements.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
         </div>
 
-        <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold">{customerWallets.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Active Wallets</p>
-          </div>
-          <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-success">₦{customerWallets.reduce((s, w) => s + w.totalCredits, 0).toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total Credits</p>
-          </div>
-          <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-warning">₦{customerWallets.reduce((s, w) => s + w.totalWithdrawals, 0).toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total Withdrawals</p>
-          </div>
-          <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-accent">{topUpRecords.length}</p>
-            <p className="text-xs text-muted-foreground mt-1">Manual Top-ups</p>
-          </div>
-        </div>
-
-        {/* Top-up Records */}
-        {topUpRecords.length > 0 && (
-          <div className="mb-6">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recent Top-ups</p>
-            <div className="bg-card border rounded-xl overflow-hidden">
-              <Table>
-                <TableHeader>
-                  <TableRow className="bg-muted/50">
-                    <TableHead className="text-xs font-semibold">ID</TableHead>
-                    <TableHead className="text-xs font-semibold">Customer</TableHead>
-                    <TableHead className="text-xs font-semibold">Description</TableHead>
-                    <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
-                    <TableHead className="text-xs font-semibold text-right">Date</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {topUpRecords.map(r => (
-                    <TableRow key={r.id}>
-                      <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
-                      <TableCell className="text-sm">{r.alias}</TableCell>
-                      <TableCell className="text-xs text-muted-foreground">{r.description}</TableCell>
-                      <TableCell className="text-right text-sm font-bold text-success">+₦{r.amount.toLocaleString()}</TableCell>
-                      <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </div>
-        )}
-
-        <div className="relative max-w-sm mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by alias..."
-            className="pl-10"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
-        </div>
-
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Transaction History</p>
         <div className="bg-card border rounded-xl overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="text-xs font-semibold">Customer</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Balance</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Total Credits</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Total Withdrawals</TableHead>
-                <TableHead className="text-xs font-semibold text-right"></TableHead>
+                <TableHead className="text-xs font-semibold">ID</TableHead>
+                <TableHead className="text-xs font-semibold">Type</TableHead>
+                <TableHead className="text-xs font-semibold">Description</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(w => (
-                <TableRow key={w.alias} className="hover:bg-muted/30">
+              {records.map(r => (
+                <TableRow key={r.id} className="hover:bg-muted/30">
+                  <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
                   <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                        {w.alias.slice(-2)}
-                      </div>
-                      <span className="text-sm font-medium">{w.alias}</span>
+                    <div className="flex items-center gap-1.5">
+                      {r.type === "deposit" ? (
+                        <ArrowDownLeft className="w-3.5 h-3.5 text-success" />
+                      ) : (
+                        <ArrowUpRight className="w-3.5 h-3.5 text-warning" />
+                      )}
+                      <span className={`text-xs font-medium capitalize ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
+                        {r.type}
+                      </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-right text-sm font-bold">₦{w.balance.toLocaleString()}</TableCell>
-                  <TableCell className="text-right text-sm text-success">₦{w.totalCredits.toLocaleString()}</TableCell>
-                  <TableCell className="text-right text-sm text-warning">₦{w.totalWithdrawals.toLocaleString()}</TableCell>
-                  <TableCell className="text-right">
-                    <button
-                      onClick={() => setSelectedWallet(w)}
-                      className="text-muted-foreground hover:text-foreground transition-colors"
-                    >
-                      <Eye className="w-4 h-4" />
-                    </button>
+                  <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate">{r.description}</TableCell>
+                  <TableCell className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
+                    {r.type === "deposit" ? "+" : "-"}₦{r.amount.toLocaleString()}
                   </TableCell>
+                  <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
                 </TableRow>
               ))}
-              {filtered.length === 0 && (
+              {records.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={5} className="text-center py-8 text-muted-foreground text-sm">
-                    No wallets found
+                    No records yet
                   </TableCell>
                 </TableRow>
               )}
@@ -202,101 +140,35 @@ export default function AdminWallets() {
         </div>
       </div>
 
-      {/* Wallet Detail Dialog */}
-      <Dialog open={!!selectedWallet} onOpenChange={() => setSelectedWallet(null)}>
-        <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-accent" />
-              Wallet — {selectedWallet?.alias}
-            </DialogTitle>
-            <DialogDescription>Balance: ₦{selectedWallet?.balance.toLocaleString()}</DialogDescription>
-          </DialogHeader>
-          {selectedWallet && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-muted rounded-lg p-3 text-center">
-                  <p className="text-sm font-bold">₦{selectedWallet.balance.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">Balance</p>
-                </div>
-                <div className="bg-success/10 rounded-lg p-3 text-center">
-                  <p className="text-sm font-bold text-success">₦{selectedWallet.totalCredits.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">Credits</p>
-                </div>
-                <div className="bg-warning/10 rounded-lg p-3 text-center">
-                  <p className="text-sm font-bold text-warning">₦{selectedWallet.totalWithdrawals.toLocaleString()}</p>
-                  <p className="text-[10px] text-muted-foreground">Withdrawals</p>
-                </div>
-              </div>
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recent Transactions</p>
-                <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {allTransactions
-                    .filter(t => topUpRecords.some(r => r.id === t.id && r.alias === selectedWallet.alias) || !topUpRecords.some(r => r.id === t.id))
-                    .map(t => (
-                    <div key={t.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
-                        {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">{t.description}</p>
-                        <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
-                      </div>
-                      <p className={`text-xs font-bold ${t.type === "credit" ? "text-success" : "text-warning"}`}>
-                        {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Money Dialog */}
-      <Dialog open={showTopUp} onOpenChange={setShowTopUp}>
+      {/* Add Money Modal */}
+      <Dialog open={showDeposit} onOpenChange={setShowDeposit}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Plus className="w-5 h-5 text-accent" /> Add Money to Wallet
+              <Plus className="w-5 h-5 text-accent" /> Add Money to Platform Wallet
             </DialogTitle>
-            <DialogDescription>Credit a customer's platform wallet</DialogDescription>
+            <DialogDescription>Deposit funds into the platform wallet for customer disbursements</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-xs font-medium">Customer</label>
-              <Select value={topUpAlias} onValueChange={setTopUpAlias}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select customer..." />
-                </SelectTrigger>
-                <SelectContent>
-                  {customerWallets.map(w => (
-                    <SelectItem key={w.alias} value={w.alias}>
-                      {w.alias} — Balance: ₦{w.balance.toLocaleString()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
             <div className="space-y-2">
               <label className="text-xs font-medium">Amount (₦)</label>
               <Input
                 placeholder="Enter amount..."
-                value={topUpAmount}
-                onChange={e => setTopUpAmount(e.target.value.replace(/[^0-9,]/g, ""))}
+                value={depositAmount}
+                onChange={e => setDepositAmount(e.target.value.replace(/[^0-9,]/g, ""))}
               />
             </div>
             <div className="space-y-2">
               <label className="text-xs font-medium">Description (optional)</label>
-              <Input
-                placeholder="e.g. Bonus credit, Refund..."
-                value={topUpDescription}
-                onChange={e => setTopUpDescription(e.target.value)}
+              <Textarea
+                placeholder="e.g. Weekly operational funding..."
+                value={depositDescription}
+                onChange={e => setDepositDescription(e.target.value)}
+                rows={2}
               />
             </div>
-            <Button className="w-full" onClick={handleTopUp}>
-              Credit Wallet
+            <Button className="w-full" onClick={handleDeposit}>
+              Deposit to Platform Wallet
             </Button>
           </div>
         </DialogContent>

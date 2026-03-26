@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { conversations, customerWallets } from "@/data/mock";
-import { Search, Users, Eye, Wallet } from "lucide-react";
+import { conversations, customerWallets, walletTransactions } from "@/data/mock";
+import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -10,6 +10,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const customers = conversations.map(c => {
   const wallet = customerWallets.find(w => w.alias === c.alias);
@@ -25,6 +26,8 @@ const customers = conversations.map(c => {
     totalOrders: Math.floor(Math.random() * 20) + 1,
     joinedDate: "Mar 2026",
     walletBalance: wallet?.balance ?? 0,
+    totalCredits: wallet?.totalCredits ?? 0,
+    totalWithdrawals: wallet?.totalWithdrawals ?? 0,
   };
 });
 
@@ -42,6 +45,9 @@ export default function AdminCustomers() {
     c.alias.toLowerCase().includes(search.toLowerCase()) ||
     c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
   );
+
+  // Get transactions for selected customer (mock: show all wallet transactions)
+  const customerTransactions = walletTransactions;
 
   return (
     <AdminLayout>
@@ -140,9 +146,9 @@ export default function AdminCustomers() {
         </div>
       </div>
 
-      {/* Customer detail modal */}
+      {/* Customer detail modal with wallet info */}
       <Dialog open={!!selectedCustomer} onOpenChange={() => setSelectedCustomer(null)}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-lg">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
@@ -150,27 +156,73 @@ export default function AdminCustomers() {
               </div>
               {selectedCustomer?.alias}
             </DialogTitle>
-            <DialogDescription>Customer details and activity summary</DialogDescription>
+            <DialogDescription>Customer details, wallet & transactions</DialogDescription>
           </DialogHeader>
           {selectedCustomer && (
-            <div className="space-y-3 py-2">
-              {[
-                ["Status", selectedCustomer.status],
-                ["Good Rate", `${selectedCustomer.goodRate}%`],
-                ["Total Orders", `${selectedCustomer.totalOrders}`],
-                ["Total Value", selectedCustomer.totalValue],
-                ["Wallet Balance", `₦${selectedCustomer.walletBalance.toLocaleString()}`],
-                ["Last Active", `${selectedCustomer.lastActive} ago`],
-                ["Joined", selectedCustomer.joinedDate],
-                ["Tags", selectedCustomer.tags.join(", ") || "None"],
-                ["Last Message", selectedCustomer.lastMessage],
-              ].map(([label, value]) => (
-                <div key={label} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
+            <Tabs defaultValue="details" className="mt-1">
+              <TabsList className="w-full">
+                <TabsTrigger value="details" className="flex-1 text-xs">Details</TabsTrigger>
+                <TabsTrigger value="wallet" className="flex-1 text-xs">Wallet</TabsTrigger>
+                <TabsTrigger value="transactions" className="flex-1 text-xs">Transactions</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="details" className="space-y-3 py-2">
+                {[
+                  ["Status", selectedCustomer.status],
+                  ["Good Rate", `${selectedCustomer.goodRate}%`],
+                  ["Total Orders", `${selectedCustomer.totalOrders}`],
+                  ["Total Value", selectedCustomer.totalValue],
+                  ["Last Active", `${selectedCustomer.lastActive} ago`],
+                  ["Joined", selectedCustomer.joinedDate],
+                  ["Tags", selectedCustomer.tags.join(", ") || "None"],
+                  ["Last Message", selectedCustomer.lastMessage],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
+                  </div>
+                ))}
+              </TabsContent>
+
+              <TabsContent value="wallet" className="py-2">
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  <div className="bg-muted rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold">₦{selectedCustomer.walletBalance.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">Balance</p>
+                  </div>
+                  <div className="bg-success/10 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-success">₦{selectedCustomer.totalCredits.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">Credits</p>
+                  </div>
+                  <div className="bg-warning/10 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-warning">₦{selectedCustomer.totalWithdrawals.toLocaleString()}</p>
+                    <p className="text-[10px] text-muted-foreground">Withdrawals</p>
+                  </div>
                 </div>
-              ))}
-            </div>
+              </TabsContent>
+
+              <TabsContent value="transactions" className="py-2">
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {customerTransactions.map(t => (
+                    <div key={t.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
+                        {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs font-medium truncate">{t.description}</p>
+                        <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                      </div>
+                      <p className={`text-xs font-bold ${t.type === "credit" ? "text-success" : "text-warning"}`}>
+                        {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
+                      </p>
+                    </div>
+                  ))}
+                  {customerTransactions.length === 0 && (
+                    <p className="text-center text-xs text-muted-foreground py-4">No transactions yet</p>
+                  )}
+                </div>
+              </TabsContent>
+            </Tabs>
           )}
         </DialogContent>
       </Dialog>
