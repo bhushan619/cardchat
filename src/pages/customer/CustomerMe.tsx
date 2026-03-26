@@ -61,6 +61,14 @@ export default function CustomerMe() {
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Open wallet if navigated with state
+  useState(() => {
+    if ((location.state as any)?.openWallet) {
+      setActiveSection("wallet");
+    }
+  });
 
   // Wallet state
   const [showWithdraw, setShowWithdraw] = useState(false);
