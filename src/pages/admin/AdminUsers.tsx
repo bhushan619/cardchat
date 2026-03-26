@@ -18,7 +18,7 @@ type User = {
   id: number;
   name: string;
   email: string;
-  role: "super_admin" | "team_lead" | "agent";
+  role: "super_admin" | "team_lead" | "agent" | "finance";
   status: "active" | "offline" | "suspended";
   lastLogin: string;
 };
@@ -27,12 +27,14 @@ const roleLabels: Record<string, { label: string; color: string }> = {
   super_admin: { label: "Super Admin", color: "bg-accent/10 text-accent" },
   team_lead: { label: "Team Lead", color: "bg-warning/10 text-warning" },
   agent: { label: "Agent", color: "bg-primary/10 text-primary" },
+  finance: { label: "Finance", color: "bg-success/10 text-success" },
 };
 
 const PERMISSIONS: Record<string, string[]> = {
   super_admin: ["View All Chats", "Manage Users", "Set Naira Rate", "API Config", "SMS Broadcast", "View Reports", "Process Orders"],
   team_lead: ["View Team Chats", "View Reports", "Process Orders", "Reassign Customers"],
   agent: ["View Assigned Chats", "Process Orders"],
+  finance: ["View Wallets", "View Naira Rate", "View Orders (Read-only)"],
 };
 
 export default function AdminUsers() {

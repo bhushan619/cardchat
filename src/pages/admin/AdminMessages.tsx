@@ -27,7 +27,6 @@ import {
 const columns = [
   { id: "consulting", label: "Consulting", color: "text-white", bg: "bg-gradient-to-r from-amber-500 to-orange-400", activeBg: "bg-gradient-to-r from-amber-600 to-orange-500" },
   { id: "trading", label: "Trading", color: "text-white", bg: "bg-gradient-to-r from-emerald-500 to-teal-400", activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500" },
-  { id: "pending", label: "Pending Payment", color: "text-white", bg: "bg-gradient-to-r from-blue-500 to-indigo-400", activeBg: "bg-gradient-to-r from-blue-600 to-indigo-500" },
 ];
 
 const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
@@ -99,13 +98,13 @@ export default function AdminMessages() {
   }, [conversationsWithTabs, activeTab, customerSearch]);
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    const counts: Record<string, number> = { consulting: 0, trading: 0 };
     conversationsWithTabs.forEach(c => { counts[c.dynamicTab] = (counts[c.dynamicTab] || 0) + 1; });
     return counts;
   }, [conversationsWithTabs]);
 
   const tabUnreadCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    const counts: Record<string, number> = { consulting: 0, trading: 0 };
     conversationsWithTabs.forEach(c => { if (c.unread > 0) counts[c.dynamicTab] += c.unread; });
     return counts;
   }, [conversationsWithTabs]);
@@ -132,17 +131,9 @@ export default function AdminMessages() {
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // Auto-transition: Success → Pending Payment
+      // When success: auto-credit wallet
       if (newStatus === "success") {
-        setTimeout(() => {
-          const msg2 = orderStatus.transitionStatus(conversationId, "pending_payment");
-          if (msg2) {
-            const pendingCustomerStatus = toCustomerStatus("pending_payment");
-            if (pendingCustomerStatus !== newCustomerStatus) {
-              addSystemMessage(`📌 Order status: ${customerStatusLabels[pendingCustomerStatus]}`);
-            }
-          }
-        }, 500);
+        addSystemMessage(`💰 Funds credited to customer's wallet`);
       }
     }
   };
@@ -214,14 +205,7 @@ export default function AdminMessages() {
     setTransferCompletedOrders(prev => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
-    addSystemMessage(`💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`);
-    if (selectedId) {
-      const currentStatus = orderStatus.getStatus(selectedId);
-      if (currentStatus === "pending_payment") {
-        orderStatus.transitionStatus(selectedId, "payment_completed");
-        addSystemMessage(`📌 Order status: ${customerStatusLabels["payment_completed"]}`);
-      }
-    }
+    addSystemMessage(`💰 ₦${payout.toLocaleString()} credited to customer's wallet`);
   };
 
   const getSenderColor = (sender: string, senderName: string) => {
@@ -326,22 +310,8 @@ export default function AdminMessages() {
       case "success":
         return (
           <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
-            <p className="text-xs font-medium text-success">✅ Trade Successful</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Moving to Pending Payment...</p>
-          </div>
-        );
-      case "pending_payment":
-        return (
-          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-xs font-medium text-primary">💰 Pending Payment</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Process payment to the customer using the order details above.</p>
-          </div>
-        );
-      case "payment_completed":
-        return (
-          <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
-            <p className="text-xs font-medium text-success">✅ Payment Completed</p>
-            <p className="text-[10px] text-muted-foreground mt-1">This order is fully resolved.</p>
+            <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Funds have been credited to the customer's wallet.</p>
           </div>
         );
       default:
@@ -840,80 +810,12 @@ export default function AdminMessages() {
                                   ))}
                                 </div>
 
-                                {/* Process Payment button */}
-                                {(currentOrderStatus === "pending_payment") && paymentOrderId !== o.id && !transferCompletedOrders.has(o.id) && (
-                                  <Button
-                                    size="sm"
-                                    className="w-full mt-2 h-8 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-                                    onClick={() => { setPaymentOrderId(o.id); setSelectedBankId(null); }}
-                                  >
-                                    <Banknote className="w-3.5 h-3.5" /> Process Payment
-                                  </Button>
-                                )}
-
-                                {/* Inline payment flow */}
-                                {paymentOrderId === o.id && (
-                                  <div className="mt-2 space-y-2 border-t pt-2">
-                                    <div className="flex items-center justify-between">
-                                      <h4 className="font-heading font-semibold text-xs">Execute Transfer</h4>
-                                      <button onClick={() => { setPaymentOrderId(null); setSelectedBankId(null); }} className="text-muted-foreground hover:text-foreground">
-                                        <X className="w-3.5 h-3.5" />
-                                      </button>
-                                    </div>
-                                    <div className="bg-muted rounded-lg p-2.5 space-y-1">
-                                      <div className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">Total Billing</span>
-                                        <span className="font-semibold">₦{o.payout.toLocaleString()}</span>
-                                      </div>
-                                    </div>
-                                    <p className="text-[10px] text-muted-foreground">Select bank account:</p>
-                                    {bankAccounts.map(a => (
-                                      <button
-                                        key={a.id}
-                                        onClick={() => setSelectedBankId(a.id)}
-                                        className={`w-full text-left rounded-lg p-2.5 transition-colors ${
-                                          selectedBankId === a.id
-                                            ? "bg-accent/10 border border-accent/30"
-                                            : "bg-muted border border-transparent hover:bg-muted/80"
-                                        }`}
-                                      >
-                                        <div className="flex items-center gap-2">
-                                          <div className={`w-1.5 h-1.5 rounded-full ${selectedBankId === a.id ? "bg-accent" : "bg-success"}`} />
-                                          <div>
-                                            <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                                            <p className="text-[10px] text-muted-foreground">{a.holderName} · Verified</p>
-                                          </div>
-                                        </div>
-                                      </button>
-                                    ))}
-                                    {selectedBankId && (
-                                      <div className="bg-muted rounded-lg p-2.5">
-                                        <div className="flex justify-between text-xs">
-                                          <span className="text-muted-foreground">Amount</span>
-                                          <span className="font-semibold">₦{o.payout.toLocaleString()}</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs mt-1">
-                                          <span className="text-muted-foreground">To</span>
-                                          <span className="font-medium">{bankAccounts.find(b => b.id === selectedBankId)?.bankName} · {bankAccounts.find(b => b.id === selectedBankId)?.accountNumber}</span>
-                                        </div>
-                                      </div>
-                                    )}
-                                    <Button
-                                      className="w-full h-8 text-xs bg-accent text-accent-foreground hover:bg-accent/90 gap-1.5"
-                                      disabled={!selectedBankId}
-                                      onClick={() => handleExecuteTransfer(o.id, o.payout)}
-                                    >
-                                      <Banknote className="w-3.5 h-3.5" /> Execute Transfer
-                                    </Button>
-                                  </div>
-                                )}
-
-                                {/* Transfer complete */}
-                                {transferCompletedOrders.has(o.id) && (
+                                {/* Wallet credit indicator */}
+                                {currentOrderStatus === "success" && (
                                   <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
                                     <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                    <p className="text-xs font-medium text-success">Transfer Complete</p>
-                                    <p className="text-[10px] text-muted-foreground">₦{o.payout.toLocaleString()} sent</p>
+                                    <p className="text-xs font-medium text-success">Wallet Credited</p>
+                                    <p className="text-[10px] text-muted-foreground">₦{o.payout.toLocaleString()} added to customer's wallet</p>
                                   </div>
                                 )}
                               </div>

@@ -1,6 +1,6 @@
 import { createContext, useContext, useState, ReactNode } from "react";
 
-type Role = "super_admin" | "team_lead" | "agent";
+type Role = "super_admin" | "team_lead" | "agent" | "finance";
 
 const AdminRoleContext = createContext<{
   role: Role;
