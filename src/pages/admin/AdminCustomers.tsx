@@ -75,6 +75,7 @@ export default function AdminCustomers() {
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Total Value</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Wallet</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Tags</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Last Active</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Joined</TableHead>
@@ -102,6 +103,12 @@ export default function AdminCustomers() {
                   </TableCell>
                   <TableCell className="text-center text-sm">{c.totalOrders}</TableCell>
                   <TableCell className="text-right text-sm font-medium">{c.totalValue}</TableCell>
+                  <TableCell className="text-right text-sm font-medium">
+                    <span className="flex items-center justify-end gap-1">
+                      <Wallet className="w-3 h-3 text-accent" />
+                      ₦{c.walletBalance.toLocaleString()}
+                    </span>
+                  </TableCell>
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-1">
                       {c.tags.length > 0 ? c.tags.map(t => (
@@ -123,7 +130,7 @@ export default function AdminCustomers() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
