@@ -16,6 +16,8 @@ import CustomerContacts from "./pages/customer/CustomerContacts";
 import CustomerMe from "./pages/customer/CustomerMe";
 import CustomerGuide from "./pages/customer/CustomerGuide";
 import AgentProfile from "./pages/customer/AgentProfile";
+import CustomerRewards from "./pages/customer/CustomerRewards";
+import CustomerRanking from "./pages/customer/CustomerRanking";
 
 // Admin Panel
 import AdminLogin from "./pages/admin/AdminLogin";
@@ -55,6 +57,8 @@ const App = () => (
             <Route path="/customer/me" element={<CustomerMe />} />
             <Route path="/customer/guide" element={<CustomerGuide />} />
             <Route path="/customer/agent/:id" element={<AgentProfile />} />
+            <Route path="/customer/rewards" element={<CustomerRewards />} />
+            <Route path="/customer/ranking" element={<CustomerRanking />} />
 
             {/* Admin Login */}
             <Route path="/admin/login" element={<AdminLogin />} />

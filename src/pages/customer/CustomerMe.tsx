@@ -227,61 +227,7 @@ export default function CustomerMe() {
     );
   }
 
-  // ── Bank Accounts ──
-  if (activeSection === "bank") {
-    return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
-        <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
-          <button onClick={() => { setActiveSection(null); setShowAddBank(false); }} className="text-sm text-accent">← Back</button>
-          <h2 className="font-heading font-semibold">Verified Bank Accounts</h2>
-        </header>
-        <div className="flex-1 overflow-y-auto p-4 space-y-3">
-          {bankAccounts.map(a => (
-            <div key={a.id} className="bg-card border rounded-xl p-4 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <CreditCard className="w-5 h-5 text-accent" />
-              </div>
-              <div className="flex-1">
-                <p className="text-sm font-medium">{a.bankName} · {a.accountNumber}</p>
-                <p className="text-xs text-muted-foreground">{a.holderName}</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-4 h-4 text-success" />
-                <button><Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive" /></button>
-              </div>
-            </div>
-          ))}
-          <p className="text-xs text-muted-foreground text-center">{bankAccounts.length}/5 accounts verified</p>
-
-          {showAddBank ? (
-            <div className="bg-card border rounded-xl p-4 space-y-3 animate-slide-up">
-              <h3 className="text-sm font-semibold">Add Bank Account</h3>
-              <div>
-                <label className="text-xs text-muted-foreground">Bank Name</label>
-                <Input placeholder="Select bank" className="mt-1" />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Account Number</label>
-                <Input placeholder="Enter 10-digit account number" className="mt-1" />
-              </div>
-              <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
-                <p className="text-xs text-accent font-medium">✓ Verified: JOHN ADEBAYO</p>
-                <p className="text-[10px] text-muted-foreground mt-1">Name returned by bank verification API</p>
-              </div>
-              <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setShowAddBank(false)}>Cancel</Button>
-                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">Confirm & Save</Button>
-              </div>
-            </div>
-          ) : (
-            <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowAddBank(true)}>
-              <Plus className="w-4 h-4 mr-2" /> Add Bank Account
-            </Button>
-          )}
-        </div>
-      </div>
-    );
-  }
+  // ── Bank Accounts (now accessed from wallet section) ──
 
   // ── Order Detail ──
   if (activeSection === "orders" && selectedOrder) {
