@@ -20,7 +20,7 @@ export default function CustomerHome() {
   const [calcCardType, setCalcCardType] = useState("");
   const [calcCurrency, setCalcCurrency] = useState("");
   const [calcDenom, setCalcDenom] = useState("");
-  const [balanceVisible, setBalanceVisible] = useState(true);
+  const [balanceVisible, setBalanceVisible] = useState(false);
 
   // Filter rates by both searches
   const filteredRates = cardRates.filter(r => {
