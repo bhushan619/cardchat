@@ -1,11 +1,14 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { bankAccounts } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck } from "lucide-react";
+import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -59,6 +62,13 @@ export default function CustomerMe() {
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
+  // Wallet state
+  const [showWithdraw, setShowWithdraw] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [withdrawBank, setWithdrawBank] = useState("");
+  const [withdrawComplete, setWithdrawComplete] = useState(false);
+  const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
+
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
       setEditStep("otp");
@@ -78,7 +88,144 @@ export default function CustomerMe() {
     }
   };
 
+  const handleWithdraw = () => {
+    if (withdrawAmount && withdrawBank) {
+      setWithdrawComplete(true);
+      setTimeout(() => {
+        setShowWithdraw(false);
+        setWithdrawComplete(false);
+        setWithdrawAmount("");
+        setWithdrawBank("");
+      }, 2000);
+    }
+  };
+
   const initials = savedName.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2);
+
+  // ── Wallet ──
+  if (activeSection === "wallet") {
+    const filteredTx = walletTxFilter === "all" ? walletTransactions : walletTransactions.filter(t => t.type === walletTxFilter);
+
+    return (
+      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+        <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
+          <button onClick={() => { setActiveSection(null); setShowWithdraw(false); }} className="text-sm text-accent">← Back</button>
+          <h2 className="font-heading font-semibold">My Wallet</h2>
+        </header>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+          {/* Balance Card */}
+          <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-5 text-accent-foreground">
+            <p className="text-xs opacity-80">Available Balance</p>
+            <p className="text-3xl font-heading font-bold mt-1">₦{walletBalance.toLocaleString()}</p>
+            <div className="flex gap-2 mt-4">
+              <Button
+                size="sm"
+                className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0"
+                onClick={() => setShowWithdraw(true)}
+              >
+                <Send className="w-3.5 h-3.5 mr-1.5" /> Withdraw
+              </Button>
+            </div>
+          </div>
+
+          {/* Withdraw Modal */}
+          {showWithdraw && (
+            <div className="bg-card border rounded-xl p-4 space-y-3 animate-slide-up">
+              {withdrawComplete ? (
+                <div className="text-center py-4 space-y-2">
+                  <div className="w-12 h-12 mx-auto rounded-full bg-success/10 flex items-center justify-center">
+                    <CheckCircle className="w-6 h-6 text-success" />
+                  </div>
+                  <p className="font-heading font-semibold">Withdrawal Successful</p>
+                  <p className="text-xs text-muted-foreground">₦{parseInt(withdrawAmount).toLocaleString()} sent to your bank</p>
+                </div>
+              ) : (
+                <>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold">Withdraw to Bank</h3>
+                    <button onClick={() => setShowWithdraw(false)} className="text-muted-foreground text-sm">✕</button>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Amount (₦)</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter amount"
+                      value={withdrawAmount}
+                      onChange={e => setWithdrawAmount(e.target.value)}
+                      className="mt-1"
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">Available: ₦{walletBalance.toLocaleString()}</p>
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground">Select Bank Account</label>
+                    <Select value={withdrawBank} onValueChange={setWithdrawBank}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue placeholder="Choose account" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {bankAccounts.map(a => (
+                          <SelectItem key={a.id} value={String(a.id)}>
+                            {a.bankName} · {a.accountNumber} — {a.holderName}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button size="sm" variant="outline" onClick={() => setShowWithdraw(false)}>Cancel</Button>
+                    <Button
+                      size="sm"
+                      className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                      disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > walletBalance || Number(withdrawAmount) <= 0}
+                      onClick={handleWithdraw}
+                    >
+                      Confirm Withdrawal
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Transaction Filters */}
+          <div className="flex gap-2">
+            {(["all", "credit", "withdrawal"] as const).map(f => (
+              <Button
+                key={f}
+                size="sm"
+                variant={walletTxFilter === f ? "outline" : "ghost"}
+                className="text-xs h-7"
+                onClick={() => setWalletTxFilter(f)}
+              >
+                {f === "all" ? "All" : f === "credit" ? "Credits" : "Withdrawals"}
+              </Button>
+            ))}
+          </div>
+
+          {/* Transaction List */}
+          <div className="space-y-2">
+            {filteredTx.map(t => (
+              <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
+                <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
+                  {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium truncate">{t.description}</p>
+                  <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                </div>
+                <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
+                  {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
+                </p>
+              </div>
+            ))}
+            {filteredTx.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-8">No transactions</p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // ── Bank Accounts ──
   if (activeSection === "bank") {
@@ -230,41 +377,12 @@ export default function CustomerMe() {
                 <p className="text-sm font-semibold">Total Payout</p>
                 <p className="text-sm font-heading font-bold text-accent">{selectedOrder.totalPayout}</p>
               </div>
-            </div>
-          </div>
-
-          {/* Bank Transfer */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Transfer</p>
-            <div className="bg-muted/50 rounded-xl p-3 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                  selectedOrder.status === "success" ? "bg-success/10" : "bg-muted"
-                }`}>
-                  {selectedOrder.status === "success" ? (
-                    <CheckCircle className="w-4 h-4 text-success" />
-                  ) : selectedOrder.status === "failed" ? (
-                    <XCircle className="w-4 h-4 text-destructive" />
-                  ) : (
-                    <Clock className="w-4 h-4 text-muted-foreground" />
-                  )}
+              {selectedOrder.status === "success" && (
+                <div className="bg-success/10 rounded-lg p-2 flex items-center gap-2 mt-1">
+                  <Wallet className="w-4 h-4 text-success" />
+                  <p className="text-[10px] text-success font-medium">Credited to wallet</p>
                 </div>
-                <div className="flex-1">
-                  <p className="text-xs font-medium">
-                    {selectedOrder.status === "success" ? "Transfer Completed" : selectedOrder.status === "failed" ? "Transfer Failed" : "Transfer Pending"}
-                  </p>
-                  <p className="text-[10px] text-muted-foreground">{selectedOrder.date}</p>
-                </div>
-              </div>
-              {[
-                { label: "Bank", value: selectedOrder.bank },
-                { label: "Amount", value: selectedOrder.totalPayout },
-              ].map(item => (
-                <div key={item.label} className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">{item.label}</p>
-                  <p className="text-xs font-medium">{item.value}</p>
-                </div>
-              ))}
+              )}
             </div>
           </div>
 
@@ -445,6 +563,33 @@ export default function CustomerMe() {
             >
               <Pencil className="w-4 h-4 text-muted-foreground" />
             </button>
+          </div>
+        </div>
+
+        {/* Wallet Card */}
+        <div className="bg-gradient-to-br from-accent to-accent/80 rounded-xl p-4 text-accent-foreground">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs opacity-80">Wallet Balance</p>
+              <p className="text-2xl font-heading font-bold">₦{walletBalance.toLocaleString()}</p>
+            </div>
+            <Wallet className="w-8 h-8 opacity-50" />
+          </div>
+          <div className="flex gap-2 mt-3">
+            <Button
+              size="sm"
+              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
+              onClick={() => setActiveSection("wallet")}
+            >
+              View Wallet
+            </Button>
+            <Button
+              size="sm"
+              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
+              onClick={() => { setActiveSection("wallet"); setTimeout(() => setShowWithdraw(true), 100); }}
+            >
+              <Send className="w-3 h-3 mr-1" /> Withdraw
+            </Button>
           </div>
         </div>
 
