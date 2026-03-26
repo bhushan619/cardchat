@@ -91,7 +91,7 @@ export default function CustomerHome() {
           </p>
           <div className="flex gap-2 mt-3">
             <button
-              onClick={() => navigate("/customer/me")}
+              onClick={() => navigate("/customer/me", { state: { openWallet: true } })}
               className="text-[11px] bg-accent-foreground/20 hover:bg-accent-foreground/30 text-accent-foreground px-3 py-1.5 rounded-lg font-medium transition-colors"
             >
               View Details

@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
 import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -61,6 +61,13 @@ export default function CustomerMe() {
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if ((location.state as any)?.openWallet) {
+      setActiveSection("wallet");
+    }
+  }, [location.state]);
 
   // Wallet state
   const [showWithdraw, setShowWithdraw] = useState(false);
