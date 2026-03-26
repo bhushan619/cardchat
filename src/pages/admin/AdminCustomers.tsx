@@ -163,7 +163,6 @@ export default function AdminCustomers() {
               <TabsList className="w-full">
                 <TabsTrigger value="details" className="flex-1 text-xs">Details</TabsTrigger>
                 <TabsTrigger value="wallet" className="flex-1 text-xs">Wallet</TabsTrigger>
-                <TabsTrigger value="transactions" className="flex-1 text-xs">Transactions</TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
@@ -199,10 +198,8 @@ export default function AdminCustomers() {
                     <p className="text-[10px] text-muted-foreground">Withdrawals</p>
                   </div>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="transactions" className="py-2">
-                <div className="space-y-2 max-h-64 overflow-y-auto">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Transactions</p>
+                <div className="space-y-2 max-h-48 overflow-y-auto">
                   {customerTransactions.map(t => (
                     <div key={t.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
