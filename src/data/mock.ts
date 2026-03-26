@@ -19,10 +19,10 @@ export const systemNairaRate = 1580;
 export const conversations = [
   { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },
   { id: "c2", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"] },
-  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "pending" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"] },
+  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "trading" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"] },
   { id: "c4", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [] },
   { id: "c5", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"] },
-  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "pending" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"] },
+  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "consulting" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"] },
   { id: "c7", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [] },
 ];
 
@@ -38,7 +38,7 @@ export const chatMessages = [
 export const orders = [
   { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 1580, unitPrice: 680, status: "settled" as const, created: "10:37 AM" },
   { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 1580, unitPrice: 620, status: "trading" as const, created: "09:15 AM" },
-  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 1580, unitPrice: 600, status: "pending_payment" as const, created: "08:45 AM" },
+  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 1580, unitPrice: 600, status: "success" as const, created: "08:45 AM" },
 ];
 
 export const bankAccounts = [
@@ -60,6 +60,7 @@ export const adminUsers = [
   { id: 3, name: "Mike Agent", email: "mike@lightchat.com", role: "agent" as const, status: "active" as const, lastLogin: "5 min ago" },
   { id: 4, name: "Tunde Agent", email: "tunde@lightchat.com", role: "agent" as const, status: "active" as const, lastLogin: "1 hr ago" },
   { id: 5, name: "Joy Agent", email: "joy@lightchat.com", role: "agent" as const, status: "offline" as const, lastLogin: "3 hrs ago" },
+  { id: 6, name: "Femi Finance", email: "femi@lightchat.com", role: "finance" as const, status: "active" as const, lastLogin: "15 min ago" },
 ];
 
 export const nairaRateHistory = [
@@ -78,4 +79,28 @@ export const customerContacts = [
   { id: 1, name: "LightChat Support", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 2, name: "Agent Mike", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 3, name: "Agent Tunde", status: "away" as const, isAgent: true, lastSeen: "15 min ago" },
+];
+
+// Wallet data
+export const walletBalance = 556200;
+
+export const walletTransactions = [
+  { id: "WT-001", type: "credit" as const, amount: 215200, description: "Order #ORD-20260318-001 — iTunes US", date: "Mar 18, 2026", time: "10:42 AM" },
+  { id: "WT-002", type: "withdrawal" as const, amount: 150000, description: "Withdrawal to First Bank ****1234", date: "Mar 18, 2026", time: "11:15 AM" },
+  { id: "WT-003", type: "credit" as const, amount: 93000, description: "Order #ORD-20260317-005 — Amazon US", date: "Mar 17, 2026", time: "03:20 PM" },
+  { id: "WT-004", type: "withdrawal" as const, amount: 80000, description: "Withdrawal to GTBank ****5678", date: "Mar 17, 2026", time: "04:00 PM" },
+  { id: "WT-005", type: "credit" as const, amount: 62000, description: "Order #ORD-20260315-008 — iTunes UK", date: "Mar 15, 2026", time: "02:10 PM" },
+  { id: "WT-006", type: "credit" as const, amount: 186000, description: "Order #ORD-20260316-003 — Steam US", date: "Mar 16, 2026", time: "09:30 AM" },
+  { id: "WT-007", type: "withdrawal" as const, amount: 50000, description: "Withdrawal to Access Bank ****9012", date: "Mar 15, 2026", time: "05:45 PM" },
+];
+
+// Customer wallet data for admin view
+export const customerWallets = [
+  { alias: "A7X3KP", balance: 265200, totalCredits: 556200, totalWithdrawals: 291000 },
+  { alias: "K9M2BL", balance: 45000, totalCredits: 120000, totalWithdrawals: 75000 },
+  { alias: "R4P8TN", balance: 830000, totalCredits: 2100000, totalWithdrawals: 1270000 },
+  { alias: "B5N1QW", balance: 12000, totalCredits: 80000, totalWithdrawals: 68000 },
+  { alias: "H2L6YD", balance: 98000, totalCredits: 340000, totalWithdrawals: 242000 },
+  { alias: "W8T4FJ", balance: 620000, totalCredits: 1500000, totalWithdrawals: 880000 },
+  { alias: "D3F9RX", balance: 15000, totalCredits: 45000, totalWithdrawals: 30000 },
 ];

@@ -6,9 +6,7 @@ export type AgentOrderStatus =
   | "in_trade"
   | "negotiation"
   | "order_cancelled"
-  | "success"
-  | "pending_payment"
-  | "payment_completed";
+  | "success";
 
 export type CustomerOrderStatus =
   | "order_created"
@@ -16,7 +14,7 @@ export type CustomerOrderStatus =
   | "failed"
   | "success";
 
-export type ConversationTab = "consulting" | "trading" | "pending";
+export type ConversationTab = "consulting" | "trading";
 
 // Valid transitions
 const validTransitions: Record<AgentOrderStatus, AgentOrderStatus[]> = {
@@ -25,9 +23,7 @@ const validTransitions: Record<AgentOrderStatus, AgentOrderStatus[]> = {
   in_trade: ["success", "negotiation"],
   negotiation: ["success", "order_cancelled"],
   order_cancelled: [],
-  success: ["pending_payment"],
-  pending_payment: ["payment_completed"],
-  payment_completed: [],
+  success: [],
 };
 
 export function canTransition(from: AgentOrderStatus, to: AgentOrderStatus): boolean {
@@ -50,8 +46,6 @@ export function toCustomerStatus(status: AgentOrderStatus): CustomerOrderStatus 
     case "order_cancelled":
       return "failed";
     case "success":
-    case "pending_payment":
-    case "payment_completed":
       return "success";
   }
 }
@@ -66,13 +60,8 @@ export function getTabForStatus(status: AgentOrderStatus | null): ConversationTa
       return "consulting";
     case "in_trade":
     case "negotiation":
-      return "trading";
     case "success":
       return "trading";
-    case "pending_payment":
-      return "pending";
-    case "payment_completed":
-      return "consulting";
     default:
       return "consulting";
   }
@@ -86,8 +75,6 @@ export const agentStatusLabels: Record<AgentOrderStatus, string> = {
   negotiation: "Negotiation",
   order_cancelled: "Order Cancelled",
   success: "Success",
-  pending_payment: "Pending Payment",
-  payment_completed: "Payment Completed",
 };
 
 // Display labels for customer-side statuses
@@ -106,6 +93,4 @@ export const agentStatusStyles: Record<AgentOrderStatus, { color: string; bg: st
   negotiation: { color: "text-warning", bg: "bg-warning/10" },
   order_cancelled: { color: "text-destructive", bg: "bg-destructive/10" },
   success: { color: "text-success", bg: "bg-success/10" },
-  pending_payment: { color: "text-primary", bg: "bg-primary/10" },
-  payment_completed: { color: "text-success", bg: "bg-success/10" },
 };
