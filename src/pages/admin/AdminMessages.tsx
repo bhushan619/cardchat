@@ -27,7 +27,6 @@ import {
 const columns = [
   { id: "consulting", label: "Consulting", color: "text-white", bg: "bg-gradient-to-r from-amber-500 to-orange-400", activeBg: "bg-gradient-to-r from-amber-600 to-orange-500" },
   { id: "trading", label: "Trading", color: "text-white", bg: "bg-gradient-to-r from-emerald-500 to-teal-400", activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500" },
-  { id: "pending", label: "Pending Payment", color: "text-white", bg: "bg-gradient-to-r from-blue-500 to-indigo-400", activeBg: "bg-gradient-to-r from-blue-600 to-indigo-500" },
 ];
 
 const escalatableUsers = adminUsers.filter(u => u.role === "super_admin" || u.role === "team_lead");
@@ -99,13 +98,13 @@ export default function AdminMessages() {
   }, [conversationsWithTabs, activeTab, customerSearch]);
 
   const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    const counts: Record<string, number> = { consulting: 0, trading: 0 };
     conversationsWithTabs.forEach(c => { counts[c.dynamicTab] = (counts[c.dynamicTab] || 0) + 1; });
     return counts;
   }, [conversationsWithTabs]);
 
   const tabUnreadCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0, pending: 0 };
+    const counts: Record<string, number> = { consulting: 0, trading: 0 };
     conversationsWithTabs.forEach(c => { if (c.unread > 0) counts[c.dynamicTab] += c.unread; });
     return counts;
   }, [conversationsWithTabs]);
@@ -132,17 +131,9 @@ export default function AdminMessages() {
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // Auto-transition: Success → Pending Payment
+      // When success: auto-credit wallet
       if (newStatus === "success") {
-        setTimeout(() => {
-          const msg2 = orderStatus.transitionStatus(conversationId, "pending_payment");
-          if (msg2) {
-            const pendingCustomerStatus = toCustomerStatus("pending_payment");
-            if (pendingCustomerStatus !== newCustomerStatus) {
-              addSystemMessage(`📌 Order status: ${customerStatusLabels[pendingCustomerStatus]}`);
-            }
-          }
-        }, 500);
+        addSystemMessage(`💰 Funds credited to customer's wallet`);
       }
     }
   };
@@ -214,14 +205,7 @@ export default function AdminMessages() {
     setTransferCompletedOrders(prev => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
-    addSystemMessage(`💸 Transfer executed — ₦${payout.toLocaleString()} sent to customer's verified account`);
-    if (selectedId) {
-      const currentStatus = orderStatus.getStatus(selectedId);
-      if (currentStatus === "pending_payment") {
-        orderStatus.transitionStatus(selectedId, "payment_completed");
-        addSystemMessage(`📌 Order status: ${customerStatusLabels["payment_completed"]}`);
-      }
-    }
+    addSystemMessage(`💰 ₦${payout.toLocaleString()} credited to customer's wallet`);
   };
 
   const getSenderColor = (sender: string, senderName: string) => {
@@ -326,22 +310,8 @@ export default function AdminMessages() {
       case "success":
         return (
           <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
-            <p className="text-xs font-medium text-success">✅ Trade Successful</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Moving to Pending Payment...</p>
-          </div>
-        );
-      case "pending_payment":
-        return (
-          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-xs font-medium text-primary">💰 Pending Payment</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Process payment to the customer using the order details above.</p>
-          </div>
-        );
-      case "payment_completed":
-        return (
-          <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
-            <p className="text-xs font-medium text-success">✅ Payment Completed</p>
-            <p className="text-[10px] text-muted-foreground mt-1">This order is fully resolved.</p>
+            <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
+            <p className="text-[10px] text-muted-foreground mt-1">Funds have been credited to the customer's wallet.</p>
           </div>
         );
       default:
