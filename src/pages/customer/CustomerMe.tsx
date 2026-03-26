@@ -233,7 +233,7 @@ export default function CustomerMe() {
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => { setActiveSection(null); setShowAddBank(false); }} className="text-sm text-accent">← Back</button>
-          <h2 className="font-heading font-semibold">Verified Bank Accounts</h2>
+          <h2 className="font-heading font-semibold">Add Bank Accounts</h2>
         </header>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
           {bankAccounts.map(a => (
@@ -579,16 +579,23 @@ export default function CustomerMe() {
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => setActiveSection("wallet")}
+              onClick={() => { setActiveSection("wallet"); setTimeout(() => setShowWithdraw(true), 100); }}
             >
-              View Wallet
+              <Send className="w-3 h-3 mr-1" /> Withdraw
             </Button>
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => { setActiveSection("wallet"); setTimeout(() => setShowWithdraw(true), 100); }}
+              onClick={() => { setActiveSection("bank"); }}
             >
-              <Send className="w-3 h-3 mr-1" /> Withdraw
+              <Plus className="w-3 h-3 mr-1" /> Add Bank
+            </Button>
+            <Button
+              size="sm"
+              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
+              onClick={() => setActiveSection("wallet")}
+            >
+              Details
             </Button>
           </div>
         </div>
@@ -666,8 +673,8 @@ export default function CustomerMe() {
         {/* Menu Items */}
         <div className="space-y-1">
           {[
-            { icon: CreditCard, label: "Verified Bank Accounts", desc: `${bankAccounts.length} accounts`, key: "bank" },
             { icon: FileText, label: "My Orders", desc: `${customerOrders.length} orders`, key: "orders" },
+            { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
