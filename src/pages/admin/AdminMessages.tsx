@@ -159,7 +159,7 @@ export default function AdminMessages() {
     if (selectedId) {
       orderStatus.createOrder(selectedId, order.orderId);
       addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
-      setActiveTab("trading");
+      
     }
   };
 
