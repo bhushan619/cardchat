@@ -143,7 +143,6 @@ export default function AdminMessages() {
     const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     orderStatus.createOrder(selectedId, orderId);
     addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
-    setActiveTab("trading");
   };
 
   const toggleStar = (e: React.MouseEvent, id: string) => {
@@ -160,7 +159,7 @@ export default function AdminMessages() {
     if (selectedId) {
       orderStatus.createOrder(selectedId, order.orderId);
       addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
-      setActiveTab("trading");
+      
     }
   };
 

@@ -15,7 +15,7 @@ const mockOrderDetails: Record<string, {
   cardFormat: string;
   agent: string;
   timeline: { event: string; time: string }[];
-  bankTransfer?: { bank: string; account: string; amount: string; ref: string };
+  
 }> = {
   "ORD-20260318-001": {
     cardFormat: "Physical",
@@ -26,7 +26,7 @@ const mockOrderDetails: Record<string, {
       { event: "Settled", time: "10:40 AM" },
       { event: "Payment sent", time: "10:42 AM" },
     ],
-    bankTransfer: { bank: "First Bank", account: "****1234", amount: "₦215,200", ref: "TXN-001" },
+    
   },
   "ORD-20260318-002": {
     cardFormat: "E-Code",
@@ -175,24 +175,6 @@ export default function AdminOrders() {
                                   <span className="font-medium">{details.agent}</span>
                                 </div>
                               </div>
-                              {details.bankTransfer && (
-                                <>
-                                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-3">Bank Transfer</p>
-                                  <div className="space-y-1.5">
-                                    {[
-                                      ["Bank", details.bankTransfer.bank],
-                                      ["Account", details.bankTransfer.account],
-                                      ["Amount", details.bankTransfer.amount],
-                                      ["Ref", details.bankTransfer.ref],
-                                    ].map(([k, v]) => (
-                                      <div key={k} className="flex justify-between text-xs">
-                                        <span className="text-muted-foreground">{k}</span>
-                                        <span className="font-medium">{v}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </>
-                              )}
                             </div>
 
                             {/* Timeline */}

@@ -1,24 +1,78 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { customerWallets, walletTransactions } from "@/data/mock";
-import { Wallet, Search, Eye, ArrowUpRight, ArrowDownLeft } from "lucide-react";
+import { Wallet, Search, Eye, ArrowUpRight, ArrowDownLeft, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import { toast } from "sonner";
+
+type TopUpRecord = {
+  id: string;
+  alias: string;
+  amount: number;
+  description: string;
+  date: string;
+  time: string;
+};
 
 export default function AdminWallets() {
   const [search, setSearch] = useState("");
   const [selectedWallet, setSelectedWallet] = useState<(typeof customerWallets)[0] | null>(null);
+  const [showTopUp, setShowTopUp] = useState(false);
+  const [topUpAlias, setTopUpAlias] = useState("");
+  const [topUpAmount, setTopUpAmount] = useState("");
+  const [topUpDescription, setTopUpDescription] = useState("");
+  const [topUpRecords, setTopUpRecords] = useState<TopUpRecord[]>([]);
 
   const totalBalance = customerWallets.reduce((sum, w) => sum + w.balance, 0);
   const filtered = customerWallets.filter(w =>
     w.alias.toLowerCase().includes(search.toLowerCase())
   );
+
+  const handleTopUp = () => {
+    const amount = Number(topUpAmount.replace(/,/g, ""));
+    if (!topUpAlias || !amount || amount <= 0) {
+      toast.error("Please select a customer and enter a valid amount");
+      return;
+    }
+    const record: TopUpRecord = {
+      id: `TU-${Date.now().toString(36).toUpperCase()}`,
+      alias: topUpAlias,
+      amount,
+      description: topUpDescription || "Manual top-up by admin",
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setTopUpRecords(prev => [record, ...prev]);
+    toast.success(`₦${amount.toLocaleString()} credited to ${topUpAlias}'s wallet`);
+    setTopUpAlias("");
+    setTopUpAmount("");
+    setTopUpDescription("");
+    setShowTopUp(false);
+  };
+
+  // Merge top-up records into transactions for display
+  const allTransactions = [
+    ...topUpRecords.map(r => ({
+      id: r.id,
+      type: "credit" as const,
+      amount: r.amount,
+      description: r.description,
+      date: r.date,
+      time: r.time,
+    })),
+    ...walletTransactions,
+  ];
 
   return (
     <AdminLayout>
@@ -30,13 +84,18 @@ export default function AdminWallets() {
             </h1>
             <p className="text-sm text-muted-foreground">View all customer wallet balances and transactions</p>
           </div>
-          <div className="text-right">
-            <p className="text-xs text-muted-foreground">Total Platform Balance</p>
-            <p className="text-lg font-heading font-bold text-accent">₦{totalBalance.toLocaleString()}</p>
+          <div className="flex items-center gap-3">
+            <Button size="sm" className="gap-1.5" onClick={() => setShowTopUp(true)}>
+              <Plus className="w-3.5 h-3.5" /> Add Money
+            </Button>
+            <div className="text-right">
+              <p className="text-xs text-muted-foreground">Total Platform Balance</p>
+              <p className="text-lg font-heading font-bold text-accent">₦{totalBalance.toLocaleString()}</p>
+            </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold">{customerWallets.length}</p>
             <p className="text-xs text-muted-foreground mt-1">Active Wallets</p>
@@ -49,7 +108,42 @@ export default function AdminWallets() {
             <p className="text-2xl font-heading font-bold text-warning">₦{customerWallets.reduce((s, w) => s + w.totalWithdrawals, 0).toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Withdrawals</p>
           </div>
+          <div className="bg-card border rounded-xl p-4 text-center">
+            <p className="text-2xl font-heading font-bold text-accent">{topUpRecords.length}</p>
+            <p className="text-xs text-muted-foreground mt-1">Manual Top-ups</p>
+          </div>
         </div>
+
+        {/* Top-up Records */}
+        {topUpRecords.length > 0 && (
+          <div className="mb-6">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recent Top-ups</p>
+            <div className="bg-card border rounded-xl overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-xs font-semibold">ID</TableHead>
+                    <TableHead className="text-xs font-semibold">Customer</TableHead>
+                    <TableHead className="text-xs font-semibold">Description</TableHead>
+                    <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                    <TableHead className="text-xs font-semibold text-right">Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {topUpRecords.map(r => (
+                    <TableRow key={r.id}>
+                      <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
+                      <TableCell className="text-sm">{r.alias}</TableCell>
+                      <TableCell className="text-xs text-muted-foreground">{r.description}</TableCell>
+                      <TableCell className="text-right text-sm font-bold text-success">+₦{r.amount.toLocaleString()}</TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          </div>
+        )}
 
         <div className="relative max-w-sm mb-4">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
@@ -108,6 +202,7 @@ export default function AdminWallets() {
         </div>
       </div>
 
+      {/* Wallet Detail Dialog */}
       <Dialog open={!!selectedWallet} onOpenChange={() => setSelectedWallet(null)}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
@@ -136,7 +231,9 @@ export default function AdminWallets() {
               <div>
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Recent Transactions</p>
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {walletTransactions.map(t => (
+                  {allTransactions
+                    .filter(t => topUpRecords.some(r => r.id === t.id && r.alias === selectedWallet.alias) || !topUpRecords.some(r => r.id === t.id))
+                    .map(t => (
                     <div key={t.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
                       <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
                         {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
@@ -154,6 +251,54 @@ export default function AdminWallets() {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Money Dialog */}
+      <Dialog open={showTopUp} onOpenChange={setShowTopUp}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5 text-accent" /> Add Money to Wallet
+            </DialogTitle>
+            <DialogDescription>Credit a customer's platform wallet</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs font-medium">Customer</label>
+              <Select value={topUpAlias} onValueChange={setTopUpAlias}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select customer..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {customerWallets.map(w => (
+                    <SelectItem key={w.alias} value={w.alias}>
+                      {w.alias} — Balance: ₦{w.balance.toLocaleString()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium">Amount (₦)</label>
+              <Input
+                placeholder="Enter amount..."
+                value={topUpAmount}
+                onChange={e => setTopUpAmount(e.target.value.replace(/[^0-9,]/g, ""))}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium">Description (optional)</label>
+              <Input
+                placeholder="e.g. Bonus credit, Refund..."
+                value={topUpDescription}
+                onChange={e => setTopUpDescription(e.target.value)}
+              />
+            </div>
+            <Button className="w-full" onClick={handleTopUp}>
+              Credit Wallet
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </AdminLayout>
