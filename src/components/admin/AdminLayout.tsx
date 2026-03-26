@@ -4,7 +4,7 @@ import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
   BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
-  Sun, Moon
+  Sun, Moon, Wallet
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -12,11 +12,12 @@ import { conversations, orders, cardRates } from "@/data/mock";
 import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
-  { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin" },
+  { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"] },
   { id: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
-  { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates" },
+  { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates", roles: ["super_admin", "team_lead", "agent"] },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
-  { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead"] },
+  { id: "wallets", label: "Wallets", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
+  { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
   { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
@@ -56,6 +57,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
     super_admin: { name: "Admin One", label: "Super Admin" },
     team_lead: { name: "Sarah Lead", label: "Team Lead" },
     agent: { name: "Mike Agent", label: "Agent" },
+    finance: { name: "Femi Finance", label: "Finance" },
   };
 
   // Search results
@@ -96,8 +98,8 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
           <div className="flex items-center gap-2">
             <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">View as</span>
           </div>
-          <div className="flex gap-1">
-            {(["super_admin", "team_lead", "agent"] as const).map(r => (
+          <div className="flex gap-1 flex-wrap">
+            {(["super_admin", "team_lead", "agent", "finance"] as const).map(r => (
               <button
                 key={r}
                 onClick={() => setRole(r)}
