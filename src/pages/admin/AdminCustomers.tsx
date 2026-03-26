@@ -162,11 +162,12 @@ export default function AdminCustomers() {
                   ["Tags", selectedCustomer.tags.join(", ") || "None"],
                   ["Last Message", selectedCustomer.lastMessage],
                 ].map(([label, value]) => (
-                <div key={label} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
-                </div>
-              ))}
+                  <div key={label} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
+                  </div>
+                ));
+              })()}
             </div>
           )}
         </DialogContent>
