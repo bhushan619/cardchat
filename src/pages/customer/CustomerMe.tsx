@@ -525,16 +525,23 @@ export default function CustomerMe() {
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => setActiveSection("wallet")}
+              onClick={() => { setActiveSection("wallet"); setTimeout(() => setShowWithdraw(true), 100); }}
             >
-              View Wallet
+              <Send className="w-3 h-3 mr-1" /> Withdraw
             </Button>
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => { setActiveSection("wallet"); setTimeout(() => setShowWithdraw(true), 100); }}
+              onClick={() => { setActiveSection("bank"); }}
             >
-              <Send className="w-3 h-3 mr-1" /> Withdraw
+              <Plus className="w-3 h-3 mr-1" /> Add Bank
+            </Button>
+            <Button
+              size="sm"
+              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
+              onClick={() => setActiveSection("wallet")}
+            >
+              Details
             </Button>
           </div>
         </div>
@@ -612,8 +619,8 @@ export default function CustomerMe() {
         {/* Menu Items */}
         <div className="space-y-1">
           {[
-            { icon: CreditCard, label: "Verified Bank Accounts", desc: `${bankAccounts.length} accounts`, key: "bank" },
             { icon: FileText, label: "My Orders", desc: `${customerOrders.length} orders`, key: "orders" },
+            { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
