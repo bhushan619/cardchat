@@ -33,6 +33,7 @@ import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
 import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
 import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminWallets from "./pages/admin/AdminWallets";
 
 const queryClient = new QueryClient();
 
@@ -76,6 +77,7 @@ const App = () => (
                   <Route path="/customer-guide" element={<AdminCustomerGuide />} />
                   <Route path="/sensitive-words" element={<AdminSensitiveWords />} />
                   <Route path="/customers" element={<AdminCustomers />} />
+                  <Route path="/wallets" element={<AdminWallets />} />
                 </Routes>
               </AdminRoleProvider>
             } />
