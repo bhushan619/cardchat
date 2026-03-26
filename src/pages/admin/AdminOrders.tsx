@@ -6,9 +6,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const statusColors: Record<string, string> = {
-  trading: "bg-warning/10 text-warning",
-  settled: "bg-accent/10 text-accent",
-  pending_payment: "bg-destructive/10 text-destructive",
+  pending_sale: "bg-warning/10 text-warning",
+  pending: "bg-primary/10 text-primary",
+  in_trade: "bg-accent/10 text-accent",
+  negotiation: "bg-warning/10 text-warning",
+  order_cancelled: "bg-destructive/10 text-destructive",
+  success: "bg-success/10 text-success",
 };
 
 const mockOrderDetails: Record<string, {
