@@ -825,19 +825,6 @@ export default function AdminMessages() {
                     </div>
                   </div>
 
-                  {/* Bank accounts */}
-                  <div className="p-4 border-b">
-                    <h3 className="font-heading font-semibold text-sm mb-3">Verified Bank Accounts</h3>
-                    {bankAccounts.map(a => (
-                      <div key={a.id} className="flex items-center gap-2 p-2 rounded-lg bg-muted mb-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-success" />
-                        <div>
-                          <p className="text-xs font-medium">{a.bankName} · {a.accountNumber}</p>
-                          <p className="text-[10px] text-muted-foreground">{a.holderName}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
 
                   {/* Customer info */}
                   <div className="p-4">
