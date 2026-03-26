@@ -68,6 +68,7 @@ export default function CustomerMe() {
   const [withdrawBank, setWithdrawBank] = useState("");
   const [withdrawComplete, setWithdrawComplete] = useState(false);
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
+  const [balanceVisible, setBalanceVisible] = useState(false);
 
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
@@ -115,8 +116,13 @@ export default function CustomerMe() {
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {/* Balance Card */}
           <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-5 text-accent-foreground">
-            <p className="text-xs opacity-80">Available Balance</p>
-            <p className="text-3xl font-heading font-bold mt-1">₦{walletBalance.toLocaleString()}</p>
+            <div className="flex items-center justify-between">
+              <p className="text-xs opacity-80">Available Balance</p>
+              <button onClick={() => setBalanceVisible(!balanceVisible)} className="opacity-70 hover:opacity-100 transition-opacity">
+                {balanceVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              </button>
+            </div>
+            <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
             <div className="flex gap-2 mt-4">
               <Button
                 size="sm"
@@ -571,9 +577,11 @@ export default function CustomerMe() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs opacity-80">Wallet Balance</p>
-              <p className="text-2xl font-heading font-bold">₦{walletBalance.toLocaleString()}</p>
+              <p className="text-2xl font-heading font-bold">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
             </div>
-            <Wallet className="w-8 h-8 opacity-50" />
+            <button onClick={() => setBalanceVisible(!balanceVisible)} className="opacity-70 hover:opacity-100 transition-opacity">
+              {balanceVisible ? <Eye className="w-6 h-6" /> : <EyeOff className="w-6 h-6" />}
+            </button>
           </div>
           <div className="flex gap-2 mt-3">
             <Button
