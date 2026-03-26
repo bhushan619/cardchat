@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { conversations as rawConversations, chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
+import { conversations as rawConversations, chatMessages, orders, adminUsers } from "@/data/mock";
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
