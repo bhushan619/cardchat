@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
 import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff } from "lucide-react";
@@ -63,12 +63,11 @@ export default function CustomerMe() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Open wallet if navigated with state
-  useState(() => {
+  useEffect(() => {
     if ((location.state as any)?.openWallet) {
       setActiveSection("wallet");
     }
-  });
+  }, [location.state]);
 
   // Wallet state
   const [showWithdraw, setShowWithdraw] = useState(false);
