@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets } from "@/data/mock";
-import { Search, Users, Eye, Wallet } from "lucide-react";
+import { Search, Users, Eye } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -11,22 +11,17 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 
-const customers = conversations.map(c => {
-  const wallet = customerWallets.find(w => w.alias === c.alias);
-  return {
-    id: c.id,
-    alias: c.alias,
-    status: c.status,
-    goodRate: c.goodRate,
-    totalValue: c.totalValue,
-    tags: c.tags,
-    lastMessage: c.lastMessage,
-    lastActive: c.time,
-    totalOrders: Math.floor(Math.random() * 20) + 1,
-    joinedDate: "Mar 2026",
-    walletBalance: wallet?.balance ?? 0,
-  };
-});
+const customers = conversations.map(c => ({
+  id: c.id,
+  alias: c.alias,
+  status: c.status,
+  goodRate: c.goodRate,
+  totalValue: c.totalValue,
+  tags: c.tags,
+  lastMessage: c.lastMessage,
+  lastActive: c.time,
+  totalOrders: Math.floor(Math.random() * 20) + 1,
+}));
 
 const statusColors: Record<string, string> = {
   consulting: "bg-amber-500/10 text-amber-600",
@@ -70,20 +65,23 @@ export default function AdminCustomers() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="text-xs font-semibold">Alias</TableHead>
+                <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Total Value</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Wallet</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Balance</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Total Credits</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Total Withdrawals</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Tags</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Last Active</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Joined</TableHead>
                 <TableHead className="text-xs font-semibold text-right"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(c => (
+              {filtered.map(c => {
+                const wallet = customerWallets.find(w => w.alias === c.alias);
+                return (
                 <TableRow key={c.id} className="hover:bg-muted/30">
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -103,12 +101,9 @@ export default function AdminCustomers() {
                   </TableCell>
                   <TableCell className="text-center text-sm">{c.totalOrders}</TableCell>
                   <TableCell className="text-right text-sm font-medium">{c.totalValue}</TableCell>
-                  <TableCell className="text-right text-sm font-medium">
-                    <span className="flex items-center justify-end gap-1">
-                      <Wallet className="w-3 h-3 text-accent" />
-                      ₦{c.walletBalance.toLocaleString()}
-                    </span>
-                  </TableCell>
+                  <TableCell className="text-right text-sm font-bold">₦{(wallet?.balance ?? 0).toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-sm text-success">₦{(wallet?.totalCredits ?? 0).toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-sm text-warning">₦{(wallet?.totalWithdrawals ?? 0).toLocaleString()}</TableCell>
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-1">
                       {c.tags.length > 0 ? c.tags.map(t => (
@@ -117,7 +112,6 @@ export default function AdminCustomers() {
                     </div>
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">{c.lastActive} ago</TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground">{c.joinedDate}</TableCell>
                   <TableCell className="text-right">
                     <button
                       onClick={() => setSelectedCustomer(c)}
@@ -127,10 +121,10 @@ export default function AdminCustomers() {
                     </button>
                   </TableCell>
                 </TableRow>
-              ))}
+              )})}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
@@ -154,22 +148,26 @@ export default function AdminCustomers() {
           </DialogHeader>
           {selectedCustomer && (
             <div className="space-y-3 py-2">
-              {[
-                ["Status", selectedCustomer.status],
-                ["Good Rate", `${selectedCustomer.goodRate}%`],
-                ["Total Orders", `${selectedCustomer.totalOrders}`],
-                ["Total Value", selectedCustomer.totalValue],
-                ["Wallet Balance", `₦${selectedCustomer.walletBalance.toLocaleString()}`],
-                ["Last Active", `${selectedCustomer.lastActive} ago`],
-                ["Joined", selectedCustomer.joinedDate],
-                ["Tags", selectedCustomer.tags.join(", ") || "None"],
-                ["Last Message", selectedCustomer.lastMessage],
-              ].map(([label, value]) => (
-                <div key={label} className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">{label}</span>
-                  <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
-                </div>
-              ))}
+              {(() => {
+                const wallet = customerWallets.find(w => w.alias === selectedCustomer.alias);
+                return [
+                  ["Status", selectedCustomer.status],
+                  ["Good Rate", `${selectedCustomer.goodRate}%`],
+                  ["Total Orders", `${selectedCustomer.totalOrders}`],
+                  ["Total Value", selectedCustomer.totalValue],
+                  ["Wallet Balance", `₦${(wallet?.balance ?? 0).toLocaleString()}`],
+                  ["Total Credits", `₦${(wallet?.totalCredits ?? 0).toLocaleString()}`],
+                  ["Total Withdrawals", `₦${(wallet?.totalWithdrawals ?? 0).toLocaleString()}`],
+                  ["Last Active", `${selectedCustomer.lastActive} ago`],
+                  ["Tags", selectedCustomer.tags.join(", ") || "None"],
+                  ["Last Message", selectedCustomer.lastMessage],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="font-medium text-right max-w-[60%] truncate">{value}</span>
+                  </div>
+                ));
+              })()}
             </div>
           )}
         </DialogContent>
