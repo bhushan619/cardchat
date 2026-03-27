@@ -337,10 +337,24 @@ export default function AdminMessages() {
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
+  const simulateCardlightWebhook = (orderId: string) => {
+    setCardlightResults(prev => ({ ...prev, [orderId]: "pending" }));
+    const webhookDelay = 3000 + Math.random() * 3000;
+    setTimeout(() => {
+      const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+      const randomResult = results[Math.floor(Math.random() * results.length)];
+      setCardlightResults(prev => ({ ...prev, [orderId]: randomResult }));
+    }, webhookDelay);
+  };
+
   // Handle buyer selection callback from OrderWizardModal
   const handleBuyerSelected = (conversationId: string) => {
     // Skip pending and go directly to in_trade so the agent can act immediately
     orderStatus.transitionStatus(conversationId, "pending");
+    const linkedOrderId = orderStatus.getOrderId(conversationId);
+    if (linkedOrderId) {
+      simulateCardlightWebhook(linkedOrderId);
+    }
     // Use a microtask to ensure state updates, then advance
     setTimeout(() => {
       orderStatus.transitionStatus(conversationId, "in_trade");
