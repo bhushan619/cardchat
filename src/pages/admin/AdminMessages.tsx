@@ -341,7 +341,7 @@ export default function AdminMessages() {
     setCardlightResults(prev => ({ ...prev, [orderId]: "pending" }));
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
-      const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+      const results: CardlightResult[] = ["successful", "declined", "negotiate"];
       const randomResult = results[Math.floor(Math.random() * results.length)];
       setCardlightResults(prev => ({ ...prev, [orderId]: randomResult }));
     }, webhookDelay);
@@ -367,11 +367,11 @@ export default function AdminMessages() {
     const statusOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
     const fallbackCardlightResult: CardlightResult | undefined =
       currentOrderStatus === "success"
-        ? "approved"
+        ? "successful"
         : currentOrderStatus === "order_cancelled"
           ? "declined"
           : currentOrderStatus === "negotiation"
-            ? "partial_approved"
+            ? "negotiate"
             : currentOrderStatus === "in_trade"
               ? "pending"
               : undefined;
