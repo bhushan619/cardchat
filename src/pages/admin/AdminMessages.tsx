@@ -419,7 +419,7 @@ export default function AdminMessages() {
                   size="sm"
                   variant="outline"
                   className="flex-1 h-8 text-xs"
-                  onClick={() => {/* TODO: show details modal */}}
+                  onClick={() => statusOrder && setDetailOrderId(statusOrder.id)}
                 >
                   Details
                 </Button>
@@ -445,7 +445,7 @@ export default function AdminMessages() {
                 size="sm"
                 variant="outline"
                 className="flex-1 h-8 text-xs"
-                onClick={() => {/* TODO: show details modal */}}
+                onClick={() => statusOrder && setDetailOrderId(statusOrder.id)}
               >
                 Details
               </Button>
@@ -598,20 +598,9 @@ export default function AdminMessages() {
           </div>
         )}
 
-        {/* Bottom row: action buttons + details */}
-        <div className="p-3 border-t border-border flex items-center gap-2">
-          <div className="flex-1">
-            {renderActionButtons()}
-          </div>
-          {statusOrder && (
-            <Button
-              size="sm"
-              onClick={() => setDetailOrderId(statusOrder.id)}
-              className="h-8 px-3 text-[10px] gap-1 shrink-0"
-            >
-              <ExternalLink className="w-3 h-3" /> Details
-            </Button>
-          )}
+        {/* Bottom row: action buttons */}
+        <div className="p-3 border-t border-border">
+          {renderActionButtons()}
         </div>
       </div>
     );
