@@ -216,6 +216,12 @@ export default function AdminMessages() {
   const [negotiateDenom, setNegotiateDenom] = useState("");
   const [negotiateRate, setNegotiateRate] = useState("");
 
+  // Track negotiation data per order: orderId -> { oldAmount, oldDenom, oldRate, newDenom, newRate, newAmount }
+  const [negotiationData, setNegotiationData] = useState<Record<string, {
+    oldDenom: number; oldRate: number; oldAmount: number;
+    newDenom: number; newRate: number; newAmount: number;
+  }>>({});
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
@@ -429,24 +435,24 @@ export default function AdminMessages() {
                   {statusOrder.cardType} {statusOrder.cardCurrency && <span className="text-muted-foreground font-normal">/ {statusOrder.cardCurrency}</span>}
                 </p>
                 {statusOrder.cardNumbers.length > 0 && (
-                  <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                    <span className="font-mono truncate">{statusOrder.cardNumbers.join(", ")}</span>
+                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                    <span className="font-mono truncate text-foreground font-medium">{statusOrder.cardNumbers.join(", ")}</span>
                     <button onClick={() => handleCopy(statusOrder.cardNumbers.join(", "), "status-cn")} className="text-muted-foreground hover:text-primary shrink-0">
-                      <Copy className="w-3 h-3" />
+                      <Copy className="w-3.5 h-3.5" />
                     </button>
-                    {copyFeedback === "status-cn" && <span className="text-[8px] text-success">Copied!</span>}
+                    {copyFeedback === "status-cn" && <span className="text-[9px] text-success">Copied!</span>}
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-              <div className="flex items-center gap-1">
-                <span className="font-mono">#{statusOrder.id}</span>
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-foreground font-medium">#{statusOrder.id}</span>
                 <button onClick={() => handleCopy(statusOrder.id, "status-oid")} className="text-muted-foreground hover:text-primary shrink-0">
-                  <Copy className="w-3 h-3" />
+                  <Copy className="w-3.5 h-3.5" />
                 </button>
-                {copyFeedback === "status-oid" && <span className="text-[8px] text-success">Copied!</span>}
+                {copyFeedback === "status-oid" && <span className="text-[9px] text-success">Copied!</span>}
               </div>
               <span>${statusOrder.amount.toLocaleString()}</span>
             </div>
@@ -1190,6 +1196,33 @@ export default function AdminMessages() {
                           </div>
                         </div>
                       ))}
+
+                      {/* Negotiation comparison */}
+                      {detailOrder && negotiationData[detailOrder.id] && (() => {
+                        const neg = negotiationData[detailOrder.id];
+                        const currSym = detailOrder.cardCurrency === "GBP" ? "£" : "$";
+                        return (
+                          <div className="mt-3 pt-3 border-t border-warning/30">
+                            <h4 className="font-heading font-semibold text-xs text-warning mb-2">Negotiation Details</h4>
+                            <div className="space-y-2">
+                              {[
+                                ["Denomination", `${currSym}${neg.oldDenom.toLocaleString()}`, `${currSym}${neg.newDenom.toLocaleString()}`],
+                                ["Card Rate", `₦${neg.oldRate.toLocaleString()}`, `₦${neg.newRate.toLocaleString()}`],
+                                ["Payout", `₦${neg.oldAmount.toLocaleString()}`, `₦${neg.newAmount.toLocaleString()}`],
+                              ].map(([label, oldVal, newVal]) => (
+                                <div key={label} className="flex gap-3 text-sm">
+                                  <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                                  <div className="flex items-center gap-2">
+                                    <span className="line-through text-muted-foreground">{oldVal}</span>
+                                    <span className="text-foreground">→</span>
+                                    <span className="font-semibold text-warning">{newVal}</span>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                 </div>
@@ -1217,59 +1250,107 @@ export default function AdminMessages() {
       </Dialog>
 
       {/* Negotiate Modal */}
-      <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Negotiate Order</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            The buyer found a discrepancy. Enter the actual denomination and rate to recalculate the payout.
-          </p>
-          <div className="space-y-3 pt-2">
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium">Actual Denomination ($)</label>
-              <Input
-                type="number"
-                placeholder="e.g. 50"
-                value={negotiateDenom}
-                onChange={e => setNegotiateDenom(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium">Actual Card Rate (₦)</label>
-              <Input
-                type="number"
-                placeholder="e.g. 1400"
-                value={negotiateRate}
-                onChange={e => setNegotiateRate(e.target.value)}
-              />
-            </div>
-            {negotiateDenom && negotiateRate && (
-              <div className="bg-muted rounded-lg p-3 text-center">
-                <p className="text-xs text-muted-foreground">Recalculated Payout</p>
-                <p className="text-lg font-bold text-primary">₦{(parseFloat(negotiateDenom) * parseFloat(negotiateRate)).toLocaleString()}</p>
+      {(() => {
+        const negOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
+        const negCurrency = negOrder?.cardCurrency || "USD";
+        const currSymbol = negCurrency === "GBP" ? "£" : "$";
+        const oldDenom = negOrder?.amount || 0;
+        const oldRate = negOrder?.unitPrice || negOrder?.nairaRate || 0;
+        const oldPayout = negOrder?.payout || 0;
+        const newPayout = negotiateDenom && negotiateRate ? parseFloat(negotiateDenom) * parseFloat(negotiateRate) : 0;
+
+        return (
+          <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
+            <DialogContent className="max-w-sm">
+              <DialogHeader>
+                <DialogTitle>Negotiate Order</DialogTitle>
+              </DialogHeader>
+              <p className="text-sm text-muted-foreground">
+                The buyer found a discrepancy. Enter the actual denomination and rate to recalculate the payout.
+              </p>
+
+              {/* Original order summary */}
+              <div className="bg-muted/50 rounded-lg p-3 space-y-1.5">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Original Order</p>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Denomination</span>
+                  <span className="font-medium">{currSymbol}{oldDenom.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Card Rate</span>
+                  <span className="font-medium">₦{oldRate.toLocaleString()}</span>
+                </div>
+                <div className="flex justify-between text-xs border-t border-border pt-1.5">
+                  <span className="text-muted-foreground font-medium">Original Payout</span>
+                  <span className="font-bold">₦{oldPayout.toLocaleString()}</span>
+                </div>
               </div>
-            )}
-          </div>
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" className="flex-1" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
-            <Button
-              className="flex-1"
-              disabled={!negotiateDenom || !negotiateRate}
-              onClick={() => {
-                if (selectedId) {
-                  handleStatusTransition(selectedId, "negotiation");
-                  const payout = parseFloat(negotiateDenom) * parseFloat(negotiateRate);
-                  addSystemMessage(`⚠️ Negotiation: Denomination $${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}`);
-                }
-                setNegotiateOpen(false);
-              }}
-            >
-              Confirm
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+
+              <div className="space-y-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium">Actual Denomination ({currSymbol})</label>
+                  <Input
+                    type="number"
+                    placeholder={`e.g. 50`}
+                    value={negotiateDenom}
+                    onChange={e => setNegotiateDenom(e.target.value)}
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-medium">Actual Card Rate (₦)</label>
+                  <Input
+                    type="number"
+                    placeholder="e.g. 1400"
+                    value={negotiateRate}
+                    onChange={e => setNegotiateRate(e.target.value)}
+                  />
+                </div>
+                {negotiateDenom && negotiateRate && (
+                  <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Original Payout</span>
+                      <span className="font-medium line-through text-muted-foreground">₦{oldPayout.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-foreground font-medium">New Payout</span>
+                      <span className="font-bold text-primary">₦{newPayout.toLocaleString()}</span>
+                    </div>
+                    {newPayout < oldPayout && (
+                      <p className="text-[10px] text-warning text-center">
+                        Difference: -₦{(oldPayout - newPayout).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                )}
+              </div>
+              <div className="flex gap-2 pt-2">
+                <Button variant="outline" className="flex-1" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
+                <Button
+                  className="flex-1"
+                  disabled={!negotiateDenom || !negotiateRate}
+                  onClick={() => {
+                    if (selectedId && currentOrderId) {
+                      handleStatusTransition(selectedId, "negotiation");
+                      const payout = parseFloat(negotiateDenom) * parseFloat(negotiateRate);
+                      setNegotiationData(prev => ({
+                        ...prev,
+                        [currentOrderId]: {
+                          oldDenom, oldRate, oldAmount: oldPayout,
+                          newDenom: parseFloat(negotiateDenom), newRate: parseFloat(negotiateRate), newAmount: payout,
+                        }
+                      }));
+                      addSystemMessage(`⚠️ Negotiation: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}`);
+                    }
+                    setNegotiateOpen(false);
+                  }}
+                >
+                  Confirm
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
     </AdminLayout>
   );
 }
