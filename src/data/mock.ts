@@ -14,7 +14,7 @@ export const cardRates = [
   { id: 11, cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 570, sellRate: 610, lastUpdated: "4 min ago" },
 ];
 
-export const systemNairaRate = 1580;
+export const systemNairaRate = 289;
 export const systemDenomination = 100;
 export const systemPriceControl = 85.00; // percentage 1.00% - 100.00%
 
@@ -46,14 +46,14 @@ export const chatMessages = [
   { id: 2, sender: "agent", text: "Hello! Sure, please send clear images of both cards (front and back)", time: "10:33 AM" },
   { id: 3, sender: "customer", text: "", time: "10:35 AM", image: true },
   { id: 4, sender: "agent", text: "Cards received. Let me verify them now.", time: "10:36 AM" },
-  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦1,580/CNY.", time: "10:37 AM", isOrder: true },
+  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦289/CNY.", time: "10:37 AM", isOrder: true },
   { id: 6, sender: "agent", text: "Cards verified ✅ Order created. Processing your billing now.", time: "10:38 AM" },
 ];
 
 export const orders = [
-  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 1580, unitPrice: 680, status: "success" as const, created: "10:37 AM" },
-  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 1580, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM" },
-  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 1580, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM" },
+  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, created: "10:37 AM" },
+  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM" },
+  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM" },
 ];
 
 export const bankAccounts = [
@@ -79,9 +79,9 @@ export const adminUsers = [
 ];
 
 export const nairaRateHistory = [
-  { timestamp: "Mar 18, 10:00 AM", oldRate: 1560, newRate: 1580, changedBy: "Admin One", reason: "Market adjustment" },
-  { timestamp: "Mar 17, 02:30 PM", oldRate: 1540, newRate: 1560, changedBy: "Admin One", reason: "Daily update" },
-  { timestamp: "Mar 16, 09:00 AM", oldRate: 1520, newRate: 1540, changedBy: "Admin One", reason: "Weekly review" },
+  { timestamp: "Mar 18, 10:00 AM", oldRate: 270, newRate: 289, changedBy: "Admin One", reason: "Market adjustment" },
+  { timestamp: "Mar 17, 02:30 PM", oldRate: 255, newRate: 270, changedBy: "Admin One", reason: "Daily update" },
+  { timestamp: "Mar 16, 09:00 AM", oldRate: 240, newRate: 255, changedBy: "Admin One", reason: "Weekly review" },
 ];
 
 export const promoBanners = [
