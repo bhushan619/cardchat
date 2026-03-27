@@ -306,13 +306,38 @@ export default function AdminMessages() {
             <p className="text-[10px] text-muted-foreground mt-1">Negotiation failed. This order has been cancelled.</p>
           </div>
         );
-      case "success":
+      case "success": {
+        const successOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
         return (
-          <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
-            <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Funds have been credited to the customer's wallet.</p>
+          <div className="p-3 bg-success/5 border border-success/20 rounded-lg space-y-2.5">
+            <div className="flex items-center justify-between">
+              <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
+              {currentOrderId && (
+                <span className="text-[10px] text-muted-foreground font-mono">#{currentOrderId}</span>
+              )}
+            </div>
+            <p className="text-[10px] text-muted-foreground">Funds have been credited to the customer's wallet.</p>
+            {successOrder && (
+              <div className="bg-success/5 border border-success/15 rounded-md p-2.5 space-y-1.5">
+                {[
+                  ["Card", `${successOrder.cardType} · ${successOrder.denomination}`],
+                  ["Face Value", `$${successOrder.amount.toLocaleString()}`],
+                  ["Rate", `₦${successOrder.nairaRate.toLocaleString()}`],
+                ].map(([label, value]) => (
+                  <div key={label} className="flex items-center justify-between text-[11px]">
+                    <span className="text-muted-foreground">{label}</span>
+                    <span className="font-medium">{value}</span>
+                  </div>
+                ))}
+                <div className="flex items-center justify-between text-xs border-t border-success/20 pt-1.5 mt-1">
+                  <span className="text-muted-foreground font-medium">Total Payout</span>
+                  <span className="font-bold text-success">₦{successOrder.payout.toLocaleString()}</span>
+                </div>
+              </div>
+            )}
           </div>
         );
+      }
       default:
         return null;
     }
