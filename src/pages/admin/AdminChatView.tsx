@@ -121,7 +121,7 @@ export default function AdminChatView() {
       cardType: o.cards.map(c => c.cardType).join(", "),
       denomination: `${o.cards.length} cards`,
       amount: o.totalFaceValue,
-      nairaRate: 1580,
+      nairaRate: 289,
       unitPrice: 0,
       status: o.status as string,
       payout: o.totalPayout,

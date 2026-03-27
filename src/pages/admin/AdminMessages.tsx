@@ -249,7 +249,7 @@ export default function AdminMessages() {
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
       denomination: `${o.cards.length} cards`, amount: o.totalFaceValue,
-      nairaRate: 1580, unitPrice: 0, status: o.status as string,
+      nairaRate: 289, unitPrice: 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
       cardCurrency: o.cardCurrency || "",
@@ -509,7 +509,7 @@ export default function AdminMessages() {
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Naira Rate</span>
-                      <span className="font-medium">₦{(statusOrder.nairaRate || 1580).toLocaleString()}/CNY</span>
+                      <span className="font-medium">₦{(statusOrder.nairaRate || 289).toLocaleString()}/CNY</span>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                       <span className="text-muted-foreground font-medium">Total Payout</span>
@@ -526,7 +526,7 @@ export default function AdminMessages() {
                   {[
                     ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
                     ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
-                    ["Naira Rate", `₦${(statusOrder.nairaRate || 1580).toLocaleString()}/CNY`],
+                    ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}/CNY`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -1362,7 +1362,7 @@ export default function AdminMessages() {
                  </div>
                  <div className="flex justify-between text-xs">
                    <span className="text-muted-foreground">Naira Rate</span>
-                   <span className="font-medium">₦{(negOrder?.nairaRate || 1580).toLocaleString()}/CNY</span>
+                   <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}/CNY</span>
                  </div>
                  <div className="flex justify-between text-xs border-t border-border pt-1.5">
                    <span className="text-muted-foreground font-medium">Original Payout</span>
@@ -1397,7 +1397,7 @@ export default function AdminMessages() {
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Naira Rate</span>
-                      <span className="font-medium">₦{(negOrder?.nairaRate || 1580).toLocaleString()}/CNY</span>
+                      <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}/CNY</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground font-medium">New Payout</span>
