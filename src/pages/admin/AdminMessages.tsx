@@ -355,7 +355,12 @@ export default function AdminMessages() {
               <Button
                 size="sm"
                 className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
+                onClick={() => setConfirmAction({
+                  type: "good_card",
+                  title: "Confirm Good Card",
+                  desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
               </Button>
@@ -363,7 +368,7 @@ export default function AdminMessages() {
                 size="sm"
                 variant="outline"
                 className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                onClick={() => handleStatusTransition(selectedId, "negotiation")}
+                onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
               >
                 <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
               </Button>
@@ -375,7 +380,12 @@ export default function AdminMessages() {
               <Button
                 size="sm"
                 className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
+                onClick={() => setConfirmAction({
+                  type: "successful",
+                  title: "Confirm Successful Trade",
+                  desc: `This will mark the trade as successful and credit funds to the customer's wallet.`,
+                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
               </Button>
@@ -383,7 +393,12 @@ export default function AdminMessages() {
                 size="sm"
                 variant="destructive"
                 className="flex-1 h-8 text-xs"
-                onClick={() => handleStatusTransition(selectedId, "order_cancelled")}
+                onClick={() => setConfirmAction({
+                  type: "failed",
+                  title: "Confirm Order Cancellation",
+                  desc: "This will cancel the order. No funds will be released to the customer.",
+                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
+                })}
               >
                 <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
               </Button>
