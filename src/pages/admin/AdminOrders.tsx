@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { orders } from "@/data/mock";
+import { orders, cardlightResultLabels, type CardlightResult } from "@/data/mock";
 import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
