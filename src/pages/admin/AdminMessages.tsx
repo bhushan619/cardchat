@@ -228,7 +228,7 @@ export default function AdminMessages() {
     ...orders.map(o => ({
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
-      cardCurrency: o.currency || (o.denomination?.includes("$") ? "USD" : "GBP"),
+      cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
       cardNumbers: [`${Math.floor(Math.random() * 9000000000 + 1000000000)}`],
       createdAt: o.created,
     })),
