@@ -18,7 +18,7 @@ const navItems = [
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
   { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
-  { id: "team-chat", label: "Team Chat", icon: MessageSquare, path: "/admin/team-chat" },
+  { id: "team-chat", label: "Team Chat", icon: MessageSquare, path: "/admin/team-chat", badge: 3 },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
   { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
@@ -90,7 +90,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 className={`admin-sidebar-item w-full text-left ${isActive ? "bg-sidebar-accent text-sidebar-primary" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"}`}
               >
                 <item.icon className="w-4 h-4" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {(item as any).badge && !isActive && (
+                  <span className="w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center shrink-0">
+                    {(item as any).badge}
+                  </span>
+                )}
               </button>
             );
           })}
