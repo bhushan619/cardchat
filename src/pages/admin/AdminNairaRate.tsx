@@ -99,17 +99,11 @@ export default function AdminNairaRate() {
             </Button>
           </div>
 
-          {/* Denomination & Price Control display */}
-          <div className="flex items-center gap-6 mb-3 pl-[60px]">
-            <div className="flex items-center gap-2">
-              <p className="text-sm text-muted-foreground">System Denomination:</p>
-              <p className="text-lg font-heading font-bold">{systemDenomination}</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Percent className="w-4 h-4 text-muted-foreground" />
-              <p className="text-sm text-muted-foreground">Price Control:</p>
-              <p className="text-lg font-heading font-bold">{systemPriceControl.toFixed(2)}%</p>
-            </div>
+          {/* Price Control display */}
+          <div className="flex items-center gap-2 mb-3 pl-[60px]">
+            <Percent className="w-4 h-4 text-muted-foreground" />
+            <p className="text-sm text-muted-foreground">Price Control:</p>
+            <p className="text-lg font-heading font-bold">{systemPriceControl.toFixed(2)}%</p>
           </div>
 
           {editing && (
@@ -120,8 +114,9 @@ export default function AdminNairaRate() {
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Denomination</label>
-                  <Input value={denomination} onChange={e => setDenomination(e.target.value)} className="mt-1" />
+                  <label className="text-xs font-medium text-muted-foreground">New Price Control (%)</label>
+                  <Input value={priceControl} onChange={e => setPriceControl(e.target.value)} placeholder="e.g. 85.00" className="mt-1" />
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Range: 1.00% – 100.00%</p>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">New Price Control (%)</label>
