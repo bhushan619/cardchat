@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cardRates } from "@/data/mock";
+import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
 
 // Card brands with their available currencies
 const cardBrands: { name: string; currencies: string[] }[] = [
@@ -104,8 +104,8 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   const [cardCurrency, setCardCurrency] = useState("");
   const [cardSource, setCardSource] = useState("W");
   const [supplier, setSupplier] = useState("");
-  const [nairaPrice, setNairaPrice] = useState("");
-  const [cardRate, setCardRate] = useState("");
+  const [nairaPrice] = useState(systemNairaRate.toString());
+  const [cardRate] = useState(systemDenomination.toString());
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
   const [cardTypeOpen, setCardTypeOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
@@ -354,23 +354,19 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 </div>
               </div>
 
-              {/* Row 2: Naira Price, Card Rate */}
+              {/* Row 2: Naira Price, Denomination (read-only labels) */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
-                  <Input
-                    value={nairaPrice}
-                    onChange={e => setNairaPrice(e.target.value)}
-                    className="h-8 text-xs"
-                  />
+                  <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
+                    ₦{Number(nairaPrice).toLocaleString()}
+                  </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate</label>
-                  <Input
-                    value={cardRate}
-                    onChange={e => setCardRate(e.target.value)}
-                    className="h-8 text-xs"
-                  />
+                  <label className="text-[11px] font-medium text-muted-foreground">Denomination</label>
+                  <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
+                    {cardRate}
+                  </div>
                 </div>
               </div>
 

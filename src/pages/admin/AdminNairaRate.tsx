@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { nairaRateHistory, systemNairaRate } from "@/data/mock";
+import { nairaRateHistory, systemNairaRate, systemDenomination } from "@/data/mock";
 import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ export default function AdminNairaRate() {
   const { role } = useAdminRole();
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
+  const [denomination, setDenomination] = useState(systemDenomination.toString());
   const [reason, setReason] = useState("");
   const [broadcasting, setBroadcasting] = useState<"idle" | "broadcasting" | "done">("idle");
 
@@ -50,7 +51,7 @@ export default function AdminNairaRate() {
         <h1 className="font-heading text-xl font-bold mb-1">Naira Rate Configuration</h1>
         <p className="text-sm text-muted-foreground mb-6">System-wide rate · Locked into orders at creation</p>
 
-        {/* Current Rate Card */}
+        {/* Current Rate & Denomination Card */}
         <div className="bg-card border rounded-xl p-6 mb-6">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -75,16 +76,26 @@ export default function AdminNairaRate() {
               </div>
             </div>
             <Button variant="outline" size="sm" onClick={() => setEditing(!editing)} className="gap-2">
-              <Edit className="w-3.5 h-3.5" /> {editing ? "Cancel" : "Update Rate"}
+              <Edit className="w-3.5 h-3.5" /> {editing ? "Cancel" : "Update"}
             </Button>
+          </div>
+
+          {/* Denomination display */}
+          <div className="flex items-center gap-3 mb-3 pl-[60px]">
+            <p className="text-sm text-muted-foreground">System Denomination:</p>
+            <p className="text-lg font-heading font-bold">{systemDenomination}</p>
           </div>
 
           {editing && (
             <div className="border-t pt-4 space-y-3 animate-slide-up">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-3 gap-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per CNY)</label>
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">New Denomination</label>
+                  <Input value={denomination} onChange={e => setDenomination(e.target.value)} className="mt-1" />
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">Reason for Change</label>
@@ -92,7 +103,7 @@ export default function AdminNairaRate() {
                 </div>
               </div>
               <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
-                <p className="text-xs text-warning-foreground">⚠ This rate will be broadcast to all active sessions and the Customer App immediately. All new orders will use this rate.</p>
+                <p className="text-xs text-warning-foreground">⚠ These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values.</p>
               </div>
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"

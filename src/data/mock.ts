@@ -15,6 +15,7 @@ export const cardRates = [
 ];
 
 export const systemNairaRate = 1580;
+export const systemDenomination = 100;
 
 export const conversations = [
   { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },
