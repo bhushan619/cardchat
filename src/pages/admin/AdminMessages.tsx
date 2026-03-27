@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { conversations as rawConversations, chatMessages, orders, adminUsers, type FundAdjustment } from "@/data/mock";
+import { conversations as rawConversations, chatMessages, orders, adminUsers, customerWallets, walletTransactions, type FundAdjustment } from "@/data/mock";
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
@@ -1448,64 +1448,106 @@ export default function AdminMessages() {
               <Wallet className="w-5 h-5 text-accent" /> Fund Adjustment
             </DialogTitle>
           </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            {fundAdjustType === "addition" ? "Add" : "Deduct"} funds {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
-          </p>
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant={fundAdjustType === "addition" ? "default" : "outline"}
-                className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "addition" ? "bg-success text-success-foreground hover:bg-success/90" : ""}`}
-                onClick={() => setFundAdjustType("addition")}
-              >
-                <PlusCircle className="w-3.5 h-3.5" /> Addition
-              </Button>
-              <Button
-                size="sm"
-                variant={fundAdjustType === "deduction" ? "default" : "outline"}
-                className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "deduction" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}`}
-                onClick={() => setFundAdjustType("deduction")}
-              >
-                <MinusCircle className="w-3.5 h-3.5" /> Deduction
-              </Button>
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium">Amount (₦)</label>
-              <Input
-                type="number"
-                placeholder="Enter amount..."
-                value={fundAdjustAmount}
-                onChange={e => setFundAdjustAmount(e.target.value)}
-              />
-            </div>
-            <div className="space-y-1.5">
-              <label className="text-xs font-medium">Reason</label>
-              <Input
-                placeholder="e.g. Refund for bad card, Bonus credit..."
-                value={fundAdjustReason}
-                onChange={e => setFundAdjustReason(e.target.value)}
-              />
-            </div>
+          {(() => {
+            const cw = selectedConvo ? customerWallets.find(w => w.alias === selectedConvo.alias) : null;
+            const custTxns = selectedConvo ? walletTransactions.slice(0, 5) : [];
+            const custAdjustments = selectedConvo ? fundAdjustments.filter(a => a.customerAlias === selectedConvo.alias) : [];
+            return (
+              <>
+                <p className="text-sm text-muted-foreground">
+                  {fundAdjustType === "addition" ? "Add" : "Deduct"} funds {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
+                </p>
 
-            {/* Recent adjustments for this customer */}
-            {selectedConvo && fundAdjustments.filter(a => a.customerAlias === selectedConvo.alias).length > 0 && (
-              <div className="border rounded-lg p-2.5 space-y-1.5 max-h-32 overflow-y-auto">
-                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Recent Adjustments</p>
-                {fundAdjustments.filter(a => a.customerAlias === selectedConvo.alias).slice(0, 5).map(a => (
-                  <div key={a.id} className="flex items-center justify-between text-[10px]">
-                    <div className="flex items-center gap-1.5">
-                      {a.type === "addition" ? <PlusCircle className="w-3 h-3 text-success" /> : <MinusCircle className="w-3 h-3 text-destructive" />}
-                      <span className="text-muted-foreground truncate max-w-[120px]">{a.reason}</span>
+                {/* Wallet Balance Card */}
+                {cw && (
+                  <div className="bg-accent/10 border border-accent/20 rounded-xl p-3 space-y-1.5">
+                    <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Current Wallet Balance</p>
+                    <p className="font-heading text-xl font-bold text-accent">₦{cw.balance.toLocaleString()}</p>
+                    <div className="flex gap-4 text-[10px] text-muted-foreground">
+                      <span>Total Credits: <span className="text-success font-medium">₦{cw.totalCredits.toLocaleString()}</span></span>
+                      <span>Withdrawals: <span className="text-destructive font-medium">₦{cw.totalWithdrawals.toLocaleString()}</span></span>
                     </div>
-                    <span className={`font-medium ${a.type === "addition" ? "text-success" : "text-destructive"}`}>
-                      {a.type === "addition" ? "+" : "-"}₦{a.amount.toLocaleString()}
-                    </span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                )}
+
+                <div className="space-y-3">
+                  <div className="flex gap-2">
+                    <Button
+                      size="sm"
+                      variant={fundAdjustType === "addition" ? "default" : "outline"}
+                      className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "addition" ? "bg-success text-success-foreground hover:bg-success/90" : ""}`}
+                      onClick={() => setFundAdjustType("addition")}
+                    >
+                      <PlusCircle className="w-3.5 h-3.5" /> Addition
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant={fundAdjustType === "deduction" ? "default" : "outline"}
+                      className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "deduction" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}`}
+                      onClick={() => setFundAdjustType("deduction")}
+                    >
+                      <MinusCircle className="w-3.5 h-3.5" /> Deduction
+                    </Button>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium">Amount (₦)</label>
+                    <Input
+                      type="number"
+                      placeholder="Enter amount..."
+                      value={fundAdjustAmount}
+                      onChange={e => setFundAdjustAmount(e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium">Reason</label>
+                    <Input
+                      placeholder="e.g. Refund for bad card, Bonus credit..."
+                      value={fundAdjustReason}
+                      onChange={e => setFundAdjustReason(e.target.value)}
+                    />
+                  </div>
+
+                  {/* Wallet Transactions */}
+                  {custTxns.length > 0 && (
+                    <div className="border rounded-lg p-2.5 space-y-1.5 max-h-36 overflow-y-auto">
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Recent Transactions</p>
+                      {custTxns.map(tx => (
+                        <div key={tx.id} className="flex items-center justify-between text-[10px]">
+                          <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                            {tx.type === "credit"
+                              ? <PlusCircle className="w-3 h-3 text-success shrink-0" />
+                              : <MinusCircle className="w-3 h-3 text-destructive shrink-0" />}
+                            <span className="text-muted-foreground truncate">{tx.description}</span>
+                          </div>
+                          <span className={`font-medium shrink-0 ml-2 ${tx.type === "credit" ? "text-success" : "text-destructive"}`}>
+                            {tx.type === "credit" ? "+" : "-"}₦{tx.amount.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Recent adjustments for this customer */}
+                  {custAdjustments.length > 0 && (
+                    <div className="border rounded-lg p-2.5 space-y-1.5 max-h-32 overflow-y-auto">
+                      <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Recent Adjustments</p>
+                      {custAdjustments.slice(0, 5).map(a => (
+                        <div key={a.id} className="flex items-center justify-between text-[10px]">
+                          <div className="flex items-center gap-1.5">
+                            {a.type === "addition" ? <PlusCircle className="w-3 h-3 text-success" /> : <MinusCircle className="w-3 h-3 text-destructive" />}
+                            <span className="text-muted-foreground truncate max-w-[120px]">{a.reason}</span>
+                          </div>
+                          <span className={`font-medium ${a.type === "addition" ? "text-success" : "text-destructive"}`}>
+                            {a.type === "addition" ? "+" : "-"}₦{a.amount.toLocaleString()}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
+            );
+          })()}
           <div className="flex gap-2 pt-2">
             <Button variant="outline" className="flex-1" onClick={() => setFundAdjustOpen(false)}>Cancel</Button>
             <Button
