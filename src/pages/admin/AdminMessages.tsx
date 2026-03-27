@@ -1363,10 +1363,14 @@ export default function AdminMessages() {
                   />
                 </div>
                 {negotiateDenom && negotiateRate && (
-                  <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-2">
+                   <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-2">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Original Payout</span>
                       <span className="font-medium line-through text-muted-foreground">₦{oldPayout.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Naira Rate</span>
+                      <span className="font-medium">₦{(negOrder?.nairaRate || 1580).toLocaleString()}/CNY</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground font-medium">New Payout</span>
