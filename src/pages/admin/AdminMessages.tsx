@@ -939,6 +939,16 @@ export default function AdminMessages() {
                       </Popover>
                     </div>
                     <div className="flex items-center gap-2">
+                      {canAdjustFunds && selectedConvo && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => { setFundAdjustType("addition"); setFundAdjustAmount(""); setFundAdjustReason(""); setFundAdjustOpen(true); }}
+                          className="h-8 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10"
+                        >
+                          <Wallet className="w-3.5 h-3.5" /> Fund +/-
+                        </Button>
+                      )}
                       {!currentOrderStatus && (
                         <Button
                           size="sm"
