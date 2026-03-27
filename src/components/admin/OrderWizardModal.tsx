@@ -43,7 +43,7 @@ interface OrderEntry {
 
 export interface CompletedOrder {
   orderId: string;
-  cards: { cardType: string; denomination: string; unitPrice: string; status: string }[];
+  cards: { cardType: string; denomination: string; unitPrice: string; status: string; cardNo?: string }[];
   totalPayout: number;
   totalFaceValue: number;
   bank: string;
@@ -52,6 +52,8 @@ export interface CompletedOrder {
   transferAmount: string;
   timestamp: string;
   status: "processing" | "completed" | "failed";
+  cardCurrency?: string;
+  cardNumbers?: string[];
 }
 
 interface CardlightPanelProps {
@@ -181,7 +183,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     if (onComplete) {
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
-        cards: cards.map(c => ({ cardType, denomination: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale" })),
+        cards: cards.map(c => ({ cardType, denomination: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale", cardNo: c.cardNo })),
         totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * (Number(cardRate) || 0),
         totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
         bank: "",
@@ -190,6 +192,8 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
         transferAmount: "0",
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         status: "processing",
+        cardCurrency: cardCurrency,
+        cardNumbers: cards.map(c => c.cardNo).filter(Boolean),
       };
       onComplete(order);
     }

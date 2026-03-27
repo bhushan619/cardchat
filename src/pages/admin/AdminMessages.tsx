@@ -4,10 +4,12 @@ import { conversations as rawConversations, chatMessages, orders, adminUsers } f
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info
+  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info,
+  CreditCard, Copy, ExternalLink
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -203,6 +205,15 @@ export default function AdminMessages() {
     setReassignOpen(false);
   };
 
+  const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopyFeedback(label);
+    setTimeout(() => setCopyFeedback(null), 1500);
+  };
+
   const allOrders = [
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
@@ -210,10 +221,16 @@ export default function AdminMessages() {
       nairaRate: 1580, unitPrice: 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
+      cardCurrency: o.cardCurrency || "",
+      cardNumbers: o.cardNumbers || [],
+      createdAt: o.timestamp,
     })),
     ...orders.map(o => ({
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
+      cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
+      cardNumbers: [] as string[],
+      createdAt: o.created,
     })),
   ];
 
@@ -821,28 +838,71 @@ export default function AdminMessages() {
                                 isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
                               }`}
                             >
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-[11px] font-semibold">{o.id}</span>
-                                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">
-                                  {o.status}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                                <span>{o.cardType}</span>
-                                <span>${o.amount}</span>
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                  <CreditCard className="w-4 h-4 text-primary" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between mb-0.5">
+                                    <span className="text-[11px] font-semibold truncate">
+                                      {o.cardType} {o.cardCurrency && <span className="text-muted-foreground font-normal">/ {o.cardCurrency}</span>}
+                                    </span>
+                                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 ml-1">
+                                      {o.status}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                                    <div className="flex items-center gap-1 truncate">
+                                      <span className="font-mono truncate">{o.id}</span>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.id, o.id); }}
+                                        className="text-muted-foreground hover:text-primary shrink-0"
+                                        title="Copy Order ID"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                      {copyFeedback === o.id && <span className="text-[8px] text-success">Copied!</span>}
+                                    </div>
+                                    <span className="shrink-0">${o.amount}</span>
+                                  </div>
+                                  {o.cardNumbers.length > 0 && (
+                                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-muted-foreground">
+                                      <span className="truncate font-mono">{o.cardNumbers[0]}{o.cardNumbers.length > 1 ? ` +${o.cardNumbers.length - 1}` : ""}</span>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.cardNumbers.join(", "), `cn-${o.id}`); }}
+                                        className="text-muted-foreground hover:text-primary shrink-0"
+                                        title="Copy Card Number(s)"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                      {copyFeedback === `cn-${o.id}` && <span className="text-[8px] text-success">Copied!</span>}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </button>
                             {isSelected && (
                               <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
-                                <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setDetailOrderId(o.id)}
+                                    className="h-6 px-2.5 text-[10px] gap-1"
+                                  >
+                                    <ExternalLink className="w-3 h-3" /> Details
+                                  </Button>
+                                </div>
                                 <div className="space-y-1.5">
                                   {[
                                     ["Order ID", o.id],
-                                    ["Card", o.cardType],
+                                    ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                     ["Denomination", o.denomination],
                                     ["Amount", `$${o.amount}`],
                                     ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
                                     ["Payout", `₦${o.payout.toLocaleString()}`],
+                                    ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
                                     ...(o.bank ? [["Bank", `${o.bank} ${o.bankAccount}`]] : []),
                                     ["Time", o.timestamp],
                                   ].map(([k, v]) => (
@@ -925,6 +985,115 @@ export default function AdminMessages() {
         </div>
         </div>
       </div>
+
+      {/* Order Details Modal */}
+      {(() => {
+        const detailOrder = detailOrderId ? allOrders.find(o => o.id === detailOrderId) : null;
+        return (
+          <Dialog open={!!detailOrderId} onOpenChange={(open) => { if (!open) setDetailOrderId(null); }}>
+            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Order Details</DialogTitle>
+              </DialogHeader>
+              {detailOrder && (
+                <div className="grid grid-cols-2 gap-8 pt-2">
+                  {/* Product Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
+                    <div className="space-y-3">
+                      {[
+                        ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
+                        ["Card image number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers[0] : "—"],
+                        ["Card type", `${detailOrder.cardType}${detailOrder.cardCurrency ? ` / ${detailOrder.cardCurrency}` : ""}`],
+                        ["Order face value", `${detailOrder.amount}`],
+                        ["Card number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : "—"],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-medium break-all">{value}</span>
+                            {(label === "Card number" || label === "Card image number") && value !== "—" && (
+                              <button onClick={() => handleCopy(String(value), `modal-${label}`)} className="text-muted-foreground hover:text-primary shrink-0">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            {copyFeedback === `modal-${label}` && <span className="text-[9px] text-success">Copied!</span>}
+                          </div>
+                        </div>
+                      ))}
+                      {/* Card image placeholder */}
+                      <div className="flex gap-3 text-sm">
+                        <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card image</span>
+                        <div className="flex gap-2">
+                          <div className="w-16 h-12 bg-muted rounded flex items-center justify-center">
+                            <CreditCard className="w-5 h-5 text-muted-foreground" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dispute Info */}
+                    <div className="pt-3 border-t">
+                      <h4 className="font-heading font-semibold text-sm mb-3">Dispute Info</h4>
+                      <div className="space-y-3">
+                        <div className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Contact Seller</span>
+                          <span className="text-muted-foreground italic text-xs">No dispute message</span>
+                        </div>
+                        <div className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Upload Pic</span>
+                          <span className="text-muted-foreground italic text-xs">No uploads</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-heading font-semibold text-sm text-center">Order Information</h4>
+                    <div className="space-y-3">
+                      {[
+                        ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
+                        ["Order id", detailOrder.id],
+                        ["Order face value", `${detailOrder.amount}`],
+                        ["Order unit price", `${detailOrder.unitPrice || "—"}`],
+                        ["Order amount", `${detailOrder.payout.toLocaleString()}`],
+                        ["Settlement amount", detailOrder.bank ? `₦${detailOrder.payout.toLocaleString()}` : "—"],
+                        ["Order Status", detailOrder.status],
+                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : currentOrderStatus === "negotiation" ? "Under negotiation" : "Pending"],
+                        ["Arbitration status", "No arbitrated"],
+                        ["Dispute Amount", "—"],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={`font-medium break-all ${
+                              label === "Order Status" && value === "success" ? "text-success" :
+                              label === "Order Status" && value === "order_cancelled" ? "text-destructive" :
+                              ""
+                            }`}>
+                              {value}
+                            </span>
+                            {label === "Order id" && (
+                              <button onClick={() => handleCopy(String(value), "modal-orderid")} className="text-muted-foreground hover:text-primary shrink-0">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            {copyFeedback === "modal-orderid" && label === "Order id" && <span className="text-[9px] text-success">Copied!</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-end pt-4 border-t">
+                <Button onClick={() => setDetailOrderId(null)} className="px-6">Confirm</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
     </AdminLayout>
   );
 }
