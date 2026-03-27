@@ -30,13 +30,13 @@ interface CardEntry {
   cardAmount: string;
 }
 
-export type CardlightResult = "pending" | "approved" | "declined" | "partial_approved";
+export type CardlightResult = "pending" | "successful" | "declined" | "negotiate";
 
 export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
-  pending:          { label: "Pending",          color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
-  approved:         { label: "Approved",         color: "text-success",     bg: "bg-success/10",     rowBg: "bg-success/5" },
-  declined:         { label: "Declined",         color: "text-destructive", bg: "bg-destructive/10", rowBg: "bg-destructive/5" },
-  partial_approved: { label: "Partial Approved", color: "text-primary",     bg: "bg-primary/10",     rowBg: "bg-primary/5" },
+  pending:    { label: "Pending",    color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
+  successful: { label: "Successful", color: "text-success",     bg: "bg-success/10",     rowBg: "bg-success/5" },
+  declined:   { label: "Declined",   color: "text-destructive", bg: "bg-destructive/10", rowBg: "bg-destructive/5" },
+  negotiate:  { label: "Negotiate",  color: "text-primary",     bg: "bg-primary/10",     rowBg: "bg-primary/5" },
 };
 
 interface OrderEntry {
@@ -137,6 +137,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   const [sellerModalOpen, setSellerModalOpen] = useState(false);
   const [saleOrderId, setSaleOrderId] = useState<string | null>(null);
   const [confirmSeller, setConfirmSeller] = useState<SellerEntry | null>(null);
+  const [simulatedResult, setSimulatedResult] = useState<CardlightResult | "random">("random");
 
   const handleLogin = () => {
     if (!account.trim() || !password.trim()) return;
@@ -224,12 +225,14 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       // Simulate CardLight webhook response after 3-6 seconds
       const webhookDelay = 3000 + Math.random() * 3000;
       const capturedOrderId = saleOrderId;
+      const capturedSimResult = simulatedResult;
       setTimeout(() => {
-        const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
-        const randomResult = results[Math.floor(Math.random() * results.length)];
+        const result: CardlightResult = capturedSimResult === "random"
+          ? (["successful", "declined", "negotiate"] as CardlightResult[])[Math.floor(Math.random() * 3)]
+          : capturedSimResult;
         setOrderList(prev => {
           const updated = prev.map(o =>
-            o.id === capturedOrderId ? { ...o, cardlightResult: randomResult, status: randomResult === "approved" ? "Approved" : randomResult === "declined" ? "Declined" : "Partial" } : o
+            o.id === capturedOrderId ? { ...o, cardlightResult: result, status: result === "successful" ? "Successful" : result === "declined" ? "Declined" : "Negotiate" } : o
           );
           sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
           return updated;
@@ -585,9 +588,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                             <span className={`text-[9px] font-medium ${
                               o.status === "Negotiation" ? "text-warning" :
                               o.status === "Selling" ? "text-primary" :
-                              o.status === "Approved" ? "text-success" :
+                             o.status === "Successful" ? "text-success" :
                               o.status === "Declined" ? "text-destructive" :
-                              o.status === "Partial" ? "text-primary" :
+                              o.status === "Negotiate" ? "text-primary" :
                               "text-muted-foreground"
                             }`}>
                               {o.status}
@@ -662,6 +665,20 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
           <DialogHeader>
             <DialogTitle>Choose buyer and sell</DialogTitle>
           </DialogHeader>
+          <div className="flex items-center gap-2 text-sm">
+            <span className="text-muted-foreground text-xs">Simulate Result:</span>
+            <Select value={simulatedResult} onValueChange={(v) => setSimulatedResult(v as CardlightResult | "random")}>
+              <SelectTrigger className="h-8 w-[160px] text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="random" className="text-xs">Random</SelectItem>
+                <SelectItem value="successful" className="text-xs">    Successful</SelectItem>
+                <SelectItem value="declined" className="text-xs">🔴 Declined</SelectItem>
+                <SelectItem value="negotiate" className="text-xs">🔵 Negotiate</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
           <div className="border rounded-lg overflow-hidden">
             <table className="w-full text-sm">
               <thead>
