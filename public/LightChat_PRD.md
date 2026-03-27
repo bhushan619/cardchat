@@ -1,7 +1,7 @@
 # LightChat — Product Requirements Document (PRD)
 
-**Version:** 4.1  
-**Date:** March 25, 2026  
+**Version:** 4.2  
+**Date:** March 27, 2026  
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://lightchat.lovable.app
@@ -188,20 +188,16 @@ Five sequential steps managed by `step` state:
 - Specification: 5-minute expiry, max 3 attempts (not enforced in prototype)
 - Advances to Step 4
 
-**Step 4 — Invite Code (Optional):**
-- Title: "Have an invite code?"
-- Input for 6-character invite code or WS alias
-- "Continue" button
-- **"Skip for Now"** link — 7-day window to add code retroactively; defaults to "App Ad" source after
-- Advances to Step 5
-
-**Step 5 — Alias Confirmation:**
+**Step 4 — Alias Confirmation (formerly Step 5):**
 - Title: "You're all set!"
 - System-generated **6-character alphanumeric alias** displayed prominently (e.g., "J4D9KP")
 - Monospace font, accent-colored badge
 - Usage explanation: "This is your unique trading identity. This alias is used across all support interactions."
 - Shield icon for trust reinforcement
 - "Continue to Home" button → navigates to `/customer`
+
+> **Note:** The invite code step has been removed from the registration flow. Invite codes are now entered via the **Rewards** screen accessible from the Customer App.
+
 
 ### 4.2 Home Screen (`/customer`)
 
@@ -335,6 +331,7 @@ A multi-section profile page with drill-down sub-views.
 - **Menu Items** (each with icon, label, description, chevron):
   - Verified Bank Accounts — shows account count
   - Transaction Records — shows transaction count
+  - Rewards — enter invite code, view referral bonuses
   - Data Dashboard — "View your stats"
   - Security Settings — "2FA, password"
   - App Settings — "Notifications, language"
@@ -384,18 +381,18 @@ A multi-section profile page with drill-down sub-views.
 
 - **12 expandable accordion sections** with step-by-step instructions
 - Topics:
-  1. Getting Started — splash, onboarding, OTP, invite code, alias flow
+  1. Getting Started — splash, onboarding, OTP, alias flow (invite code moved to Rewards)
   2. Exploring the Home Screen — modular grid, search, live rates
   3. How to Sell a Gift Card — step-by-step sell flow
   4. Using the Chat — inline image/emoji, message bubbles, order tracking
   5. Finding Available Agents — search, status indicators (green/yellow dots)
   6. Understanding Card Rates — format badges, currency, refresh
   7. Managing Your Profile — alias display, bank accounts, settings
-  8. Beginner's Guide — 3-step first-login overlay documentation
-  9. Receiving Payments — bank verification, transfer tracking, proof screenshots
-  10. Safety & Security Tips — never share passwords, verify agent badges
-  11. Staying Updated — rate changes, app notifications
-  12. Theme & Appearance — dark/light mode toggle via Me tab
+   8. Beginner's Guide — 3-step first-login overlay documentation
+   9. Receiving Payments — bank verification, transfer tracking, proof screenshots
+   10. Wallet & Withdrawals — withdrawal limits (₦2,000–₦790,000)
+   11. Safety & Security Tips — never share passwords, verify agent badges
+   12. Staying Updated — rate changes, app notifications
 - Each step has optional **Pro Tips** (accent-colored callouts)
 - **Expand All / Collapse All** controls
 - Accessible from Me tab menu and bottom tab bar
@@ -557,7 +554,8 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Camera icon (inline)
   - Smile/emoji icon (inline)
   - Send button (accent circle)
-  - "Create Order" button (opens Order Wizard)
+   - "Create Order" button (opens Order Wizard)
+   - **"Fund Deduction/Addition" button** (Super Admin and Team Lead only) — opens Fund Adjustment Modal to add/deduct money from customer wallet. Shows current wallet balance, transaction history, and records all operations.
 
 - **Order Status Controls:**
   - When an order exists for the conversation, status action buttons appear
@@ -673,10 +671,14 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 
 **Component:** `src/pages/admin/AdminCardRates.tsx`
 
-- Header: "Card Rates" with CreditCard icon
-- Search bar (filter by card type or currency)
+- Header: "Card Rates" with CreditCard icon, current Naira Rate and Price Control display
+- **Two independent search boxes:** Card Type search and Currency search (filter independently)
 - Refresh button
 - "Auto-refresh every 60s" indicator
+- **"Price Push" button** (Super Admin and Team Lead only) — broadcasts current popular card prices (Apple, Steam, Razer Gold) to all platform customers
+- **Rate calculation formula:**
+  - Sell Rate = Current Naira Rate × Buy Rate
+  - Buy Rate = Sell Rate × Current Price Control
 - **Data table** columns:
   - Card Type
   - Format — badge: "E-Code" (primary pill) or "Physical" (muted pill)
@@ -707,11 +709,14 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 **Component:** `src/pages/admin/AdminNairaRate.tsx`  
 **Access:** Super Admin, Team Lead
 
-- **Current Rate Display:** ₦1,580 prominently shown
-- **Update Form:**
-  - New Rate input (₦)
-  - Reason text input
-  - "Update Rate" button with confirmation
+- **Current Rate Display:** ₦289 prominently shown with system denomination and price control percentage
+- **Update Form (3 editable fields):**
+  - New Rate input (NGN per CNY) — **validated between 99–299**
+  - New Denomination input
+  - New Price Control (%) — **validated between 1.00%–100.00%**
+  - Reason for change text input
+- **Broadcasting:** On save, rate is broadcast to all active sessions with real-time status indicator (Broadcasting → All sessions updated)
+- **Warning:** "These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values."
 - **Rate History Table:**
   - Timestamp
   - Old Rate → New Rate
@@ -1044,7 +1049,13 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | **Card Brands** | name, currencies[] (used in Cardlight cascading selector) |
 
 ### 7.9 System Constants
-- `systemNairaRate`: 1580 (₦ per CNY)
+- `systemNairaRate`: 289 (₦ per CNY)
+- `systemDenomination`: 100
+- `systemPriceControl`: 85.00 (%)
+- Naira rate valid range: 99–299
+- Price control valid range: 1.00%–100.00%
+- Customer wallet withdrawal minimum: ₦2,000
+- Customer wallet withdrawal maximum: ₦790,000
 - Cardlight card sources: `["W", "E", "M"]`
 - Max cards per order: 15
 - Max images per card entry: 10
@@ -1252,7 +1263,24 @@ src/
 
 ## 12. Full Changelog
 
-### v4 → v4.1 (Current)
+### v4.1 → v4.2 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **System Naira Rate → 289** | Changed global rate from ₦1,580 to ₦289 across all mock data, orders, and chat references |
+| **Price Control Management** | Added editable Price Control field (1.00%–100.00%) to Naira Rate page with validation and broadcast |
+| **Naira Rate Validation** | Rate input validated between 99–299 with error toast on invalid values |
+| **Denomination Editable** | Sales Order panel denomination field is now editable (was read-only), pre-filled with system default |
+| **Card Rates Dual Search** | Replaced single search box with independent Card Type and Currency search filters |
+| **Price Push Button** | Super Admin/Team Lead can broadcast popular card prices (Apple, Steam, Razer) to all customers |
+| **Fund Deduction/Addition** | New button in chat interface (Super Admin/Team Lead) to add/deduct from customer wallet with full transaction recording |
+| **Fund Adjustment Modal** | Shows current wallet balance, transaction history, and records all fund operations |
+| **Wallet Withdrawal Limits** | Customer withdrawals capped at ₦2,000 minimum and ₦790,000 maximum per transaction |
+| **Invite Code Moved** | Removed from registration flow; now accessible on the Rewards screen |
+| **Admin Header Stats** | Displays current Naira rate and Price Control for agents (view-only); editable by Super Admin/Team Lead |
+| **Guides Updated** | Admin Guide, Customer Guide, and PRD updated to reflect all v4.2 changes |
+
+### v4 → v4.1
 
 | Change | Description |
 |--------|-------------|

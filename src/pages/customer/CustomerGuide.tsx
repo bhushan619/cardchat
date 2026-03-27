@@ -27,9 +27,9 @@ const guides: GuideSection[] = [
       { text: "On the Welcome screen, tap 'Get Started' to create an account or 'I already have an account' to sign in." },
       { text: "Choose your sign-in method: Continue with Apple, Continue with Google, or enter your email to receive a one-time passcode (OTP)." },
       { text: "Enter the 4-digit OTP sent to your email. You have 3 attempts and the code expires in 5 minutes.", tip: "Tap 'Resend' if you didn't receive the code. Check your spam folder too." },
-      { text: "Optionally enter a 6-character invite code or WS alias. You can skip this — you have 7 days to add one later." },
       { text: "Your unique 6-character alias (e.g., A7X3KP) is displayed. This is your identity across all support interactions — agents never see your real name." },
       { text: "Tap 'Continue to Home' to enter the app. On your first visit, a Beginner's Guide overlay walks you through the basics.", tip: "Your alias is permanent and used for all trades. Only system administrators can see your real identity." },
+      { text: "To enter an invite code, go to the Rewards screen from the Me tab — invite codes are no longer part of the registration flow.", tip: "You can enter an invite code at any time via the Rewards screen." },
     ],
   },
   {
@@ -139,6 +139,20 @@ const guides: GuideSection[] = [
       { text: "Payments are sent to the bank account you have on file." },
       { text: "Most transfers complete within a few minutes — some banks may take up to 30 minutes." },
       { text: "Check your 'Me' tab for a full history of all your transactions and their statuses.", tip: "If a payment shows as 'Failed', contact support immediately through the chat." },
+    ],
+  },
+  {
+    id: "wallet",
+    title: "Wallet & Withdrawals",
+    icon: Banknote,
+    description: "Manage your wallet balance and cash withdrawals.",
+    steps: [
+      { text: "Your wallet balance is visible on the Me tab and updated in real-time as trades complete." },
+      { text: "To withdraw funds, navigate to your wallet and tap 'Withdraw'." },
+      { text: "The minimum withdrawal amount is ₦2,000 per transaction.", tip: "Amounts below ₦2,000 will be rejected — accumulate a balance first." },
+      { text: "The maximum withdrawal amount is ₦790,000 per transaction." },
+      { text: "For larger amounts, split your withdrawal into multiple transactions of up to ₦790,000 each." },
+      { text: "Withdrawals are sent to your verified bank account. Processing time depends on your bank." },
     ],
   },
   {
