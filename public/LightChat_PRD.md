@@ -331,6 +331,7 @@ A multi-section profile page with drill-down sub-views.
 - **Menu Items** (each with icon, label, description, chevron):
   - Verified Bank Accounts — shows account count
   - Transaction Records — shows transaction count
+  - Rewards — enter invite code, view referral bonuses
   - Data Dashboard — "View your stats"
   - Security Settings — "2FA, password"
   - App Settings — "Notifications, language"
