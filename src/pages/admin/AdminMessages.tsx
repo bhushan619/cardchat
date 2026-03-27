@@ -5,8 +5,9 @@ import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
   AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info,
-  CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet
+  CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet, Lock
 } from "lucide-react";
+import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
