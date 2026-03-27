@@ -365,6 +365,18 @@ export default function AdminMessages() {
   const renderStatusActions = () => {
     if (!selectedId || !currentOrderStatus) return null;
     const statusOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
+    const fallbackCardlightResult: CardlightResult | undefined =
+      currentOrderStatus === "success"
+        ? "approved"
+        : currentOrderStatus === "order_cancelled"
+          ? "declined"
+          : currentOrderStatus === "negotiation"
+            ? "partial_approved"
+            : currentOrderStatus === "in_trade"
+              ? "pending"
+              : undefined;
+    const cardlightResult = currentOrderId ? (cardlightResults[currentOrderId] ?? fallbackCardlightResult) : fallbackCardlightResult;
+    const cardlightMeta = cardlightResult ? cardlightResultMeta[cardlightResult] : null;
 
     // Status header info
     const statusHeader = () => {
