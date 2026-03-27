@@ -205,6 +205,15 @@ export default function AdminMessages() {
     setReassignOpen(false);
   };
 
+  const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
+  const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
+
+  const handleCopy = (text: string, label: string) => {
+    navigator.clipboard.writeText(text);
+    setCopyFeedback(label);
+    setTimeout(() => setCopyFeedback(null), 1500);
+  };
+
   const allOrders = [
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
@@ -212,10 +221,16 @@ export default function AdminMessages() {
       nairaRate: 1580, unitPrice: 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
+      cardCurrency: o.cardCurrency || "",
+      cardNumbers: o.cardNumbers || [],
+      createdAt: o.timestamp,
     })),
     ...orders.map(o => ({
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
+      cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
+      cardNumbers: [] as string[],
+      createdAt: o.created,
     })),
   ];
 
