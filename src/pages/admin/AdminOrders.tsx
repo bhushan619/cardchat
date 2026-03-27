@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { orders } from "@/data/mock";
-import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar } from "lucide-react";
+import { orders as initialOrders } from "@/data/mock";
+import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar, Pencil, Check, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 const statusColors: Record<string, string> = {
   pending_sale: "bg-warning/10 text-warning",
@@ -55,11 +56,21 @@ export default function AdminOrders() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [editingDenom, setEditingDenom] = useState<string | null>(null);
+  const [denomValue, setDenomValue] = useState("");
+  const [orderData, setOrderData] = useState(initialOrders);
 
-  const filtered = orders.filter(o =>
+  const filtered = orderData.filter(o =>
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     o.customer.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleSaveDenom = (orderId: string) => {
+    if (!denomValue.trim()) return;
+    setOrderData(prev => prev.map(o => o.id === orderId ? { ...o, denomination: denomValue.trim() } : o));
+    setEditingDenom(null);
+    toast.success("Denomination updated");
+  };
 
   const handleExportCSV = () => {
     const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "Created"];
@@ -132,7 +143,28 @@ export default function AdminOrders() {
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-accent">{o.id}</td>
                       <td className="px-4 py-3 text-sm">{o.customer}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType} {o.denomination}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
+                        {o.cardType}{" "}
+                        {editingDenom === o.id ? (
+                          <span className="inline-flex items-center gap-1">
+                            <Input
+                              className="h-6 w-28 text-xs inline"
+                              value={denomValue}
+                              onChange={e => setDenomValue(e.target.value)}
+                              onKeyDown={e => e.key === "Enter" && handleSaveDenom(o.id)}
+                              onClick={e => e.stopPropagation()}
+                              autoFocus
+                            />
+                            <Check className="w-3.5 h-3.5 text-success cursor-pointer" onClick={e => { e.stopPropagation(); handleSaveDenom(o.id); }} />
+                            <X className="w-3.5 h-3.5 text-destructive cursor-pointer" onClick={e => { e.stopPropagation(); setEditingDenom(null); }} />
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1">
+                            {o.denomination}
+                            <Pencil className="w-3 h-3 text-muted-foreground hover:text-foreground cursor-pointer" onClick={e => { e.stopPropagation(); setEditingDenom(o.id); setDenomValue(o.denomination); }} />
+                          </span>
+                        )}
+                      </td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-center">
