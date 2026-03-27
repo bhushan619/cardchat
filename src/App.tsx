@@ -37,6 +37,7 @@ import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminWallets from "./pages/admin/AdminWallets";
 import AdminTeamChat from "./pages/admin/AdminTeamChat";
+import AdminProfile from "./pages/admin/AdminProfile";
 
 const queryClient = new QueryClient();
 
