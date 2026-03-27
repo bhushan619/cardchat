@@ -120,12 +120,18 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             ))}
           </div>
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold">
+            <button
+              onClick={() => navigate("/admin/profile")}
+              className="w-8 h-8 rounded-full bg-sidebar-primary flex items-center justify-center text-sidebar-primary-foreground text-xs font-bold hover:ring-2 hover:ring-sidebar-primary/50 transition-all"
+              title="My Profile"
+            >
               {roleProfiles[role].name[0]}
-            </div>
+            </button>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
-              <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
+              <button onClick={() => navigate("/admin/profile")} className="block text-left hover:text-sidebar-primary transition-colors">
+                <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
+                <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
+              </button>
             </div>
             <button onClick={handleLogout} className="text-sidebar-foreground/50 hover:text-destructive transition-colors" title="Sign out">
               <LogOut className="w-4 h-4" />
