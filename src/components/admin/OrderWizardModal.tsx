@@ -218,12 +218,26 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   const handleConfirmSell = () => {
     if (saleOrderId) {
-      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling", cardlightResult: "pending" as CardlightResult } : o));
+
+      // Simulate CardLight webhook response after 3-6 seconds
+      const webhookDelay = 3000 + Math.random() * 3000;
+      const capturedOrderId = saleOrderId;
+      setTimeout(() => {
+        const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+        const randomResult = results[Math.floor(Math.random() * results.length)];
+        setOrderList(prev => {
+          const updated = prev.map(o =>
+            o.id === capturedOrderId ? { ...o, cardlightResult: randomResult, status: randomResult === "approved" ? "Approved" : randomResult === "declined" ? "Declined" : "Partial" } : o
+          );
+          sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
+          return updated;
+        });
+      }, webhookDelay);
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
     setSaleOrderId(null);
-    // Notify parent that buyer was selected → triggers status transition
     onBuyerSelected?.();
   };
 
