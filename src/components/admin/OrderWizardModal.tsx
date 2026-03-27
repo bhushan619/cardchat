@@ -381,23 +381,19 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 </div>
               </div>
 
-              {/* Row 2: Naira Price, Denomination (read-only labels) */}
-              <div className="grid grid-cols-2 gap-2">
+              {/* Row 2: Naira Price + Card Rate */}
+              <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
                   <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
-                    ₦{Number(nairaPrice).toLocaleString()}
+                    {Number(nairaPrice).toLocaleString()}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-destructive">* Denomination</label>
-                  <Input
-                    type="number"
-                    className="h-8 text-xs"
-                    value={cardRate}
-                    onChange={e => setCardRate(e.target.value)}
-                    placeholder="Enter denomination"
-                  />
+                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate</label>
+                  <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
+                    {cardRate}
+                  </div>
                 </div>
               </div>
 
