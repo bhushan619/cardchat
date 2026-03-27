@@ -78,8 +78,14 @@ export default function AdminMessages() {
       return saved ? new Set(JSON.parse(saved)) : new Set();
     } catch { return new Set(); }
   });
+  const [cardlightResults, setCardlightResults] = useState<Record<string, CardlightResult>>(() => {
+    try {
+      const saved = sessionStorage.getItem("lightchat_cardlight_results");
+      return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+  });
 
-  // Persist completedOrders and transferCompletedOrders
+  // Persist completedOrders, transferCompletedOrders and CardLight results
   useEffect(() => {
     sessionStorage.setItem("lightchat_completed_orders", JSON.stringify(completedOrders));
   }, [completedOrders]);
@@ -87,6 +93,10 @@ export default function AdminMessages() {
   useEffect(() => {
     sessionStorage.setItem("lightchat_transfer_completed", JSON.stringify([...transferCompletedOrders]));
   }, [transferCompletedOrders]);
+
+  useEffect(() => {
+    sessionStorage.setItem("lightchat_cardlight_results", JSON.stringify(cardlightResults));
+  }, [cardlightResults]);
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
