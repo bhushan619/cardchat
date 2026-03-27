@@ -16,6 +16,20 @@ export const cardRates = [
 
 export const systemNairaRate = 1580;
 export const systemDenomination = 100;
+export const systemPriceControl = 85.00; // percentage 1.00% - 100.00%
+
+// Fund adjustment records
+export type FundAdjustment = {
+  id: string;
+  customerAlias: string;
+  type: "addition" | "deduction";
+  amount: number;
+  reason: string;
+  performedBy: string;
+  timestamp: string;
+};
+
+export const fundAdjustments: FundAdjustment[] = [];
 
 export const conversations = [
   { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },

@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
-import { conversations, orders, cardRates } from "@/data/mock";
+import { conversations, orders, cardRates, systemNairaRate, systemPriceControl } from "@/data/mock";
 import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
@@ -144,6 +144,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="flex items-center gap-4">
+            {/* Current Naira Rate & Price Control - visible to agents */}
+            {(role === "agent" || role === "super_admin" || role === "team_lead") && (
+              <div className="flex items-center gap-3 border-r pr-4 mr-1">
+                <div className="flex items-center gap-1.5">
+                  <DollarSign className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] text-muted-foreground">Naira Rate</span>
+                  <span className="text-xs font-bold text-foreground">₦{systemNairaRate.toLocaleString()}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <TrendingUp className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] text-muted-foreground">Price Control</span>
+                  <span className="text-xs font-bold text-foreground">{systemPriceControl.toFixed(2)}%</span>
+                </div>
+              </div>
+            )}
             <button
               onClick={toggleTheme}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
