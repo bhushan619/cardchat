@@ -431,7 +431,7 @@ export default function AdminMessages() {
                     type: "good_card",
                     title: "Confirm Successful Trade",
                     desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
-                    onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                    onConfirm: () => { handleStatusTransition(selectedId, "success", statusOrder?.payout); setConfirmAction(null); }
                   })}
                 >
                   <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
@@ -477,7 +477,7 @@ export default function AdminMessages() {
                   type: "successful",
                   title: "Confirm Negotiated Trade",
                   desc: `This will complete the transaction and credit the negotiated payout to the customer's wallet.`,
-                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                  onConfirm: () => { handleStatusTransition(selectedId, "success", statusOrder?.payout); setConfirmAction(null); }
                 })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
@@ -1468,8 +1468,8 @@ export default function AdminMessages() {
                       }));
                       // Transition through negotiation to success (completing the transaction)
                       handleStatusTransition(selectedId, "negotiation");
-                      setTimeout(() => handleStatusTransition(selectedId, "success"), 100);
-                      addSystemMessage(`✅ Negotiation confirmed: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}. Funds credited to customer wallet.`);
+                      setTimeout(() => handleStatusTransition(selectedId, "success", payout), 100);
+                      addSystemMessage(`✅ Negotiation confirmed: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}.`);
                     }
                     setNegotiateOpen(false);
                   }}
