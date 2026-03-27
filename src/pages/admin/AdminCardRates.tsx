@@ -17,7 +17,8 @@ const popularCards = ["iTunes US", "Steam US", "Razer Gold"];
 
 export default function AdminCardRates() {
   const { role } = useAdminRole();
-  const [search, setSearch] = useState("");
+  const [cardTypeSearch, setCardTypeSearch] = useState("");
+  const [currencySearch, setCurrencySearch] = useState("");
   const [formatFilter, setFormatFilter] = useState("all");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
@@ -35,7 +36,8 @@ export default function AdminCardRates() {
   });
 
   const filtered = ratesWithFormula
-    .filter(r => r.cardType.toLowerCase().includes(search.toLowerCase()) || r.currency.toLowerCase().includes(search.toLowerCase()))
+    .filter(r => r.cardType.toLowerCase().includes(cardTypeSearch.toLowerCase()))
+    .filter(r => r.currency.toLowerCase().includes(currencySearch.toLowerCase()))
     .filter(r => formatFilter === "all" || r.cardFormat === formatFilter);
 
   const sorted = sortKey
@@ -92,9 +94,15 @@ export default function AdminCardRates() {
           </div>
         </div>
 
-        <div className="relative max-w-sm mb-3">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input placeholder="Search by card type or currency..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+        <div className="flex items-center gap-3 mb-3">
+          <div className="relative flex-1 max-w-xs">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search card type..." className="pl-10" value={cardTypeSearch} onChange={e => setCardTypeSearch(e.target.value)} />
+          </div>
+          <div className="relative flex-1 max-w-[180px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input placeholder="Search currency..." className="pl-10" value={currencySearch} onChange={e => setCurrencySearch(e.target.value)} />
+          </div>
         </div>
 
         {/* Format filter chips */}
