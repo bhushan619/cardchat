@@ -425,9 +425,18 @@ export default function AdminChatView() {
           </div>
 
           {/* Selected order details */}
-          {selectedOrder && (
-            <div className="p-4 border-b">
-              <h3 className="font-heading font-semibold text-sm mb-3">Order Details</h3>
+          {selectedOrder && (() => {
+            const resultMeta = selectedOrder.cardlightResult ? cardlightResultMeta[selectedOrder.cardlightResult] : null;
+            return (
+            <div className={`p-4 border-b transition-colors ${resultMeta ? resultMeta.rowBg : ""}`}>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="font-heading font-semibold text-sm">Order Details</h3>
+                {resultMeta && (
+                  <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${resultMeta.bg} ${resultMeta.color}`}>
+                    ● {resultMeta.label}
+                  </span>
+                )}
+              </div>
               <div className="space-y-2">
                 {[
                   ["Order ID", selectedOrder.id],
