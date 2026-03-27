@@ -439,7 +439,27 @@ export default function AdminMessages() {
               </div>
             );
           }
-          // declined or negotiate → show Re-negotiate + Failed
+          if (cardlightResult === "declined") {
+            // Declined → only Failed button
+            return (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="flex-1 h-8 text-xs"
+                  onClick={() => setConfirmAction({
+                    type: "failed",
+                    title: "Confirm Order Cancellation",
+                    desc: "This will cancel the order. No funds will be released to the customer.",
+                    onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
+                  })}
+                >
+                  <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
+                </Button>
+              </div>
+            );
+          }
+          // negotiate → show Re-negotiate + Failed
           return (
             <div className="flex gap-2">
               <Button
