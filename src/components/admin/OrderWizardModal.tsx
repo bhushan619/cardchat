@@ -130,8 +130,16 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     setLoginLoading(true);
     setTimeout(() => {
       setIsLoggedIn(true);
+      sessionStorage.setItem("cardlight_logged_in", "true");
+      sessionStorage.setItem("cardlight_account", account);
       setLoginLoading(false);
     }, 800);
+  };
+
+  // Persist order list changes
+  const updateOrderList = (newList: OrderEntry[]) => {
+    setOrderList(newList);
+    sessionStorage.setItem("cardlight_orders", JSON.stringify(newList));
   };
 
   const addCard = () => {
