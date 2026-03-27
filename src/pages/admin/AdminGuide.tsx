@@ -32,6 +32,7 @@ const guides: GuideSection[] = [
       { text: "Only customer-facing status changes appear as system messages in chat (e.g., Order Created, Order Processing, Success, Payment Completed). Internal agent transitions like Pending → In Trade are silent.", tip: "This keeps the customer's chat clean — they only see statuses relevant to them." },
       { text: "Look for unread count badges on each conversation card to prioritize responses." },
       { text: "VIP and Repeat customer tags are shown on conversation cards — prioritize these customers." },
+      { text: "Super Admin and Team Lead: Use the 'Fund Deduction/Addition' button next to 'Create Order' to add or deduct funds from the customer's wallet. The modal shows current wallet balance and transaction history.", tip: "All fund adjustment operations are recorded for audit purposes." },
     ],
   },
   {
