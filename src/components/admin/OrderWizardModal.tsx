@@ -507,7 +507,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
               {/* Amount Calculation Summary */}
               {(() => {
                 const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
-                const totalPayout = cards.reduce((sum, c) => sum + ((Number(c.cardAmount) || 0) * (Number(c.cardRate) || 0)), 0);
+                const totalPayout = totalFaceValue * (Number(cardRate) || 0);
                 const currencySymbol = cardCurrency === "GBP" ? "£" : cardCurrency === "EUR" ? "€" : cardCurrency === "CAD" ? "C$" : cardCurrency === "AUD" ? "A$" : "$";
                 const hasValues = totalFaceValue > 0 || totalPayout > 0;
 
