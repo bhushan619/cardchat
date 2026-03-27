@@ -416,13 +416,12 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                         <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 10 images.</p>
                       </div>
                       <div className="space-y-1 min-w-[100px]">
-                        <label className="text-[10px] font-medium text-destructive">Card Rate *</label>
-                        <Input
-                          placeholder="Enter rate"
-                          value={card.cardRate}
-                          onChange={e => updateCard(card.id, { cardRate: e.target.value })}
-                          className="h-7 text-xs"
-                        />
+                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate</label>
+                        <div className="h-7 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
+                          {Number(nairaPrice) > 0 && Number(cardRate) > 0
+                            ? (Number(cardRate) / Number(nairaPrice)).toFixed(4)
+                            : "—"}
+                        </div>
                       </div>
                     </div>
 
