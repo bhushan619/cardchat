@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import CardlightPanel, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
+import CardlightPanel, { type CompletedOrder, cardlightResultMeta, type CardlightResult } from "@/components/admin/OrderWizardModal";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
 import {
@@ -78,8 +78,14 @@ export default function AdminMessages() {
       return saved ? new Set(JSON.parse(saved)) : new Set();
     } catch { return new Set(); }
   });
+  const [cardlightResults, setCardlightResults] = useState<Record<string, CardlightResult>>(() => {
+    try {
+      const saved = sessionStorage.getItem("lightchat_cardlight_results");
+      return saved ? JSON.parse(saved) : {};
+    } catch { return {}; }
+  });
 
-  // Persist completedOrders and transferCompletedOrders
+  // Persist completedOrders, transferCompletedOrders and CardLight results
   useEffect(() => {
     sessionStorage.setItem("lightchat_completed_orders", JSON.stringify(completedOrders));
   }, [completedOrders]);
@@ -87,6 +93,10 @@ export default function AdminMessages() {
   useEffect(() => {
     sessionStorage.setItem("lightchat_transfer_completed", JSON.stringify([...transferCompletedOrders]));
   }, [transferCompletedOrders]);
+
+  useEffect(() => {
+    sessionStorage.setItem("lightchat_cardlight_results", JSON.stringify(cardlightResults));
+  }, [cardlightResults]);
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
@@ -327,10 +337,24 @@ export default function AdminMessages() {
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
+  const simulateCardlightWebhook = (orderId: string) => {
+    setCardlightResults(prev => ({ ...prev, [orderId]: "pending" }));
+    const webhookDelay = 3000 + Math.random() * 3000;
+    setTimeout(() => {
+      const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+      const randomResult = results[Math.floor(Math.random() * results.length)];
+      setCardlightResults(prev => ({ ...prev, [orderId]: randomResult }));
+    }, webhookDelay);
+  };
+
   // Handle buyer selection callback from OrderWizardModal
   const handleBuyerSelected = (conversationId: string) => {
     // Skip pending and go directly to in_trade so the agent can act immediately
     orderStatus.transitionStatus(conversationId, "pending");
+    const linkedOrderId = orderStatus.getOrderId(conversationId);
+    if (linkedOrderId) {
+      simulateCardlightWebhook(linkedOrderId);
+    }
     // Use a microtask to ensure state updates, then advance
     setTimeout(() => {
       orderStatus.transitionStatus(conversationId, "in_trade");
@@ -341,6 +365,18 @@ export default function AdminMessages() {
   const renderStatusActions = () => {
     if (!selectedId || !currentOrderStatus) return null;
     const statusOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
+    const fallbackCardlightResult: CardlightResult | undefined =
+      currentOrderStatus === "success"
+        ? "approved"
+        : currentOrderStatus === "order_cancelled"
+          ? "declined"
+          : currentOrderStatus === "negotiation"
+            ? "partial_approved"
+            : currentOrderStatus === "in_trade"
+              ? "pending"
+              : undefined;
+    const cardlightResult = currentOrderId ? (cardlightResults[currentOrderId] ?? fallbackCardlightResult) : fallbackCardlightResult;
+    const cardlightMeta = cardlightResult ? cardlightResultMeta[cardlightResult] : null;
 
     // Status header info
     const statusHeader = () => {
@@ -446,10 +482,17 @@ export default function AdminMessages() {
     };
 
     return (
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className={`border border-border rounded-lg overflow-hidden transition-colors ${cardlightMeta ? cardlightMeta.rowBg : ""}`}>
         {/* Status header */}
         <div className="p-3 border-b border-border">
-          <p className={`text-xs font-medium ${header.colorClass}`}>{header.icon} {header.title}</p>
+          <div className="flex items-center justify-between gap-2">
+            <p className={`text-xs font-medium ${header.colorClass}`}>{header.icon} {header.title}</p>
+            {cardlightMeta && (
+              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${cardlightMeta.bg} ${cardlightMeta.color}`}>
+                {cardlightMeta.label}
+              </span>
+            )}
+          </div>
           <p className="text-[10px] text-muted-foreground mt-1">{header.desc}</p>
         </div>
 
