@@ -34,9 +34,9 @@ export type CardlightResult = "pending" | "successful" | "declined" | "negotiate
 
 export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
   pending:    { label: "Pending",    color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
-  successful: { label: "Successful", color: "text-success",     bg: "bg-success/10",     rowBg: "bg-success/5" },
-  declined:   { label: "Declined",   color: "text-destructive", bg: "bg-destructive/10", rowBg: "bg-destructive/5" },
-  negotiate:  { label: "Negotiate",  color: "text-primary",     bg: "bg-primary/10",     rowBg: "bg-primary/5" },
+  successful: { label: "Successful", color: "text-success",     bg: "bg-success/20",     rowBg: "bg-success/10" },
+  declined:   { label: "Declined",   color: "text-destructive", bg: "bg-destructive/20", rowBg: "bg-destructive/10" },
+  negotiate:  { label: "Negotiate",  color: "text-primary",     bg: "bg-primary/20",     rowBg: "bg-primary/10" },
 };
 
 interface OrderEntry {
