@@ -457,19 +457,54 @@ export default function AdminMessages() {
               <span>${statusOrder.amount.toLocaleString()}</span>
             </div>
 
-            {[
-              ["Face Value", `$${statusOrder.amount.toLocaleString()}`],
-              ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
-            ].map(([label, value]) => (
-              <div key={label} className="flex items-center justify-between text-[11px]">
-                <span className="text-muted-foreground">{label}</span>
-                <span className="font-medium">{value}</span>
-              </div>
-            ))}
-            <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
-              <span className="text-muted-foreground font-medium">Total Payout</span>
-              <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
-            </div>
+            {(() => {
+              const neg = currentOrderId ? negotiationData[currentOrderId] : null;
+              const currSym = statusOrder.cardCurrency === "GBP" ? "£" : "$";
+              if (neg) {
+                return (
+                  <>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Denomination</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground line-through text-[10px]">{currSym}{neg.oldDenom.toLocaleString()}</span>
+                        <span className="font-medium text-warning">{currSym}{neg.newDenom.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Rate</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground line-through text-[10px]">₦{neg.oldRate.toLocaleString()}</span>
+                        <span className="font-medium text-warning">₦{neg.newRate.toLocaleString()}</span>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
+                      <span className="text-muted-foreground font-medium">Total Payout</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-muted-foreground line-through text-[10px]">₦{neg.oldAmount.toLocaleString()}</span>
+                        <span className="font-bold text-warning">₦{neg.newAmount.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  </>
+                );
+              }
+              return (
+                <>
+                  {[
+                    ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
+                    ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
+                  ].map(([label, value]) => (
+                    <div key={label} className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">{label}</span>
+                      <span className="font-medium">{value}</span>
+                    </div>
+                  ))}
+                  <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
+                    <span className="text-muted-foreground font-medium">Total Payout</span>
+                    <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
+                  </div>
+                </>
+              );
+            })()}
           </div>
         )}
 
