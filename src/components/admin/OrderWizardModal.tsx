@@ -414,10 +414,10 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     <div className="grid grid-cols-[1fr,auto] gap-3">
                       <div className="space-y-1.5">
                         <label className="text-[11px] font-medium text-destructive">* Card Image</label>
-                        <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 10 images.</p>
-                        <div className="flex flex-wrap gap-2">
+                        <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 15 images.</p>
+                        <div className="grid grid-cols-5 gap-1.5">
                           {card.cardImages.map((img, imgIdx) => (
-                            <div key={imgIdx} className="relative w-16 h-16 rounded-md overflow-hidden border group">
+                            <div key={imgIdx} className="relative w-11 h-11 rounded overflow-hidden border group">
                               <img src={img} alt={`Card ${imgIdx + 1}`} className="w-full h-full object-cover" />
                               <button
                                 onClick={() => {
@@ -426,11 +426,11 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                                 }}
                                 className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                               >
-                                <X className="w-3.5 h-3.5 text-white" />
+                                <X className="w-3 h-3 text-white" />
                               </button>
                             </div>
                           ))}
-                          {card.cardImages.length < 10 && (
+                          {card.cardImages.length < 15 && (
                             <>
                               <input
                                 type="file"
@@ -440,7 +440,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                                 id={`card-images-${card.id}`}
                                 onChange={e => {
                                   const files = Array.from(e.target.files || []);
-                                  const remaining = 10 - card.cardImages.length;
+                                  const remaining = 15 - card.cardImages.length;
                                   const newUrls = files.slice(0, remaining).map(f => URL.createObjectURL(f));
                                   updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
                                   e.target.value = "";
@@ -448,10 +448,10 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                               />
                               <label
                                 htmlFor={`card-images-${card.id}`}
-                                className="w-16 h-16 border-2 border-dashed rounded-md flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                                className="w-11 h-11 border-2 border-dashed rounded flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors"
                               >
-                                <ImageIcon className="w-4 h-4" />
-                                <span className="text-[8px] mt-0.5">Upload</span>
+                                <ImageIcon className="w-3.5 h-3.5" />
+                                <span className="text-[7px] mt-0.5">Upload</span>
                               </label>
                             </>
                           )}
