@@ -119,11 +119,6 @@ export default function AdminNairaRate() {
                   <p className="text-[10px] text-muted-foreground mt-0.5">Range: 1.00% – 100.00%</p>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Price Control (%)</label>
-                  <Input value={priceControl} onChange={e => setPriceControl(e.target.value)} placeholder="e.g. 85.00" className="mt-1" />
-                  <p className="text-[10px] text-muted-foreground mt-0.5">Range: 1.00% – 100.00%</p>
-                </div>
-                <div>
                   <label className="text-xs font-medium text-muted-foreground">Reason for Change</label>
                   <Input value={reason} onChange={e => setReason(e.target.value)} placeholder="e.g. Market adjustment" className="mt-1" />
                 </div>
