@@ -4,7 +4,8 @@ import { conversations as rawConversations, chatMessages, orders, adminUsers } f
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info
+  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info,
+  CreditCard, Copy, ExternalLink
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
