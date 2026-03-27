@@ -222,6 +222,23 @@ export default function AdminMessages() {
     newDenom: number; newRate: number; newAmount: number;
   }>>({});
 
+  // Fund adjustment state
+  const [fundAdjustOpen, setFundAdjustOpen] = useState(false);
+  const [fundAdjustType, setFundAdjustType] = useState<"addition" | "deduction">("addition");
+  const [fundAdjustAmount, setFundAdjustAmount] = useState("");
+  const [fundAdjustReason, setFundAdjustReason] = useState("");
+  const [fundAdjustments, setFundAdjustments] = useState<FundAdjustment[]>(() => {
+    try {
+      const saved = sessionStorage.getItem("lightchat_fund_adjustments");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
+  useEffect(() => {
+    sessionStorage.setItem("lightchat_fund_adjustments", JSON.stringify(fundAdjustments));
+  }, [fundAdjustments]);
+
+  const canAdjustFunds = role === "super_admin" || role === "team_lead";
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
