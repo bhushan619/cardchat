@@ -67,6 +67,16 @@ export default function AdminChatView() {
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
+
+    // Simulate CardLight webhook result after 3-6 seconds
+    const webhookDelay = 3000 + Math.random() * 3000;
+    setTimeout(() => {
+      const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+      const randomResult = results[Math.floor(Math.random() * results.length)];
+      setCompletedOrders(prev =>
+        prev.map(o => o.orderId === order.orderId ? { ...o, cardlightResult: randomResult } : o)
+      );
+    }, webhookDelay);
   };
 
   const addToGroup = (user: (typeof adminUsers)[0]) => {
