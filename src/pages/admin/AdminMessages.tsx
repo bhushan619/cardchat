@@ -482,10 +482,17 @@ export default function AdminMessages() {
     };
 
     return (
-      <div className="border border-border rounded-lg overflow-hidden">
+      <div className={`border border-border rounded-lg overflow-hidden transition-colors ${cardlightMeta ? cardlightMeta.rowBg : ""}`}>
         {/* Status header */}
         <div className="p-3 border-b border-border">
-          <p className={`text-xs font-medium ${header.colorClass}`}>{header.icon} {header.title}</p>
+          <div className="flex items-center justify-between gap-2">
+            <p className={`text-xs font-medium ${header.colorClass}`}>{header.icon} {header.title}</p>
+            {cardlightMeta && (
+              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${cardlightMeta.bg} ${cardlightMeta.color}`}>
+                {cardlightMeta.label}
+              </span>
+            )}
+          </div>
           <p className="text-[10px] text-muted-foreground mt-1">{header.desc}</p>
         </div>
 
