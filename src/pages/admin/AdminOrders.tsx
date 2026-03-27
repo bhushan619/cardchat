@@ -58,11 +58,19 @@ export default function AdminOrders() {
   const [dateTo, setDateTo] = useState("");
   const [editingDenom, setEditingDenom] = useState<string | null>(null);
   const [denomValue, setDenomValue] = useState("");
+  const [orderData, setOrderData] = useState(initialOrders);
 
-  const filtered = orders.filter(o =>
+  const filtered = orderData.filter(o =>
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
     o.customer.toLowerCase().includes(searchQuery.toLowerCase())
   );
+
+  const handleSaveDenom = (orderId: string) => {
+    if (!denomValue.trim()) return;
+    setOrderData(prev => prev.map(o => o.id === orderId ? { ...o, denomination: denomValue.trim() } : o));
+    setEditingDenom(null);
+    toast.success("Denomination updated");
+  };
 
   const handleExportCSV = () => {
     const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "Created"];
