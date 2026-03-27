@@ -26,10 +26,19 @@ export default function AdminNairaRate() {
   }
 
   const handleSave = () => {
+    const rateNum = Number(rate);
+    if (isNaN(rateNum) || rateNum < 99 || rateNum > 299) {
+      toast({
+        title: "Invalid Rate",
+        description: "Naira rate must be between 99 and 299.",
+        variant: "destructive",
+      });
+      return;
+    }
     setBroadcasting("broadcasting");
     toast({
       title: "Rate Updated",
-      description: `Rate updated to ₦${Number(rate).toLocaleString()} — broadcasting to all sessions...`,
+      description: `Rate updated to ₦${rateNum.toLocaleString()} — broadcasting to all sessions...`,
     });
     setTimeout(() => {
       setBroadcasting("done");
@@ -102,8 +111,9 @@ export default function AdminNairaRate() {
                   <Input value={reason} onChange={e => setReason(e.target.value)} placeholder="e.g. Market adjustment" className="mt-1" />
                 </div>
               </div>
-              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
+              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 space-y-1">
                 <p className="text-xs text-warning-foreground">⚠ These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values.</p>
+                <p className="text-[10px] text-muted-foreground">Naira rate must be between <strong>99</strong> and <strong>299</strong>.</p>
               </div>
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
