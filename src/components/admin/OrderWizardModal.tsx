@@ -504,7 +504,6 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
               {/* Amount Calculation Summary */}
               {(() => {
                 const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
-                const avgCardRate = cards.reduce((sum, c) => sum + (Number(c.cardRate) || 0), 0) / (cards.filter(c => Number(c.cardRate) > 0).length || 1);
                 const totalPayout = cards.reduce((sum, c) => sum + ((Number(c.cardAmount) || 0) * (Number(c.cardRate) || 0)), 0);
                 const currencySymbol = cardCurrency === "GBP" ? "£" : cardCurrency === "EUR" ? "€" : cardCurrency === "CAD" ? "C$" : cardCurrency === "AUD" ? "A$" : "$";
                 const hasValues = totalFaceValue > 0 || totalPayout > 0;
@@ -514,10 +513,6 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Total Face Value</span>
                       <span className="font-semibold">{currencySymbol}{totalFaceValue.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Avg Card Rate</span>
-                      <span className="font-semibold">₦{avgCardRate.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                     </div>
                     {nairaPrice && (
                       <div className="flex items-center justify-between text-[11px]">
