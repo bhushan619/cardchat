@@ -1644,7 +1644,7 @@ export default function AdminMessages() {
                 <Button variant="outline" className="flex-1" onClick={() => { setFundPinStep(false); setFundPin(""); }}>Back</Button>
                 <Button
                   className="flex-1"
-                  disabled={fundPin.length !== 4}
+                  disabled={fundPin.length !== 6}
                   onClick={() => {
                     const storedPin = localStorage.getItem(`adminPin_${role}`);
                     if (fundPin !== storedPin) {
