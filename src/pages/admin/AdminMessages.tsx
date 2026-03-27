@@ -208,6 +208,14 @@ export default function AdminMessages() {
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
+  // Confirmation modal states
+  const [confirmAction, setConfirmAction] = useState<{ type: string; title: string; desc: string; onConfirm: () => void } | null>(null);
+
+  // Negotiate modal state
+  const [negotiateOpen, setNegotiateOpen] = useState(false);
+  const [negotiateDenom, setNegotiateDenom] = useState("");
+  const [negotiateRate, setNegotiateRate] = useState("");
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
@@ -347,7 +355,12 @@ export default function AdminMessages() {
               <Button
                 size="sm"
                 className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
+                onClick={() => setConfirmAction({
+                  type: "good_card",
+                  title: "Confirm Good Card",
+                  desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
               </Button>
@@ -355,7 +368,7 @@ export default function AdminMessages() {
                 size="sm"
                 variant="outline"
                 className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                onClick={() => handleStatusTransition(selectedId, "negotiation")}
+                onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
               >
                 <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
               </Button>
@@ -367,7 +380,12 @@ export default function AdminMessages() {
               <Button
                 size="sm"
                 className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
+                onClick={() => setConfirmAction({
+                  type: "successful",
+                  title: "Confirm Successful Trade",
+                  desc: `This will mark the trade as successful and credit funds to the customer's wallet.`,
+                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
               </Button>
@@ -375,7 +393,12 @@ export default function AdminMessages() {
                 size="sm"
                 variant="destructive"
                 className="flex-1 h-8 text-xs"
-                onClick={() => handleStatusTransition(selectedId, "order_cancelled")}
+                onClick={() => setConfirmAction({
+                  type: "failed",
+                  title: "Confirm Order Cancellation",
+                  desc: "This will cancel the order. No funds will be released to the customer.",
+                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
+                })}
               >
                 <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
               </Button>
@@ -452,9 +475,8 @@ export default function AdminMessages() {
           {statusOrder && (
             <Button
               size="sm"
-              variant="outline"
               onClick={() => setDetailOrderId(statusOrder.id)}
-              className="h-8 px-2.5 text-[10px] gap-1 shrink-0"
+              className="h-8 px-3 text-[10px] gap-1 shrink-0"
             >
               <ExternalLink className="w-3 h-3" /> Details
             </Button>
@@ -1179,6 +1201,75 @@ export default function AdminMessages() {
           </Dialog>
         );
       })()}
+
+      {/* Confirmation Modal for money-related actions */}
+      <Dialog open={!!confirmAction} onOpenChange={(open) => { if (!open) setConfirmAction(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{confirmAction?.title}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{confirmAction?.desc}</p>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setConfirmAction(null)}>Cancel</Button>
+            <Button className="flex-1" onClick={() => confirmAction?.onConfirm()}>Confirm</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Negotiate Modal */}
+      <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Negotiate Order</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            The buyer found a discrepancy. Enter the actual denomination and rate to recalculate the payout.
+          </p>
+          <div className="space-y-3 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Actual Denomination ($)</label>
+              <Input
+                type="number"
+                placeholder="e.g. 50"
+                value={negotiateDenom}
+                onChange={e => setNegotiateDenom(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Actual Card Rate (₦)</label>
+              <Input
+                type="number"
+                placeholder="e.g. 1400"
+                value={negotiateRate}
+                onChange={e => setNegotiateRate(e.target.value)}
+              />
+            </div>
+            {negotiateDenom && negotiateRate && (
+              <div className="bg-muted rounded-lg p-3 text-center">
+                <p className="text-xs text-muted-foreground">Recalculated Payout</p>
+                <p className="text-lg font-bold text-primary">₦{(parseFloat(negotiateDenom) * parseFloat(negotiateRate)).toLocaleString()}</p>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
+            <Button
+              className="flex-1"
+              disabled={!negotiateDenom || !negotiateRate}
+              onClick={() => {
+                if (selectedId) {
+                  handleStatusTransition(selectedId, "negotiation");
+                  const payout = parseFloat(negotiateDenom) * parseFloat(negotiateRate);
+                  addSystemMessage(`⚠️ Negotiation: Denomination $${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}`);
+                }
+                setNegotiateOpen(false);
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
