@@ -337,23 +337,26 @@ export default function AdminMessages() {
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
-  const simulateCardlightWebhook = (orderId: string) => {
+  const simulateCardlightWebhook = (orderId: string, simulatedResult?: CardlightResult) => {
     setCardlightResults(prev => ({ ...prev, [orderId]: "pending" }));
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
       const results: CardlightResult[] = ["successful", "declined", "negotiate"];
-      const randomResult = results[Math.floor(Math.random() * results.length)];
-      setCardlightResults(prev => ({ ...prev, [orderId]: randomResult }));
+      const resolvedResult: CardlightResult =
+        simulatedResult && simulatedResult !== "pending"
+          ? simulatedResult
+          : results[Math.floor(Math.random() * results.length)];
+      setCardlightResults(prev => ({ ...prev, [orderId]: resolvedResult }));
     }, webhookDelay);
   };
 
   // Handle buyer selection callback from OrderWizardModal
-  const handleBuyerSelected = (conversationId: string) => {
+  const handleBuyerSelected = (conversationId: string, simulatedResult?: CardlightResult) => {
     // Skip pending and go directly to in_trade so the agent can act immediately
     orderStatus.transitionStatus(conversationId, "pending");
     const linkedOrderId = orderStatus.getOrderId(conversationId);
     if (linkedOrderId) {
-      simulateCardlightWebhook(linkedOrderId);
+      simulateCardlightWebhook(linkedOrderId, simulatedResult);
     }
     // Use a microtask to ensure state updates, then advance
     setTimeout(() => {
@@ -1214,7 +1217,7 @@ export default function AdminMessages() {
                 onComplete={handleOrderComplete}
                 customerAlias={selectedConvo?.alias}
                 embedded
-                onBuyerSelected={selectedId ? () => handleBuyerSelected(selectedId) : undefined}
+                onBuyerSelected={selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined}
               />
             </TabsContent>
           </Tabs>
