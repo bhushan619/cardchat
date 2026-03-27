@@ -90,7 +90,12 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 className={`admin-sidebar-item w-full text-left ${isActive ? "bg-sidebar-accent text-sidebar-primary" : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50"}`}
               >
                 <item.icon className="w-4 h-4" />
-                {item.label}
+                <span className="flex-1">{item.label}</span>
+                {(item as any).badge && !isActive && (
+                  <span className="w-5 h-5 rounded-full bg-destructive text-destructive-foreground text-[10px] flex items-center justify-center shrink-0">
+                    {(item as any).badge}
+                  </span>
+                )}
               </button>
             );
           })}
