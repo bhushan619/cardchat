@@ -397,6 +397,19 @@ export default function AdminMessages() {
               </Button>
               <Button
                 size="sm"
+                variant="outline"
+                className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
+                onClick={() => {
+                  const neg = currentOrderId ? negotiationData[currentOrderId] : null;
+                  setNegotiateDenom(neg ? neg.newDenom.toString() : "");
+                  setNegotiateRate(neg ? neg.newRate.toString() : "");
+                  setNegotiateOpen(true);
+                }}
+              >
+                <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
+              </Button>
+              <Button
+                size="sm"
                 variant="destructive"
                 className="flex-1 h-8 text-xs"
                 onClick={() => setConfirmAction({
@@ -477,6 +490,10 @@ export default function AdminMessages() {
                         <span className="font-medium text-warning">₦{neg.newRate.toLocaleString()}</span>
                       </div>
                     </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Naira Rate</span>
+                      <span className="font-medium">₦{(statusOrder.nairaRate || 1580).toLocaleString()}/CNY</span>
+                    </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                       <span className="text-muted-foreground font-medium">Total Payout</span>
                       <div className="flex items-center gap-2">
@@ -492,6 +509,7 @@ export default function AdminMessages() {
                   {[
                     ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
                     ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
+                    ["Naira Rate", `₦${(statusOrder.nairaRate || 1580).toLocaleString()}/CNY`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -1311,14 +1329,18 @@ export default function AdminMessages() {
                   <span className="text-muted-foreground">Denomination</span>
                   <span className="font-medium">{currSymbol}{oldDenom.toLocaleString()}</span>
                 </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Card Rate</span>
-                  <span className="font-medium">₦{oldRate.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-xs border-t border-border pt-1.5">
-                  <span className="text-muted-foreground font-medium">Original Payout</span>
-                  <span className="font-bold">₦{oldPayout.toLocaleString()}</span>
-                </div>
+                 <div className="flex justify-between text-xs">
+                   <span className="text-muted-foreground">Card Rate</span>
+                   <span className="font-medium">₦{oldRate.toLocaleString()}</span>
+                 </div>
+                 <div className="flex justify-between text-xs">
+                   <span className="text-muted-foreground">Naira Rate</span>
+                   <span className="font-medium">₦{(negOrder?.nairaRate || 1580).toLocaleString()}/CNY</span>
+                 </div>
+                 <div className="flex justify-between text-xs border-t border-border pt-1.5">
+                   <span className="text-muted-foreground font-medium">Original Payout</span>
+                   <span className="font-bold">₦{oldPayout.toLocaleString()}</span>
+                 </div>
               </div>
 
               <div className="space-y-3">
@@ -1341,10 +1363,14 @@ export default function AdminMessages() {
                   />
                 </div>
                 {negotiateDenom && negotiateRate && (
-                  <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-2">
+                   <div className="rounded-lg border border-warning/30 bg-warning/5 p-3 space-y-2">
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Original Payout</span>
                       <span className="font-medium line-through text-muted-foreground">₦{oldPayout.toLocaleString()}</span>
+                    </div>
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Naira Rate</span>
+                      <span className="font-medium">₦{(negOrder?.nairaRate || 1580).toLocaleString()}/CNY</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground font-medium">New Payout</span>
