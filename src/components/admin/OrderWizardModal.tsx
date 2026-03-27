@@ -410,56 +410,54 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                       </button>
                     )}
 
-                    {/* Card Image - full width */}
-                    <div className="space-y-1.5">
-                      <label className="text-[11px] font-medium text-destructive">* Card Image</label>
-                      <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 15 images.</p>
-                      <div className="grid grid-cols-8 gap-1.5">
-                        {card.cardImages.map((img, imgIdx) => (
-                          <div key={imgIdx} className="relative aspect-square rounded overflow-hidden border group">
-                            <img src={img} alt={`Card ${imgIdx + 1}`} className="w-full h-full object-cover" />
-                            <button
-                              onClick={() => {
-                                const newImages = card.cardImages.filter((_, i) => i !== imgIdx);
-                                updateCard(card.id, { cardImages: newImages });
-                              }}
-                              className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
-                            >
-                              <X className="w-3 h-3 text-white" />
-                            </button>
-                          </div>
-                        ))}
-                        {card.cardImages.length < 15 && (
-                          <>
-                            <input
-                              type="file"
-                              accept="image/jpeg,image/png,image/webp"
-                              multiple
-                              className="hidden"
-                              id={`card-images-${card.id}`}
-                              onChange={e => {
-                                const files = Array.from(e.target.files || []);
-                                const remaining = 15 - card.cardImages.length;
-                                const newUrls = files.slice(0, remaining).map(f => URL.createObjectURL(f));
-                                updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
-                                e.target.value = "";
-                              }}
-                            />
-                            <label
-                              htmlFor={`card-images-${card.id}`}
-                              className="aspect-square border-2 border-dashed rounded flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors"
-                            >
-                              <ImageIcon className="w-3.5 h-3.5" />
-                              <span className="text-[7px] mt-0.5">Upload</span>
-                            </label>
-                          </>
-                        )}
+                    {/* Row 1: Card Image + Card Rate side by side */}
+                    <div className="grid grid-cols-[1fr,auto] gap-3">
+                      <div className="space-y-1.5">
+                        <label className="text-[11px] font-medium text-destructive">* Card Image</label>
+                        <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 10 images.</p>
+                        <div className="flex flex-wrap gap-2">
+                          {card.cardImages.map((img, imgIdx) => (
+                            <div key={imgIdx} className="relative w-16 h-16 rounded-md overflow-hidden border group">
+                              <img src={img} alt={`Card ${imgIdx + 1}`} className="w-full h-full object-cover" />
+                              <button
+                                onClick={() => {
+                                  const newImages = card.cardImages.filter((_, i) => i !== imgIdx);
+                                  updateCard(card.id, { cardImages: newImages });
+                                }}
+                                className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                              >
+                                <X className="w-3.5 h-3.5 text-white" />
+                              </button>
+                            </div>
+                          ))}
+                          {card.cardImages.length < 10 && (
+                            <>
+                              <input
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                multiple
+                                className="hidden"
+                                id={`card-images-${card.id}`}
+                                onChange={e => {
+                                  const files = Array.from(e.target.files || []);
+                                  const remaining = 10 - card.cardImages.length;
+                                  const newUrls = files.slice(0, remaining).map(f => URL.createObjectURL(f));
+                                  updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
+                                  e.target.value = "";
+                                }}
+                              />
+                              <label
+                                htmlFor={`card-images-${card.id}`}
+                                className="w-16 h-16 border-2 border-dashed rounded-md flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors"
+                              >
+                                <ImageIcon className="w-4 h-4" />
+                                <span className="text-[8px] mt-0.5">Upload</span>
+                              </label>
+                            </>
+                          )}
+                        </div>
                       </div>
-                    </div>
-
-                    {/* Card Rate + Card Amount + Card No in one row */}
-                    <div className="grid grid-cols-3 gap-2">
-                      <div className="space-y-1">
+                      <div className="space-y-1 min-w-[100px]">
                         <label className="text-[10px] font-medium text-destructive">Card Rate *</label>
                         <Input
                           placeholder="Enter rate"
@@ -468,21 +466,25 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                           className="h-7 text-xs"
                         />
                       </div>
+                    </div>
+
+                    {/* Row 2: Card No + Card Amount */}
+                    <div className="grid grid-cols-2 gap-2">
                       <div className="space-y-1">
-                        <label className="text-[10px] font-medium text-destructive">Card Amount *</label>
+                        <label className="text-[10px] text-muted-foreground">Card No.</label>
                         <Input
-                          placeholder="Enter amount"
-                          value={card.cardAmount}
-                          onChange={e => updateCard(card.id, { cardAmount: e.target.value })}
+                          placeholder="Please enter the card No."
+                          value={card.cardNo}
+                          onChange={e => updateCard(card.id, { cardNo: e.target.value })}
                           className="h-7 text-xs"
                         />
                       </div>
                       <div className="space-y-1">
-                        <label className="text-[10px] text-muted-foreground">Card No.</label>
+                        <label className="text-[10px] font-medium text-destructive">Card Amount *</label>
                         <Input
-                          placeholder="Enter card No."
-                          value={card.cardNo}
-                          onChange={e => updateCard(card.id, { cardNo: e.target.value })}
+                          placeholder="Please enter amount"
+                          value={card.cardAmount}
+                          onChange={e => updateCard(card.id, { cardAmount: e.target.value })}
                           className="h-7 text-xs"
                         />
                       </div>
