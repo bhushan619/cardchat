@@ -229,7 +229,7 @@ export default function AdminMessages() {
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
       cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
-      cardNumbers: [] as string[],
+      cardNumbers: [`${Math.floor(Math.random() * 9000000000 + 1000000000)}`],
       createdAt: o.created,
     })),
   ];
