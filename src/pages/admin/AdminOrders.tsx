@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { orders, cardlightResultLabels, type CardlightResult } from "@/data/mock";
+import { orders } from "@/data/mock";
 import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -12,13 +12,6 @@ const statusColors: Record<string, string> = {
   negotiation: "bg-warning/10 text-warning",
   order_cancelled: "bg-destructive/10 text-destructive",
   success: "bg-success/10 text-success",
-};
-
-const cardlightResultColors: Record<CardlightResult, string> = {
-  approved: "bg-success/10 text-success",
-  declined: "bg-destructive/10 text-destructive",
-  pending: "bg-warning/10 text-warning",
-  partial: "bg-accent/10 text-accent",
 };
 
 const mockOrderDetails: Record<string, {
@@ -69,8 +62,8 @@ export default function AdminOrders() {
   );
 
   const handleExportCSV = () => {
-    const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "CardLight Result", "Created"];
-    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.nairaRate}`, o.status, cardlightResultLabels[o.cardlightResult], o.created]);
+    const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "Created"];
+    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.nairaRate}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -120,7 +113,6 @@ export default function AdminOrders() {
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Rate (₦)</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
-                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">CardLight Result</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
               </tr>
             </thead>
@@ -148,16 +140,11 @@ export default function AdminOrders() {
                           {o.status.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-center">
-                        <span className={`status-badge ${cardlightResultColors[o.cardlightResult] || ""}`}>
-                          {cardlightResultLabels[o.cardlightResult]}
-                        </span>
-                      </td>
                       <td className="px-4 py-3 text-xs text-right text-muted-foreground">{o.created}</td>
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={9} className="px-6 py-4 bg-muted/20">
+                        <td colSpan={8} className="px-6 py-4 bg-muted/20">
                           <div className="grid grid-cols-3 gap-6 animate-slide-up">
                             {/* Card details */}
                             <div className="space-y-2">

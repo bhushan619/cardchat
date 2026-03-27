@@ -50,19 +50,10 @@ export const chatMessages = [
   { id: 6, sender: "agent", text: "Cards verified ✅ Order created. Processing your billing now.", time: "10:38 AM" },
 ];
 
-export type CardlightResult = "approved" | "declined" | "pending" | "partial";
-
-export const cardlightResultLabels: Record<CardlightResult, string> = {
-  approved: "Approved",
-  declined: "Declined",
-  pending: "Pending",
-  partial: "Partial",
-};
-
 export const orders = [
-  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, created: "10:37 AM", cardlightResult: "approved" as CardlightResult },
-  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM", cardlightResult: "pending" as CardlightResult },
-  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM", cardlightResult: "declined" as CardlightResult },
+  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", denomination: "$100 x2", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, created: "10:37 AM" },
+  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", denomination: "$50 x3", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM" },
+  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", denomination: "$200 x1", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM" },
 ];
 
 export const bankAccounts = [
