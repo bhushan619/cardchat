@@ -412,27 +412,56 @@ export default function AdminMessages() {
             </Button>
           );
         case "in_trade":
+          if (!cardlightResult || cardlightResult === "pending") return null;
+          if (cardlightResult === "successful") {
+            return (
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
+                  onClick={() => setConfirmAction({
+                    type: "good_card",
+                    title: "Confirm Good Card",
+                    desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                    onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
+                  })}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
+                  onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
+                >
+                  <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
+                </Button>
+              </div>
+            );
+          }
+          // declined or negotiate → show Re-negotiate + Failed
           return (
             <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => setConfirmAction({
-                  type: "good_card",
-                  title: "Confirm Good Card",
-                  desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
-                  onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
-                })}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
-              </Button>
               <Button
                 size="sm"
                 variant="outline"
                 className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
                 onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
               >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
+                <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
+              </Button>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="flex-1 h-8 text-xs"
+                onClick={() => setConfirmAction({
+                  type: "failed",
+                  title: "Confirm Order Cancellation",
+                  desc: "This will cancel the order. No funds will be released to the customer.",
+                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
+                })}
+              >
+                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
               </Button>
             </div>
           );
