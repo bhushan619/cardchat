@@ -349,14 +349,41 @@ export default function AdminMessages() {
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
               {currentOrderId && (
-                <span className="text-[10px] text-muted-foreground font-mono">#{currentOrderId}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[10px] text-muted-foreground font-mono">#{currentOrderId}</span>
+                  <button onClick={() => handleCopy(currentOrderId, "status-oid")} className="text-muted-foreground hover:text-primary">
+                    <Copy className="w-3 h-3" />
+                  </button>
+                  {copyFeedback === "status-oid" && <span className="text-[8px] text-success">Copied!</span>}
+                </div>
               )}
             </div>
             <p className="text-[10px] text-muted-foreground">Funds have been credited to the customer's wallet.</p>
             {successOrder && (
-              <div className="bg-success/5 border border-success/15 rounded-md p-2.5 space-y-1.5">
+              <div className="bg-success/5 border border-success/15 rounded-md p-2.5 space-y-2">
+                {/* Card info with icon */}
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <CreditCard className="w-4 h-4 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[11px] font-semibold truncate">
+                      {successOrder.cardType} {successOrder.cardCurrency && <span className="text-muted-foreground font-normal">/ {successOrder.cardCurrency}</span>}
+                    </p>
+                    {successOrder.cardNumbers.length > 0 && (
+                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                        <span className="font-mono truncate">{successOrder.cardNumbers.join(", ")}</span>
+                        <button onClick={() => handleCopy(successOrder.cardNumbers.join(", "), "status-cn")} className="text-muted-foreground hover:text-primary shrink-0">
+                          <Copy className="w-3 h-3" />
+                        </button>
+                        {copyFeedback === "status-cn" && <span className="text-[8px] text-success">Copied!</span>}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Key details */}
                 {[
-                  ["Card", `${successOrder.cardType} · ${successOrder.denomination}`],
                   ["Face Value", `$${successOrder.amount.toLocaleString()}`],
                   ["Rate", `₦${successOrder.nairaRate.toLocaleString()}`],
                 ].map(([label, value]) => (
@@ -368,6 +395,18 @@ export default function AdminMessages() {
                 <div className="flex items-center justify-between text-xs border-t border-success/20 pt-1.5 mt-1">
                   <span className="text-muted-foreground font-medium">Total Payout</span>
                   <span className="font-bold text-success">₦{successOrder.payout.toLocaleString()}</span>
+                </div>
+
+                {/* Details button */}
+                <div className="flex justify-end pt-1">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setDetailOrderId(successOrder.id)}
+                    className="h-6 px-2.5 text-[10px] gap-1"
+                  >
+                    <ExternalLink className="w-3 h-3" /> Details
+                  </Button>
                 </div>
               </div>
             )}
