@@ -84,6 +84,7 @@ const App = () => (
                   <Route path="customers" element={<AdminCustomers />} />
                   <Route path="wallets" element={<AdminWallets />} />
                   <Route path="team-chat" element={<AdminTeamChat />} />
+                  <Route path="profile" element={<AdminProfile />} />
                 </Routes>
               </AdminRoleProvider>
             } />
