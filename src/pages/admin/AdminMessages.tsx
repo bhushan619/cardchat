@@ -152,7 +152,7 @@ export default function AdminMessages() {
   };
 
   // Order status actions — only send chat message when customer-visible status changes
-  const handleStatusTransition = (conversationId: string, newStatus: AgentOrderStatus) => {
+  const handleStatusTransition = (conversationId: string, newStatus: AgentOrderStatus, payoutAmount?: number) => {
     const currentStatus = orderStatus.getStatus(conversationId);
     const prevCustomerStatus = currentStatus ? toCustomerStatus(currentStatus) : null;
     const msg = orderStatus.transitionStatus(conversationId, newStatus);
@@ -162,9 +162,10 @@ export default function AdminMessages() {
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // When success: auto-credit wallet
+      // When success: auto-credit wallet with specific amount
       if (newStatus === "success") {
-        addSystemMessage(`💰 Funds credited to customer's wallet`);
+        const amountStr = payoutAmount ? `₦${payoutAmount.toLocaleString()}` : "";
+        addSystemMessage(`📌 💰 Funds credited to customer's wallet${amountStr ? ` — ${amountStr}` : ""}`);
       }
     }
   };
