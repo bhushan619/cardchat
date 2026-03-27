@@ -105,7 +105,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   const [cardSource, setCardSource] = useState("W");
   const [supplier, setSupplier] = useState("");
   const [nairaPrice] = useState(systemNairaRate.toString());
-  const [cardRate] = useState(systemDenomination.toString());
+  const [cardRate, setCardRate] = useState(systemDenomination.toString());
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
   const [cardTypeOpen, setCardTypeOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
@@ -361,10 +361,14 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Denomination</label>
-                  <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
-                    {cardRate}
-                  </div>
+                  <label className="text-[11px] font-medium text-destructive">* Denomination</label>
+                  <Input
+                    type="number"
+                    className="h-8 text-xs"
+                    value={cardRate}
+                    onChange={e => setCardRate(e.target.value)}
+                    placeholder="Enter denomination"
+                  />
                 </div>
               </div>
 
