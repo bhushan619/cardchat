@@ -170,7 +170,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
     };
 
-    setOrderList(prev => [newOrder, ...prev]);
+    updateOrderList([newOrder, ...orderList]);
     // Reset form
     setCards([makeCard()]);
     setCardRate("");
@@ -206,7 +206,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   const handleConfirmSell = () => {
     if (saleOrderId) {
-      setOrderList(prev => prev.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
