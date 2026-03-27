@@ -30,6 +30,15 @@ interface CardEntry {
   cardAmount: string;
 }
 
+export type CardlightResult = "pending" | "approved" | "declined" | "partial_approved";
+
+export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
+  pending:          { label: "Pending",          color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
+  approved:         { label: "Approved",         color: "text-success",     bg: "bg-success/10",     rowBg: "bg-success/5" },
+  declined:         { label: "Declined",         color: "text-destructive", bg: "bg-destructive/10", rowBg: "bg-destructive/5" },
+  partial_approved: { label: "Partial Approved", color: "text-primary",     bg: "bg-primary/10",     rowBg: "bg-primary/5" },
+};
+
 interface OrderEntry {
   id: string;
   cardCode: string;
@@ -39,6 +48,7 @@ interface OrderEntry {
   supplier: string;
   status: string;
   date: string;
+  cardlightResult?: CardlightResult;
 }
 
 export interface CompletedOrder {
