@@ -462,10 +462,6 @@ export default function AdminMessages() {
         </div>
       </div>
     );
-      }
-      default:
-        return null;
-    }
   };
 
   return (
