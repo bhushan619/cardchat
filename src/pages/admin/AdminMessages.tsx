@@ -912,9 +912,9 @@ export default function AdminMessages() {
                         const isSelected = selectedOrderId === o.id;
                         return (
                           <div key={o.id}>
-                            <button
+                            <div
                               onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
-                              className={`w-full text-left rounded-lg p-2.5 transition-colors ${
+                              className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
                                 isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
                               }`}
                             >
