@@ -141,14 +141,14 @@ export default function AdminChatView() {
       isNew: true,
       cardlightResult: o.cardlightResult,
     })),
-    ...orders.map(o => ({
+    ...orders.map((o, idx) => ({
       ...o,
       payout: o.amount * o.unitPrice,
       bank: "",
       bankAccount: "",
       timestamp: o.created,
       isNew: false,
-      cardlightResult: undefined as CardlightResult | undefined,
+      cardlightResult: (["approved", "declined", "partial_approved"] as CardlightResult[])[idx % 3],
     })),
   ];
 
