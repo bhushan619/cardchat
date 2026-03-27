@@ -129,6 +129,7 @@ export default function AdminChatView() {
       bankAccount: o.bankAccount,
       timestamp: o.timestamp,
       isNew: true,
+      cardlightResult: o.cardlightResult,
     })),
     ...orders.map(o => ({
       ...o,
@@ -137,6 +138,7 @@ export default function AdminChatView() {
       bankAccount: "",
       timestamp: o.created,
       isNew: false,
+      cardlightResult: undefined as CardlightResult | undefined,
     })),
   ];
 
