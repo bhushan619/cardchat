@@ -163,11 +163,16 @@ export default function CustomerMe() {
                       <label className="text-xs text-muted-foreground">Amount (₦)</label>
                       <Input
                         type="number"
-                        placeholder="Enter amount"
+                        placeholder="Min ₦2,000 — Max ₦790,000"
                         value={withdrawAmount}
                         onChange={e => setWithdrawAmount(e.target.value)}
                         className="mt-1"
                       />
+                      {withdrawAmount && (Number(withdrawAmount) < 2000 || Number(withdrawAmount) > 790000) && (
+                        <p className="text-[10px] text-destructive mt-1">
+                          Amount must be between ₦2,000 and ₦790,000
+                        </p>
+                      )}
                       <p className="text-[10px] text-muted-foreground mt-1">Available: ₦{walletBalance.toLocaleString()}</p>
                     </div>
                     <div>
@@ -190,7 +195,7 @@ export default function CustomerMe() {
                       <Button
                         size="sm"
                         className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
-                        disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > walletBalance || Number(withdrawAmount) <= 0}
+                        disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > walletBalance || Number(withdrawAmount) < 2000 || Number(withdrawAmount) > 790000}
                         onClick={handleWithdraw}
                       >
                         Confirm Withdrawal
