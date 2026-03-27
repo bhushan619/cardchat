@@ -91,9 +91,9 @@ const mockSellers: SellerEntry[] = [
 const cardSources = ["W", "E", "M"];
 
 export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded, onBuyerSelected }: CardlightPanelProps) {
-  // Login state
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [account, setAccount] = useState("");
+  // Login state - persisted in sessionStorage
+  const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("cardlight_logged_in") === "true");
+  const [account, setAccount] = useState(() => sessionStorage.getItem("cardlight_account") || "");
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
 
@@ -108,8 +108,13 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   const [cardTypeOpen, setCardTypeOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
 
-  // Order list
-  const [orderList, setOrderList] = useState<OrderEntry[]>([]);
+  // Order list - persisted in sessionStorage
+  const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
+    try {
+      const saved = sessionStorage.getItem("cardlight_orders");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
   const totalPages = Math.ceil(orderList.length / pageSize);
@@ -125,8 +130,16 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     setLoginLoading(true);
     setTimeout(() => {
       setIsLoggedIn(true);
+      sessionStorage.setItem("cardlight_logged_in", "true");
+      sessionStorage.setItem("cardlight_account", account);
       setLoginLoading(false);
     }, 800);
+  };
+
+  // Persist order list changes
+  const updateOrderList = (newList: OrderEntry[]) => {
+    setOrderList(newList);
+    sessionStorage.setItem("cardlight_orders", JSON.stringify(newList));
   };
 
   const addCard = () => {
@@ -157,7 +170,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
     };
 
-    setOrderList(prev => [newOrder, ...prev]);
+    updateOrderList([newOrder, ...orderList]);
     // Reset form
     setCards([makeCard()]);
     setCardRate("");
@@ -193,7 +206,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   const handleConfirmSell = () => {
     if (saleOrderId) {
-      setOrderList(prev => prev.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
