@@ -390,9 +390,12 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 </div>
                 <div className="space-y-1">
                   <label className="text-[11px] font-medium text-muted-foreground">Card Rate</label>
-                  <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
-                    {cardRate}
-                  </div>
+                  <Input
+                    placeholder="Enter rate..."
+                    value={cardRate}
+                    onChange={e => setCardRate(e.target.value.replace(/[^0-9.]/g, ""))}
+                    className="h-8 text-xs"
+                  />
                 </div>
               </div>
 
