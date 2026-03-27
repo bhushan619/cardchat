@@ -55,6 +55,8 @@ export default function AdminOrders() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [editingDenom, setEditingDenom] = useState<string | null>(null);
+  const [denomValue, setDenomValue] = useState("");
 
   const filtered = orders.filter(o =>
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
