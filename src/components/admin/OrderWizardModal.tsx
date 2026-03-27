@@ -175,8 +175,6 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     updateOrderList([newOrder, ...orderList]);
     // Reset form
     setCards([makeCard()]);
-    setCardRate("");
-    setNairaPrice("");
     setSupplier("");
 
     // Also notify parent
