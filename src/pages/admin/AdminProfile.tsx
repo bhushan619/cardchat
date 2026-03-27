@@ -48,8 +48,8 @@ export default function AdminProfile() {
         return;
       }
     }
-    if (newPin.length !== 4 || !/^\d{4}$/.test(newPin)) {
-      toast.error("PIN must be exactly 4 digits");
+    if (newPin.length !== 6 || !/^\d{6}$/.test(newPin)) {
+      toast.error("PIN must be exactly 6 digits");
       return;
     }
     if (newPin !== confirmPin) {
@@ -126,7 +126,7 @@ export default function AdminProfile() {
             <div>
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Transaction PIN</p>
               <p className="text-xs text-muted-foreground mt-1">
-                {hasPin ? "Your PIN is set. Use it to authorize fund adjustments." : "Create a 4-digit PIN to authorize fund adjustments."}
+                {hasPin ? "Your PIN is set. Use it to authorize fund adjustments." : "Create a 6-digit PIN to authorize fund adjustments."}
               </p>
             </div>
             {hasPin && (
@@ -153,10 +153,10 @@ export default function AdminProfile() {
                   <div className="relative">
                     <Input
                       type={showCurrentPin ? "text" : "password"}
-                      maxLength={4}
-                      placeholder="••••"
+                      maxLength={6}
+                      placeholder="••••••"
                       value={currentPin}
-                      onChange={e => setCurrentPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                      onChange={e => setCurrentPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                       className="pr-9"
                     />
                     <button
@@ -172,12 +172,12 @@ export default function AdminProfile() {
               <div className="space-y-1.5">
                 <label className="text-xs font-medium">New PIN</label>
                 <div className="relative">
-                  <Input
+                    <Input
                     type={showNewPin ? "text" : "password"}
-                    maxLength={4}
-                    placeholder="••••"
+                    maxLength={6}
+                    placeholder="••••••"
                     value={newPin}
-                    onChange={e => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                    onChange={e => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     className="pr-9"
                   />
                   <button
@@ -192,12 +192,12 @@ export default function AdminProfile() {
               <div className="space-y-1.5">
                 <label className="text-xs font-medium">Confirm PIN</label>
                 <div className="relative">
-                  <Input
+                    <Input
                     type={showConfirmPin ? "text" : "password"}
-                    maxLength={4}
-                    placeholder="••••"
+                    maxLength={6}
+                    placeholder="••••••"
                     value={confirmPin}
-                    onChange={e => setConfirmPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                    onChange={e => setConfirmPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                     className="pr-9"
                   />
                   <button

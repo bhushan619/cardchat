@@ -1617,9 +1617,9 @@ export default function AdminMessages() {
               <div className="bg-muted/50 rounded-lg p-4 text-center space-y-3">
                 <Lock className="w-8 h-8 text-accent mx-auto" />
                 <p className="text-sm font-medium">Enter Transaction PIN</p>
-                <p className="text-xs text-muted-foreground">Enter your 4-digit PIN to authorize this {fundAdjustType}</p>
+                <p className="text-xs text-muted-foreground">Enter your 6-digit PIN to authorize this {fundAdjustType}</p>
                 <div className="flex justify-center gap-2">
-                  {[0, 1, 2, 3].map(i => (
+                  {[0, 1, 2, 3, 4, 5].map(i => (
                     <div
                       key={i}
                       className={`w-10 h-12 rounded-lg border-2 flex items-center justify-center text-lg font-bold transition-colors ${
@@ -1634,9 +1634,9 @@ export default function AdminMessages() {
                   type="text"
                   inputMode="numeric"
                   autoFocus
-                  maxLength={4}
+                  maxLength={6}
                   value={fundPin}
-                  onChange={e => setFundPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  onChange={e => setFundPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
                   className="sr-only"
                 />
               </div>
@@ -1644,7 +1644,7 @@ export default function AdminMessages() {
                 <Button variant="outline" className="flex-1" onClick={() => { setFundPinStep(false); setFundPin(""); }}>Back</Button>
                 <Button
                   className="flex-1"
-                  disabled={fundPin.length !== 4}
+                  disabled={fundPin.length !== 6}
                   onClick={() => {
                     const storedPin = localStorage.getItem(`adminPin_${role}`);
                     if (fundPin !== storedPin) {
