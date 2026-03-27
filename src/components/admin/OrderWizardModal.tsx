@@ -30,12 +30,11 @@ interface CardEntry {
   cardAmount: string;
 }
 
-export type CardlightResult = "pending" | "successful" | "declined" | "negotiate";
+export type CardlightResult = "pending" | "successful" | "negotiate";
 
 export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
   pending:    { label: "Pending",    color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
   successful: { label: "Successful", color: "text-success",     bg: "bg-success/20",     rowBg: "bg-success/10" },
-  declined:   { label: "Declined",   color: "text-destructive", bg: "bg-destructive/20", rowBg: "bg-destructive/10" },
   negotiate:  { label: "Negotiate",  color: "text-primary",     bg: "bg-primary/20",     rowBg: "bg-primary/10" },
 };
 
@@ -590,8 +589,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                               o.status === "Negotiation" ? "text-warning" :
                               o.status === "Selling" ? "text-primary" :
                              o.status === "Successful" ? "text-success" :
-                              o.status === "Declined" ? "text-destructive" :
-                              o.status === "Negotiate" ? "text-primary" :
+                               o.status === "Negotiate" ? "text-primary" :
                               "text-muted-foreground"
                             }`}>
                               {o.status}
@@ -674,8 +672,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="random" className="text-xs">Random</SelectItem>
-                <SelectItem value="successful" className="text-xs">    Successful</SelectItem>
-                <SelectItem value="declined" className="text-xs">🔴 Declined</SelectItem>
+                <SelectItem value="successful" className="text-xs">🟢 Successful</SelectItem>
                 <SelectItem value="negotiate" className="text-xs">🔵 Negotiate</SelectItem>
               </SelectContent>
             </Select>
