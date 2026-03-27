@@ -64,6 +64,7 @@ export interface CompletedOrder {
   status: "processing" | "completed" | "failed";
   cardCurrency?: string;
   cardNumbers?: string[];
+  cardlightResult?: CardlightResult;
 }
 
 interface CardlightPanelProps {
