@@ -251,6 +251,47 @@ export default function AdminMessages() {
     return colors[idx % colors.length] || "text-accent";
   };
 
+  // Auto-seed order status from mock orders when selecting a conversation
+  useEffect(() => {
+    if (!selectedId) return;
+    const existing = orderStatus.getStatus(selectedId);
+    if (existing) return; // already has a status, don't override
+
+    // Find the first mock order matching this conversation's customer alias
+    const convo = rawConversations.find(c => c.id === selectedId);
+    if (!convo) return;
+    const mockOrder = orders.find(o => o.customer === convo.alias);
+    if (!mockOrder) return;
+
+    // Map mock status to AgentOrderStatus
+    const statusMap: Record<string, AgentOrderStatus> = {
+      success: "success",
+      in_trade: "in_trade",
+      order_cancelled: "order_cancelled",
+    };
+    const mappedStatus = statusMap[mockOrder.status];
+    if (!mappedStatus) return;
+
+    // Seed the order through the required transitions
+    orderStatus.createOrder(selectedId, mockOrder.id);
+    if (mappedStatus === "in_trade" || mappedStatus === "success" || mappedStatus === "order_cancelled") {
+      setTimeout(() => {
+        orderStatus.transitionStatus(selectedId, "pending");
+        setTimeout(() => {
+          orderStatus.transitionStatus(selectedId, "in_trade");
+          if (mappedStatus === "success") {
+            setTimeout(() => orderStatus.transitionStatus(selectedId, "success"), 50);
+          } else if (mappedStatus === "order_cancelled") {
+            setTimeout(() => {
+              orderStatus.transitionStatus(selectedId, "negotiation");
+              setTimeout(() => orderStatus.transitionStatus(selectedId, "order_cancelled"), 50);
+            }, 50);
+          }
+        }, 50);
+      }, 50);
+    }
+  }, [selectedId]);
+
   // Current order status for selected conversation
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
@@ -871,9 +912,9 @@ export default function AdminMessages() {
                         const isSelected = selectedOrderId === o.id;
                         return (
                           <div key={o.id}>
-                            <button
+                            <div
                               onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
-                              className={`w-full text-left rounded-lg p-2.5 transition-colors ${
+                              className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
                                 isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
                               }`}
                             >
@@ -919,7 +960,7 @@ export default function AdminMessages() {
                                   )}
                                 </div>
                               </div>
-                            </button>
+                            </div>
                             {isSelected && (
                               <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
                                 <div className="flex items-center justify-between">
