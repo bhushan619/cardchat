@@ -86,6 +86,7 @@ export default function AdminMessages() {
     sessionStorage.setItem("lightchat_transfer_completed", JSON.stringify([...transferCompletedOrders]));
   }, [transferCompletedOrders]);
 
+  const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
       ...m,
       senderName: m.sender === "customer" ? "A7X3KP" : m.sender === "agent" ? "You" : "System",
