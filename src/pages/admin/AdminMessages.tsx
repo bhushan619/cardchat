@@ -960,7 +960,7 @@ export default function AdminMessages() {
                                   )}
                                 </div>
                               </div>
-                            </button>
+                            </div>
                             {isSelected && (
                               <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
                                 <div className="flex items-center justify-between">
