@@ -14,6 +14,13 @@ const statusColors: Record<string, string> = {
   success: "bg-success/10 text-success",
 };
 
+const cardlightResultColors: Record<CardlightResult, string> = {
+  approved: "bg-success/10 text-success",
+  declined: "bg-destructive/10 text-destructive",
+  pending: "bg-warning/10 text-warning",
+  partial: "bg-accent/10 text-accent",
+};
+
 const mockOrderDetails: Record<string, {
   cardFormat: string;
   agent: string;
