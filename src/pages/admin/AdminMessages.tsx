@@ -1618,7 +1618,7 @@ export default function AdminMessages() {
                 <Lock className="w-8 h-8 text-accent mx-auto" />
                 <p className="text-sm font-medium">Enter Transaction PIN</p>
                 <p className="text-xs text-muted-foreground">Enter your 6-digit PIN to authorize this {fundAdjustType}</p>
-                <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-2 cursor-text" onClick={() => document.getElementById("fund-pin-input")?.focus()}>
                   {[0, 1, 2, 3, 4, 5].map(i => (
                     <div
                       key={i}
@@ -1631,13 +1631,14 @@ export default function AdminMessages() {
                   ))}
                 </div>
                 <input
+                  id="fund-pin-input"
                   type="text"
                   inputMode="numeric"
                   autoFocus
                   maxLength={6}
                   value={fundPin}
                   onChange={e => setFundPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="sr-only"
+                  className="opacity-0 absolute w-0 h-0"
                 />
               </div>
               <div className="flex gap-2">
