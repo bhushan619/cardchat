@@ -838,28 +838,71 @@ export default function AdminMessages() {
                                 isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
                               }`}
                             >
-                              <div className="flex items-center justify-between mb-1">
-                                <span className="text-[11px] font-semibold">{o.id}</span>
-                                <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary">
-                                  {o.status}
-                                </span>
-                              </div>
-                              <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                                <span>{o.cardType}</span>
-                                <span>${o.amount}</span>
+                              <div className="flex items-center gap-2.5">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                  <CreditCard className="w-4 h-4 text-primary" />
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center justify-between mb-0.5">
+                                    <span className="text-[11px] font-semibold truncate">
+                                      {o.cardType} {o.cardCurrency && <span className="text-muted-foreground font-normal">/ {o.cardCurrency}</span>}
+                                    </span>
+                                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 ml-1">
+                                      {o.status}
+                                    </span>
+                                  </div>
+                                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                                    <div className="flex items-center gap-1 truncate">
+                                      <span className="font-mono truncate">{o.id}</span>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.id, o.id); }}
+                                        className="text-muted-foreground hover:text-primary shrink-0"
+                                        title="Copy Order ID"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                      {copyFeedback === o.id && <span className="text-[8px] text-success">Copied!</span>}
+                                    </div>
+                                    <span className="shrink-0">${o.amount}</span>
+                                  </div>
+                                  {o.cardNumbers.length > 0 && (
+                                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-muted-foreground">
+                                      <span className="truncate font-mono">{o.cardNumbers[0]}{o.cardNumbers.length > 1 ? ` +${o.cardNumbers.length - 1}` : ""}</span>
+                                      <button
+                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.cardNumbers.join(", "), `cn-${o.id}`); }}
+                                        className="text-muted-foreground hover:text-primary shrink-0"
+                                        title="Copy Card Number(s)"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                      {copyFeedback === `cn-${o.id}` && <span className="text-[8px] text-success">Copied!</span>}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
                             </button>
                             {isSelected && (
                               <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
-                                <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                                <div className="flex items-center justify-between">
+                                  <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setDetailOrderId(o.id)}
+                                    className="h-6 px-2.5 text-[10px] gap-1"
+                                  >
+                                    <ExternalLink className="w-3 h-3" /> Details
+                                  </Button>
+                                </div>
                                 <div className="space-y-1.5">
                                   {[
                                     ["Order ID", o.id],
-                                    ["Card", o.cardType],
+                                    ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                     ["Denomination", o.denomination],
                                     ["Amount", `$${o.amount}`],
                                     ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
                                     ["Payout", `₦${o.payout.toLocaleString()}`],
+                                    ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
                                     ...(o.bank ? [["Bank", `${o.bank} ${o.bankAccount}`]] : []),
                                     ["Time", o.timestamp],
                                   ].map(([k, v]) => (
