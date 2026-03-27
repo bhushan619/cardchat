@@ -476,6 +476,38 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 </button>
               </div>
 
+              {/* Amount Calculation Summary */}
+              {(() => {
+                const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
+                const avgCardRate = cards.reduce((sum, c) => sum + (Number(c.cardRate) || 0), 0) / (cards.filter(c => Number(c.cardRate) > 0).length || 1);
+                const totalPayout = cards.reduce((sum, c) => sum + ((Number(c.cardAmount) || 0) * (Number(c.cardRate) || 0)), 0);
+                const currencySymbol = cardCurrency === "GBP" ? "£" : cardCurrency === "EUR" ? "€" : cardCurrency === "CAD" ? "C$" : cardCurrency === "AUD" ? "A$" : "$";
+                const hasValues = totalFaceValue > 0 || totalPayout > 0;
+
+                return hasValues ? (
+                  <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Total Face Value</span>
+                      <span className="font-semibold">{currencySymbol}{totalFaceValue.toLocaleString()}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="text-muted-foreground">Avg Card Rate</span>
+                      <span className="font-semibold">₦{avgCardRate.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                    </div>
+                    {nairaPrice && (
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-muted-foreground">Naira Price</span>
+                        <span className="font-semibold">₦{Number(nairaPrice).toLocaleString()}</span>
+                      </div>
+                    )}
+                    <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
+                      <span className="text-muted-foreground font-medium">Total Payout</span>
+                      <span className="font-bold text-success">₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                    </div>
+                  </div>
+                ) : null;
+              })()}
+
               {/* Create Now button */}
               <div className="flex justify-end pt-1">
                 <Button
