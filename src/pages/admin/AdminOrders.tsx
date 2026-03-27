@@ -120,6 +120,7 @@ export default function AdminOrders() {
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Rate (₦)</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">CardLight Result</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
               </tr>
             </thead>
