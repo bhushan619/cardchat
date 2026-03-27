@@ -56,7 +56,12 @@ export default function AdminMessages() {
   // Chat state
   const [message, setMessage] = useState("");
   const [rightTab, setRightTab] = useState<string>("orders");
-  const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
+  const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>(() => {
+    try {
+      const saved = sessionStorage.getItem("lightchat_completed_orders");
+      return saved ? JSON.parse(saved) : [];
+    } catch { return []; }
+  });
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
   const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
@@ -65,7 +70,12 @@ export default function AdminMessages() {
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
   const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
-  const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(new Set());
+  const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(() => {
+    try {
+      const saved = sessionStorage.getItem("lightchat_transfer_completed");
+      return saved ? new Set(JSON.parse(saved)) : new Set();
+    } catch { return new Set(); }
+  });
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map(m => ({
