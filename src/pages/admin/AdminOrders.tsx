@@ -148,11 +148,16 @@ export default function AdminOrders() {
                           {o.status.replace("_", " ")}
                         </span>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`status-badge ${cardlightResultColors[o.cardlightResult] || ""}`}>
+                          {cardlightResultLabels[o.cardlightResult]}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-xs text-right text-muted-foreground">{o.created}</td>
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={8} className="px-6 py-4 bg-muted/20">
+                        <td colSpan={9} className="px-6 py-4 bg-muted/20">
                           <div className="grid grid-cols-3 gap-6 animate-slide-up">
                             {/* Card details */}
                             <div className="space-y-2">
