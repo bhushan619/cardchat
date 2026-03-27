@@ -1457,7 +1457,6 @@ export default function AdminMessages() {
                   disabled={!negotiateDenom || !negotiateRate}
                   onClick={() => {
                     if (selectedId && currentOrderId) {
-                      handleStatusTransition(selectedId, "negotiation");
                       const payout = parseFloat(negotiateDenom) * parseFloat(negotiateRate);
                       setNegotiationData(prev => ({
                         ...prev,
@@ -1466,7 +1465,10 @@ export default function AdminMessages() {
                           newDenom: parseFloat(negotiateDenom), newRate: parseFloat(negotiateRate), newAmount: payout,
                         }
                       }));
-                      addSystemMessage(`⚠️ Negotiation: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}`);
+                      // Transition through negotiation to success (completing the transaction)
+                      handleStatusTransition(selectedId, "negotiation");
+                      setTimeout(() => handleStatusTransition(selectedId, "success"), 100);
+                      addSystemMessage(`✅ Negotiation confirmed: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}. Funds credited to customer wallet.`);
                     }
                     setNegotiateOpen(false);
                   }}
