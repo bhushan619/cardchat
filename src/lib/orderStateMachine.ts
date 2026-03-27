@@ -21,7 +21,7 @@ const validTransitions: Record<AgentOrderStatus, AgentOrderStatus[]> = {
   pending_sale: ["pending"],
   pending: ["in_trade"],
   in_trade: ["success", "negotiation"],
-  negotiation: ["success", "order_cancelled"],
+  negotiation: ["success", "order_cancelled", "negotiation"],
   order_cancelled: [],
   success: [],
 };
