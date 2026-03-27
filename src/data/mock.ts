@@ -14,7 +14,7 @@ export const cardRates = [
   { id: 11, cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 570, sellRate: 610, lastUpdated: "4 min ago" },
 ];
 
-export const systemNairaRate = 1580;
+export const systemNairaRate = 289;
 export const systemDenomination = 100;
 export const systemPriceControl = 85.00; // percentage 1.00% - 100.00%
 
