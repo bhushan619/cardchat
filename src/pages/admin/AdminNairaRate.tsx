@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { nairaRateHistory, systemNairaRate, systemDenomination } from "@/data/mock";
-import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2 } from "lucide-react";
+import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl } from "@/data/mock";
+import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -12,6 +12,7 @@ export default function AdminNairaRate() {
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
   const [denomination, setDenomination] = useState(systemDenomination.toString());
+  const [priceControl, setPriceControl] = useState(systemPriceControl.toFixed(2));
   const [reason, setReason] = useState("");
   const [broadcasting, setBroadcasting] = useState<"idle" | "broadcasting" | "done">("idle");
 
@@ -31,6 +32,15 @@ export default function AdminNairaRate() {
       toast({
         title: "Invalid Rate",
         description: "Naira rate must be between 99 and 299.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const pcNum = Number(priceControl);
+    if (isNaN(pcNum) || pcNum < 1 || pcNum > 100) {
+      toast({
+        title: "Invalid Price Control",
+        description: "Price control must be between 1.00% and 100.00%.",
         variant: "destructive",
       });
       return;
@@ -89,15 +99,22 @@ export default function AdminNairaRate() {
             </Button>
           </div>
 
-          {/* Denomination display */}
-          <div className="flex items-center gap-3 mb-3 pl-[60px]">
-            <p className="text-sm text-muted-foreground">System Denomination:</p>
-            <p className="text-lg font-heading font-bold">{systemDenomination}</p>
+          {/* Denomination & Price Control display */}
+          <div className="flex items-center gap-6 mb-3 pl-[60px]">
+            <div className="flex items-center gap-2">
+              <p className="text-sm text-muted-foreground">System Denomination:</p>
+              <p className="text-lg font-heading font-bold">{systemDenomination}</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Percent className="w-4 h-4 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Price Control:</p>
+              <p className="text-lg font-heading font-bold">{systemPriceControl.toFixed(2)}%</p>
+            </div>
           </div>
 
           {editing && (
             <div className="border-t pt-4 space-y-3 animate-slide-up">
-              <div className="grid grid-cols-3 gap-4">
+              <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per CNY)</label>
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
@@ -107,13 +124,18 @@ export default function AdminNairaRate() {
                   <Input value={denomination} onChange={e => setDenomination(e.target.value)} className="mt-1" />
                 </div>
                 <div>
+                  <label className="text-xs font-medium text-muted-foreground">New Price Control (%)</label>
+                  <Input value={priceControl} onChange={e => setPriceControl(e.target.value)} placeholder="e.g. 85.00" className="mt-1" />
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Range: 1.00% – 100.00%</p>
+                </div>
+                <div>
                   <label className="text-xs font-medium text-muted-foreground">Reason for Change</label>
                   <Input value={reason} onChange={e => setReason(e.target.value)} placeholder="e.g. Market adjustment" className="mt-1" />
                 </div>
               </div>
               <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 space-y-1">
                 <p className="text-xs text-warning-foreground">⚠ These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values.</p>
-                <p className="text-[10px] text-muted-foreground">Naira rate must be between <strong>99</strong> and <strong>299</strong>.</p>
+                <p className="text-[10px] text-muted-foreground">Naira rate: <strong>99–299</strong> · Price control: <strong>1.00%–100.00%</strong></p>
               </div>
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
