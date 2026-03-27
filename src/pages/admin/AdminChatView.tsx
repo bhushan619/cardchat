@@ -488,7 +488,8 @@ export default function AdminChatView() {
                 </div>
               )}
             </div>
-          )}
+            );
+          })()}
 
           {/* Payment flow */}
           {paymentMode && selectedOrder && (
