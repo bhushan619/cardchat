@@ -238,6 +238,8 @@ export default function AdminMessages() {
   const [fundAdjustType, setFundAdjustType] = useState<"addition" | "deduction">("addition");
   const [fundAdjustAmount, setFundAdjustAmount] = useState("");
   const [fundAdjustReason, setFundAdjustReason] = useState("");
+  const [fundPinStep, setFundPinStep] = useState(false);
+  const [fundPin, setFundPin] = useState("");
   const [fundAdjustments, setFundAdjustments] = useState<FundAdjustment[]>(() => {
     try {
       const saved = sessionStorage.getItem("lightchat_fund_adjustments");
