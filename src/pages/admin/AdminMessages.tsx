@@ -463,28 +463,23 @@ export default function AdminMessages() {
             <div className="flex gap-2">
               <Button
                 size="sm"
+                variant="outline"
+                className="flex-1 h-8 text-xs"
+                onClick={() => statusOrder && setDetailOrderId(statusOrder.id)}
+              >
+                Details
+              </Button>
+              <Button
+                size="sm"
                 className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
                 onClick={() => setConfirmAction({
                   type: "successful",
-                  title: "Confirm Successful Trade",
-                  desc: `This will mark the trade as successful and credit funds to the customer's wallet.`,
+                  title: "Confirm Negotiated Trade",
+                  desc: `This will complete the transaction and credit the negotiated payout to the customer's wallet.`,
                   onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
                 })}
               >
                 <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                onClick={() => {
-                  const neg = currentOrderId ? negotiationData[currentOrderId] : null;
-                  setNegotiateDenom(neg ? neg.newDenom.toString() : "");
-                  setNegotiateRate(neg ? neg.newRate.toString() : "");
-                  setNegotiateOpen(true);
-                }}
-              >
-                <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
               </Button>
             </div>
           );
