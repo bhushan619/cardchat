@@ -163,9 +163,9 @@ export default function AdminMessages() {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
       // When success: auto-credit wallet with specific amount
-      if (newStatus === "success") {
-        const amountStr = payoutAmount ? `₦${payoutAmount.toLocaleString()}` : "";
-        addSystemMessage(`📌 💰 Funds credited to customer's wallet${amountStr ? ` — ${amountStr}` : ""}`);
+      if (newStatus === "success" && payoutAmount) {
+        // Agent sees detailed credit message
+        addSystemMessage(`📌 💰 Funds credited to customer's wallet — ₦${payoutAmount.toLocaleString()}`);
       }
     }
   };
@@ -560,7 +560,7 @@ export default function AdminMessages() {
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Naira Rate</span>
-                      <span className="font-medium">₦{(statusOrder.nairaRate || 289).toLocaleString()}/CNY</span>
+                      <span className="font-medium">₦{(statusOrder.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                       <span className="text-muted-foreground font-medium">Total Payout</span>
@@ -577,7 +577,7 @@ export default function AdminMessages() {
                   {[
                     ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
                     ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
-                    ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}/CNY`],
+                    ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -1402,7 +1402,7 @@ export default function AdminMessages() {
                  </div>
                  <div className="flex justify-between text-xs">
                    <span className="text-muted-foreground">Naira Rate</span>
-                   <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}/CNY</span>
+                    <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                  </div>
                  <div className="flex justify-between text-xs border-t border-border pt-1.5">
                    <span className="text-muted-foreground font-medium">Original Payout</span>
@@ -1437,7 +1437,7 @@ export default function AdminMessages() {
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Naira Rate</span>
-                      <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}/CNY</span>
+                      <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground font-medium">New Payout</span>
@@ -1469,7 +1469,7 @@ export default function AdminMessages() {
                       // Transition through negotiation to success (completing the transaction)
                       handleStatusTransition(selectedId, "negotiation");
                       setTimeout(() => handleStatusTransition(selectedId, "success", payout), 100);
-                      addSystemMessage(`✅ Negotiation confirmed: Denomination ${currSymbol}${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}.`);
+                      addSystemMessage(`✅ Negotiation confirmed. Payout ₦${payout.toLocaleString()}.`);
                     }
                     setNegotiateOpen(false);
                   }}

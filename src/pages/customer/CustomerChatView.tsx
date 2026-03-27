@@ -53,7 +53,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
-            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580/CNY</p>
+            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580</p>
           </div>
           <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
             <StatusIcon className={`w-3 h-3 ${orderStatus === "order_processing" ? "animate-spin" : ""}`} />
@@ -112,31 +112,12 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         })}
 
         {(currentIdx >= 2) && (
-          <div className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
-            <p className="text-xs text-accent font-medium">✅ Trade successful — ₦215,200 total payout</p>
+          <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center">
+            <p className="text-xs text-success font-semibold">✅ ₦215,200 has been added to your wallet</p>
             <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
           </div>
         )}
 
-        {orderStatus === "success" && (
-          <>
-            <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center animate-slide-up">
-              <p className="text-xs text-success font-semibold">✅ Success — ₦215,200 sent to First Bank ****1234</p>
-              <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
-            </div>
-            <div className="flex justify-start">
-              <div className="chat-bubble-other">
-                <p className="text-[9px] font-semibold mb-1 text-accent">System</p>
-                <div className="w-56 h-36 bg-muted rounded-lg flex flex-col items-center justify-center border border-dashed border-muted-foreground/30">
-                  <ImageIcon className="w-8 h-8 text-muted-foreground/50 mb-1" />
-                  <span className="text-[10px] text-muted-foreground">Transfer Proof Screenshot</span>
-                  <span className="text-[9px] text-muted-foreground/60">First Bank · ₦215,200</span>
-                </div>
-                <p className="text-[10px] text-muted-foreground mt-1">10:42 AM</p>
-              </div>
-            </div>
-          </>
-        )}
 
         {orderStatus === "failed" && (
           <div className="bg-destructive/10 border border-destructive/30 rounded-lg p-3 text-center animate-slide-up">
@@ -171,7 +152,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                   { label: "Denomination", value: "$100 x 2" },
                   { label: "Total Face Value", value: "$200" },
                   { label: "Rate (per $)", value: "₦680" },
-                  { label: "Naira Rate", value: "₦1,580/CNY" },
+                  { label: "Naira Rate", value: "₦1,580" },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
