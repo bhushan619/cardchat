@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
-import OrderWizardModal, { type CompletedOrder } from "@/components/admin/OrderWizardModal";
+import OrderWizardModal, { type CompletedOrder, cardlightResultMeta, type CardlightResult } from "@/components/admin/OrderWizardModal";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 type ChatMessage = {
