@@ -1592,34 +1592,91 @@ export default function AdminMessages() {
               </>
             );
           })()}
-          <div className="flex gap-2 pt-2">
-            <Button variant="outline" className="flex-1" onClick={() => setFundAdjustOpen(false)}>Cancel</Button>
-            <Button
-              className="flex-1"
-              disabled={!fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
-              onClick={() => {
-                const amount = Number(fundAdjustAmount);
-                if (!selectedConvo || !amount || amount <= 0 || !fundAdjustReason) return;
-                const roleProfiles: Record<string, string> = { super_admin: "Admin One", team_lead: "Sarah Lead" };
-                const adjustment: FundAdjustment = {
-                  id: `FA-${Date.now().toString(36).toUpperCase()}`,
-                  customerAlias: selectedConvo.alias,
-                  type: fundAdjustType,
-                  amount,
-                  reason: fundAdjustReason,
-                  performedBy: roleProfiles[role] || role,
-                  timestamp: new Date().toLocaleString(),
-                };
-                setFundAdjustments(prev => [adjustment, ...prev]);
-                addSystemMessage(`💰 Fund ${fundAdjustType}: ${fundAdjustType === "addition" ? "+" : "-"}₦${amount.toLocaleString()} — ${fundAdjustReason} (by ${adjustment.performedBy})`);
-                setFundAdjustOpen(false);
-                setFundAdjustAmount("");
-                setFundAdjustReason("");
-              }}
-            >
-              Confirm {fundAdjustType === "addition" ? "Addition" : "Deduction"}
-            </Button>
-          </div>
+          {!fundPinStep ? (
+            <div className="flex gap-2 pt-2">
+              <Button variant="outline" className="flex-1" onClick={() => setFundAdjustOpen(false)}>Cancel</Button>
+              <Button
+                className="flex-1"
+                disabled={!fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
+                onClick={() => {
+                  const storedPin = localStorage.getItem(`adminPin_${role}`);
+                  if (!storedPin) {
+                    toast.error("Please create a transaction PIN in your Profile first");
+                    return;
+                  }
+                  setFundPinStep(true);
+                  setFundPin("");
+                }}
+              >
+                Confirm {fundAdjustType === "addition" ? "Addition" : "Deduction"}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-3 pt-2">
+              <div className="bg-muted/50 rounded-lg p-4 text-center space-y-3">
+                <Lock className="w-8 h-8 text-accent mx-auto" />
+                <p className="text-sm font-medium">Enter Transaction PIN</p>
+                <p className="text-xs text-muted-foreground">Enter your 4-digit PIN to authorize this {fundAdjustType}</p>
+                <div className="flex justify-center gap-2">
+                  {[0, 1, 2, 3].map(i => (
+                    <div
+                      key={i}
+                      className={`w-10 h-12 rounded-lg border-2 flex items-center justify-center text-lg font-bold transition-colors ${
+                        fundPin.length > i ? "border-accent bg-accent/10 text-accent" : "border-border bg-background"
+                      }`}
+                    >
+                      {fundPin.length > i ? "•" : ""}
+                    </div>
+                  ))}
+                </div>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  autoFocus
+                  maxLength={4}
+                  value={fundPin}
+                  onChange={e => setFundPin(e.target.value.replace(/\D/g, "").slice(0, 4))}
+                  className="sr-only"
+                />
+              </div>
+              <div className="flex gap-2">
+                <Button variant="outline" className="flex-1" onClick={() => { setFundPinStep(false); setFundPin(""); }}>Back</Button>
+                <Button
+                  className="flex-1"
+                  disabled={fundPin.length !== 4}
+                  onClick={() => {
+                    const storedPin = localStorage.getItem(`adminPin_${role}`);
+                    if (fundPin !== storedPin) {
+                      toast.error("Incorrect PIN");
+                      setFundPin("");
+                      return;
+                    }
+                    const amount = Number(fundAdjustAmount);
+                    if (!selectedConvo || !amount || amount <= 0 || !fundAdjustReason) return;
+                    const roleNames: Record<string, string> = { super_admin: "Admin One", team_lead: "Sarah Lead" };
+                    const adjustment: FundAdjustment = {
+                      id: `FA-${Date.now().toString(36).toUpperCase()}`,
+                      customerAlias: selectedConvo.alias,
+                      type: fundAdjustType,
+                      amount,
+                      reason: fundAdjustReason,
+                      performedBy: roleNames[role] || role,
+                      timestamp: new Date().toLocaleString(),
+                    };
+                    setFundAdjustments(prev => [adjustment, ...prev]);
+                    addSystemMessage(`💰 Fund ${fundAdjustType}: ${fundAdjustType === "addition" ? "+" : "-"}₦${amount.toLocaleString()} — ${fundAdjustReason} (by ${adjustment.performedBy})`);
+                    setFundAdjustOpen(false);
+                    setFundAdjustAmount("");
+                    setFundAdjustReason("");
+                    setFundPinStep(false);
+                    setFundPin("");
+                  }}
+                >
+                  Authorize
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
