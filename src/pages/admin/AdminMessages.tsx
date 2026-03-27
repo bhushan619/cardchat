@@ -471,7 +471,7 @@ export default function AdminMessages() {
                   onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
                 })}
               >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
               </Button>
               <Button
                 size="sm"
@@ -485,19 +485,6 @@ export default function AdminMessages() {
                 }}
               >
                 <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="flex-1 h-8 text-xs"
-                onClick={() => setConfirmAction({
-                  type: "failed",
-                  title: "Confirm Order Cancellation",
-                  desc: "This will cancel the order. No funds will be released to the customer.",
-                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
-                })}
-              >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
               </Button>
             </div>
           );
