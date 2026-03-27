@@ -13,19 +13,20 @@ import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
   { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"] },
-  { id: "customers", label: "Customers", icon: Users, path: "/admin/customers" },
+  { id: "customers", label: "Customers", icon: Users, path: "/admin/customers", roles: ["super_admin", "team_lead", "agent"] },
   { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates", roles: ["super_admin", "team_lead", "agent"] },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
   { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
+  { id: "team-chat", label: "Team Chat", icon: MessageSquare, path: "/admin/team-chat" },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
   { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
   { id: "sensitive-words", label: "Sensitive Words", icon: ShieldAlert, path: "/admin/sensitive-words", roles: ["super_admin"] },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
-  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide" },
-  { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide" },
+  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide", roles: ["super_admin", "team_lead", "agent"] },
+  { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead", "agent"] },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
