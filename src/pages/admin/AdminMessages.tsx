@@ -1201,6 +1201,75 @@ export default function AdminMessages() {
           </Dialog>
         );
       })()}
+
+      {/* Confirmation Modal for money-related actions */}
+      <Dialog open={!!confirmAction} onOpenChange={(open) => { if (!open) setConfirmAction(null); }}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{confirmAction?.title}</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">{confirmAction?.desc}</p>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setConfirmAction(null)}>Cancel</Button>
+            <Button className="flex-1" onClick={() => confirmAction?.onConfirm()}>Confirm</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Negotiate Modal */}
+      <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Negotiate Order</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            The buyer found a discrepancy. Enter the actual denomination and rate to recalculate the payout.
+          </p>
+          <div className="space-y-3 pt-2">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Actual Denomination ($)</label>
+              <Input
+                type="number"
+                placeholder="e.g. 50"
+                value={negotiateDenom}
+                onChange={e => setNegotiateDenom(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Actual Card Rate (₦)</label>
+              <Input
+                type="number"
+                placeholder="e.g. 1400"
+                value={negotiateRate}
+                onChange={e => setNegotiateRate(e.target.value)}
+              />
+            </div>
+            {negotiateDenom && negotiateRate && (
+              <div className="bg-muted rounded-lg p-3 text-center">
+                <p className="text-xs text-muted-foreground">Recalculated Payout</p>
+                <p className="text-lg font-bold text-primary">₦{(parseFloat(negotiateDenom) * parseFloat(negotiateRate)).toLocaleString()}</p>
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setNegotiateOpen(false)}>Cancel</Button>
+            <Button
+              className="flex-1"
+              disabled={!negotiateDenom || !negotiateRate}
+              onClick={() => {
+                if (selectedId) {
+                  handleStatusTransition(selectedId, "negotiation");
+                  const payout = parseFloat(negotiateDenom) * parseFloat(negotiateRate);
+                  addSystemMessage(`⚠️ Negotiation: Denomination $${negotiateDenom}, Rate ₦${negotiateRate}, Payout ₦${payout.toLocaleString()}`);
+                }
+                setNegotiateOpen(false);
+              }}
+            >
+              Confirm
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
