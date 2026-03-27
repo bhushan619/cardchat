@@ -208,6 +208,14 @@ export default function AdminMessages() {
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
 
+  // Confirmation modal states
+  const [confirmAction, setConfirmAction] = useState<{ type: string; title: string; desc: string; onConfirm: () => void } | null>(null);
+
+  // Negotiate modal state
+  const [negotiateOpen, setNegotiateOpen] = useState(false);
+  const [negotiateDenom, setNegotiateDenom] = useState("");
+  const [negotiateRate, setNegotiateRate] = useState("");
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
