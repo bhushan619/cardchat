@@ -46,7 +46,7 @@ export const chatMessages = [
   { id: 2, sender: "agent", text: "Hello! Sure, please send clear images of both cards (front and back)", time: "10:33 AM" },
   { id: 3, sender: "customer", text: "", time: "10:35 AM", image: true },
   { id: 4, sender: "agent", text: "Cards received. Let me verify them now.", time: "10:36 AM" },
-  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦1,580/CNY.", time: "10:37 AM", isOrder: true },
+  { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 x2. Rate locked at ₦289/CNY.", time: "10:37 AM", isOrder: true },
   { id: 6, sender: "agent", text: "Cards verified ✅ Order created. Processing your billing now.", time: "10:38 AM" },
 ];
 
