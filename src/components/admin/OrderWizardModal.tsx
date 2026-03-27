@@ -30,6 +30,15 @@ interface CardEntry {
   cardAmount: string;
 }
 
+export type CardlightResult = "pending" | "approved" | "declined" | "partial_approved";
+
+export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
+  pending:          { label: "Pending",          color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
+  approved:         { label: "Approved",         color: "text-success",     bg: "bg-success/10",     rowBg: "bg-success/5" },
+  declined:         { label: "Declined",         color: "text-destructive", bg: "bg-destructive/10", rowBg: "bg-destructive/5" },
+  partial_approved: { label: "Partial Approved", color: "text-primary",     bg: "bg-primary/10",     rowBg: "bg-primary/5" },
+};
+
 interface OrderEntry {
   id: string;
   cardCode: string;
@@ -39,6 +48,7 @@ interface OrderEntry {
   supplier: string;
   status: string;
   date: string;
+  cardlightResult?: CardlightResult;
 }
 
 export interface CompletedOrder {
@@ -208,12 +218,26 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   const handleConfirmSell = () => {
     if (saleOrderId) {
-      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling" } : o));
+      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling", cardlightResult: "pending" as CardlightResult } : o));
+
+      // Simulate CardLight webhook response after 3-6 seconds
+      const webhookDelay = 3000 + Math.random() * 3000;
+      const capturedOrderId = saleOrderId;
+      setTimeout(() => {
+        const results: CardlightResult[] = ["approved", "declined", "partial_approved"];
+        const randomResult = results[Math.floor(Math.random() * results.length)];
+        setOrderList(prev => {
+          const updated = prev.map(o =>
+            o.id === capturedOrderId ? { ...o, cardlightResult: randomResult, status: randomResult === "approved" ? "Approved" : randomResult === "declined" ? "Declined" : "Partial" } : o
+          );
+          sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
+          return updated;
+        });
+      }, webhookDelay);
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
     setSaleOrderId(null);
-    // Notify parent that buyer was selected → triggers status transition
     onBuyerSelected?.();
   };
 
@@ -539,43 +563,59 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Denom.</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Rate</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
+                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {pagedOrders.map(o => (
-                      <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30">
-                        <td className="py-2 px-2">{o.supplier || "—"}</td>
-                        <td className="py-2 px-1">
-                          <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
-                          <div className="text-muted-foreground">{o.description}</div>
-                          <div className="text-muted-foreground">{o.date}</div>
-                        </td>
-                        <td className="py-2 px-1">{o.denom}</td>
-                        <td className="py-2 px-1">{o.purchaseRate}</td>
-                        <td className="py-2 px-1">
-                          <span className={`text-[9px] font-medium ${
-                            o.status === "Negotiation" ? "text-warning" :
-                            o.status === "Selling" ? "text-primary" :
-                            "text-muted-foreground"
-                          }`}>
-                            {o.status}
-                          </span>
-                        </td>
-                        <td className="py-2 px-1">
-                          {o.status === "Wait For Sale" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleSale(o.id)}
-                              className="h-6 px-3 text-[10px]"
-                            >
-                              Sale
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                    {pagedOrders.map(o => {
+                      const resultMeta = o.cardlightResult ? cardlightResultMeta[o.cardlightResult] : null;
+                      return (
+                        <tr key={o.id} className={`border-b last:border-0 transition-colors ${resultMeta ? resultMeta.rowBg : "hover:bg-muted/30"}`}>
+                          <td className="py-2 px-2">{o.supplier || "—"}</td>
+                          <td className="py-2 px-1">
+                            <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
+                            <div className="text-muted-foreground">{o.description}</div>
+                            <div className="text-muted-foreground">{o.date}</div>
+                          </td>
+                          <td className="py-2 px-1">{o.denom}</td>
+                          <td className="py-2 px-1">{o.purchaseRate}</td>
+                          <td className="py-2 px-1">
+                            <span className={`text-[9px] font-medium ${
+                              o.status === "Negotiation" ? "text-warning" :
+                              o.status === "Selling" ? "text-primary" :
+                              o.status === "Approved" ? "text-success" :
+                              o.status === "Declined" ? "text-destructive" :
+                              o.status === "Partial" ? "text-primary" :
+                              "text-muted-foreground"
+                            }`}>
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className="py-2 px-1">
+                            {resultMeta ? (
+                              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${resultMeta.bg} ${resultMeta.color}`}>
+                                {resultMeta.label}
+                              </span>
+                            ) : (
+                              <span className="text-[9px] text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="py-2 px-1">
+                            {o.status === "Wait For Sale" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleSale(o.id)}
+                                className="h-6 px-3 text-[10px]"
+                              >
+                                Sale
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
