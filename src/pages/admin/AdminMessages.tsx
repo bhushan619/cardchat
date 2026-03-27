@@ -1439,6 +1439,103 @@ export default function AdminMessages() {
           </Dialog>
         );
       })()}
+
+      {/* Fund Adjustment Modal */}
+      <Dialog open={fundAdjustOpen} onOpenChange={setFundAdjustOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Wallet className="w-5 h-5 text-accent" /> Fund Adjustment
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            {fundAdjustType === "addition" ? "Add" : "Deduct"} funds {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
+          </p>
+          <div className="space-y-3">
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant={fundAdjustType === "addition" ? "default" : "outline"}
+                className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "addition" ? "bg-success text-success-foreground hover:bg-success/90" : ""}`}
+                onClick={() => setFundAdjustType("addition")}
+              >
+                <PlusCircle className="w-3.5 h-3.5" /> Addition
+              </Button>
+              <Button
+                size="sm"
+                variant={fundAdjustType === "deduction" ? "default" : "outline"}
+                className={`flex-1 h-8 text-xs gap-1 ${fundAdjustType === "deduction" ? "bg-destructive text-destructive-foreground hover:bg-destructive/90" : ""}`}
+                onClick={() => setFundAdjustType("deduction")}
+              >
+                <MinusCircle className="w-3.5 h-3.5" /> Deduction
+              </Button>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Amount (₦)</label>
+              <Input
+                type="number"
+                placeholder="Enter amount..."
+                value={fundAdjustAmount}
+                onChange={e => setFundAdjustAmount(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Reason</label>
+              <Input
+                placeholder="e.g. Refund for bad card, Bonus credit..."
+                value={fundAdjustReason}
+                onChange={e => setFundAdjustReason(e.target.value)}
+              />
+            </div>
+
+            {/* Recent adjustments for this customer */}
+            {selectedConvo && fundAdjustments.filter(a => a.customerAlias === selectedConvo.alias).length > 0 && (
+              <div className="border rounded-lg p-2.5 space-y-1.5 max-h-32 overflow-y-auto">
+                <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Recent Adjustments</p>
+                {fundAdjustments.filter(a => a.customerAlias === selectedConvo.alias).slice(0, 5).map(a => (
+                  <div key={a.id} className="flex items-center justify-between text-[10px]">
+                    <div className="flex items-center gap-1.5">
+                      {a.type === "addition" ? <PlusCircle className="w-3 h-3 text-success" /> : <MinusCircle className="w-3 h-3 text-destructive" />}
+                      <span className="text-muted-foreground truncate max-w-[120px]">{a.reason}</span>
+                    </div>
+                    <span className={`font-medium ${a.type === "addition" ? "text-success" : "text-destructive"}`}>
+                      {a.type === "addition" ? "+" : "-"}₦{a.amount.toLocaleString()}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setFundAdjustOpen(false)}>Cancel</Button>
+            <Button
+              className="flex-1"
+              disabled={!fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
+              onClick={() => {
+                const amount = Number(fundAdjustAmount);
+                if (!selectedConvo || !amount || amount <= 0 || !fundAdjustReason) return;
+                const roleProfiles: Record<string, string> = { super_admin: "Admin One", team_lead: "Sarah Lead" };
+                const adjustment: FundAdjustment = {
+                  id: `FA-${Date.now().toString(36).toUpperCase()}`,
+                  customerAlias: selectedConvo.alias,
+                  type: fundAdjustType,
+                  amount,
+                  reason: fundAdjustReason,
+                  performedBy: roleProfiles[role] || role,
+                  timestamp: new Date().toLocaleString(),
+                };
+                setFundAdjustments(prev => [adjustment, ...prev]);
+                addSystemMessage(`💰 Fund ${fundAdjustType}: ${fundAdjustType === "addition" ? "+" : "-"}₦${amount.toLocaleString()} — ${fundAdjustReason} (by ${adjustment.performedBy})`);
+                setFundAdjustOpen(false);
+                setFundAdjustAmount("");
+                setFundAdjustReason("");
+              }}
+            >
+              Confirm {fundAdjustType === "addition" ? "Addition" : "Deduction"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
