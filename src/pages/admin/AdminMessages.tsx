@@ -1,11 +1,11 @@
 import { useState, useMemo, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { conversations as rawConversations, chatMessages, orders, adminUsers } from "@/data/mock";
+import { conversations as rawConversations, chatMessages, orders, adminUsers, type FundAdjustment } from "@/data/mock";
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
   AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info,
-  CreditCard, Copy, ExternalLink
+  CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet
 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

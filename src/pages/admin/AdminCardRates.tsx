@@ -1,20 +1,40 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { cardRates } from "@/data/mock";
-import { Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { cardRates, systemNairaRate, systemPriceControl } from "@/data/mock";
+import { Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { toast } from "sonner";
 
 type SortKey = "cardType" | "currency" | "buyRate" | "sellRate";
 type SortDir = "asc" | "desc";
 
+const popularCards = ["iTunes US", "Steam US", "Razer Gold"];
+
 export default function AdminCardRates() {
+  const { role } = useAdminRole();
   const [search, setSearch] = useState("");
   const [formatFilter, setFormatFilter] = useState("all");
   const [sortKey, setSortKey] = useState<SortKey | null>(null);
   const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [pricePushOpen, setPricePushOpen] = useState(false);
 
-  const filtered = cardRates
+  const canPush = role === "super_admin" || role === "team_lead";
+
+  // Apply rate formulas:
+  // Sell Rate = Current Naira Rate * card's buyRate (from API)
+  // Buy Rate = Sell Rate * Current Price Control
+  const ratesWithFormula = cardRates.map(r => {
+    const sellRate = r.sellRate; // Already in Naira from API
+    const buyRate = Math.round(sellRate * (systemPriceControl / 100));
+    return { ...r, buyRate, sellRate };
+  });
+
+  const filtered = ratesWithFormula
     .filter(r => r.cardType.toLowerCase().includes(search.toLowerCase()) || r.currency.toLowerCase().includes(search.toLowerCase()))
     .filter(r => formatFilter === "all" || r.cardFormat === formatFilter);
 
@@ -45,6 +65,13 @@ export default function AdminCardRates() {
     return sortDir === "asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />;
   };
 
+  const popularRates = ratesWithFormula.filter(r => popularCards.some(p => r.cardType.includes(p.split(" ")[0])));
+
+  const handlePricePush = () => {
+    toast.success("Price notification pushed to all customers!");
+    setPricePushOpen(false);
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -53,9 +80,16 @@ export default function AdminCardRates() {
             <h1 className="font-heading text-xl font-bold">Card Rates</h1>
             <p className="text-sm text-muted-foreground">Live rates from merchant API · Auto-refreshes every 60s</p>
           </div>
-          <Button variant="outline" size="sm" className="gap-2">
-            <RefreshCw className="w-3.5 h-3.5" /> Refresh
-          </Button>
+          <div className="flex items-center gap-2">
+            {canPush && (
+              <Button variant="outline" size="sm" className="gap-2" onClick={() => setPricePushOpen(true)}>
+                <Send className="w-3.5 h-3.5" /> Price Push
+              </Button>
+            )}
+            <Button variant="outline" size="sm" className="gap-2">
+              <RefreshCw className="w-3.5 h-3.5" /> Refresh
+            </Button>
+          </div>
         </div>
 
         <div className="relative max-w-sm mb-3">
@@ -126,6 +160,41 @@ export default function AdminCardRates() {
           </table>
         </div>
       </div>
+
+      {/* Price Push Modal */}
+      <Dialog open={pricePushOpen} onOpenChange={setPricePushOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Send className="w-5 h-5 text-accent" /> Push Card Prices
+            </DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            This will send a notification with the current popular card prices to all customers on the platform.
+          </p>
+          <div className="bg-muted/50 rounded-lg p-4 space-y-3">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Popular Cards Preview</p>
+            {popularRates.map(r => (
+              <div key={r.id} className="flex items-center justify-between text-sm">
+                <span className="font-medium">{r.cardType} <span className="text-muted-foreground text-xs">({r.cardFormat})</span></span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-muted-foreground">Buy: <strong className="text-accent">₦{r.buyRate}</strong></span>
+                  <span className="text-xs text-muted-foreground">Sell: <strong>₦{r.sellRate}</strong></span>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
+            <p className="text-xs text-warning-foreground">⚠ This will notify all active customers immediately.</p>
+          </div>
+          <div className="flex gap-2 pt-2">
+            <Button variant="outline" className="flex-1" onClick={() => setPricePushOpen(false)}>Cancel</Button>
+            <Button className="flex-1 gap-1.5" onClick={handlePricePush}>
+              <Send className="w-3.5 h-3.5" /> Push to All Customers
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
