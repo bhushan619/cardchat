@@ -454,10 +454,26 @@ export default function AdminChatView() {
                 </Button>
               )}
               {transferComplete && (
-                <div className="mt-3 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                  <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                  <p className="text-xs font-medium text-success">Transfer Complete</p>
-                  <p className="text-[10px] text-muted-foreground">₦{billingTotal.toLocaleString()} sent</p>
+                <div className="mt-3 bg-success/10 border border-success/30 rounded-lg p-3 space-y-2.5">
+                  <div className="text-center">
+                    <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                    <p className="text-xs font-medium text-success">Transfer Complete</p>
+                  </div>
+                  <div className="space-y-1.5">
+                    {transferDetails.map((d, i) => (
+                      <div key={i} className="flex items-center justify-between text-[11px] bg-background/60 rounded-md px-2.5 py-1.5">
+                        <div>
+                          <p className="font-medium">{d.bankName} · {d.accountNumber}</p>
+                          <p className="text-[10px] text-muted-foreground">{d.holderName}</p>
+                        </div>
+                        <span className="font-semibold text-success">₦{d.amount.toLocaleString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex justify-between text-xs border-t border-success/20 pt-2">
+                    <span className="text-muted-foreground">Total Sent</span>
+                    <span className="font-bold text-success">₦{billingTotal.toLocaleString()}</span>
+                  </div>
                 </div>
               )}
             </div>
