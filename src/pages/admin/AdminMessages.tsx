@@ -341,7 +341,7 @@ export default function AdminMessages() {
     setCardlightResults(prev => ({ ...prev, [orderId]: "pending" }));
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
-      const results: CardlightResult[] = ["successful", "declined", "negotiate"];
+      const results: CardlightResult[] = ["successful", "negotiate"];
       const resolvedResult: CardlightResult =
         simulatedResult && simulatedResult !== "pending"
           ? simulatedResult
@@ -371,13 +371,11 @@ export default function AdminMessages() {
     const fallbackCardlightResult: CardlightResult | undefined =
       currentOrderStatus === "success"
         ? "successful"
-        : currentOrderStatus === "order_cancelled"
-          ? "declined"
-          : currentOrderStatus === "negotiation"
-            ? "negotiate"
-            : currentOrderStatus === "in_trade"
-              ? "pending"
-              : undefined;
+        : currentOrderStatus === "negotiation"
+          ? "negotiate"
+          : currentOrderStatus === "in_trade"
+            ? "pending"
+            : undefined;
     const cardlightResult = currentOrderId ? (cardlightResults[currentOrderId] ?? fallbackCardlightResult) : fallbackCardlightResult;
     const cardlightMeta = cardlightResult ? cardlightResultMeta[cardlightResult] : null;
 
@@ -414,74 +412,49 @@ export default function AdminMessages() {
         case "in_trade":
           if (!cardlightResult || cardlightResult === "pending") return null;
           if (cardlightResult === "successful") {
+            // Successful → show Details and Confirm
             return (
               <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 h-8 text-xs"
+                  onClick={() => {/* TODO: show details modal */}}
+                >
+                  Details
+                </Button>
                 <Button
                   size="sm"
                   className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
                   onClick={() => setConfirmAction({
                     type: "good_card",
-                    title: "Confirm Good Card",
+                    title: "Confirm Successful Trade",
                     desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                     onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
                   })}
                 >
-                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                  onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
-                >
-                  <XCircle className="w-3.5 h-3.5 mr-1" /> Negotiate
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
                 </Button>
               </div>
             );
           }
-          if (cardlightResult === "declined") {
-            // Declined → only Failed button
-            return (
-              <div className="flex gap-2">
-                <Button
-                  size="sm"
-                  variant="destructive"
-                  className="flex-1 h-8 text-xs"
-                  onClick={() => setConfirmAction({
-                    type: "failed",
-                    title: "Confirm Order Cancellation",
-                    desc: "This will cancel the order. No funds will be released to the customer.",
-                    onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
-                  })}
-                >
-                  <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
-                </Button>
-              </div>
-            );
-          }
-          // negotiate → show Re-negotiate + Failed
+          // negotiate → show Details and Agree
           return (
             <div className="flex gap-2">
               <Button
                 size="sm"
                 variant="outline"
-                className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
+                className="flex-1 h-8 text-xs"
+                onClick={() => {/* TODO: show details modal */}}
               >
-                <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
+                Details
               </Button>
               <Button
                 size="sm"
-                variant="destructive"
-                className="flex-1 h-8 text-xs"
-                onClick={() => setConfirmAction({
-                  type: "failed",
-                  title: "Confirm Order Cancellation",
-                  desc: "This will cancel the order. No funds will be released to the customer.",
-                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
-                })}
+                className="flex-1 h-8 text-xs bg-primary text-primary-foreground hover:bg-primary/90"
+                onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
               >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
+                Agree
               </Button>
             </div>
           );
@@ -498,7 +471,7 @@ export default function AdminMessages() {
                   onConfirm: () => { handleStatusTransition(selectedId, "success"); setConfirmAction(null); }
                 })}
               >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
+                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
               </Button>
               <Button
                 size="sm"
@@ -512,19 +485,6 @@ export default function AdminMessages() {
                 }}
               >
                 <AlertTriangle className="w-3.5 h-3.5 mr-1" /> Re-negotiate
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="flex-1 h-8 text-xs"
-                onClick={() => setConfirmAction({
-                  type: "failed",
-                  title: "Confirm Order Cancellation",
-                  desc: "This will cancel the order. No funds will be released to the customer.",
-                  onConfirm: () => { handleStatusTransition(selectedId, "order_cancelled"); setConfirmAction(null); }
-                })}
-              >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
               </Button>
             </div>
           );
