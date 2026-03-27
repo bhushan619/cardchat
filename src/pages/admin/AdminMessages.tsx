@@ -306,6 +306,76 @@ export default function AdminMessages() {
     }, 500);
   };
 
+  // Shared card info block for the Order Status section
+  const renderOrderCardInfo = () => {
+    const statusOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
+    if (!statusOrder) return null;
+
+    return (
+      <div className="bg-muted/50 border border-border rounded-md p-2.5 space-y-2 mt-2">
+        {/* Card info with icon */}
+        <div className="flex items-center gap-2.5">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+            <CreditCard className="w-4 h-4 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-[11px] font-semibold truncate">
+              {statusOrder.cardType} {statusOrder.cardCurrency && <span className="text-muted-foreground font-normal">/ {statusOrder.cardCurrency}</span>}
+            </p>
+            {statusOrder.cardNumbers.length > 0 && (
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                <span className="font-mono truncate">{statusOrder.cardNumbers.join(", ")}</span>
+                <button onClick={() => handleCopy(statusOrder.cardNumbers.join(", "), "status-cn")} className="text-muted-foreground hover:text-primary shrink-0">
+                  <Copy className="w-3 h-3" />
+                </button>
+                {copyFeedback === "status-cn" && <span className="text-[8px] text-success">Copied!</span>}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Order ID with copy */}
+        <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <span className="font-mono">#{statusOrder.id}</span>
+            <button onClick={() => handleCopy(statusOrder.id, "status-oid")} className="text-muted-foreground hover:text-primary shrink-0">
+              <Copy className="w-3 h-3" />
+            </button>
+            {copyFeedback === "status-oid" && <span className="text-[8px] text-success">Copied!</span>}
+          </div>
+          <span>${statusOrder.amount.toLocaleString()}</span>
+        </div>
+
+        {/* Key details */}
+        {[
+          ["Face Value", `$${statusOrder.amount.toLocaleString()}`],
+          ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
+        ].map(([label, value]) => (
+          <div key={label} className="flex items-center justify-between text-[11px]">
+            <span className="text-muted-foreground">{label}</span>
+            <span className="font-medium">{value}</span>
+          </div>
+        ))}
+        <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
+          <span className="text-muted-foreground font-medium">Total Payout</span>
+          <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
+        </div>
+
+        {/* Details button */}
+        <div className="flex justify-end pt-1">
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => setDetailOrderId(statusOrder.id)}
+            className="h-6 px-2.5 text-[10px] gap-1"
+          >
+            <ExternalLink className="w-3 h-3" /> Details
+          </Button>
+        </div>
+      </div>
+    );
+  };
+
   // Status action buttons renderer
   const renderStatusActions = () => {
     if (!selectedId || !currentOrderStatus) return null;
@@ -313,144 +383,99 @@ export default function AdminMessages() {
     switch (currentOrderStatus) {
       case "pending_sale":
         return (
-          <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
-            <p className="text-xs font-medium text-warning mb-2">⏳ Pending Sale</p>
-            <p className="text-[10px] text-muted-foreground mb-2">Select a buyer from the Sales Order panel to proceed.</p>
-            <Button size="sm" className="w-full h-7 text-xs" onClick={() => setRightTab("sales")}>
-              Open Sales Order Panel
-            </Button>
+          <div className="space-y-0">
+            <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg">
+              <p className="text-xs font-medium text-warning mb-2">⏳ Pending Sale</p>
+              <p className="text-[10px] text-muted-foreground mb-2">Select a buyer from the Sales Order panel to proceed.</p>
+              <Button size="sm" className="w-full h-7 text-xs" onClick={() => setRightTab("sales")}>
+                Open Sales Order Panel
+              </Button>
+            </div>
+            {renderOrderCardInfo()}
           </div>
         );
       case "pending":
         return (
-          <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
-            <p className="text-xs font-medium text-primary">⏳ Waiting for buyer...</p>
-            <p className="text-[10px] text-muted-foreground mt-1">The buyer is reviewing the order.</p>
+          <div className="space-y-0">
+            <div className="p-3 bg-primary/5 border border-primary/20 rounded-lg">
+              <p className="text-xs font-medium text-primary">⏳ Waiting for buyer...</p>
+              <p className="text-[10px] text-muted-foreground mt-1">The buyer is reviewing the order.</p>
+            </div>
+            {renderOrderCardInfo()}
           </div>
         );
       case "in_trade":
         return (
-          <div className="p-3 bg-accent/5 border border-accent/20 rounded-lg space-y-2">
-            <p className="text-xs font-medium">🔄 In Trade — Card Decision</p>
-            <p className="text-[10px] text-muted-foreground">The buyer has received the order. What's the result?</p>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
-              </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
-                onClick={() => handleStatusTransition(selectedId, "negotiation")}
-              >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
-              </Button>
+          <div className="space-y-0">
+            <div className="p-3 bg-accent/5 border border-accent/20 rounded-lg space-y-2">
+              <p className="text-xs font-medium">🔄 In Trade — Card Decision</p>
+              <p className="text-[10px] text-muted-foreground">The buyer has received the order. What's the result?</p>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
+                  onClick={() => handleStatusTransition(selectedId, "success")}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Good Card ✓
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
+                  onClick={() => handleStatusTransition(selectedId, "negotiation")}
+                >
+                  <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
+                </Button>
+              </div>
             </div>
+            {renderOrderCardInfo()}
           </div>
         );
       case "negotiation":
         return (
-          <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg space-y-2">
-            <p className="text-xs font-medium text-warning">⚠️ Negotiation in Progress</p>
-            <p className="text-[10px] text-muted-foreground">The card was flagged. What's the negotiation result?</p>
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => handleStatusTransition(selectedId, "success")}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
-              </Button>
-              <Button
-                size="sm"
-                variant="destructive"
-                className="flex-1 h-8 text-xs"
-                onClick={() => handleStatusTransition(selectedId, "order_cancelled")}
-              >
-                <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
-              </Button>
+          <div className="space-y-0">
+            <div className="p-3 bg-warning/5 border border-warning/20 rounded-lg space-y-2">
+              <p className="text-xs font-medium text-warning">⚠️ Negotiation in Progress</p>
+              <p className="text-[10px] text-muted-foreground">The card was flagged. What's the negotiation result?</p>
+              <div className="flex gap-2">
+                <Button
+                  size="sm"
+                  className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
+                  onClick={() => handleStatusTransition(selectedId, "success")}
+                >
+                  <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Successful ✓
+                </Button>
+                <Button
+                  size="sm"
+                  variant="destructive"
+                  className="flex-1 h-8 text-xs"
+                  onClick={() => handleStatusTransition(selectedId, "order_cancelled")}
+                >
+                  <XCircle className="w-3.5 h-3.5 mr-1" /> Failed ✗
+                </Button>
+              </div>
             </div>
+            {renderOrderCardInfo()}
           </div>
         );
       case "order_cancelled":
         return (
-          <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
-            <p className="text-xs font-medium text-destructive">❌ Order Cancelled</p>
-            <p className="text-[10px] text-muted-foreground mt-1">Negotiation failed. This order has been cancelled.</p>
+          <div className="space-y-0">
+            <div className="p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
+              <p className="text-xs font-medium text-destructive">❌ Order Cancelled</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Negotiation failed. This order has been cancelled.</p>
+            </div>
+            {renderOrderCardInfo()}
           </div>
         );
       case "success": {
-        const successOrder = currentOrderId ? allOrders.find(o => o.id === currentOrderId) : null;
         return (
-          <div className="p-3 bg-success/5 border border-success/20 rounded-lg space-y-2.5">
-            <div className="flex items-center justify-between">
+          <div className="space-y-0">
+            <div className="p-3 bg-success/5 border border-success/20 rounded-lg">
               <p className="text-xs font-medium text-success">✅ Trade Successful — Wallet Credited</p>
-              {currentOrderId && (
-                <div className="flex items-center gap-1">
-                  <span className="text-[10px] text-muted-foreground font-mono">#{currentOrderId}</span>
-                  <button onClick={() => handleCopy(currentOrderId, "status-oid")} className="text-muted-foreground hover:text-primary">
-                    <Copy className="w-3 h-3" />
-                  </button>
-                  {copyFeedback === "status-oid" && <span className="text-[8px] text-success">Copied!</span>}
-                </div>
-              )}
+              <p className="text-[10px] text-muted-foreground mt-1">Funds have been credited to the customer's wallet.</p>
             </div>
-            <p className="text-[10px] text-muted-foreground">Funds have been credited to the customer's wallet.</p>
-            {successOrder && (
-              <div className="bg-success/5 border border-success/15 rounded-md p-2.5 space-y-2">
-                {/* Card info with icon */}
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <CreditCard className="w-4 h-4 text-primary" />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[11px] font-semibold truncate">
-                      {successOrder.cardType} {successOrder.cardCurrency && <span className="text-muted-foreground font-normal">/ {successOrder.cardCurrency}</span>}
-                    </p>
-                    {successOrder.cardNumbers.length > 0 && (
-                      <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
-                        <span className="font-mono truncate">{successOrder.cardNumbers.join(", ")}</span>
-                        <button onClick={() => handleCopy(successOrder.cardNumbers.join(", "), "status-cn")} className="text-muted-foreground hover:text-primary shrink-0">
-                          <Copy className="w-3 h-3" />
-                        </button>
-                        {copyFeedback === "status-cn" && <span className="text-[8px] text-success">Copied!</span>}
-                      </div>
-                    )}
-                  </div>
-                </div>
-
-                {/* Key details */}
-                {[
-                  ["Face Value", `$${successOrder.amount.toLocaleString()}`],
-                  ["Rate", `₦${successOrder.nairaRate.toLocaleString()}`],
-                ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between text-[11px]">
-                    <span className="text-muted-foreground">{label}</span>
-                    <span className="font-medium">{value}</span>
-                  </div>
-                ))}
-                <div className="flex items-center justify-between text-xs border-t border-success/20 pt-1.5 mt-1">
-                  <span className="text-muted-foreground font-medium">Total Payout</span>
-                  <span className="font-bold text-success">₦{successOrder.payout.toLocaleString()}</span>
-                </div>
-
-                {/* Details button */}
-                <div className="flex justify-end pt-1">
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    onClick={() => setDetailOrderId(successOrder.id)}
-                    className="h-6 px-2.5 text-[10px] gap-1"
-                  >
-                    <ExternalLink className="w-3 h-3" /> Details
-                  </Button>
-                </div>
-              </div>
-            )}
+            {renderOrderCardInfo()}
           </div>
         );
       }
