@@ -434,7 +434,7 @@ export default function AdminMessages() {
                   className="flex-1 h-8 text-xs border-warning text-warning hover:bg-warning/10"
                   onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
                 >
-                  <XCircle className="w-3.5 h-3.5 mr-1" /> Bad Card — Negotiate
+                  <XCircle className="w-3.5 h-3.5 mr-1" /> Negotiate
                 </Button>
               </div>
             );
