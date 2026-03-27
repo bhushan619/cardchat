@@ -231,7 +231,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       setTimeout(() => {
         setOrderList(prev => {
           const updated = prev.map(o =>
-            o.id === capturedOrderId ? { ...o, cardlightResult: plannedResult, status: plannedResult === "successful" ? "Successful" : plannedResult === "declined" ? "Declined" : "Negotiate" } : o
+            o.id === capturedOrderId ? { ...o, cardlightResult: plannedResult, status: plannedResult === "successful" ? "Successful" : "Negotiate" } : o
           );
           sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
           return updated;

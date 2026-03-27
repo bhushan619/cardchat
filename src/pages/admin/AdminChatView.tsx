@@ -71,7 +71,7 @@ export default function AdminChatView() {
     // Simulate CardLight webhook result after 3-6 seconds
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
-      const results: CardlightResult[] = ["successful", "declined", "negotiate"];
+      const results: CardlightResult[] = ["successful", "negotiate"];
       const randomResult = results[Math.floor(Math.random() * results.length)];
       setCompletedOrders(prev =>
         prev.map(o => o.orderId === order.orderId ? { ...o, cardlightResult: randomResult } : o)
@@ -148,7 +148,7 @@ export default function AdminChatView() {
       bankAccount: "",
       timestamp: o.created,
       isNew: false,
-      cardlightResult: (["successful", "declined", "negotiate"] as CardlightResult[])[idx % 3],
+      cardlightResult: (["successful", "negotiate"] as CardlightResult[])[idx % 2],
     })),
   ];
 
