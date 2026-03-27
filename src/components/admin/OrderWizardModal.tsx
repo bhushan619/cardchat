@@ -73,7 +73,7 @@ interface CardlightPanelProps {
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
   embedded?: boolean;
-  onBuyerSelected?: () => void;
+  onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
 }
 
 const makeCard = (): CardEntry => ({
@@ -222,27 +222,28 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     if (saleOrderId) {
       updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling", cardlightResult: "pending" as CardlightResult } : o));
 
+      const plannedResult: CardlightResult = simulatedResult === "random"
+        ? (["successful", "declined", "negotiate"] as CardlightResult[])[Math.floor(Math.random() * 3)]
+        : simulatedResult;
+
       // Simulate CardLight webhook response after 3-6 seconds
       const webhookDelay = 3000 + Math.random() * 3000;
       const capturedOrderId = saleOrderId;
-      const capturedSimResult = simulatedResult;
       setTimeout(() => {
-        const result: CardlightResult = capturedSimResult === "random"
-          ? (["successful", "declined", "negotiate"] as CardlightResult[])[Math.floor(Math.random() * 3)]
-          : capturedSimResult;
         setOrderList(prev => {
           const updated = prev.map(o =>
-            o.id === capturedOrderId ? { ...o, cardlightResult: result, status: result === "successful" ? "Successful" : result === "declined" ? "Declined" : "Negotiate" } : o
+            o.id === capturedOrderId ? { ...o, cardlightResult: plannedResult, status: plannedResult === "successful" ? "Successful" : plannedResult === "declined" ? "Declined" : "Negotiate" } : o
           );
           sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
           return updated;
         });
       }, webhookDelay);
+
+      onBuyerSelected?.(plannedResult);
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
     setSaleOrderId(null);
-    onBuyerSelected?.();
   };
 
   if (!open) return null;
