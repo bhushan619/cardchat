@@ -475,9 +475,8 @@ export default function AdminMessages() {
           {statusOrder && (
             <Button
               size="sm"
-              variant="outline"
               onClick={() => setDetailOrderId(statusOrder.id)}
-              className="h-8 px-2.5 text-[10px] gap-1 shrink-0"
+              className="h-8 px-3 text-[10px] gap-1 shrink-0"
             >
               <ExternalLink className="w-3 h-3" /> Details
             </Button>
