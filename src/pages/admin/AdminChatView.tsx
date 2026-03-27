@@ -151,7 +151,19 @@ export default function AdminChatView() {
   const billingTotal = selectedOrder ? selectedOrder.payout : 0;
   const remainingBalance = billingTotal - totalPaymentEntered;
 
+  const [transferDetails, setTransferDetails] = useState<{ bankName: string; accountNumber: string; holderName: string; amount: number }[]>([]);
+
   const handleExecuteTransfer = () => {
+    // Capture transfer details before clearing payment state
+    const details = bankAccounts
+      .filter(a => Number((paymentAmounts[a.id] || "0").replace(/,/g, "")) > 0)
+      .map(a => ({
+        bankName: a.bankName,
+        accountNumber: a.accountNumber,
+        holderName: a.holderName,
+        amount: Number((paymentAmounts[a.id] || "0").replace(/,/g, "")),
+      }));
+    setTransferDetails(details);
     setTransferComplete(true);
     setPaymentMode(false);
     const newMsg: ChatMessage = {
