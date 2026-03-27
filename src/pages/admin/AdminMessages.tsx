@@ -985,6 +985,115 @@ export default function AdminMessages() {
         </div>
         </div>
       </div>
+
+      {/* Order Details Modal */}
+      {(() => {
+        const detailOrder = detailOrderId ? allOrders.find(o => o.id === detailOrderId) : null;
+        return (
+          <Dialog open={!!detailOrderId} onOpenChange={(open) => { if (!open) setDetailOrderId(null); }}>
+            <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Order Details</DialogTitle>
+              </DialogHeader>
+              {detailOrder && (
+                <div className="grid grid-cols-2 gap-8 pt-2">
+                  {/* Product Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
+                    <div className="space-y-3">
+                      {[
+                        ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
+                        ["Card image number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers[0] : "—"],
+                        ["Card type", `${detailOrder.cardType}${detailOrder.cardCurrency ? ` / ${detailOrder.cardCurrency}` : ""}`],
+                        ["Order face value", `${detailOrder.amount}`],
+                        ["Card number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : "—"],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="font-medium break-all">{value}</span>
+                            {(label === "Card number" || label === "Card image number") && value !== "—" && (
+                              <button onClick={() => handleCopy(String(value), `modal-${label}`)} className="text-muted-foreground hover:text-primary shrink-0">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            {copyFeedback === `modal-${label}` && <span className="text-[9px] text-success">Copied!</span>}
+                          </div>
+                        </div>
+                      ))}
+                      {/* Card image placeholder */}
+                      <div className="flex gap-3 text-sm">
+                        <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card image</span>
+                        <div className="flex gap-2">
+                          <div className="w-16 h-12 bg-muted rounded flex items-center justify-center">
+                            <CreditCard className="w-5 h-5 text-muted-foreground" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Dispute Info */}
+                    <div className="pt-3 border-t">
+                      <h4 className="font-heading font-semibold text-sm mb-3">Dispute Info</h4>
+                      <div className="space-y-3">
+                        <div className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Contact Seller</span>
+                          <span className="text-muted-foreground italic text-xs">No dispute message</span>
+                        </div>
+                        <div className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Upload Pic</span>
+                          <span className="text-muted-foreground italic text-xs">No uploads</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Order Information */}
+                  <div className="space-y-4">
+                    <h4 className="font-heading font-semibold text-sm text-center">Order Information</h4>
+                    <div className="space-y-3">
+                      {[
+                        ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
+                        ["Order id", detailOrder.id],
+                        ["Order face value", `${detailOrder.amount}`],
+                        ["Order unit price", `${detailOrder.unitPrice || "—"}`],
+                        ["Order amount", `${detailOrder.payout.toLocaleString()}`],
+                        ["Settlement amount", detailOrder.bank ? `₦${detailOrder.payout.toLocaleString()}` : "—"],
+                        ["Order Status", detailOrder.status],
+                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : currentOrderStatus === "negotiation" ? "Under negotiation" : "Pending"],
+                        ["Arbitration status", "No arbitrated"],
+                        ["Dispute Amount", "—"],
+                      ].map(([label, value]) => (
+                        <div key={label} className="flex gap-3 text-sm">
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className={`font-medium break-all ${
+                              label === "Order Status" && value === "success" ? "text-success" :
+                              label === "Order Status" && value === "order_cancelled" ? "text-destructive" :
+                              ""
+                            }`}>
+                              {value}
+                            </span>
+                            {label === "Order id" && (
+                              <button onClick={() => handleCopy(String(value), "modal-orderid")} className="text-muted-foreground hover:text-primary shrink-0">
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                            {copyFeedback === "modal-orderid" && label === "Order id" && <span className="text-[9px] text-success">Copied!</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-end pt-4 border-t">
+                <Button onClick={() => setDetailOrderId(null)} className="px-6">Confirm</Button>
+              </div>
+            </DialogContent>
+          </Dialog>
+        );
+      })()}
     </AdminLayout>
   );
 }
