@@ -563,43 +563,59 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Denom.</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Rate</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
+                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {pagedOrders.map(o => (
-                      <tr key={o.id} className="border-b last:border-0 hover:bg-muted/30">
-                        <td className="py-2 px-2">{o.supplier || "—"}</td>
-                        <td className="py-2 px-1">
-                          <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
-                          <div className="text-muted-foreground">{o.description}</div>
-                          <div className="text-muted-foreground">{o.date}</div>
-                        </td>
-                        <td className="py-2 px-1">{o.denom}</td>
-                        <td className="py-2 px-1">{o.purchaseRate}</td>
-                        <td className="py-2 px-1">
-                          <span className={`text-[9px] font-medium ${
-                            o.status === "Negotiation" ? "text-warning" :
-                            o.status === "Selling" ? "text-primary" :
-                            "text-muted-foreground"
-                          }`}>
-                            {o.status}
-                          </span>
-                        </td>
-                        <td className="py-2 px-1">
-                          {o.status === "Wait For Sale" && (
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              onClick={() => handleSale(o.id)}
-                              className="h-6 px-3 text-[10px]"
-                            >
-                              Sale
-                            </Button>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
+                    {pagedOrders.map(o => {
+                      const resultMeta = o.cardlightResult ? cardlightResultMeta[o.cardlightResult] : null;
+                      return (
+                        <tr key={o.id} className={`border-b last:border-0 transition-colors ${resultMeta ? resultMeta.rowBg : "hover:bg-muted/30"}`}>
+                          <td className="py-2 px-2">{o.supplier || "—"}</td>
+                          <td className="py-2 px-1">
+                            <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
+                            <div className="text-muted-foreground">{o.description}</div>
+                            <div className="text-muted-foreground">{o.date}</div>
+                          </td>
+                          <td className="py-2 px-1">{o.denom}</td>
+                          <td className="py-2 px-1">{o.purchaseRate}</td>
+                          <td className="py-2 px-1">
+                            <span className={`text-[9px] font-medium ${
+                              o.status === "Negotiation" ? "text-warning" :
+                              o.status === "Selling" ? "text-primary" :
+                              o.status === "Approved" ? "text-success" :
+                              o.status === "Declined" ? "text-destructive" :
+                              o.status === "Partial" ? "text-primary" :
+                              "text-muted-foreground"
+                            }`}>
+                              {o.status}
+                            </span>
+                          </td>
+                          <td className="py-2 px-1">
+                            {resultMeta ? (
+                              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${resultMeta.bg} ${resultMeta.color}`}>
+                                {resultMeta.label}
+                              </span>
+                            ) : (
+                              <span className="text-[9px] text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td className="py-2 px-1">
+                            {o.status === "Wait For Sale" && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                onClick={() => handleSale(o.id)}
+                                className="h-6 px-3 text-[10px]"
+                              >
+                                Sale
+                              </Button>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
