@@ -262,7 +262,7 @@ export default function AdminMessages() {
   const allOrders = [
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
-      denomination: `${o.cards.length} cards`, amount: o.totalFaceValue,
+      amount: o.totalFaceValue,
       nairaRate: 289, unitPrice: 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,

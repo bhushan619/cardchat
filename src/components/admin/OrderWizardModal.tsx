@@ -52,7 +52,7 @@ interface OrderEntry {
 
 export interface CompletedOrder {
   orderId: string;
-  cards: { cardType: string; denomination: string; unitPrice: string; status: string; cardNo?: string }[];
+  cards: { cardType: string; cardAmount: string; unitPrice: string; status: string; cardNo?: string }[];
   totalPayout: number;
   totalFaceValue: number;
   bank: string;
