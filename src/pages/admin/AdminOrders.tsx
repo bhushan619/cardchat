@@ -107,11 +107,10 @@ export default function AdminOrders() {
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="w-8 px-2"></th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Order ID</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Customer</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Code</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (₦)</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
               </tr>
@@ -130,11 +129,13 @@ export default function AdminOrders() {
                       <td className="px-2 text-center">
                         {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />}
                       </td>
-                      <td className="px-4 py-3 text-sm font-medium text-accent">{o.id}</td>
-                      <td className="px-4 py-3 text-sm">{o.customer}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType}</td>
-                      <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
+                      <td className="px-4 py-3 text-sm font-medium">{o.customer}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">
+                        <div>{o.cardType}</div>
+                        <div className="text-[10px] text-muted-foreground">{o.id}</div>
+                      </td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
+                      <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
                           {o.status.replace("_", " ")}
