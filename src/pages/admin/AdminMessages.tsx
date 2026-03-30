@@ -538,7 +538,7 @@ export default function AdminMessages() {
                 </button>
                 {copyFeedback === "status-oid" && <span className="text-[9px] text-success">Copied!</span>}
               </div>
-              <span>${statusOrder.amount.toLocaleString()}</span>
+              <span className="font-medium text-foreground">${statusOrder.amount.toLocaleString()}</span>
             </div>
 
             {(() => {
