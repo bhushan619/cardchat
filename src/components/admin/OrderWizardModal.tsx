@@ -64,6 +64,8 @@ export interface CompletedOrder {
   cardCurrency?: string;
   cardNumbers?: string[];
   cardlightResult?: CardlightResult;
+  cr2?: number;
+  cr3?: number;
 }
 
 interface CardlightPanelProps {
@@ -190,10 +192,12 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
     // Also notify parent
     if (onComplete) {
+      const cr2Value = Number(cardRate) || 0;
+      const cr3Value = Number(nairaPrice) > 0 && cr2Value > 0 ? cr2Value / Number(nairaPrice) : 0;
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
         cards: cards.map(c => ({ cardType, denomination: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale", cardNo: c.cardNo })),
-        totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * (Number(cardRate) || 0),
+        totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * cr2Value,
         totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
         bank: "",
         bankAccount: "",
@@ -203,6 +207,8 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
         status: "processing",
         cardCurrency: cardCurrency,
         cardNumbers: cards.map(c => c.cardNo).filter(Boolean),
+        cr2: cr2Value,
+        cr3: cr3Value,
       };
       onComplete(order);
     }
