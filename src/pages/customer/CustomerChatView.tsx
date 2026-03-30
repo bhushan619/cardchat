@@ -113,7 +113,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
         {(currentIdx >= 2) && (
           <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center">
-            <p className="text-xs text-success font-semibold">✅ ₦215,200 has been added to your wallet</p>
+            <p className="text-xs text-success font-semibold">✅ ₦136,000 has been added to your wallet</p>
             <p className="text-[10px] text-muted-foreground mt-1">10:40 AM</p>
           </div>
         )}
