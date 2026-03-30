@@ -1,7 +1,7 @@
 # LightChat — Product Requirements Document (PRD)
 
-**Version:** 4.2  
-**Date:** March 27, 2026  
+**Version:** 4.3  
+**Date:** March 30, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://lightchat.lovable.app
@@ -455,8 +455,9 @@ A full-height flex layout with:
 
 #### Sidebar (w-60, fixed)
 - **Header:** LightChat logo, "Admin Panel" subtitle
-- **Navigation:** 13 sidebar items with icons, role-filtered visibility
-- **Role Switcher:** "View as" section with 3 role buttons (Super Admin, Team Lead, Agent)
+- **Navigation:** 15 sidebar items with icons, role-filtered visibility
+- **Unread Badges:** Messages and Team Chat nav items display unread count badges (destructive-colored circles), visible even when the item is active
+- **Role Switcher:** "View as" section with 4 role buttons (Super Admin, Team Lead, Agent, Finance)
 - **User Profile:** Avatar circle (initial), name, role label, logout button
 
 #### Top Bar (h-14, fixed)
@@ -476,26 +477,28 @@ A full-height flex layout with:
 
 ### 5.3 Role-Based Access Control (RBAC)
 
-Three roles with hierarchical access:
+Four roles with hierarchical access:
 
-| Feature | Super Admin | Team Lead | Agent |
-|---------|:-----------:|:---------:|:-----:|
-| Messages | ✅ | ✅ | ✅ |
-| Customers | ✅ | ✅ | ✅ |
-| Card Rates | ✅ | ✅ | ✅ |
-| Orders | ✅ | ✅ | ✅ |
-| Customer Guide | ✅ | ✅ | ✅ |
-| Admin Guide | ✅ | ✅ | ✅ |
-| Naira Rate | ✅ | ✅ | ❌ |
-| Team Dashboard | ✅ | ✅ | ❌ |
-| User Management | ✅ | ❌ | ❌ |
-| IP & Country | ✅ | ❌ | ❌ |
-| Sensitive Words | ✅ | ❌ | ❌ |
-| API Config | ✅ | ❌ | ❌ |
-| SMS Broadcast | ✅ | ❌ | ❌ |
+| Feature | Super Admin | Team Lead | Agent | Finance |
+|---------|:-----------:|:---------:|:-----:|:-------:|
+| Messages | ✅ | ✅ | ✅ | ❌ |
+| Team Chat | ✅ | ✅ | ✅ | ✅ |
+| Customers | ✅ | ✅ | ✅ | ❌ |
+| Card Rates | ✅ | ✅ | ✅ | ❌ |
+| Orders | ✅ | ✅ | ✅ | ✅ |
+| Platform Wallet | ✅ | ❌ | ❌ | ✅ |
+| Customer Guide | ✅ | ✅ | ✅ | ❌ |
+| Admin Guide | ✅ | ✅ | ✅ | ❌ |
+| Naira Rate | ✅ | ✅ | ❌ | ✅ |
+| Team Dashboard | ✅ | ✅ | ❌ | ❌ |
+| User Management | ✅ | ❌ | ❌ | ❌ |
+| IP & Country | ✅ | ❌ | ❌ | ❌ |
+| Sensitive Words | ✅ | ❌ | ❌ | ❌ |
+| API Config | ✅ | ❌ | ❌ | ❌ |
+| SMS Broadcast | ✅ | ❌ | ❌ | ❌ |
 
-- Role stored in React Context (`AdminRoleContext`)
-- Sidebar items filtered by role — items with `roles` array are only shown if current role is included
+- Role stored in React Context (`AdminRoleContext`) — supports 4 roles: `super_admin`, `team_lead`, `agent`, `finance`
+- Sidebar items filtered by role — items with `roles` array are only shown if current role is included; items without `roles` are visible to all
 - "View as" switcher is **demo-only** — in production, roles would come from server-side auth
 
 ### 5.4 Messages Page (`/admin`)
@@ -1263,7 +1266,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.1 → v4.2 (Current)
+### v4.2 → v4.3 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Finance Role Added** | New `finance` role with access to Platform Wallet, Naira Rate, Orders, and Team Chat |
+| **4-Role RBAC** | Role switcher now includes Finance; all nav items and RBAC table updated for 4 roles |
+| **Sidebar Unread Badges** | Messages (5) and Team Chat (3) nav items display destructive-colored unread count badges, visible even when active |
+| **Order Card Alignment** | Order number row amount removed; Card No. and Order No. right-aligned in the card name/icon row |
+| **Order ID Right-Aligned** | Order ID display right-aligned in order cards for cleaner layout |
+| **PRD Updated** | PRD bumped to v4.3 reflecting all sidebar, RBAC, and order card changes |
+
+### v4.1 → v4.2
 
 | Change | Description |
 |--------|-------------|
