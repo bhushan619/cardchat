@@ -62,8 +62,8 @@ export default function AdminOrders() {
   );
 
   const handleExportCSV = () => {
-    const headers = ["Order ID", "Customer", "Card", "Amount", "Rate", "Status", "Created"];
-    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.nairaRate}`, o.status, o.created]);
+    const headers = ["Order ID", "Customer", "Card", "Amount", "Card Rate (₦)", "Status", "Created"];
+    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.unitPrice}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -111,7 +111,7 @@ export default function AdminOrders() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Customer</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Rate (₦)</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (₦)</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
               </tr>
@@ -134,7 +134,7 @@ export default function AdminOrders() {
                       <td className="px-4 py-3 text-sm">{o.customer}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType} {o.denomination}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
-                      <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
+                      <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
                           {o.status.replace("_", " ")}
@@ -154,8 +154,9 @@ export default function AdminOrders() {
                                   ["Type", o.cardType],
                                   ["Format", details.cardFormat],
                                   ["Denomination", o.denomination],
-                                  ["Unit Price", `₦${o.unitPrice}`],
-                                  ["Rate", `₦${o.nairaRate}`],
+                                  ["Card Rate", `₦${o.unitPrice}`],
+                                  ["Naira Price", `₦${o.nairaRate}`],
+                                  ["Total Payout", `₦${(o.amount * o.unitPrice).toLocaleString()}`],
                                 ].map(([k, v]) => (
                                   <div key={k} className="flex justify-between text-xs">
                                     <span className="text-muted-foreground">{k}</span>
