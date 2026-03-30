@@ -48,7 +48,7 @@ export default function CustomerHome() {
         {/* Header */}
         <div className="flex items-center gap-3">
           <div className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center shrink-0 shadow-lg shadow-accent/20">
-            <span className="text-accent-foreground font-heading font-bold text-lg">LC</span>
+            <span className="text-accent-foreground font-heading font-bold text-lg">CC</span>
           </div>
           <div className="flex-1">
             <h1 className="font-heading text-lg font-bold">CardChat</h1>

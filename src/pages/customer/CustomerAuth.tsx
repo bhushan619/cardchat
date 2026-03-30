@@ -31,7 +31,7 @@ export default function CustomerAuth() {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x items-center justify-center p-8 text-center">
         <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mb-6 shadow-lg shadow-accent/20">
-          <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
+          <span className="text-accent-foreground font-heading font-bold text-2xl">CC</span>
         </div>
         <h1 className="font-heading text-3xl font-bold mb-2">CardChat</h1>
         <p className="text-muted-foreground mb-8">Buy & sell gift cards securely</p>

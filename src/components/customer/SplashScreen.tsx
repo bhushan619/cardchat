@@ -26,7 +26,7 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
       {/* Logo */}
       <div className={`relative z-10 flex flex-col items-center transition-all duration-700 ${phase >= 1 ? "-translate-y-6" : "translate-y-0"}`}>
         <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mb-4 shadow-lg shadow-accent/20 animate-[scale-in_0.6s_ease-out]">
-          <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
+          <span className="text-accent-foreground font-heading font-bold text-2xl">CC</span>
         </div>
         <h1 className="font-heading text-3xl font-bold animate-[fade-in_0.5s_ease-out_0.3s_both]">CardChat</h1>
         <p className="text-sm text-muted-foreground mt-1 animate-[fade-in_0.5s_ease-out_0.5s_both]">Trusted Gift Card Exchange</p>
