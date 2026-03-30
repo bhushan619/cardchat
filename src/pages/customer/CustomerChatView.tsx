@@ -53,7 +53,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
-            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦680</p>
+            <p className="text-[10px] text-muted-foreground">iTunes US · $200 · Card Rate: ₦680</p>
           </div>
           <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
             <StatusIcon className={`w-3 h-3 ${orderStatus === "order_processing" ? "animate-spin" : ""}`} />
@@ -149,9 +149,9 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
                 {[
                   { label: "Card Type", value: "iTunes US" },
-                  { label: "Total Face Value", value: "$200" },
+                  { label: "Amount", value: "$200" },
                   { label: "Card Rate", value: "₦680" },
-                  { label: "Naira Rate", value: "₦289" },
+                  { label: "Payout", value: "₦136,000" },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -161,15 +161,6 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
 
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payout Summary</p>
-              <div className="bg-muted/50 rounded-xl p-3 space-y-2">
-                <div className="border-t pt-2 flex items-center justify-between">
-                  <p className="text-sm font-semibold">Total Payout</p>
-                  <p className="text-sm font-heading font-bold text-accent">₦136,000</p>
-                </div>
-              </div>
-            </div>
 
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
