@@ -4,7 +4,7 @@ import { conversations as rawConversations, chatMessages, orders, adminUsers, cu
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
-  AlertTriangle, UserCheck, Camera, Smile, FileText as FileTextIcon, Info,
+  AlertTriangle, UserCheck, Smile, FileText as FileTextIcon, Info,
   CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet, Lock
 } from "lucide-react";
 import { toast } from "sonner";
@@ -761,6 +761,54 @@ export default function AdminMessages() {
                     </div>
                   </TooltipProvider>
 
+                  {canReassign && (
+                    <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
+                      <PopoverTrigger asChild>
+                        <Button size="sm" variant="outline" className="h-7 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10 hover:text-warning">
+                          <UserCheck className="w-3.5 h-3.5" /> Reassign
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-56 p-0" align="end">
+                        <div className="p-3 border-b">
+                          <p className="text-xs font-semibold">Reassign Customer</p>
+                          <p className="text-[10px] text-muted-foreground">Select an agent</p>
+                        </div>
+                        {reassignTarget ? (
+                          <div className="p-3 space-y-3">
+                            <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
+                              <p className="text-xs text-warning-foreground">
+                                Reassign <strong>{selectedConvo.alias}</strong> to <strong>{reassignTarget.name}</strong>?
+                              </p>
+                              <p className="text-[10px] text-muted-foreground mt-1">Full chat history and order context will be transferred.</p>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button size="sm" variant="outline" className="flex-1 h-7 text-xs" onClick={() => setReassignTarget(null)}>Cancel</Button>
+                              <Button size="sm" className="flex-1 h-7 text-xs bg-warning text-warning-foreground hover:bg-warning/90" onClick={handleReassign}>Confirm</Button>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="p-1.5 space-y-0.5">
+                            {adminUsers.filter(u => u.role === "agent").map(agent => (
+                              <button
+                                key={agent.id}
+                                onClick={() => setReassignTarget(agent)}
+                                className="w-full flex items-center gap-2 p-2 rounded-md hover:bg-muted text-left"
+                              >
+                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                                  {agent.name[0]}
+                                </div>
+                                <div>
+                                  <p className="text-xs font-medium">{agent.name}</p>
+                                  <p className="text-[10px] text-muted-foreground">{agent.status}</p>
+                                </div>
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </PopoverContent>
+                    </Popover>
+                  )}
+
                   <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
                     <PopoverTrigger asChild>
                       <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
@@ -820,53 +868,6 @@ export default function AdminMessages() {
                       </button>
                     </span>
                   ))}
-                  {canReassign && (
-                    <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
-                      <PopoverTrigger asChild>
-                        <button className="text-[10px] font-medium text-warning hover:text-warning/80 ml-auto shrink-0 flex items-center gap-1">
-                          <UserCheck className="w-3 h-3" /> Reassign
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-56 p-0" align="end">
-                        <div className="p-3 border-b">
-                          <p className="text-xs font-semibold">Reassign Customer</p>
-                          <p className="text-[10px] text-muted-foreground">Select an agent</p>
-                        </div>
-                        {reassignTarget ? (
-                          <div className="p-3 space-y-3">
-                            <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
-                              <p className="text-xs text-warning-foreground">
-                                Reassign <strong>{selectedConvo.alias}</strong> to <strong>{reassignTarget.name}</strong>?
-                              </p>
-                              <p className="text-[10px] text-muted-foreground mt-1">Full chat history and order context will be transferred.</p>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" className="flex-1 h-7 text-xs" onClick={() => setReassignTarget(null)}>Cancel</Button>
-                              <Button size="sm" className="flex-1 h-7 text-xs bg-warning text-warning-foreground hover:bg-warning/90" onClick={handleReassign}>Confirm</Button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div className="p-1.5 space-y-0.5">
-                            {adminUsers.filter(u => u.role === "agent").map(agent => (
-                              <button
-                                key={agent.id}
-                                onClick={() => setReassignTarget(agent)}
-                                className="w-full flex items-center gap-2 p-2 rounded-md hover:bg-muted text-left"
-                              >
-                                <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                                  {agent.name[0]}
-                                </div>
-                                <div>
-                                  <p className="text-xs font-medium">{agent.name}</p>
-                                  <p className="text-[10px] text-muted-foreground">{agent.status}</p>
-                                </div>
-                              </button>
-                            ))}
-                          </div>
-                        )}
-                      </PopoverContent>
-                    </Popover>
-                  )}
                 </div>
               )}
 
@@ -923,33 +924,8 @@ export default function AdminMessages() {
                       }
                     }}
                   />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    id="admin-chat-image"
-                    className="hidden"
-                    onChange={e => {
-                      const file = e.target.files?.[0];
-                      if (file) {
-                        const newMsg: ChatMessage = {
-                          id: Date.now(), sender: "agent", senderName: "You",
-                          text: file.name, image: true,
-                          time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                        };
-                        setLocalMessages(prev => [...prev, newMsg]);
-                      }
-                      e.target.value = "";
-                    }}
-                  />
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
-                      <button
-                        onClick={() => document.getElementById("admin-chat-image")?.click()}
-                        className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
-                        title="Send image"
-                      >
-                        <Camera className="w-4 h-4" />
-                      </button>
                       <Popover>
                         <PopoverTrigger asChild>
                           <button
