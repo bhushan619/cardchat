@@ -263,7 +263,7 @@ export default function AdminMessages() {
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
       amount: o.totalFaceValue,
-      nairaRate: 289, unitPrice: 0, status: o.status as string,
+      nairaRate: 289, unitPrice: o.cr2 || 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
       cardCurrency: o.cardCurrency || "",
@@ -555,7 +555,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Rate</span>
+                      <span className="text-muted-foreground">Card Rate</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">₦{neg.oldRate.toLocaleString()}</span>
                         <span className="font-medium text-warning">₦{neg.newRate.toLocaleString()}</span>
@@ -579,7 +579,7 @@ export default function AdminMessages() {
                 <>
                   {[
                     ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Card Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
+                    ["Card Rate", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
                     ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
