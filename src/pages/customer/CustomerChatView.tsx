@@ -53,7 +53,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         <div className="flex items-center justify-between mb-2">
           <div>
             <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
-            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦1,580</p>
+            <p className="text-[10px] text-muted-foreground">iTunes US · $100 x2 · Rate: ₦680</p>
           </div>
           <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
             <StatusIcon className={`w-3 h-3 ${orderStatus === "order_processing" ? "animate-spin" : ""}`} />
@@ -151,8 +151,8 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                   { label: "Card Type", value: "iTunes US" },
                   { label: "Denomination", value: "$100 x 2" },
                   { label: "Total Face Value", value: "$200" },
-                  { label: "Rate (per $)", value: "₦680" },
-                  { label: "Naira Rate", value: "₦1,580" },
+                  { label: "Rate", value: "₦680" },
+                  { label: "Naira Rate", value: "₦289" },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -165,51 +165,10 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             <div className="space-y-2">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payout Summary</p>
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">Card Value (NGN)</p>
-                  <p className="text-xs font-medium">₦215,200</p>
-                </div>
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">Fee</p>
-                  <p className="text-xs font-medium">₦0</p>
-                </div>
                 <div className="border-t pt-2 flex items-center justify-between">
                   <p className="text-sm font-semibold">Total Payout</p>
-                  <p className="text-sm font-heading font-bold text-accent">₦215,200</p>
+                  <p className="text-sm font-heading font-bold text-accent">₦136,000</p>
                 </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Bank Transfer</p>
-              <div className="bg-muted/50 rounded-xl p-3 space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
-                    orderStatus === "success" ? "bg-success/10" : "bg-muted"
-                  }`}>
-                    {orderStatus === "success" ? (
-                      <CheckCircle className="w-4 h-4 text-success" />
-                    ) : (
-                      <Clock className="w-4 h-4 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <p className="text-xs font-medium">
-                      {orderStatus === "success" ? "Transfer Completed" : "Transfer Pending"}
-                    </p>
-                    <p className="text-[10px] text-muted-foreground">Mar 18, 2026 · 10:42 AM</p>
-                  </div>
-                </div>
-                {[
-                  { label: "Bank", value: "First Bank · ****1234" },
-                  { label: "Amount Sent", value: "₦215,200" },
-                  { label: "Reference", value: "TXN-001" },
-                ].map(item => (
-                  <div key={item.label} className="flex items-center justify-between">
-                    <p className="text-xs text-muted-foreground">{item.label}</p>
-                    <p className="text-xs font-medium">{item.value}</p>
-                  </div>
-                ))}
               </div>
             </div>
 

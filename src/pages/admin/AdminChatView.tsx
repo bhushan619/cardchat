@@ -140,6 +140,9 @@ export default function AdminChatView() {
       timestamp: o.timestamp,
       isNew: true,
       cardlightResult: o.cardlightResult,
+      cr2: o.cr2 || 0,
+      cr3: o.cr3 || 0,
+      cardNumbers: o.cardNumbers || [],
     })),
     ...orders.map((o, idx) => ({
       ...o,
@@ -149,6 +152,9 @@ export default function AdminChatView() {
       timestamp: o.created,
       isNew: false,
       cardlightResult: (["successful", "negotiate"] as CardlightResult[])[idx % 2],
+      cr2: o.unitPrice,
+      cr3: o.unitPrice / o.nairaRate,
+      cardNumbers: [] as string[],
     })),
   ];
 
@@ -452,10 +458,11 @@ export default function AdminChatView() {
                   ["Order ID", selectedOrder.id],
                   ["Card", `${selectedOrder.cardType}`],
                   ["Denomination", selectedOrder.denomination],
-                  ["Amount", `$${selectedOrder.amount}`],
+                  ["Face Value", `$${selectedOrder.amount}`],
+                  ["Rate", `₦${selectedOrder.cr2?.toLocaleString() || "—"}`],
                   ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
                   ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
-                  ...(selectedOrder.bank ? [["Bank", `${selectedOrder.bank} ${selectedOrder.bankAccount}`]] : []),
+                  ...(selectedOrder.cardNumbers && selectedOrder.cardNumbers.length > 0 ? [["Card No.", selectedOrder.cardNumbers.join(", ")]] : []),
                   ["Time", selectedOrder.timestamp],
                 ].map(([k, v]) => (
                   <div key={k} className="flex justify-between text-xs">
