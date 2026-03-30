@@ -149,9 +149,8 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
                 {[
                   { label: "Card Type", value: "iTunes US" },
-                  { label: "Denomination", value: "$100 x 2" },
                   { label: "Total Face Value", value: "$200" },
-                  { label: "Rate", value: "₦680" },
+                  { label: "Card Rate", value: "₦680" },
                   { label: "Naira Rate", value: "₦289" },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">

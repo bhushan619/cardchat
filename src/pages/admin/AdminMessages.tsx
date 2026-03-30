@@ -579,7 +579,7 @@ export default function AdminMessages() {
                 <>
                   {[
                     ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
+                    ["Card Rate", `₦${statusOrder.nairaRate.toLocaleString()}`],
                     ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
