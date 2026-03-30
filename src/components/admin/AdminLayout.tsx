@@ -12,7 +12,7 @@ import { conversations, orders, cardRates, systemNairaRate, systemPriceControl }
 import { useTheme } from "@/hooks/use-theme";
 
 const navItems = [
-  { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"] },
+  { id: "messages", label: "Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"], badge: 5 },
   { id: "team-chat", label: "Team Chat", icon: MessageSquare, path: "/admin/team-chat", badge: 3 },
   { id: "customers", label: "Customers", icon: Users, path: "/admin/customers", roles: ["super_admin", "team_lead", "agent"] },
   { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates", roles: ["super_admin", "team_lead", "agent"] },
