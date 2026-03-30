@@ -11,7 +11,7 @@ const ThemeContext = createContext<ThemeContextType>({ theme: "dark", toggleThem
 
 export function ThemeProvider({ children, defaultTheme = "dark" }: { children: ReactNode; defaultTheme?: Theme }) {
   const [theme, setTheme] = useState<Theme>(() => {
-    const stored = localStorage.getItem("lightchat-theme") as Theme | null;
+    const stored = localStorage.getItem("cardchat-theme") as Theme | null;
     return stored || defaultTheme;
   });
 
@@ -19,7 +19,7 @@ export function ThemeProvider({ children, defaultTheme = "dark" }: { children: R
     const root = document.documentElement;
     root.classList.remove("light", "dark");
     root.classList.add(theme);
-    localStorage.setItem("lightchat-theme", theme);
+    localStorage.setItem("cardchat-theme", theme);
   }, [theme]);
 
   const toggleTheme = () => setTheme(prev => (prev === "dark" ? "light" : "dark"));

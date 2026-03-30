@@ -90,7 +90,7 @@ export default function AdminApiConfig() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-medium text-muted-foreground">Callback URL</label>
-                <Input defaultValue="https://api.lightchat.com/webhooks/merchant" className="mt-1" />
+                <Input defaultValue="https://api.cardchat.com/webhooks/merchant" className="mt-1" />
               </div>
               <div>
                 <label className="text-xs font-medium text-muted-foreground">Signing Secret</label>

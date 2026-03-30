@@ -9,10 +9,10 @@ export default function Index() {
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center max-w-lg px-6 space-y-8">
         <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto">
-          <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
+          <span className="text-accent-foreground font-heading font-bold text-2xl">CC</span>
         </div>
         <div>
-          <h1 className="font-heading text-4xl font-bold mb-3">LightChat</h1>
+          <h1 className="font-heading text-4xl font-bold mb-3">CardChat</h1>
           <p className="text-muted-foreground">Gift card trading platform — interactive UI prototype</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

@@ -126,10 +126,10 @@ const guides: GuideSection[] = [
     icon: ShieldCheck,
     description: "Security guidance for customers.",
     steps: [
-      { text: "Customers should never share login credentials — LightChat agents will never ask for passwords." },
+      { text: "Customers should never share login credentials — CardChat agents will never ask for passwords." },
       { text: "All trading should happen through the official app only — no sharing card codes outside the platform." },
       { text: "Official agents are marked in the Contacts list." },
-      { text: "Suspicious activity should be reported immediately through chat.", tip: "LightChat uses end-to-end encryption. Reassure concerned customers about data security." },
+      { text: "Suspicious activity should be reported immediately through chat.", tip: "CardChat uses end-to-end encryption. Reassure concerned customers about data security." },
     ],
   },
   {

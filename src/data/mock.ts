@@ -1,4 +1,4 @@
-// Mock data for Lightchat interactive prototypes
+// Mock data for Cardchat interactive prototypes
 
 export const cardRates = [
   { id: 1, cardType: "iTunes US", currency: "USD", cardFormat: "Physical" as const, buyRate: 680, sellRate: 720, lastUpdated: "2 min ago" },
@@ -70,12 +70,12 @@ export const transactions = [
 ];
 
 export const adminUsers = [
-  { id: 1, name: "Admin One", email: "admin@lightchat.com", role: "super_admin" as const, status: "active" as const, lastLogin: "2 min ago" },
-  { id: 2, name: "Sarah Lead", email: "sarah@lightchat.com", role: "team_lead" as const, status: "active" as const, lastLogin: "10 min ago" },
-  { id: 3, name: "Mike Agent", email: "mike@lightchat.com", role: "agent" as const, status: "active" as const, lastLogin: "5 min ago" },
-  { id: 4, name: "Tunde Agent", email: "tunde@lightchat.com", role: "agent" as const, status: "active" as const, lastLogin: "1 hr ago" },
-  { id: 5, name: "Joy Agent", email: "joy@lightchat.com", role: "agent" as const, status: "offline" as const, lastLogin: "3 hrs ago" },
-  { id: 6, name: "Femi Finance", email: "femi@lightchat.com", role: "finance" as const, status: "active" as const, lastLogin: "15 min ago" },
+  { id: 1, name: "Admin One", email: "admin@cardchat.com", role: "super_admin" as const, status: "active" as const, lastLogin: "2 min ago" },
+  { id: 2, name: "Sarah Lead", email: "sarah@cardchat.com", role: "team_lead" as const, status: "active" as const, lastLogin: "10 min ago" },
+  { id: 3, name: "Mike Agent", email: "mike@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "5 min ago" },
+  { id: 4, name: "Tunde Agent", email: "tunde@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "1 hr ago" },
+  { id: 5, name: "Joy Agent", email: "joy@cardchat.com", role: "agent" as const, status: "offline" as const, lastLogin: "3 hrs ago" },
+  { id: 6, name: "Femi Finance", email: "femi@cardchat.com", role: "finance" as const, status: "active" as const, lastLogin: "15 min ago" },
 ];
 
 export const nairaRateHistory = [
@@ -91,7 +91,7 @@ export const promoBanners = [
 ];
 
 export const customerContacts = [
-  { id: 1, name: "LightChat Support", status: "online" as const, isAgent: true, lastSeen: "Online" },
+  { id: 1, name: "CardChat Support", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 2, name: "Agent Mike", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 3, name: "Agent Tunde", status: "away" as const, isAgent: true, lastSeen: "15 min ago" },
 ];

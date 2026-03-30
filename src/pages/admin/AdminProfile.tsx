@@ -8,10 +8,10 @@ import { toast } from "sonner";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 const roleProfiles: Record<string, { name: string; label: string; email: string; phone: string }> = {
-  super_admin: { name: "Admin One", label: "Super Admin", email: "admin@lightchat.com", phone: "+234 801 234 5678" },
-  team_lead: { name: "Sarah Lead", label: "Team Lead", email: "sarah@lightchat.com", phone: "+234 802 345 6789" },
-  agent: { name: "Mike Agent", label: "Agent", email: "mike@lightchat.com", phone: "+234 803 456 7890" },
-  finance: { name: "Femi Finance", label: "Finance", email: "femi@lightchat.com", phone: "+234 804 567 8901" },
+  super_admin: { name: "Admin One", label: "Super Admin", email: "admin@cardchat.com", phone: "+234 801 234 5678" },
+  team_lead: { name: "Sarah Lead", label: "Team Lead", email: "sarah@cardchat.com", phone: "+234 802 345 6789" },
+  agent: { name: "Mike Agent", label: "Agent", email: "mike@cardchat.com", phone: "+234 803 456 7890" },
+  finance: { name: "Femi Finance", label: "Finance", email: "femi@cardchat.com", phone: "+234 804 567 8901" },
 };
 
 export default function AdminProfile() {

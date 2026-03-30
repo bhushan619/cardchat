@@ -26,7 +26,7 @@ export default function AdminBroadcast() {
             <textarea
               className="mt-1 w-full border rounded-lg p-3 text-sm bg-background resize-none h-24"
               placeholder="Type your broadcast message..."
-              defaultValue="🎉 New card rates available! Check LightChat for the latest iTunes and Amazon card prices."
+              defaultValue="🎉 New card rates available! Check CardChat for the latest iTunes and Amazon card prices."
             />
             <p className="text-[10px] text-muted-foreground mt-1">87/160 characters</p>
           </div>
@@ -48,7 +48,7 @@ export default function AdminBroadcast() {
           <div className="divide-y">
             {[
               { date: "Mar 17, 2:00 PM", msg: "New rates available! Check the app.", recipients: 1240, delivered: 1198 },
-              { date: "Mar 15, 10:00 AM", msg: "Welcome to LightChat! Start trading now.", recipients: 850, delivered: 832 },
+              { date: "Mar 15, 10:00 AM", msg: "Welcome to CardChat! Start trading now.", recipients: 850, delivered: 832 },
             ].map((b, i) => (
               <div key={i} className="p-4 flex items-center gap-4">
                 <CheckCircle className="w-4 h-4 text-success shrink-0" />

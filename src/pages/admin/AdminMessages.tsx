@@ -61,7 +61,7 @@ export default function AdminMessages() {
   const [rightTab, setRightTab] = useState<string>("orders");
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>(() => {
     try {
-      const saved = sessionStorage.getItem("lightchat_completed_orders");
+      const saved = sessionStorage.getItem("cardchat_completed_orders");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
@@ -75,28 +75,28 @@ export default function AdminMessages() {
   const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
   const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(() => {
     try {
-      const saved = sessionStorage.getItem("lightchat_transfer_completed");
+      const saved = sessionStorage.getItem("cardchat_transfer_completed");
       return saved ? new Set(JSON.parse(saved)) : new Set();
     } catch { return new Set(); }
   });
   const [cardlightResults, setCardlightResults] = useState<Record<string, CardlightResult>>(() => {
     try {
-      const saved = sessionStorage.getItem("lightchat_cardlight_results");
+      const saved = sessionStorage.getItem("cardchat_cardlight_results");
       return saved ? JSON.parse(saved) : {};
     } catch { return {}; }
   });
 
   // Persist completedOrders, transferCompletedOrders and CardLight results
   useEffect(() => {
-    sessionStorage.setItem("lightchat_completed_orders", JSON.stringify(completedOrders));
+    sessionStorage.setItem("cardchat_completed_orders", JSON.stringify(completedOrders));
   }, [completedOrders]);
 
   useEffect(() => {
-    sessionStorage.setItem("lightchat_transfer_completed", JSON.stringify([...transferCompletedOrders]));
+    sessionStorage.setItem("cardchat_transfer_completed", JSON.stringify([...transferCompletedOrders]));
   }, [transferCompletedOrders]);
 
   useEffect(() => {
-    sessionStorage.setItem("lightchat_cardlight_results", JSON.stringify(cardlightResults));
+    sessionStorage.setItem("cardchat_cardlight_results", JSON.stringify(cardlightResults));
   }, [cardlightResults]);
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
@@ -243,12 +243,12 @@ export default function AdminMessages() {
   const [fundPin, setFundPin] = useState("");
   const [fundAdjustments, setFundAdjustments] = useState<FundAdjustment[]>(() => {
     try {
-      const saved = sessionStorage.getItem("lightchat_fund_adjustments");
+      const saved = sessionStorage.getItem("cardchat_fund_adjustments");
       return saved ? JSON.parse(saved) : [];
     } catch { return []; }
   });
   useEffect(() => {
-    sessionStorage.setItem("lightchat_fund_adjustments", JSON.stringify(fundAdjustments));
+    sessionStorage.setItem("cardchat_fund_adjustments", JSON.stringify(fundAdjustments));
   }, [fundAdjustments]);
 
   const canAdjustFunds = role === "super_admin" || role === "team_lead";

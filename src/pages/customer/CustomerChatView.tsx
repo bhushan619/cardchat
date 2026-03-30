@@ -43,7 +43,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           <span className="text-accent font-bold text-sm">L</span>
         </div>
         <div>
-          <p className="text-sm font-semibold">LightChat Support</p>
+          <p className="text-sm font-semibold">CardChat Support</p>
           <p className="text-[10px] text-accent">Online</p>
         </div>
       </header>
