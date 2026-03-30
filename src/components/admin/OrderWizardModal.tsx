@@ -43,6 +43,7 @@ interface OrderEntry {
   cardCode: string;
   description: string;
   denom: number;
+  totalFaceValue: number;
   purchaseRate: number;
   supplier: string;
   status: string;
@@ -174,11 +175,13 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     if (!cardType) return;
 
     const alias = customerAlias || supplier || "";
+    const totalFace = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
     const newOrder: OrderEntry = {
       id: Date.now().toString(),
       cardCode: Math.random().toString().slice(2, 22),
       description: `${cardType} / ${cardSource}`,
       denom: cards.length,
+      totalFaceValue: totalFace,
       purchaseRate: Number(cardRate) || 0,
       supplier: alias,
       status: "Wait For Sale",
@@ -567,8 +570,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     <tr className="bg-muted/50 border-b">
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
-                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Denom.</th>
-                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Rate</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
@@ -585,8 +589,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                             <div className="text-muted-foreground">{o.description}</div>
                             <div className="text-muted-foreground">{o.date}</div>
                           </td>
-                          <td className="py-2 px-1">{o.denom}</td>
-                          <td className="py-2 px-1">{o.purchaseRate}</td>
+                          <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
+                          <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}</td>
                           <td className="py-2 px-1">
                             <span className={`text-[9px] font-medium ${
                               o.status === "Negotiation" ? "text-warning" :
