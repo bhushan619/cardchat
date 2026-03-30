@@ -518,9 +518,18 @@ export default function AdminMessages() {
                 <p className="text-[11px] font-semibold truncate">
                   {statusOrder.cardType} {statusOrder.cardCurrency && <span className="text-muted-foreground font-normal">/ {statusOrder.cardCurrency}</span>}
                 </p>
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                  <span className="font-mono text-foreground font-medium">#{statusOrder.id}</span>
+                  <button onClick={() => handleCopy(statusOrder.id, "status-oid")} className="text-muted-foreground hover:text-primary shrink-0">
+                    <Copy className="w-3.5 h-3.5" />
+                  </button>
+                  {copyFeedback === "status-oid" && <span className="text-[9px] text-success">Copied!</span>}
+                </div>
+              </div>
+              <div className="text-right shrink-0">
                 {statusOrder.cardNumbers.length > 0 && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                    <span className="font-mono truncate text-foreground font-medium">{statusOrder.cardNumbers.join(", ")}</span>
+                  <div className="flex items-center gap-1.5 text-xs justify-end">
+                    <span className="font-mono text-foreground font-medium">{statusOrder.cardNumbers.join(", ")}</span>
                     <button onClick={() => handleCopy(statusOrder.cardNumbers.join(", "), "status-cn")} className="text-muted-foreground hover:text-primary shrink-0">
                       <Copy className="w-3.5 h-3.5" />
                     </button>
@@ -528,17 +537,6 @@ export default function AdminMessages() {
                   </div>
                 )}
               </div>
-            </div>
-
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <div className="flex items-center gap-1.5">
-                <span className="font-mono text-foreground font-medium">#{statusOrder.id}</span>
-                <button onClick={() => handleCopy(statusOrder.id, "status-oid")} className="text-muted-foreground hover:text-primary shrink-0">
-                  <Copy className="w-3.5 h-3.5" />
-                </button>
-                {copyFeedback === "status-oid" && <span className="text-[9px] text-success">Copied!</span>}
-              </div>
-              <span className="font-medium text-foreground">${statusOrder.amount.toLocaleString()}</span>
             </div>
 
             {(() => {
