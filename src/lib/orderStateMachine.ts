@@ -1,4 +1,4 @@
-// Order Status State Machine for LightChat
+// Order Status State Machine for CardChat
 
 export type AgentOrderStatus =
   | "pending_sale"

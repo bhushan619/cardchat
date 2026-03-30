@@ -22,7 +22,7 @@ const guides: GuideSection[] = [
     icon: ShieldCheck,
     description: "Create your account and begin trading in minutes.",
     steps: [
-      { text: "Open the app — a 5-second splash animation introduces LightChat's trust pillars: safety, speed, and reliability." },
+      { text: "Open the app — a 5-second splash animation introduces CardChat's trust pillars: safety, speed, and reliability." },
       { text: "Swipe through the onboarding slides (up to 5 pages) highlighting security, fast settlements, dedicated support, and transaction history. Tap 'Skip' at any time." },
       { text: "On the Welcome screen, tap 'Get Started' to create an account or 'I already have an account' to sign in." },
       { text: "Choose your sign-in method: Continue with Apple, Continue with Google, or enter your email to receive a one-time passcode (OTP)." },
@@ -161,11 +161,11 @@ const guides: GuideSection[] = [
     icon: ShieldCheck,
     description: "Stay safe while trading gift cards.",
     steps: [
-      { text: "Never share your login password with anyone — LightChat agents will never ask for it." },
-      { text: "Only trade through the official LightChat app — avoid sharing card codes outside the platform." },
+      { text: "Never share your login password with anyone — CardChat agents will never ask for it." },
+      { text: "Only trade through the official CardChat app — avoid sharing card codes outside the platform." },
       { text: "Always verify the agent's identity — official agents are marked in the Contacts list." },
       { text: "Do not share card photos or codes on social media or other platforms." },
-      { text: "If something seems suspicious, report it immediately through the chat.", tip: "LightChat encrypts all your data — your card codes and bank details are secure." },
+      { text: "If something seems suspicious, report it immediately through the chat.", tip: "CardChat encrypts all your data — your card codes and bank details are secure." },
     ],
   },
   {
@@ -208,7 +208,7 @@ export default function CustomerGuide() {
             </div>
             <div>
               <h1 className="font-heading text-lg font-bold">User Guide</h1>
-              <p className="text-[11px] text-muted-foreground">Learn how to use LightChat</p>
+              <p className="text-[11px] text-muted-foreground">Learn how to use CardChat</p>
             </div>
           </div>
           <div className="flex gap-2">

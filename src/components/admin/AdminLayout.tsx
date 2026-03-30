@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
       {/* Sidebar */}
       <aside className="w-60 bg-sidebar text-sidebar-foreground flex flex-col shrink-0">
         <div className="p-5 border-b border-sidebar-border">
-          <h1 className="font-heading text-lg font-bold text-sidebar-primary">LightChat</h1>
+          <h1 className="font-heading text-lg font-bold text-sidebar-primary">CardChat</h1>
           <p className="text-xs text-sidebar-foreground/60 mt-0.5">Admin Panel</p>
         </div>
         <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto">

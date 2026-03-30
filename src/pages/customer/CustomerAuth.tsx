@@ -33,7 +33,7 @@ export default function CustomerAuth() {
         <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mb-6 shadow-lg shadow-accent/20">
           <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
         </div>
-        <h1 className="font-heading text-3xl font-bold mb-2">LightChat</h1>
+        <h1 className="font-heading text-3xl font-bold mb-2">CardChat</h1>
         <p className="text-muted-foreground mb-8">Buy & sell gift cards securely</p>
         <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 text-base" onClick={() => setStep("method")}>
           Get Started

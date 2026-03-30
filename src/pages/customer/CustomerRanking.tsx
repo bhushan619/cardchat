@@ -19,7 +19,7 @@ export default function CustomerRanking() {
           </div>
           <h3 className="font-heading font-bold text-lg">Transaction Ranking</h3>
           <p className="text-sm text-muted-foreground max-w-xs mx-auto">
-            Monthly transaction volume leaderboard is coming soon. See how you rank among top traders on LightChat.
+            Monthly transaction volume leaderboard is coming soon. See how you rank among top traders on CardChat.
           </p>
           <div className="bg-muted/50 rounded-xl p-4 text-xs text-muted-foreground">
             🚧 Under development — stay tuned!

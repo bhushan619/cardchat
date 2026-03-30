@@ -7,9 +7,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Shield, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 const MOCK_CREDENTIALS = [
-  { email: "admin@lightchat.com", password: "admin123", role: "super_admin" },
-  { email: "lead@lightchat.com", password: "lead123", role: "team_lead" },
-  { email: "agent@lightchat.com", password: "agent123", role: "agent" },
+  { email: "admin@cardchat.com", password: "admin123", role: "super_admin" },
+  { email: "lead@cardchat.com", password: "lead123", role: "team_lead" },
+  { email: "agent@cardchat.com", password: "agent123", role: "agent" },
 ];
 
 export default function AdminLogin() {
@@ -47,7 +47,7 @@ export default function AdminLogin() {
           <div className="w-14 h-14 rounded-xl bg-primary flex items-center justify-center mx-auto">
             <Shield className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="font-heading text-2xl font-bold text-foreground">LightChat Admin</h1>
+          <h1 className="font-heading text-2xl font-bold text-foreground">CardChat Admin</h1>
           <p className="text-sm text-muted-foreground">Sign in to access the admin panel</p>
         </div>
 
@@ -64,7 +64,7 @@ export default function AdminLogin() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@lightchat.com"
+                  placeholder="admin@cardchat.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required

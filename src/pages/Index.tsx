@@ -12,7 +12,7 @@ export default function Index() {
           <span className="text-accent-foreground font-heading font-bold text-2xl">LC</span>
         </div>
         <div>
-          <h1 className="font-heading text-4xl font-bold mb-3">LightChat</h1>
+          <h1 className="font-heading text-4xl font-bold mb-3">CardChat</h1>
           <p className="text-muted-foreground">Gift card trading platform — interactive UI prototype</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">

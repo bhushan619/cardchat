@@ -69,8 +69,8 @@ export default function AgentProfile() {
         <section className="space-y-2">
           <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">About</h2>
           <p className="text-sm text-foreground">
-            {agent.name === "LightChat Support"
-              ? "Official LightChat support channel. Available 24/7 for all your gift card trading needs."
+            {agent.name === "CardChat Support"
+              ? "Official CardChat support channel. Available 24/7 for all your gift card trading needs."
               : `Hi, I'm ${agent.name}. I'm here to help you with your gift card trades.`}
           </p>
         </section>
@@ -86,7 +86,7 @@ export default function AgentProfile() {
               <div>
                 <p className="text-xs text-muted-foreground">Role</p>
                 <p className="text-sm font-medium text-foreground">
-                  {agent.name === "LightChat Support" ? "Official Support" : "Support Agent"}
+                  {agent.name === "CardChat Support" ? "Official Support" : "Support Agent"}
                 </p>
               </div>
             </div>

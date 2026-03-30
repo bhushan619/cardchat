@@ -6,7 +6,7 @@ import { MessageCircle, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 
 const chatList = [
-  { id: "1", name: "LightChat Support", lastMsg: "Cards verified ✅ Order created.", time: "10:38 AM", unread: 1, hasOrder: true },
+  { id: "1", name: "CardChat Support", lastMsg: "Cards verified ✅ Order created.", time: "10:38 AM", unread: 1, hasOrder: true },
   { id: "2", name: "Agent Mike", lastMsg: "How can I help you today?", time: "Yesterday", unread: 0, hasOrder: false },
 ];
 

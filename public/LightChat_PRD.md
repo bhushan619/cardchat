@@ -1,10 +1,10 @@
-# LightChat — Product Requirements Document (PRD)
+# CardChat — Product Requirements Document (PRD)
 
 **Version:** 4.3  
 **Date:** March 30, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
-**Live Preview:** https://lightchat.lovable.app
+**Live Preview:** https://cardchat.lovable.app
 
 ---
 
@@ -27,7 +27,7 @@
 
 ## 1. Executive Summary
 
-LightChat is a real-time gift card trading platform comprising two interfaces:
+CardChat is a real-time gift card trading platform comprising two interfaces:
 
 - **Customer App** — A mobile-first, dark-themed interface where customers sell gift cards to agents, track order statuses, and receive bank payouts.
 - **Admin Panel** — A desktop-first interface where agents, team leads, and super admins manage conversations, create/verify orders, process payments, and administer platform settings.
@@ -94,7 +94,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 
 ### 2.3 Theming
 
-The app supports **light and dark modes** via a `ThemeProvider` context. The theme preference is stored in `localStorage` under key `lightchat-theme`. Default theme is **dark**.
+The app supports **light and dark modes** via a `ThemeProvider` context. The theme preference is stored in `localStorage` under key `cardchat-theme`. Default theme is **dark**.
 
 - **Customer App**: Defaults to dark luxury theme. Toggle available in the Me tab.
 - **Admin Panel**: Toggle available in the top bar (sun/moon icon).
@@ -108,8 +108,8 @@ The app supports **light and dark modes** via a `ThemeProvider` context. The the
 
 A centered splash screen serving as the entry point to both interfaces:
 
-- LightChat logo (green "LC" on accent background, `rounded-2xl`)
-- App title "LightChat" with tagline "Gift card trading platform — interactive UI prototype"
+- CardChat logo (green "LC" on accent background, `rounded-2xl`)
+- App title "CardChat" with tagline "Gift card trading platform — interactive UI prototype"
 - Two CTA buttons:
   - **Customer App** (accent/green) — navigates to `/customer/auth`
   - **Admin Panel** (outline) — navigates to `/admin/login`
@@ -138,7 +138,7 @@ A 3-phase flow managed by component state:
 **Component:** `src/components/customer/SplashScreen.tsx`
 
 - **5-second animated introduction** that auto-plays on app open
-- Displays the LightChat business avatar ("LC" logo)
+- Displays the CardChat business avatar ("LC" logo)
 - Highlights four trust pillars with staggered fade-in animations:
   - **Safety** — End-to-end encryption
   - **Speed** — Average payout under 5 minutes
@@ -165,7 +165,7 @@ A 3-phase flow managed by component state:
 Five sequential steps managed by `step` state:
 
 **Step 1 — Welcome Screen:**
-- LightChat logo with app name and tagline
+- CardChat logo with app name and tagline
 - "Get Started" button (new users)
 - "I already have an account" button (returning users)
 - Both navigate to Step 2
@@ -206,8 +206,8 @@ Five sequential steps managed by `step` state:
 A minimalist, iOS-inspired layout:
 
 #### Header
-- LightChat logo avatar ("LC" in accent rounded square with shadow)
-- App name "LightChat"
+- CardChat logo avatar ("LC" in accent rounded square with shadow)
+- App name "CardChat"
 - Tagline: "Your trusted gift card trading platform"
 
 #### Search Bar
@@ -258,7 +258,7 @@ A minimalist, iOS-inspired layout:
 **Header:**
 - Back arrow button
 - Agent avatar (accent circle with initial)
-- Agent name ("LightChat Support")
+- Agent name ("CardChat Support")
 - Online status indicator ("Online" in accent text)
 
 **Pinned Order Card:**
@@ -437,12 +437,12 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 **Component:** `src/pages/admin/AdminLogin.tsx`
 
 - Centered card layout on subtle primary-tinted background
-- LightChat Admin logo (Shield icon on primary background)
+- CardChat Admin logo (Shield icon on primary background)
 - Email + password form with show/hide toggle
 - **Mock credentials displayed** for demo:
-  - `admin@lightchat.com` / `admin123` (Super Admin)
-  - `lead@lightchat.com` / `lead123` (Team Lead)
-  - `agent@lightchat.com` / `agent123` (Agent)
+  - `admin@cardchat.com` / `admin123` (Super Admin)
+  - `lead@cardchat.com` / `lead123` (Team Lead)
+  - `agent@cardchat.com` / `agent123` (Agent)
 - Simulated 600ms login delay with loading spinner
 - Error message: "Invalid email or password. Try the demo credentials below."
 - On success: stores auth in `sessionStorage` under key `adminAuth`, navigates to `/admin`
@@ -454,7 +454,7 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 A full-height flex layout with:
 
 #### Sidebar (w-60, fixed)
-- **Header:** LightChat logo, "Admin Panel" subtitle
+- **Header:** CardChat logo, "Admin Panel" subtitle
 - **Navigation:** 15 sidebar items with icons, role-filtered visibility
 - **Unread Badges:** Messages and Team Chat nav items display unread count badges (destructive-colored circles), visible even when the item is active
 - **Role Switcher:** "View as" section with 4 role buttons (Super Admin, Team Lead, Agent, Finance)
@@ -918,7 +918,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 
 **File:** `src/hooks/useOrderStatus.ts`
 
-- Order statuses are stored per conversation in `localStorage` under key `lightchat_order_statuses`
+- Order statuses are stored per conversation in `localStorage` under key `cardchat_order_statuses`
 - Each entry: `{ conversationId, orderId, status, updatedAt }`
 - Functions: `createOrder`, `transitionStatus`, `getStatus`, `getOrderId`, `getConversationTab`, `resetAll`
 - Transition validation via `canTransition()` — invalid transitions are silently ignored

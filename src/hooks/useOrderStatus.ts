@@ -7,7 +7,7 @@ import {
   type ConversationTab,
 } from "@/lib/orderStateMachine";
 
-const STORAGE_KEY = "lightchat_order_statuses";
+const STORAGE_KEY = "cardchat_order_statuses";
 
 export interface OrderStatusEntry {
   conversationId: string;
