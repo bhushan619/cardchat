@@ -1135,11 +1135,9 @@ export default function AdminMessages() {
                                     ["Order ID", o.id],
                                     ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                     ["Amount", `$${o.amount}`],
-                                    ["Amount", `$${o.amount}`],
-                                    ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
+                                    ["Card Rate", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
                                     ["Payout", `₦${o.payout.toLocaleString()}`],
                                     ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
-                                    ...(o.bank ? [["Bank", `${o.bank} ${o.bankAccount}`]] : []),
                                     ["Time", o.timestamp],
                                   ].map(([k, v]) => (
                                     <div key={k} className="flex justify-between text-xs">
