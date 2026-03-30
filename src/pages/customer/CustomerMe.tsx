@@ -786,16 +786,9 @@ export default function CustomerMe() {
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => { setActiveSection("bank"); }}
-            >
-              <Plus className="w-3 h-3 mr-1" /> Add Bank
-            </Button>
-            <Button
-              size="sm"
-              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
               onClick={() => setActiveSection("wallet")}
             >
-              Details
+              My Wallet
             </Button>
           </div>
         </div>
@@ -874,6 +867,7 @@ export default function CustomerMe() {
         <div className="space-y-1">
           {[
             { icon: FileText, label: "My Orders", desc: `${customerOrders.length} orders`, key: "orders" },
+            { icon: CreditCard, label: "Bank Accounts", desc: "Manage your banks", key: "bank" },
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
