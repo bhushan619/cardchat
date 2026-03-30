@@ -1266,7 +1266,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.1 → v4.2 (Current)
+### v4.2 → v4.3 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Finance Role Added** | New `finance` role with access to Platform Wallet, Naira Rate, Orders, and Team Chat |
+| **4-Role RBAC** | Role switcher now includes Finance; all nav items and RBAC table updated for 4 roles |
+| **Sidebar Unread Badges** | Messages (5) and Team Chat (3) nav items display destructive-colored unread count badges, visible even when active |
+| **Order Card Alignment** | Order number row amount removed; Card No. and Order No. right-aligned in the card name/icon row |
+| **Order ID Right-Aligned** | Order ID display right-aligned in order cards for cleaner layout |
+| **PRD Updated** | PRD bumped to v4.3 reflecting all sidebar, RBAC, and order card changes |
+
+### v4.1 → v4.2
 
 | Change | Description |
 |--------|-------------|
