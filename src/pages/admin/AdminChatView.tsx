@@ -235,9 +235,9 @@ export default function AdminChatView() {
               {canReassign && (
                 <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
                   <PopoverTrigger asChild>
-                    <button className="flex items-center gap-1 text-xs text-warning hover:text-warning/80">
+                    <Button size="sm" variant="outline" className="text-xs h-7 gap-1 border-warning/30 text-warning hover:bg-warning/10 hover:text-warning">
                       <UserCheck className="w-3.5 h-3.5" /> Reassign
-                    </button>
+                    </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-56 p-0" align="end">
                     <div className="p-3 border-b">
@@ -322,7 +322,7 @@ export default function AdminChatView() {
                   </div>
                 </PopoverContent>
               </Popover>
-              <button><MoreVertical className="w-4 h-4 text-muted-foreground" /></button>
+              
             </div>
           </header>
 
@@ -377,9 +377,6 @@ export default function AdminChatView() {
             <div className="flex items-center gap-1 px-4 pt-2 pb-1">
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
                 <Type className="w-3.5 h-3.5" /> Text
-              </button>
-              <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
-                <Camera className="w-3.5 h-3.5" /> Image
               </button>
               <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground px-2 py-1 rounded-md hover:bg-muted transition-colors">
                 <Smile className="w-3.5 h-3.5" /> Emoji
