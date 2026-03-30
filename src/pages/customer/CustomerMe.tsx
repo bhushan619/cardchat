@@ -695,7 +695,6 @@ export default function CustomerMe() {
           {[
             { icon: FileText, label: "My Orders", desc: `${customerOrders.length} orders`, key: "orders" },
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
-            { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
             { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
             { icon: BookOpen, label: "User Guide", desc: "How to use LightChat", key: "guide" },
