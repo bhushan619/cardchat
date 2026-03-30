@@ -457,7 +457,7 @@ export default function AdminChatView() {
                   ["Order ID", selectedOrder.id],
                   ["Card", `${selectedOrder.cardType}`],
                   ["Amount", `$${selectedOrder.amount}`],
-                  ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
+                  ["Card Rate", `₦${(selectedOrder as any).unitPrice?.toLocaleString?.() || selectedOrder.nairaRate.toLocaleString()}`],
                   ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
                   ...(selectedOrder.cardNumbers && selectedOrder.cardNumbers.length > 0 ? [["Card No.", selectedOrder.cardNumbers.join(", ")]] : []),
                   ["Time", selectedOrder.timestamp],

@@ -548,7 +548,7 @@ export default function AdminMessages() {
                 return (
                   <>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Denomination</span>
+                      <span className="text-muted-foreground">Amount</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">{currSym}{neg.oldDenom.toLocaleString()}</span>
                         <span className="font-medium text-warning">{currSym}{neg.newDenom.toLocaleString()}</span>
@@ -560,10 +560,6 @@ export default function AdminMessages() {
                         <span className="text-muted-foreground line-through text-[10px]">₦{neg.oldRate.toLocaleString()}</span>
                         <span className="font-medium text-warning">₦{neg.newRate.toLocaleString()}</span>
                       </div>
-                    </div>
-                    <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Naira Rate</span>
-                      <span className="font-medium">₦{(statusOrder.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                       <span className="text-muted-foreground font-medium">Total Payout</span>
@@ -578,9 +574,8 @@ export default function AdminMessages() {
               return (
                 <>
                   {[
-                    ["Face Value", `${currSym}${statusOrder.amount.toLocaleString()}`],
+                    ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
                     ["Card Rate", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
-                    ["Naira Rate", `₦${(statusOrder.nairaRate || 289).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
