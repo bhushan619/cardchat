@@ -786,16 +786,9 @@ export default function CustomerMe() {
             <Button
               size="sm"
               className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
-              onClick={() => { setActiveSection("bank"); }}
-            >
-              <Plus className="w-3 h-3 mr-1" /> Add Bank
-            </Button>
-            <Button
-              size="sm"
-              className="bg-accent-foreground/20 text-accent-foreground hover:bg-accent-foreground/30 border-0 text-xs"
               onClick={() => setActiveSection("wallet")}
             >
-              Details
+              My Wallet
             </Button>
           </div>
         </div>
