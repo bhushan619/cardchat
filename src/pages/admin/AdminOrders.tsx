@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { orders } from "@/data/mock";
-import { FileText, Search, ChevronDown, ChevronUp, Download, Calendar } from "lucide-react";
+import { FileText, Search, ChevronDown, ChevronUp, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 
 const statusColors: Record<string, string> = {
   pending_sale: "bg-warning/10 text-warning",
@@ -53,8 +54,8 @@ const mockOrderDetails: Record<string, {
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [dateFrom, setDateFrom] = useState("");
-  const [dateTo, setDateTo] = useState("");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
 
   const filtered = orders.filter(o =>
     o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -92,13 +93,10 @@ export default function AdminOrders() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Search by order ID, customer..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-              <Calendar className="w-3.5 h-3.5" />
-              <Input type="datetime-local" step="1" className="h-8 w-44 text-xs" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
-              <span>to</span>
-              <Input type="datetime-local" step="1" className="h-8 w-44 text-xs" value={dateTo} onChange={e => setDateTo(e.target.value)} />
-            </div>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From date & time" />
+            <span>to</span>
+            <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To date & time" />
           </div>
         </div>
 
