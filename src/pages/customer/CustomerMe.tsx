@@ -385,9 +385,9 @@ export default function CustomerMe() {
             <div className="bg-muted/50 rounded-xl p-3 space-y-2">
               {[
                 { label: "Card Type", value: selectedOrder.cardType },
-                { label: "Total Face Value", value: selectedOrder.totalFaceValue },
-                { label: "Rate (per $)", value: selectedOrder.rate },
-                { label: "Naira Rate", value: selectedOrder.nairaRate },
+                { label: "Amount", value: selectedOrder.totalFaceValue },
+                { label: "Card Rate", value: selectedOrder.rate },
+                { label: "Payout", value: selectedOrder.totalPayout },
               ].map(item => (
                 <div key={item.label} className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -397,30 +397,13 @@ export default function CustomerMe() {
             </div>
           </div>
 
-          {/* Payout Summary */}
-          <div className="space-y-2">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Payout Summary</p>
-            <div className="bg-muted/50 rounded-xl p-3 space-y-2">
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Card Value (NGN)</p>
-                <p className="text-xs font-medium">{selectedOrder.totalPayout}</p>
-              </div>
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Fee</p>
-                <p className="text-xs font-medium">₦0</p>
-              </div>
-              <div className="border-t pt-2 flex items-center justify-between">
-                <p className="text-sm font-semibold">Total Payout</p>
-                <p className="text-sm font-heading font-bold text-accent">{selectedOrder.totalPayout}</p>
-              </div>
-              {selectedOrder.status === "success" && (
-                <div className="bg-success/10 rounded-lg p-2 flex items-center gap-2 mt-1">
-                  <Wallet className="w-4 h-4 text-success" />
-                  <p className="text-[10px] text-success font-medium">Credited to wallet</p>
-                </div>
-              )}
+          {/* Wallet Credit Status */}
+          {selectedOrder.status === "success" && (
+            <div className="bg-success/10 border border-success/20 rounded-xl p-3 flex items-center gap-2">
+              <Wallet className="w-4 h-4 text-success" />
+              <p className="text-xs text-success font-medium">Credited to wallet</p>
             </div>
-          </div>
+          )}
 
           {/* Timeline */}
           <div className="space-y-2">
@@ -913,20 +896,6 @@ export default function CustomerMe() {
             </button>
           ))}
         </div>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={toggleTheme}
-          className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-muted transition-colors"
-        >
-          <div className="w-10 h-10 rounded-lg bg-muted flex items-center justify-center">
-            {theme === "dark" ? <Sun className="w-5 h-5 text-muted-foreground" /> : <Moon className="w-5 h-5 text-muted-foreground" />}
-          </div>
-          <div className="flex-1 text-left">
-            <p className="text-sm font-medium">{theme === "dark" ? "Light Mode" : "Dark Mode"}</p>
-            <p className="text-xs text-muted-foreground">Switch appearance</p>
-          </div>
-        </button>
 
         <button className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-destructive/5 transition-colors text-destructive">
           <div className="w-10 h-10 rounded-lg bg-destructive/10 flex items-center justify-center">
