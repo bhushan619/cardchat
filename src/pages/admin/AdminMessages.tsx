@@ -273,7 +273,7 @@ export default function AdminMessages() {
     ...orders.map(o => ({
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
-      cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
+      cardCurrency: o.cardType?.includes("UK") ? "GBP" : "USD",
       cardNumbers: [`${Math.floor(Math.random() * 9000000000 + 1000000000)}`],
       createdAt: o.created,
     })),
@@ -1134,7 +1134,7 @@ export default function AdminMessages() {
                                   {[
                                     ["Order ID", o.id],
                                     ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
-                                    ["Denomination", o.denomination],
+                                    ["Amount", `$${o.amount}`],
                                     ["Amount", `$${o.amount}`],
                                     ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
                                     ["Payout", `₦${o.payout.toLocaleString()}`],
