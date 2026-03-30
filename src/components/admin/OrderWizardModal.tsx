@@ -43,6 +43,7 @@ interface OrderEntry {
   cardCode: string;
   description: string;
   denom: number;
+  totalFaceValue: number;
   purchaseRate: number;
   supplier: string;
   status: string;
