@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,24 @@ const customerOrders: CustomerOrder[] = [
   { id: "ORD-20260316-003", cardType: "Steam US", totalFaceValue: "$200", rate: "₦600", nairaRate: "₦1,580", totalPayout: "₦120,000", status: "failed", date: "Mar 16, 2026", bank: "Access Bank ****9012" },
   { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", nairaRate: "₦1,580", totalPayout: "₦85,000", status: "order_processing", date: "Mar 15, 2026", bank: "First Bank ****1234" },
 ];
+
+function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: string; defaultOn: boolean }) {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <div className="flex items-center justify-between py-2 border-t">
+      <div>
+        <p className="text-xs font-medium">{label}</p>
+        <p className="text-[10px] text-muted-foreground">{desc}</p>
+      </div>
+      <button
+        onClick={() => setOn(!on)}
+        className={`w-10 h-5 rounded-full transition-colors relative ${on ? "bg-accent" : "bg-muted-foreground/30"}`}
+      >
+        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${on ? "left-5" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
 
 export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
@@ -555,7 +573,187 @@ export default function CustomerMe() {
     );
   }
 
-  // ── Main Profile ──
+  // ── Security Settings ──
+  if (activeSection === "security") {
+    return (
+      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+        <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
+          <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
+          <h2 className="font-heading font-semibold">Security Settings</h2>
+        </header>
+        <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+          {/* Change Password */}
+          <div className="bg-card border rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Lock className="w-5 h-5 text-accent" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Change Password</p>
+                <p className="text-xs text-muted-foreground">Update your account password</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <label className="text-xs text-muted-foreground">Current Password</label>
+                <Input type="password" placeholder="Enter current password" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">New Password</label>
+                <Input type="password" placeholder="Enter new password" className="mt-1" />
+              </div>
+              <div>
+                <label className="text-xs text-muted-foreground">Confirm New Password</label>
+                <Input type="password" placeholder="Confirm new password" className="mt-1" />
+              </div>
+              <Button size="sm" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                Update Password
+              </Button>
+            </div>
+          </div>
+
+          {/* Two-Factor Authentication */}
+          <div className="bg-card border rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Smartphone className="w-5 h-5 text-accent" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Two-Factor Authentication</p>
+                <p className="text-xs text-muted-foreground">Add an extra layer of security</p>
+              </div>
+              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-warning/10 text-warning">Off</span>
+            </div>
+            <Button size="sm" variant="outline" className="w-full mt-3 text-xs">
+              Enable 2FA
+            </Button>
+          </div>
+
+          {/* Login Activity */}
+          <div className="bg-card border rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Shield className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Login Activity</p>
+                <p className="text-xs text-muted-foreground">Recent sessions</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {[
+                { device: "Chrome · Windows", location: "Lagos, NG", time: "Active now", active: true },
+                { device: "Safari · iPhone", location: "Lagos, NG", time: "2 hours ago", active: false },
+                { device: "Chrome · MacOS", location: "Abuja, NG", time: "3 days ago", active: false },
+              ].map((session, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-t first:border-0">
+                  <div>
+                    <p className="text-xs font-medium">{session.device}</p>
+                    <p className="text-[10px] text-muted-foreground">{session.location} · {session.time}</p>
+                  </div>
+                  {session.active ? (
+                    <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-success/10 text-success">Active</span>
+                  ) : (
+                    <button className="text-[10px] text-destructive font-medium">Revoke</button>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ── App Settings ──
+  if (activeSection === "settings") {
+    return (
+      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+        <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
+          <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
+          <h2 className="font-heading font-semibold">App Settings</h2>
+        </header>
+        <div className="p-4 space-y-4 flex-1 overflow-y-auto">
+          {/* Notifications */}
+          <div className="bg-card border rounded-xl p-4 space-y-3">
+            <div className="flex items-center gap-3 mb-1">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Bell className="w-5 h-5 text-accent" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold">Notifications</p>
+                <p className="text-xs text-muted-foreground">Manage your alerts</p>
+              </div>
+            </div>
+            {[
+              { label: "Order Updates", desc: "Get notified on order status changes", defaultOn: true },
+              { label: "Promotions", desc: "Receive promotional offers and deals", defaultOn: false },
+              { label: "Security Alerts", desc: "Login attempts and password changes", defaultOn: true },
+            ].map((item, i) => (
+              <NotificationToggle key={i} label={item.label} desc={item.desc} defaultOn={item.defaultOn} />
+            ))}
+          </div>
+
+          {/* Language */}
+          <div className="bg-card border rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Globe className="w-5 h-5 text-accent" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Language</p>
+                <p className="text-xs text-muted-foreground">Choose your preferred language</p>
+              </div>
+            </div>
+            <Select defaultValue="en">
+              <SelectTrigger className="mt-3">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="fr">Français</SelectItem>
+                <SelectItem value="yo">Yorùbá</SelectItem>
+                <SelectItem value="ha">Hausa</SelectItem>
+                <SelectItem value="ig">Igbo</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Appearance */}
+          <div className="bg-card border rounded-xl p-4">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
+                <Palette className="w-5 h-5 text-accent" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold">Appearance</p>
+                <p className="text-xs text-muted-foreground">Current: {theme === "dark" ? "Dark" : "Light"} mode</p>
+              </div>
+              <Button size="sm" variant="outline" className="text-xs" onClick={toggleTheme}>
+                {theme === "dark" ? <Sun className="w-3.5 h-3.5 mr-1.5" /> : <Moon className="w-3.5 h-3.5 mr-1.5" />}
+                {theme === "dark" ? "Light" : "Dark"}
+              </Button>
+            </div>
+          </div>
+
+          {/* App Info */}
+          <div className="bg-card border rounded-xl p-4 space-y-2">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">About</p>
+            {[
+              ["App Version", "v1.0.0"],
+              ["Build", "2026.03.30"],
+            ].map(([k, v]) => (
+              <div key={k} className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground">{k}</p>
+                <p className="text-xs font-medium">{v}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <CustomerLayout>
       <div className="p-4 space-y-5">
