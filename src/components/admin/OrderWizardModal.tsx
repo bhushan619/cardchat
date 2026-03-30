@@ -52,7 +52,7 @@ interface OrderEntry {
 
 export interface CompletedOrder {
   orderId: string;
-  cards: { cardType: string; denomination: string; unitPrice: string; status: string; cardNo?: string }[];
+  cards: { cardType: string; cardAmount: string; unitPrice: string; status: string; cardNo?: string }[];
   totalPayout: number;
   totalFaceValue: number;
   bank: string;
@@ -196,7 +196,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       const cr3Value = Number(nairaPrice) > 0 && cr2Value > 0 ? cr2Value / Number(nairaPrice) : 0;
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
-        cards: cards.map(c => ({ cardType, denomination: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale", cardNo: c.cardNo })),
+        cards: cards.map(c => ({ cardType, cardAmount: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale", cardNo: c.cardNo })),
         totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * cr2Value,
         totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
         bank: "",

@@ -262,7 +262,7 @@ export default function AdminMessages() {
   const allOrders = [
     ...completedOrders.map(o => ({
       id: o.orderId, cardType: o.cards.map(c => c.cardType).join(", "),
-      denomination: `${o.cards.length} cards`, amount: o.totalFaceValue,
+      amount: o.totalFaceValue,
       nairaRate: 289, unitPrice: 0, status: o.status as string,
       payout: o.totalPayout, bank: o.bank, bankAccount: o.bankAccount,
       timestamp: o.timestamp, isNew: true,
@@ -273,7 +273,7 @@ export default function AdminMessages() {
     ...orders.map(o => ({
       ...o, payout: o.amount * o.unitPrice, bank: "", bankAccount: "",
       timestamp: o.created, isNew: false,
-      cardCurrency: o.denomination?.includes("$") ? "USD" : "GBP",
+      cardCurrency: o.cardType?.includes("UK") ? "GBP" : "USD",
       cardNumbers: [`${Math.floor(Math.random() * 9000000000 + 1000000000)}`],
       createdAt: o.created,
     })),
@@ -1134,7 +1134,7 @@ export default function AdminMessages() {
                                   {[
                                     ["Order ID", o.id],
                                     ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
-                                    ["Denomination", o.denomination],
+                                    ["Amount", `$${o.amount}`],
                                     ["Amount", `$${o.amount}`],
                                     ["Naira Rate", `₦${o.nairaRate.toLocaleString()}`],
                                     ["Payout", `₦${o.payout.toLocaleString()}`],

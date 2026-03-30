@@ -129,7 +129,6 @@ export default function AdminChatView() {
     ...completedOrders.map(o => ({
       id: o.orderId,
       cardType: o.cards.map(c => c.cardType).join(", "),
-      denomination: `${o.cards.length} cards`,
       amount: o.totalFaceValue,
       nairaRate: 289,
       unitPrice: 0,
@@ -457,7 +456,6 @@ export default function AdminChatView() {
                 {[
                   ["Order ID", selectedOrder.id],
                   ["Card", `${selectedOrder.cardType}`],
-                  ["Denomination", selectedOrder.denomination],
                   ["Amount", `$${selectedOrder.amount}`],
                   ["Naira Rate", `₦${selectedOrder.nairaRate.toLocaleString()}`],
                   ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],

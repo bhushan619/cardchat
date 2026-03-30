@@ -63,7 +63,7 @@ export default function AdminOrders() {
 
   const handleExportCSV = () => {
     const headers = ["Order ID", "Customer", "Card", "Amount", "Card Rate (₦)", "Status", "Created"];
-    const rows = filtered.map(o => [o.id, o.customer, `${o.cardType} ${o.denomination}`, `$${o.amount}`, `₦${o.unitPrice}`, o.status, o.created]);
+    const rows = filtered.map(o => [o.id, o.customer, o.cardType, `$${o.amount}`, `₦${o.unitPrice}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -95,9 +95,9 @@ export default function AdminOrders() {
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
               <Calendar className="w-3.5 h-3.5" />
-              <Input type="date" className="h-8 w-32 text-xs" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
+              <Input type="datetime-local" step="1" className="h-8 w-44 text-xs" value={dateFrom} onChange={e => setDateFrom(e.target.value)} />
               <span>to</span>
-              <Input type="date" className="h-8 w-32 text-xs" value={dateTo} onChange={e => setDateTo(e.target.value)} />
+              <Input type="datetime-local" step="1" className="h-8 w-44 text-xs" value={dateTo} onChange={e => setDateTo(e.target.value)} />
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ export default function AdminOrders() {
                       </td>
                       <td className="px-4 py-3 text-sm font-medium text-accent">{o.id}</td>
                       <td className="px-4 py-3 text-sm">{o.customer}</td>
-                      <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType} {o.denomination}</td>
+                      <td className="px-4 py-3 text-sm text-muted-foreground">{o.cardType}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
                       <td className="px-4 py-3 text-center">
@@ -153,7 +153,6 @@ export default function AdminOrders() {
                                 {[
                                   ["Type", o.cardType],
                                   ["Format", details.cardFormat],
-                                  ["Denomination", o.denomination],
                                   ["Card Rate", `₦${o.unitPrice}`],
                                   ["Naira Price", `₦${o.nairaRate}`],
                                   ["Total Payout", `₦${(o.amount * o.unitPrice).toLocaleString()}`],
