@@ -46,6 +46,24 @@ const customerOrders: CustomerOrder[] = [
   { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", nairaRate: "₦1,580", totalPayout: "₦85,000", status: "order_processing", date: "Mar 15, 2026", bank: "First Bank ****1234" },
 ];
 
+function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: string; defaultOn: boolean }) {
+  const [on, setOn] = useState(defaultOn);
+  return (
+    <div className="flex items-center justify-between py-2 border-t">
+      <div>
+        <p className="text-xs font-medium">{label}</p>
+        <p className="text-[10px] text-muted-foreground">{desc}</p>
+      </div>
+      <button
+        onClick={() => setOn(!on)}
+        className={`w-10 h-5 rounded-full transition-colors relative ${on ? "bg-accent" : "bg-muted-foreground/30"}`}
+      >
+        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${on ? "left-5" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
+
 export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showAddBank, setShowAddBank] = useState(false);
