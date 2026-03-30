@@ -17,7 +17,6 @@ interface CustomerOrder {
   cardType: string;
   totalFaceValue: string;
   rate: string;
-  nairaRate: string;
   totalPayout: string;
   status: CustomerVisibleStatus;
   date: string;
@@ -40,10 +39,10 @@ const TIMELINE_STEPS = [
 ];
 
 const customerOrders: CustomerOrder[] = [
-  { id: "ORD-20260318-001", cardType: "iTunes US", totalFaceValue: "$200", rate: "₦680", nairaRate: "₦1,580", totalPayout: "₦215,200", status: "success", date: "Mar 18, 2026", bank: "First Bank ****1234" },
-  { id: "ORD-20260317-005", cardType: "Amazon US", totalFaceValue: "$150", rate: "₦620", nairaRate: "₦1,580", totalPayout: "₦93,000", status: "success", date: "Mar 17, 2026", bank: "GTBank ****5678" },
-  { id: "ORD-20260316-003", cardType: "Steam US", totalFaceValue: "$200", rate: "₦600", nairaRate: "₦1,580", totalPayout: "₦120,000", status: "failed", date: "Mar 16, 2026", bank: "Access Bank ****9012" },
-  { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", nairaRate: "₦1,580", totalPayout: "₦85,000", status: "order_processing", date: "Mar 15, 2026", bank: "First Bank ****1234" },
+  { id: "ORD-20260318-001", cardType: "iTunes US", totalFaceValue: "$200", rate: "₦680", totalPayout: "₦215,200", status: "success", date: "Mar 18, 2026", bank: "First Bank ****1234" },
+  { id: "ORD-20260317-005", cardType: "Amazon US", totalFaceValue: "$150", rate: "₦620", totalPayout: "₦93,000", status: "success", date: "Mar 17, 2026", bank: "GTBank ****5678" },
+  { id: "ORD-20260316-003", cardType: "Steam US", totalFaceValue: "$200", rate: "₦600", totalPayout: "₦120,000", status: "failed", date: "Mar 16, 2026", bank: "Access Bank ****9012" },
+  { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", totalPayout: "₦85,000", status: "order_processing", date: "Mar 15, 2026", bank: "First Bank ****1234" },
 ];
 
 function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: string; defaultOn: boolean }) {
