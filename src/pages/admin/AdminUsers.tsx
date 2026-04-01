@@ -267,6 +267,7 @@ export default function AdminUsers() {
                   <SelectItem value="super_admin">Super Admin</SelectItem>
                   <SelectItem value="team_lead">Team Lead</SelectItem>
                   <SelectItem value="agent">Agent</SelectItem>
+                  <SelectItem value="finance">Finance</SelectItem>
                 </SelectContent>
               </Select>
             </div>
