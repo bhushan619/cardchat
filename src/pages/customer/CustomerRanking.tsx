@@ -1,7 +1,5 @@
 import { useRef, useEffect, useState } from "react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
-import { Trophy, ArrowLeft, Medal, Info, ChevronRight, Flame, CalendarIcon } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Trophy, ArrowLeft, Medal, Info, ChevronRight, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,14 +30,6 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState("2");
-
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December",
-  ];
-  const periodStart = startOfMonth(new Date(2026, Number(selectedMonth)));
-  const periodEnd = endOfMonth(new Date(2026, Number(selectedMonth)));
 
   const me = rankingList.find((u) => u.alias === currentUserAlias)!;
   const currentTier = getCurrentTier(me.volume);
@@ -86,20 +76,9 @@ export default function CustomerRanking() {
               Trading Volume Ranking
             </h2>
             <p className="text-[11px] text-muted-foreground">
-              {format(periodStart, "MMM dd")} – {format(periodEnd, "MMM dd, yyyy")}
+              Mar 01 – Mar 31, 2026
             </p>
           </div>
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="h-7 w-[7.5rem] text-[11px] gap-1 border-muted">
-              <CalendarIcon className="w-3 h-3 text-muted-foreground" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((m, i) => (
-                <SelectItem key={i} value={String(i)} className="text-xs">{m}</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
           <DialogTrigger asChild>
