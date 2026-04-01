@@ -116,8 +116,8 @@ const guides: GuideSection[] = [
     description: "How the rewards system works for customers.",
     steps: [
       { text: "Customers access Rewards from the Me tab — it shows total rewards earned with a breakdown of Ranking vs. Referral earnings." },
-      { text: "Ranking rewards are earned by achieving higher tiers through consistent trading." },
-      { text: "Referral rewards are earned when an invited user completes their first trade." },
+      { text: "Ranking rewards are based on bi-weekly trading volume (H1: 1st–15th, H2: 16th–end of month). They are distributed manually by Super Admin after all orders in the period are settled." },
+      { text: "Referral rewards are automated — earned instantly when an invited user completes their first trade." },
       { text: "Customers can enter an invite code on the Rewards screen at any time." },
       { text: "Tapping the info icon (ℹ) in the Rewards header shows a 'How it Works' modal explaining the program.", tip: "If a customer asks about invite codes, direct them to the Rewards screen — it's no longer part of registration." },
     ],

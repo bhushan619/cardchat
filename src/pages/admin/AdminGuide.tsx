@@ -253,13 +253,15 @@ const guides: GuideSection[] = [
     id: "wallets",
     title: "Wallet Management",
     icon: DollarSign,
-    description: "View customer wallet balances split into trading and rewards.",
+    description: "View wallet balances, filter transactions, and export data.",
     roles: ["Super Admin", "Team Lead", "Finance"],
     steps: [
       { text: "Navigate to 'Wallets' from the sidebar." },
       { text: "Each customer's total wallet balance is split into Trading Balance (from card trades) and Rewards Balance (from ranking + referrals)." },
-      { text: "The table shows Alias, Trading Balance, Rewards Balance, Total Balance, and Last Updated." },
-      { text: "Use the search bar to filter by customer alias.", tip: "Total Balance = Trading Balance + Rewards Balance. Both are maintained independently." },
+      { text: "Use the search bar to filter transactions by ID or description." },
+      { text: "Filter by transaction type using the dropdown: All, Deposit, or Disbursement." },
+      { text: "Use the From/To date-time pickers to narrow down transactions by date range." },
+      { text: "Click 'Export CSV' to download the currently filtered transaction records as a CSV file.", tip: "Total Balance = Trading Balance + Rewards Balance. Both are maintained independently." },
     ],
   },
   {
