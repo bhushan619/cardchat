@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
+import { bankAccounts, walletBalance, tradingBalance, rewardsBalance, walletTransactions } from "@/data/mock";
 import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -147,6 +147,11 @@ export default function CustomerMe() {
                 </button>
               </div>
               <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
+              {balanceVisible && (
+                <p className="text-xs opacity-80 mt-1">
+                  ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
+                </p>
+              )}
               <div className="flex gap-2 mt-4">
                 <Button
                   size="sm"
