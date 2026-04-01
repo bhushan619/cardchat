@@ -300,7 +300,7 @@ export default function AdminUsers() {
               {getUserPinStatus(pinUser) ? "Update" : "Create"} Transaction PIN
             </DialogTitle>
             <DialogDescription>
-              {getUserPinStatus(pinUser!) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
+              {getUserPinStatus(pinUser) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
