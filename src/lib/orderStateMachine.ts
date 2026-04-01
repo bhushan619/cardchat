@@ -4,7 +4,6 @@ export type AgentOrderStatus =
   | "pending_sale"
   | "pending"
   | "in_trade"
-  | "negotiation"
   | "order_cancelled"
   | "success";
 
