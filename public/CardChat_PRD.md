@@ -730,7 +730,29 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Sell Rate (₦ per $1)
   - Last Updated
 
-### 5.9 Orders (`/admin/orders`)
+### 5.9 Volume Ranking (`/admin/ranking`)
+
+**Component:** `src/pages/admin/AdminRanking.tsx`  
+**Access:** All roles
+
+Admin view of the trading volume ranking system.
+
+- Header: "Trading Volume Ranking" with period date range
+- **Month filter:** Select dropdown to switch between months (Jan–Dec 2026)
+- **Two-panel layout (1:2 grid on desktop):**
+
+#### Reward Tiers Panel
+- Lists all 9 reward tiers with threshold and reward amounts
+- Format: "≥ 10,000" → "₦10"
+
+#### Leaderboard Panel
+- **Alias search:** Filter leaderboard by alias (case-insensitive)
+- User count display: "Leaderboard (N users)"
+- **Table columns:** Rank (with medal icons for top 3), Alias (monospace), Volume, Reward
+- Scrollable with sticky header (max 500px height)
+- Medal icons: Trophy (gold) for #1, Medal (silver) for #2, Award (bronze) for #3
+
+### 5.10 Orders (`/admin/orders`)
 
 **Component:** `src/pages/admin/AdminOrders.tsx`
 
