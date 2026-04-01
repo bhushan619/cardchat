@@ -68,7 +68,6 @@ export const agentStatusLabels: Record<AgentOrderStatus, string> = {
   pending_sale: "Pending Sale",
   pending: "Pending",
   in_trade: "In Trade",
-  negotiation: "Negotiation",
   order_cancelled: "Order Cancelled",
   success: "Success",
 };
