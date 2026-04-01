@@ -793,22 +793,32 @@ Admin view of the trading volume ranking system.
 ### 5.10 Rewards Management (`/admin/rewards`)
 
 **Component:** `src/pages/admin/AdminRewards.tsx`  
-**Access:** All roles
+**Access:** Super Admin, Team Lead, Agent (Finance excluded)
 
-Admin view of all rewards distributed to customers.
+Admin view of all rewards distributed to customers. Ranking rewards require **manual distribution by Super Admin only**; referral rewards are automated.
 
 #### Summary Cards (3-column grid)
 - **Total Rewards** — accent color, sum of all rewards
 - **Ranking Rewards** — success color, sum of ranking-type rewards
 - **Referral Rewards** — warning color, sum of referral-type rewards
 
+#### Ranking Reward Distribution (Super Admin only)
+- **"Distribute Ranking Rewards" button** — visible only to Super Admin
+- Requires selecting a bi-weekly period (H1: 1st–15th, H2: 16th–end of month)
+- **Pre-distribution checks:**
+  - All orders in the selected period must be closed/settled
+  - If open orders exist, distribution is blocked and pending orders are displayed in a table
+  - Already-distributed periods cannot be re-distributed
+- On successful distribution: ranking rewards are generated based on the leaderboard for that period and added to the rewards table
+
 #### Filters
 - **Alias search:** Filter by customer alias (case-insensitive)
 - **Type filter:** Select dropdown — All Types, Ranking, Referral
+- **Date/Time range:** From and To date-time pickers for filtering reward records by date
 
 #### Rewards Table
-- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date
-- 12 mock reward records covering both ranking and referral types
+- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date, Time
+- Mock reward records covering referral types (ranking records added via distribution)
 - Empty state: "No rewards found"
 
 ### 5.11 Orders (`/admin/orders`)
