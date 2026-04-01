@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.4  
+**Version:** 4.5  
 **Date:** April 1, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -72,6 +72,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /customer/chat             → Chat list → Chat view
 /customer/contacts         → Agent directory
 /customer/me               → Profile, bank accounts, transactions, dashboard, settings
+/customer/rewards          → Rewards overview, referral, history
 /customer/ranking          → Trading volume ranking
 /customer/guide            → User guide (accordion)
 
@@ -89,6 +90,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/sensitive-words     → Sensitive words filter
 /admin/api-config          → API configuration
 /admin/ranking             → Trading volume ranking (all roles)
+/admin/rewards             → Rewards management (all roles)
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
@@ -212,20 +214,21 @@ A minimalist, iOS-inspired layout:
 - App name "CardChat"
 - Tagline: "Your trusted gift card trading platform"
 
-#### Search Bar
-- Full-width search input with magnifying glass icon
-- Placeholder: "Search cards, rates..."
-- Filters the live rates list in real-time by card type name
-
 #### Core Actions Grid
 - **4-column modular grid** (iOS system app style)
 - Each tile: icon in accent-colored container (`bg-accent/10`), label, short description
 - Rounded-2xl borders with `border-border/50`, hover accent highlight
 - Actions:
-  - **Sell Cards** (Gift icon) → navigates to `/customer/chat`
-  - **Live Rates** (TrendingUp icon) → scrolls to rates (no navigation)
-  - **Chat** (MessageCircle icon) → navigates to `/customer/chat`
-  - **Guide** (BookOpen icon) → navigates to `/customer/guide`
+  - **Sell Cards** (Gift icon) → navigates to `/customer/contacts`
+  - **Rewards** (Star icon) → navigates to `/customer/rewards`
+  - **Ranking** (Trophy icon) → navigates to `/customer/ranking`
+  - **Calculator** (Calculator icon) → opens rate calculator modal
+
+#### Wallet Section
+- Gradient card (`from-accent to-accent/80`) with wallet icon
+- **Balance display:** masked by default, toggleable via Eye/EyeOff icon
+- **Breakdown:** When visible, shows `(550,000 Trading + 6,200 Rewards)` beneath total
+- "View Details" button → navigates to Me tab wallet view
 
 #### Live Rates Section
 - Section header: "Live Rates" with "Auto-refresh 60s" indicator
@@ -329,16 +332,20 @@ A minimalist, iOS-inspired layout:
 A multi-section profile page with drill-down sub-views.
 
 #### Main Profile View
-- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), masked phone number
+- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon
+- **Edit Profile** — pencil icon opens modal with name/email editing and OTP verification for email changes
+- **Wallet Card** — gradient card showing:
+  - Total balance (masked by default, toggleable)
+  - **Breakdown:** `(550,000 Trading + 6,200 Rewards)` when visible
+  - Withdraw button → opens withdrawal form
+  - My Wallet button → navigates to wallet sub-view
 - **Menu Items** (each with icon, label, description, chevron):
-  - Verified Bank Accounts — shows account count
-  - Transaction Records — shows transaction count
-  - Rewards — enter invite code, view referral bonuses
+  - My Orders — order history with status filters
+  - Bank Accounts — add/manage verified bank accounts
   - Data Dashboard — "View your stats"
   - Security Settings — "2FA, password"
   - App Settings — "Notifications, language"
   - User Guide — navigates to `/customer/guide`
-- **Theme Toggle** — sun/moon icon, "Light Mode" / "Dark Mode" label
 - **Log Out** — destructive-colored button
 
 #### Bank Accounts Sub-View
@@ -417,7 +424,37 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 - Persistence: `localStorage` keys `beginner_guide_done` and `beginner_guide_step`
 - Viewport-aware positioning to prevent overflow on mobile devices
 
-### 4.8 Trading Volume Ranking (`/customer/ranking`)
+### 4.8 Rewards (`/customer/rewards`)
+
+**Component:** `src/pages/customer/CustomerRewards.tsx`
+
+A single-page rewards overview combining earnings summary, referral tools, and history.
+
+#### Total Rewards Card
+- Gradient card (`from-accent to-accent/80`) centered
+- Total rewards earned (₦6,200) in large 3xl font
+- **Breakdown:** Ranking vs Referral earnings side-by-side with divider
+
+#### Referral Code
+- User's 6-char alias as referral code with copy button
+- Compact card layout
+
+#### Invite Code Input
+- Inline input + submit button (hidden after successful submission)
+- 7-day submission window note
+
+#### Rewards History
+- Chronological list of all earned rewards
+- Each entry shows: icon (Trophy for ranking, Gift for referral), description, date, amount
+- Color-coded: ranking = accent, referral = warning
+- Amount shown in success green with ArrowDownLeft icon
+
+#### How It Works (Info Modal)
+- Triggered via Info icon in header bar
+- Bottom sheet modal explaining Ranking Rewards, Referral Rewards, and Invite Code rules
+- "Got it" dismiss button
+
+### 4.9 Trading Volume Ranking (`/customer/ranking`)
 
 **Component:** `src/pages/customer/CustomerRanking.tsx`
 
@@ -454,7 +491,7 @@ A motivation-first ranking page showing the user's trading volume standing withi
 - 25 mock users with pre-assigned ranks, volumes, and rewards
 - Helper functions: `getCurrentTier()`, `getNextTier()`
 
-### 4.9 Customer App Navigation
+### 4.10 Customer App Navigation
 
 **Bottom Tab Bar** (4 tabs):
 | Tab | Icon | Path | Description |
@@ -494,7 +531,7 @@ A full-height flex layout with:
 
 #### Sidebar (w-60, fixed)
 - **Header:** CardChat logo, "Admin Panel" subtitle
-- **Navigation:** 15 sidebar items with icons, role-filtered visibility
+- **Navigation:** 16 sidebar items with icons, role-filtered visibility
 - **Unread Badges:** Messages and Team Chat nav items display unread count badges (destructive-colored circles), visible even when the item is active
 - **Role Switcher:** "View as" section with 4 role buttons (Super Admin, Team Lead, Agent, Finance)
 - **User Profile:** Avatar circle (initial), name, role label, logout button
@@ -526,6 +563,7 @@ Four roles with hierarchical access:
 | Card Rates | ✅ | ✅ | ✅ | ❌ |
 | Orders | ✅ | ✅ | ✅ | ✅ |
 | Volume Ranking | ✅ | ✅ | ✅ | ✅ |
+| Rewards | ✅ | ✅ | ✅ | ✅ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
@@ -752,7 +790,28 @@ Admin view of the trading volume ranking system.
 - Scrollable with sticky header (max 500px height)
 - Medal icons: Trophy (gold) for #1, Medal (silver) for #2, Award (bronze) for #3
 
-### 5.10 Orders (`/admin/orders`)
+### 5.10 Rewards Management (`/admin/rewards`)
+
+**Component:** `src/pages/admin/AdminRewards.tsx`  
+**Access:** All roles
+
+Admin view of all rewards distributed to customers.
+
+#### Summary Cards (3-column grid)
+- **Total Rewards** — accent color, sum of all rewards
+- **Ranking Rewards** — success color, sum of ranking-type rewards
+- **Referral Rewards** — warning color, sum of referral-type rewards
+
+#### Filters
+- **Alias search:** Filter by customer alias (case-insensitive)
+- **Type filter:** Select dropdown — All Types, Ranking, Referral
+
+#### Rewards Table
+- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date
+- 12 mock reward records covering both ranking and referral types
+- Empty state: "No rewards found"
+
+### 5.11 Orders (`/admin/orders`)
 
 **Component:** `src/pages/admin/AdminOrders.tsx`
 
@@ -769,7 +828,7 @@ Admin view of the trading volume ranking system.
   - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
   - Created (timestamp)
 
-### 5.11 Naira Rate (`/admin/naira-rate`)
+### 5.12 Naira Rate (`/admin/naira-rate`)
 
 **Component:** `src/pages/admin/AdminNairaRate.tsx`  
 **Access:** Super Admin, Team Lead
@@ -788,7 +847,7 @@ Admin view of the trading volume ranking system.
   - Changed By (admin name)
   - Reason
 
-### 5.12 User Management (`/admin/users`)
+### 5.13 User Management (`/admin/users`)
 
 **Component:** `src/pages/admin/AdminUsers.tsx`  
 **Access:** Super Admin only
@@ -800,7 +859,7 @@ Admin view of the trading volume ranking system.
   - Status (Active / Offline) — color-coded badges
   - Last Login (relative time)
 
-### 5.13 Team Dashboard (`/admin/team`)
+### 5.14 Team Dashboard (`/admin/team`)
 
 **Component:** `src/pages/admin/AdminTeam.tsx`  
 **Access:** Super Admin, Team Lead
@@ -808,7 +867,7 @@ Admin view of the trading volume ranking system.
 - Team performance metrics
 - Agent activity monitoring
 
-### 5.14 IP & Country Restrictions (`/admin/ip-restrictions`)
+### 5.15 IP & Country Restrictions (`/admin/ip-restrictions`)
 
 **Component:** `src/pages/admin/AdminIpRestrictions.tsx`  
 **Access:** Super Admin only
@@ -836,7 +895,7 @@ Two-section management page:
   - Action performed
 - Toast notifications for all actions
 
-### 5.15 Sensitive Words Filter (`/admin/sensitive-words`)
+### 5.16 Sensitive Words Filter (`/admin/sensitive-words`)
 
 **Component:** `src/pages/admin/AdminSensitiveWords.tsx`  
 **Access:** Super Admin only
@@ -864,7 +923,7 @@ Two-section management page:
 - Super Admins see original text
 - (Not enforced in prototype — specification only)
 
-### 5.16 API Config (`/admin/api-config`)
+### 5.17 API Config (`/admin/api-config`)
 
 **Component:** `src/pages/admin/AdminApiConfig.tsx`  
 **Access:** Super Admin only
@@ -873,7 +932,7 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
-### 5.17 SMS Broadcast (`/admin/broadcast`)
+### 5.18 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
 **Access:** Super Admin only
@@ -882,7 +941,7 @@ Two-section management page:
 - Audience selection
 - Send functionality
 
-### 5.18 Admin User Guide (`/admin/guide`)
+### 5.19 Admin User Guide (`/admin/guide`)
 
 **Component:** `src/pages/admin/AdminGuide.tsx`
 
@@ -913,7 +972,7 @@ Two-section management page:
 - Quick-nav buttons for jumping to sections
 - Expand All / Collapse All controls
 
-### 5.19 Customer Guide Reference (`/admin/customer-guide`)
+### 5.20 Customer Guide Reference (`/admin/customer-guide`)
 
 **Component:** `src/pages/admin/AdminCustomerGuide.tsx`
 
@@ -1110,7 +1169,15 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | **Customer Contacts** | id, name, status (online/away), isAgent, lastSeen |
 | **Card Brands** | name, currencies[] (used in Cardlight cascading selector) |
 
-### 7.9 System Constants
+### 7.9 Wallet Balance
+```typescript
+// Wallet balance is split into two components:
+tradingBalance: number;   // 550,000 — earnings from card trades
+rewardsBalance: number;   // 6,200 — earnings from ranking + referral rewards
+walletBalance: number;    // tradingBalance + rewardsBalance (computed)
+```
+
+### 7.10 System Constants
 - `systemNairaRate`: 289 (₦ per CNY)
 - `systemDenomination`: 100
 - `systemPriceControl`: 85.00 (%)
@@ -1270,6 +1337,7 @@ src/
 │   │   ├── AdminApiConfig.tsx        # API configuration
 │   │   ├── AdminBroadcast.tsx        # SMS broadcast
 │   │   ├── AdminRanking.tsx           # Trading volume ranking (admin)
+│   │   ├── AdminRewards.tsx          # Rewards management (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
@@ -1278,12 +1346,10 @@ src/
 │       ├── CustomerChat.tsx          # Chat list
 │       ├── CustomerChatView.tsx      # Chat view with order tracking
 │       ├── CustomerContacts.tsx      # Agent directory
-│       ├── CustomerMe.tsx            # Profile (309 lines — multi-section)
+│       ├── CustomerMe.tsx            # Profile (multi-section)
+│       ├── CustomerRewards.tsx      # Rewards overview + referral + history
 │       ├── CustomerRanking.tsx       # Trading volume ranking (customer)
 │       └── CustomerGuide.tsx         # User guide
-└── test/
-    ├── setup.ts
-    └── example.test.ts
 ```
 
 ---
@@ -1328,7 +1394,19 @@ src/
 
 ## 12. Full Changelog
 
-### v4.3 → v4.4 (Current)
+### v4.4 → v4.5 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Wallet Balance Split** | `walletBalance` decomposed into `tradingBalance` (₦550,000) + `rewardsBalance` (₦6,200); breakdown shown on Home, Me profile card, and My Wallet sub-view when balance is visible |
+| **Customer Rewards Page** | Redesigned `/customer/rewards` as a single-page layout with total rewards card (ranking vs referral breakdown), referral code, invite code input, rewards history list, and "How it works" info modal via header icon |
+| **Admin Rewards Page** | New `/admin/rewards` page with summary cards (total/ranking/referral), alias search, type filter, and detailed rewards table — accessible to all roles |
+| **RBAC Updated** | Rewards added to RBAC table — accessible to all 4 roles |
+| **Sidebar Updated** | 16 nav items (added Rewards with Gift icon) |
+| **Home Actions Updated** | 4-action grid now: Sell Cards, Rewards, Ranking, Calculator (replaces Live Rates, Chat, Guide) |
+| **PRD Updated** | PRD bumped to v4.5 with wallet split, rewards pages, updated routes, RBAC, and file structure |
+
+### v4.3 → v4.4
 
 | Change | Description |
 |--------|-------------|
