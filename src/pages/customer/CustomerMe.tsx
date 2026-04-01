@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { bankAccounts, walletBalance, walletTransactions } from "@/data/mock";
+import { bankAccounts, walletBalance, tradingBalance, rewardsBalance, walletTransactions } from "@/data/mock";
 import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
