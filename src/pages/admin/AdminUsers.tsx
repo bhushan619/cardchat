@@ -32,10 +32,26 @@ const roleLabels: Record<string, { label: string; color: string }> = {
 };
 
 const PERMISSIONS: Record<string, string[]> = {
-  super_admin: ["View All Chats", "Manage Users", "Set Naira Rate", "API Config", "SMS Broadcast", "View Reports", "Process Orders"],
-  team_lead: ["View Team Chats", "View Reports", "Process Orders", "Reassign Customers"],
-  agent: ["View Assigned Chats", "Process Orders"],
-  finance: ["View Wallets", "View Naira Rate", "View Orders (Read-only)"],
+  super_admin: [
+    "View All Chats", "Manage Customers", "Manage Card Rates", "Process Orders",
+    "Platform Wallet", "Set Naira Rate", "Manage Users", "Team Dashboard",
+    "IP & Country Restrictions", "Sensitive Words", "API Config", "SMS Broadcast",
+    "Volume Ranking", "Rewards", "Customer Guide", "Admin Guide", "Team Chat",
+    "Manage Transaction PINs",
+  ],
+  team_lead: [
+    "View Team Chats", "Manage Customers", "Manage Card Rates", "Process Orders",
+    "Set Naira Rate", "Team Dashboard", "Volume Ranking", "Rewards",
+    "Customer Guide", "Admin Guide", "Team Chat",
+  ],
+  agent: [
+    "View Assigned Chats", "View Customers", "View Card Rates", "Process Orders",
+    "Volume Ranking", "Rewards", "Customer Guide", "Admin Guide", "Team Chat",
+  ],
+  finance: [
+    "View Orders (Read-only)", "Platform Wallet", "Set Naira Rate",
+    "Volume Ranking", "Rewards", "Team Chat",
+  ],
 };
 
 export default function AdminUsers() {
