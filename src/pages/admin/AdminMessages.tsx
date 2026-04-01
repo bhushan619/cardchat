@@ -455,31 +455,6 @@ export default function AdminMessages() {
               </Button>
             </div>
           );
-        case "negotiation":
-          return (
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 h-8 text-xs"
-                onClick={() => statusOrder && setDetailOrderId(statusOrder.id)}
-              >
-                Details
-              </Button>
-              <Button
-                size="sm"
-                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => setConfirmAction({
-                  type: "successful",
-                  title: "Confirm Negotiated Trade",
-                  desc: `This will complete the transaction and credit the negotiated payout to the customer's wallet.`,
-                  onConfirm: () => { handleStatusTransition(selectedId, "success", statusOrder?.payout); setConfirmAction(null); }
-                })}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
-              </Button>
-            </div>
-          );
         default:
           return null;
       }
