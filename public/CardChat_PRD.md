@@ -90,6 +90,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/sensitive-words     → Sensitive words filter
 /admin/api-config          → API configuration
 /admin/ranking             → Trading volume ranking (all roles)
+/admin/rewards             → Rewards management (all roles)
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
