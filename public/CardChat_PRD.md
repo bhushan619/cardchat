@@ -864,7 +864,7 @@ Two-section management page:
 - Super Admins see original text
 - (Not enforced in prototype — specification only)
 
-### 5.15 API Config (`/admin/api-config`)
+### 5.16 API Config (`/admin/api-config`)
 
 **Component:** `src/pages/admin/AdminApiConfig.tsx`  
 **Access:** Super Admin only
