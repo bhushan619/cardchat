@@ -1,13 +1,20 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Gift, Search, ArrowDownLeft } from "lucide-react";
+import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+} from "@/components/ui/dialog";
+import { getBiWeeklyPeriods } from "@/data/rankingMock";
+import { rankingList } from "@/data/rankingMock";
+import { toast } from "sonner";
 
 type RewardRecord = {
   id: string;
@@ -19,34 +26,104 @@ type RewardRecord = {
   time: string;
 };
 
+// Previously distributed rewards (referral auto, ranking manual)
 const rewardRecords: RewardRecord[] = [
-  { id: "RW-001", alias: "Z9W4MK", type: "ranking", amount: 500, description: "Monthly ranking reward — Rank #1", date: "Mar 31, 2026", time: "12:00 AM" },
-  { id: "RW-002", alias: "P3L7GX", type: "ranking", amount: 500, description: "Monthly ranking reward — Rank #2", date: "Mar 31, 2026", time: "12:00 AM" },
-  { id: "RW-003", alias: "T6N8QR", type: "ranking", amount: 500, description: "Monthly ranking reward — Rank #3", date: "Mar 31, 2026", time: "12:00 AM" },
-  { id: "RW-004", alias: "F1H5VB", type: "ranking", amount: 200, description: "Monthly ranking reward — Rank #4", date: "Mar 31, 2026", time: "12:00 AM" },
-  { id: "RW-005", alias: "A7X3KP", type: "ranking", amount: 50, description: "Monthly ranking reward — Rank #18", date: "Mar 31, 2026", time: "12:00 AM" },
   { id: "RW-006", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited K9M2BL", date: "Mar 20, 2026", time: "02:15 PM" },
   { id: "RW-007", alias: "R4P8TN", type: "referral", amount: 500, description: "Referral bonus — invited B5N1QW", date: "Mar 18, 2026", time: "09:30 AM" },
-  { id: "RW-008", alias: "C8J2YS", type: "ranking", amount: 200, description: "Monthly ranking reward — Rank #5", date: "Mar 31, 2026", time: "12:00 AM" },
-  { id: "RW-009", alias: "M4R9DL", type: "ranking", amount: 200, description: "Monthly ranking reward — Rank #6", date: "Mar 31, 2026", time: "12:00 AM" },
   { id: "RW-010", alias: "W8T4FJ", type: "referral", amount: 500, description: "Referral bonus — invited H2L6YD", date: "Mar 15, 2026", time: "11:00 AM" },
   { id: "RW-011", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited D3F9RX", date: "Mar 10, 2026", time: "04:45 PM" },
-  { id: "RW-012", alias: "B5E3UF", type: "ranking", amount: 120, description: "Monthly ranking reward — Rank #9", date: "Mar 31, 2026", time: "12:00 AM" },
 ];
+
+// Mock: which periods have had ranking rewards distributed
+const distributedPeriods = new Set<string>();
+
+// Mock pending orders per period
+const mockPendingOrders: Record<string, { id: string; customer: string; status: string; cardType: string; amount: number }[]> = {
+  "2-h1": [], // Mar H1 — all settled
+  "2-h2": [
+    { id: "ORD-20260318-002", customer: "K9M2BL", status: "in_trade", cardType: "Amazon US", amount: 150 },
+    { id: "ORD-20260320-004", customer: "R4P8TN", status: "pending", cardType: "iTunes US", amount: 200 },
+  ],
+};
+
+function getPeriodOptions() {
+  const options: { value: string; label: string; start: Date; end: Date }[] = [];
+  for (let month = 0; month < 12; month++) {
+    const [p1, p2] = getBiWeeklyPeriods(2026, month);
+    options.push({ value: `${month}-h1`, label: p1.label, start: p1.start, end: p1.end });
+    options.push({ value: `${month}-h2`, label: p2.label, start: p2.start, end: p2.end });
+  }
+  return options;
+}
+
+const periodOptions = getPeriodOptions();
 
 export default function AdminRewards() {
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "ranking" | "referral">("all");
+  const [distributeOpen, setDistributeOpen] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState("2-h1");
+  const [checking, setChecking] = useState(false);
+  const [checkResult, setCheckResult] = useState<"ready" | "blocked" | null>(null);
+  const [distributing, setDistributing] = useState(false);
+  const [allRecords, setAllRecords] = useState<RewardRecord[]>(rewardRecords);
 
-  const filtered = rewardRecords.filter(r => {
+  const pendingOrders = mockPendingOrders[selectedPeriod] || [];
+  const isDistributed = distributedPeriods.has(selectedPeriod);
+  const activePeriod = periodOptions.find(p => p.value === selectedPeriod);
+
+  const filtered = allRecords.filter(r => {
     const matchSearch = !search || r.alias.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "all" || r.type === typeFilter;
     return matchSearch && matchType;
   });
 
-  const totalRewards = rewardRecords.reduce((s, r) => s + r.amount, 0);
-  const totalRanking = rewardRecords.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
-  const totalReferral = rewardRecords.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
+  const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
+  const totalRanking = allRecords.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
+  const totalReferral = allRecords.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
+
+  const handleCheckAndDistribute = () => {
+    setChecking(true);
+    setCheckResult(null);
+    // Simulate checking orders
+    setTimeout(() => {
+      setChecking(false);
+      if (pendingOrders.length > 0) {
+        setCheckResult("blocked");
+      } else {
+        setCheckResult("ready");
+      }
+    }, 1200);
+  };
+
+  const handleDistribute = () => {
+    setDistributing(true);
+    setTimeout(() => {
+      // Generate ranking reward records from the ranking list
+      const newRecords: RewardRecord[] = rankingList.map((u, i) => ({
+        id: `RW-${String(allRecords.length + i + 1).padStart(3, "0")}`,
+        alias: u.alias,
+        type: "ranking" as const,
+        amount: u.reward,
+        description: `Bi-weekly ranking reward — Rank #${u.rank} (${activePeriod?.label || selectedPeriod})`,
+        date: activePeriod ? new Intl.DateTimeFormat("en-US", { month: "short", day: "2-digit", year: "numeric" }).format(activePeriod.end) : "—",
+        time: "12:00 AM",
+      }));
+      setAllRecords(prev => [...newRecords, ...prev]);
+      distributedPeriods.add(selectedPeriod);
+      setDistributing(false);
+      setDistributeOpen(false);
+      setCheckResult(null);
+      toast.success(`Ranking rewards distributed for ${activePeriod?.label || selectedPeriod}`);
+    }, 1500);
+  };
+
+  const handleOpenDistribute = () => {
+    setCheckResult(null);
+    setChecking(false);
+    setDistributing(false);
+    setDistributeOpen(true);
+  };
 
   return (
     <AdminLayout>
@@ -57,9 +134,13 @@ export default function AdminRewards() {
               <Gift className="w-5 h-5 text-accent" /> Rewards Management
             </h1>
             <p className="text-sm text-muted-foreground">
-              Track all rewards distributed to customers
+              Track all rewards distributed to customers. Referral rewards are automatic; ranking rewards require manual distribution.
             </p>
           </div>
+          <Button onClick={handleOpenDistribute} className="gap-2">
+            <Trophy className="w-4 h-4" />
+            Distribute Ranking Rewards
+          </Button>
         </div>
 
         {/* Summary Cards */}
@@ -149,6 +230,128 @@ export default function AdminRewards() {
           </Table>
         </div>
       </div>
+
+      {/* Distribute Ranking Rewards Dialog */}
+      <Dialog open={distributeOpen} onOpenChange={setDistributeOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Trophy className="w-5 h-5 text-accent" />
+              Distribute Ranking Rewards
+            </DialogTitle>
+            <DialogDescription>
+              Select a bi-weekly period and verify all orders are settled before distributing ranking rewards.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
+            {/* Period selector */}
+            <div>
+              <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Bi-Weekly Period</label>
+              <Select value={selectedPeriod} onValueChange={v => { setSelectedPeriod(v); setCheckResult(null); }}>
+                <SelectTrigger className="h-9 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="max-h-[240px]">
+                  {periodOptions.map(p => (
+                    <SelectItem key={p.value} value={p.value} className="text-xs">
+                      {p.label}
+                      {distributedPeriods.has(p.value) && " ✓"}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* Already distributed notice */}
+            {isDistributed && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-success/10 border border-success/20">
+                <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
+                <div className="text-xs">
+                  <p className="font-semibold text-success">Already Distributed</p>
+                  <p className="text-muted-foreground mt-0.5">Ranking rewards for this period have already been distributed.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Check result: blocked */}
+            {checkResult === "blocked" && (
+              <div className="space-y-3">
+                <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
+                  <AlertTriangle className="w-4 h-4 text-destructive mt-0.5 shrink-0" />
+                  <div className="text-xs">
+                    <p className="font-semibold text-destructive">Cannot Distribute — Open Orders Found</p>
+                    <p className="text-muted-foreground mt-0.5">
+                      {pendingOrders.length} order{pendingOrders.length > 1 ? "s" : ""} must be settled or cancelled before ranking rewards can be distributed.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Pending orders list */}
+                <div className="bg-muted/50 rounded-lg border overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-[10px] font-semibold py-2">Order ID</TableHead>
+                        <TableHead className="text-[10px] font-semibold py-2">Customer</TableHead>
+                        <TableHead className="text-[10px] font-semibold py-2">Card</TableHead>
+                        <TableHead className="text-[10px] font-semibold py-2">Status</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {pendingOrders.map(o => (
+                        <TableRow key={o.id}>
+                          <TableCell className="text-[10px] font-medium text-accent py-1.5">{o.id}</TableCell>
+                          <TableCell className="text-[10px] font-bold py-1.5">{o.customer}</TableCell>
+                          <TableCell className="text-[10px] py-1.5">{o.cardType} ${o.amount}</TableCell>
+                          <TableCell className="py-1.5">
+                            <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warning/10 text-warning font-medium capitalize">
+                              {o.status.replace("_", " ")}
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
+
+            {/* Check result: ready */}
+            {checkResult === "ready" && !isDistributed && (
+              <div className="flex items-start gap-2 p-3 rounded-lg bg-success/10 border border-success/20">
+                <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
+                <div className="text-xs">
+                  <p className="font-semibold text-success">All Orders Settled</p>
+                  <p className="text-muted-foreground mt-0.5">
+                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling ₦{rankingList.reduce((s, u) => s + u.reward, 0).toLocaleString()}.
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <DialogFooter className="gap-2">
+            {!checkResult && !isDistributed && (
+              <Button onClick={handleCheckAndDistribute} disabled={checking} className="gap-2">
+                {checking ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+                {checking ? "Checking orders..." : "Check & Generate Rankings"}
+              </Button>
+            )}
+            {checkResult === "blocked" && (
+              <Button onClick={() => { setCheckResult(null); }} variant="outline" className="gap-2">
+                Retry Check
+              </Button>
+            )}
+            {checkResult === "ready" && !isDistributed && (
+              <Button onClick={handleDistribute} disabled={distributing} className="gap-2">
+                {distributing ? <Loader2 className="w-4 h-4 animate-spin" /> : <Gift className="w-4 h-4" />}
+                {distributing ? "Distributing..." : "Confirm & Distribute"}
+              </Button>
+            )}
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
