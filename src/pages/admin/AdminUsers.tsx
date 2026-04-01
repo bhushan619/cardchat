@@ -149,7 +149,7 @@ export default function AdminUsers() {
     setPinUser(null);
   };
 
-  const getUserPinStatus = (u: User) => !!localStorage.getItem(`adminPin_${u.role}`);
+  const getUserPinStatus = (u: User | null) => !!u && !!localStorage.getItem(`adminPin_${u.role}`);
 
   return (
     <AdminLayout>
