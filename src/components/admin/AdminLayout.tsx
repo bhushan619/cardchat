@@ -26,7 +26,7 @@ const navItems = [
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   { id: "ranking", label: "Volume Ranking", icon: TrendingUp, path: "/admin/ranking" },
-  { id: "rewards", label: "Rewards", icon: BarChart3, path: "/admin/rewards" },
+  { id: "rewards", label: "Rewards", icon: Gift, path: "/admin/rewards" },
   { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide", roles: ["super_admin", "team_lead", "agent"] },
   { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead", "agent"] },
 ];
