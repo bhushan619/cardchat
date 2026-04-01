@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -59,6 +60,8 @@ function getPeriodOptions() {
 const periodOptions = getPeriodOptions();
 
 export default function AdminRewards() {
+  const { role } = useAdminRole();
+  const isSuperAdmin = role === "super_admin";
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "ranking" | "referral">("all");
   const [distributeOpen, setDistributeOpen] = useState(false);
@@ -137,10 +140,12 @@ export default function AdminRewards() {
               Track all rewards distributed to customers. Referral rewards are automatic; ranking rewards require manual distribution.
             </p>
           </div>
-          <Button onClick={handleOpenDistribute} className="gap-2">
-            <Trophy className="w-4 h-4" />
-            Distribute Ranking Rewards
-          </Button>
+          {isSuperAdmin && (
+            <Button onClick={handleOpenDistribute} className="gap-2">
+              <Trophy className="w-4 h-4" />
+              Distribute Ranking Rewards
+            </Button>
+          )}
         </div>
 
         {/* Summary Cards */}
