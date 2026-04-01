@@ -771,7 +771,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 ### 5.9 Volume Ranking (`/admin/ranking`)
 
 **Component:** `src/pages/admin/AdminRanking.tsx`  
-**Access:** All roles
+**Access:** Super Admin, Team Lead, Agent (Finance excluded)
 
 Admin view of the trading volume ranking system.
 
