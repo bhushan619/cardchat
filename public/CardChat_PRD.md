@@ -1242,7 +1242,8 @@ src/
 ├── contexts/
 │   └── AdminRoleContext.tsx          # RBAC role state (super_admin/team_lead/agent)
 ├── data/
-│   └── mock.ts                      # All mock data
+│   ├── mock.ts                      # All mock data
+│   └── rankingMock.ts               # Ranking tiers, users, helpers
 ├── hooks/
 │   ├── use-mobile.tsx                # Mobile viewport detection
 │   ├── use-theme.tsx                 # Theme provider + toggle
