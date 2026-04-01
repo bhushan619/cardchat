@@ -1394,7 +1394,19 @@ src/
 
 ## 12. Full Changelog
 
-### v4.3 → v4.4 (Current)
+### v4.4 → v4.5 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Wallet Balance Split** | `walletBalance` decomposed into `tradingBalance` (₦550,000) + `rewardsBalance` (₦6,200); breakdown shown on Home, Me profile card, and My Wallet sub-view when balance is visible |
+| **Customer Rewards Page** | Redesigned `/customer/rewards` as a single-page layout with total rewards card (ranking vs referral breakdown), referral code, invite code input, rewards history list, and "How it works" info modal via header icon |
+| **Admin Rewards Page** | New `/admin/rewards` page with summary cards (total/ranking/referral), alias search, type filter, and detailed rewards table — accessible to all roles |
+| **RBAC Updated** | Rewards added to RBAC table — accessible to all 4 roles |
+| **Sidebar Updated** | 16 nav items (added Rewards with Gift icon) |
+| **Home Actions Updated** | 4-action grid now: Sell Cards, Rewards, Ranking, Calculator (replaces Live Rates, Chat, Guide) |
+| **PRD Updated** | PRD bumped to v4.5 with wallet split, rewards pages, updated routes, RBAC, and file structure |
+
+### v4.3 → v4.4
 
 | Change | Description |
 |--------|-------------|
