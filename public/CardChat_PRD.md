@@ -1346,12 +1346,10 @@ src/
 │       ├── CustomerChat.tsx          # Chat list
 │       ├── CustomerChatView.tsx      # Chat view with order tracking
 │       ├── CustomerContacts.tsx      # Agent directory
-│       ├── CustomerMe.tsx            # Profile (309 lines — multi-section)
+│       ├── CustomerMe.tsx            # Profile (multi-section)
+│       ├── CustomerRewards.tsx      # Rewards overview + referral + history
 │       ├── CustomerRanking.tsx       # Trading volume ranking (customer)
 │       └── CustomerGuide.tsx         # User guide
-└── test/
-    ├── setup.ts
-    └── example.test.ts
 ```
 
 ---
