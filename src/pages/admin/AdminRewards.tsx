@@ -82,7 +82,13 @@ export default function AdminRewards() {
   const filtered = allRecords.filter(r => {
     const matchSearch = !search || r.alias.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "all" || r.type === typeFilter;
-    return matchSearch && matchType;
+    let matchDate = true;
+    if (dateFrom || dateTo) {
+      const recordDate = parse(`${r.date} ${r.time}`, "MMM dd, yyyy hh:mm aa", new Date());
+      if (dateFrom && recordDate < dateFrom) matchDate = false;
+      if (dateTo && recordDate > dateTo) matchDate = false;
+    }
+    return matchSearch && matchType && matchDate;
   });
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
