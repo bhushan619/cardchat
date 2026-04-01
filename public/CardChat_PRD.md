@@ -882,7 +882,7 @@ Two-section management page:
 - Audience selection
 - Send functionality
 
-### 5.17 Admin User Guide (`/admin/guide`)
+### 5.18 Admin User Guide (`/admin/guide`)
 
 **Component:** `src/pages/admin/AdminGuide.tsx`
 
