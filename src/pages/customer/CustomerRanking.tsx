@@ -86,9 +86,20 @@ export default function CustomerRanking() {
               Trading Volume Ranking
             </h2>
             <p className="text-[11px] text-muted-foreground">
-              Mar 01 – Mar 31, 2026
+              {format(periodStart, "MMM dd")} – {format(periodEnd, "MMM dd, yyyy")}
             </p>
           </div>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="h-7 w-[7.5rem] text-[11px] gap-1 border-muted">
+              <CalendarIcon className="w-3 h-3 text-muted-foreground" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {months.map((m, i) => (
+                <SelectItem key={i} value={String(i)} className="text-xs">{m}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
           <DialogTrigger asChild>
