@@ -39,7 +39,6 @@ export function toCustomerStatus(status: AgentOrderStatus): CustomerOrderStatus 
     case "pending":
       return "order_created";
     case "in_trade":
-    case "negotiation":
       return "order_processing";
     case "order_cancelled":
       return "failed";
