@@ -424,7 +424,37 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 - Persistence: `localStorage` keys `beginner_guide_done` and `beginner_guide_step`
 - Viewport-aware positioning to prevent overflow on mobile devices
 
-### 4.8 Trading Volume Ranking (`/customer/ranking`)
+### 4.8 Rewards (`/customer/rewards`)
+
+**Component:** `src/pages/customer/CustomerRewards.tsx`
+
+A single-page rewards overview combining earnings summary, referral tools, and history.
+
+#### Total Rewards Card
+- Gradient card (`from-accent to-accent/80`) centered
+- Total rewards earned (₦6,200) in large 3xl font
+- **Breakdown:** Ranking vs Referral earnings side-by-side with divider
+
+#### Referral Code
+- User's 6-char alias as referral code with copy button
+- Compact card layout
+
+#### Invite Code Input
+- Inline input + submit button (hidden after successful submission)
+- 7-day submission window note
+
+#### Rewards History
+- Chronological list of all earned rewards
+- Each entry shows: icon (Trophy for ranking, Gift for referral), description, date, amount
+- Color-coded: ranking = accent, referral = warning
+- Amount shown in success green with ArrowDownLeft icon
+
+#### How It Works (Info Modal)
+- Triggered via Info icon in header bar
+- Bottom sheet modal explaining Ranking Rewards, Referral Rewards, and Invite Code rules
+- "Got it" dismiss button
+
+### 4.9 Trading Volume Ranking (`/customer/ranking`)
 
 **Component:** `src/pages/customer/CustomerRanking.tsx`
 
