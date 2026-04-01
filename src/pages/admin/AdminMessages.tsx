@@ -387,10 +387,8 @@ export default function AdminMessages() {
           return { icon: "⏳", title: "Waiting for buyer...", desc: "The buyer is reviewing the order.", colorClass: "text-primary" };
         case "in_trade":
           return { icon: "🔄", title: "In Trade — Card Decision", desc: "The buyer has received the order. What's the result?", colorClass: "text-foreground" };
-        case "negotiation":
-          return { icon: "⚠️", title: "Negotiation in Progress", desc: "The card was flagged. What's the negotiation result?", colorClass: "text-warning" };
         case "order_cancelled":
-          return { icon: "❌", title: "Order Cancelled", desc: "Negotiation failed. This order has been cancelled.", colorClass: "text-destructive" };
+          return { icon: "❌", title: "Order Cancelled", desc: "This order has been cancelled.", colorClass: "text-destructive" };
         case "success":
           return { icon: "✅", title: "Trade Successful — Wallet Credited", desc: "Funds have been credited to the customer's wallet.", colorClass: "text-success" };
       }
