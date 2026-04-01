@@ -106,10 +106,11 @@ const guides: GuideSection[] = [
     id: "profile",
     title: "Managing Your Profile",
     icon: User,
-    description: "View your alias, bank accounts, and transaction history.",
+    description: "View your alias, wallet balances, and transaction history.",
     steps: [
       { text: "Tap the 'Me' tab at the bottom of the screen." },
       { text: "Your 6-character alias is displayed prominently at the top — this is your trading identity." },
+      { text: "Your total wallet balance is shown with a breakdown: Trading Balance (earnings from card trades) and Rewards Balance (earnings from ranking + referrals)." },
       { text: "Your registered bank accounts are listed here — these are used for receiving payouts." },
       { text: "Review your transaction history to track past trades and payments." },
       { text: "Check your account status and any VIP/Repeat customer badges.", tip: "Keep your bank details up-to-date to avoid payout delays." },
