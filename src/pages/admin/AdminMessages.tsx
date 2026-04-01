@@ -1404,9 +1404,8 @@ export default function AdminMessages() {
                           newDenom: parseFloat(negotiateDenom), newRate: parseFloat(negotiateRate), newAmount: payout,
                         }
                       }));
-                      // Transition through negotiation to success (completing the transaction)
-                      handleStatusTransition(selectedId, "negotiation");
-                      setTimeout(() => handleStatusTransition(selectedId, "success", payout), 100);
+                      // Transition directly to success
+                      handleStatusTransition(selectedId, "success", payout);
                       addSystemMessage(`✅ Negotiation confirmed. Payout ₦${payout.toLocaleString()}.`);
                     }
                     setNegotiateOpen(false);

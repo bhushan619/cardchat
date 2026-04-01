@@ -10,7 +10,7 @@ const statusColors: Record<string, string> = {
   pending_sale: "bg-warning/10 text-warning",
   pending: "bg-primary/10 text-primary",
   in_trade: "bg-accent/10 text-accent",
-  negotiation: "bg-warning/10 text-warning",
+  
   order_cancelled: "bg-destructive/10 text-destructive",
   success: "bg-success/10 text-success",
 };
