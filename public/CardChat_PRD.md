@@ -1269,6 +1269,7 @@ src/
 │   │   ├── AdminSensitiveWords.tsx   # Sensitive words filter
 │   │   ├── AdminApiConfig.tsx        # API configuration
 │   │   ├── AdminBroadcast.tsx        # SMS broadcast
+│   │   ├── AdminRanking.tsx           # Trading volume ranking (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
