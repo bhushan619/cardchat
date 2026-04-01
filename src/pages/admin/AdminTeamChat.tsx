@@ -304,17 +304,6 @@ export default function AdminTeamChat() {
                 </button>
               ))}
           </div>
-          {dmTarget && (
-            <div className="p-2 border-t">
-              <button
-                onClick={() => { setDmTarget(null); setDmInput(""); }}
-                className="w-full flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-xs font-medium text-accent hover:bg-accent/10 transition-colors"
-              >
-                <Users className="w-3.5 h-3.5" />
-                Back to Group
-              </button>
-            </div>
-          )}
         </div>
       </div>
     </AdminLayout>
