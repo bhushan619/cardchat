@@ -531,7 +531,7 @@ A full-height flex layout with:
 
 #### Sidebar (w-60, fixed)
 - **Header:** CardChat logo, "Admin Panel" subtitle
-- **Navigation:** 15 sidebar items with icons, role-filtered visibility
+- **Navigation:** 16 sidebar items with icons, role-filtered visibility
 - **Unread Badges:** Messages and Team Chat nav items display unread count badges (destructive-colored circles), visible even when the item is active
 - **Role Switcher:** "View as" section with 4 role buttons (Super Admin, Team Lead, Agent, Finance)
 - **User Profile:** Avatar circle (initial), name, role label, logout button
