@@ -971,7 +971,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Tab |
 |-------------|-----|
 | No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` | Consulting |
-| `in_trade` / `negotiation` / `success` | Trading |
+| `in_trade` / `success` | Trading |
 | `pending_payment` | Pending Payment |
 
 ### 6.4 Status Persistence
