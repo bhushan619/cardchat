@@ -175,7 +175,7 @@ export default function AdminRewards() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           <div className="relative flex-1 max-w-xs">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <Input
@@ -195,6 +195,16 @@ export default function AdminRewards() {
               <SelectItem value="referral">Referral</SelectItem>
             </SelectContent>
           </Select>
+          <DateTimePicker date={dateFrom} setDate={setDateFrom} label="From" />
+          <DateTimePicker date={dateTo} setDate={setDateTo} label="To" />
+          {(dateFrom || dateTo) && (
+            <button
+              onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
+              className="text-xs text-muted-foreground hover:text-foreground underline"
+            >
+              Clear dates
+            </button>
+          )}
         </div>
 
         {/* Table */}
