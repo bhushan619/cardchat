@@ -255,9 +255,20 @@ export default function AdminTeamChat() {
 
         {/* Members panel */}
         <div className="w-52 border-l bg-muted/30 flex flex-col shrink-0">
-          <div className="p-4 border-b">
-            <h3 className="font-heading font-bold text-sm">Members</h3>
-            <p className="text-[10px] text-muted-foreground mt-0.5">{onlineCount} online · {teamMembers.length} total</p>
+          <div className="p-4 border-b space-y-2">
+            {dmTarget && (
+              <button
+                onClick={() => { setDmTarget(null); setDmInput(""); }}
+                className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium bg-accent/10 text-accent hover:bg-accent/20 transition-colors"
+              >
+                <Users className="w-3.5 h-3.5" />
+                Team Chat
+              </button>
+            )}
+            <div>
+              <h3 className="font-heading font-bold text-sm">Members</h3>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{onlineCount} online · {teamMembers.length} total</p>
+            </div>
           </div>
           <div className="flex-1 overflow-y-auto p-2 space-y-1">
             {otherMembers
