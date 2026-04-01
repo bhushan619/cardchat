@@ -89,6 +89,7 @@ const App = () => (
                   <Route path="team-chat" element={<AdminTeamChat />} />
                   <Route path="profile" element={<AdminProfile />} />
                   <Route path="ranking" element={<AdminRanking />} />
+                  <Route path="rewards" element={<AdminRewards />} />
                 </Routes>
               </AdminRoleProvider>
             } />
