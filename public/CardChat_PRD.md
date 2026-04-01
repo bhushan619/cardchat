@@ -960,7 +960,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Customer Sees |
 |-------------|---------------|
 | `pending_sale`, `pending` | Order Created |
-| `in_trade`, `negotiation` | Order Processing |
+| `in_trade` | Order Processing |
 | `order_cancelled` | Failed |
 | `success` | Success |
 | `pending_payment` | Pending Payment |
