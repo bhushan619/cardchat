@@ -788,7 +788,7 @@ Admin view of the trading volume ranking system.
   - Changed By (admin name)
   - Reason
 
-### 5.11 User Management (`/admin/users`)
+### 5.12 User Management (`/admin/users`)
 
 **Component:** `src/pages/admin/AdminUsers.tsx`  
 **Access:** Super Admin only
