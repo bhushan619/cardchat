@@ -800,7 +800,7 @@ Admin view of the trading volume ranking system.
   - Status (Active / Offline) — color-coded badges
   - Last Login (relative time)
 
-### 5.12 Team Dashboard (`/admin/team`)
+### 5.13 Team Dashboard (`/admin/team`)
 
 **Component:** `src/pages/admin/AdminTeam.tsx`  
 **Access:** Super Admin, Team Lead
