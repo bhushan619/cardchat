@@ -808,7 +808,7 @@ Admin view of the trading volume ranking system.
 - Team performance metrics
 - Agent activity monitoring
 
-### 5.13 IP & Country Restrictions (`/admin/ip-restrictions`)
+### 5.14 IP & Country Restrictions (`/admin/ip-restrictions`)
 
 **Component:** `src/pages/admin/AdminIpRestrictions.tsx`  
 **Access:** Super Admin only
