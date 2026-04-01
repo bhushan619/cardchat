@@ -157,7 +157,7 @@ const guides: GuideSection[] = [
     steps: [
       { text: "Navigate to 'User Management' from the sidebar (Super Admin only)." },
       { text: "View all admin users with their Name, Email, Role, Status, and Last Login." },
-      { text: "Roles include: Super Admin (full access), Team Lead (team oversight), and Agent (chat & orders)." },
+      { text: "Roles include: Super Admin (full access), Team Lead (team oversight), Agent (chat & orders), and Finance (wallet & rates)." },
       { text: "User statuses are shown as Active (online) or Offline." },
       { text: "Use this page to monitor team activity and identify who is currently available." },
     ],
