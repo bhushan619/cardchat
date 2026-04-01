@@ -417,7 +417,44 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 - Persistence: `localStorage` keys `beginner_guide_done` and `beginner_guide_step`
 - Viewport-aware positioning to prevent overflow on mobile devices
 
-### 4.8 Customer App Navigation
+### 4.8 Trading Volume Ranking (`/customer/ranking`)
+
+**Component:** `src/pages/customer/CustomerRanking.tsx`
+
+A motivation-first ranking page showing the user's trading volume standing within the current month.
+
+#### Header
+- Back arrow to Home, page title "Trading Volume Ranking"
+- Period label (e.g., "Mar 01 – Mar 31, 2026")
+- "Rules" button (Info icon) → opens Dialog with tier explanations and reset schedule
+
+#### Personal Achievement Card
+- Gradient card (`from-accent/10 via-card to-accent/5`) with decorative circle
+- **My Rank** — large `#N` display (5xl font)
+- **Current Reward** — accent-colored ₦ amount
+- **2-column stats grid:**
+  - Trading Volume (total volume number)
+  - To Next Tier (remaining volume in warning color, or "Max ✓" if at highest tier)
+
+#### Progress & CTA
+- Progress bar to next reward tier with percentage
+- Motivational text: "Trade X more to unlock ₦Y reward — almost there!" (with Flame icon)
+- "Increase Trading Volume" CTA button → navigates to `/customer/contacts`
+
+#### Leaderboard
+- Smart display: Top 20 shown if user is within top 20; otherwise Top 10 + separator + 5 rows around user
+- Grid columns: Rank, Nickname, Volume, Reward
+- Medal icons for top 3 (gold, silver, bronze)
+- Current user row highlighted with `bg-accent/10` and left accent border, "Me" badge
+- Auto-scrolls to user's row on page load
+
+#### Data Source
+- **File:** `src/data/rankingMock.ts`
+- 9 reward tiers (10K–1M volume thresholds)
+- 25 mock users with pre-assigned ranks, volumes, and rewards
+- Helper functions: `getCurrentTier()`, `getNextTier()`
+
+### 4.9 Customer App Navigation
 
 **Bottom Tab Bar** (4 tabs):
 | Tab | Icon | Path | Description |
