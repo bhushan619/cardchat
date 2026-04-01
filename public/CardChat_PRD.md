@@ -1169,7 +1169,15 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | **Customer Contacts** | id, name, status (online/away), isAgent, lastSeen |
 | **Card Brands** | name, currencies[] (used in Cardlight cascading selector) |
 
-### 7.9 System Constants
+### 7.9 Wallet Balance
+```typescript
+// Wallet balance is split into two components:
+tradingBalance: number;   // 550,000 — earnings from card trades
+rewardsBalance: number;   // 6,200 — earnings from ranking + referral rewards
+walletBalance: number;    // tradingBalance + rewardsBalance (computed)
+```
+
+### 7.10 System Constants
 - `systemNairaRate`: 289 (₦ per CNY)
 - `systemDenomination`: 100
 - `systemPriceControl`: 85.00 (%)
