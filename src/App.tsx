@@ -39,6 +39,7 @@ import AdminWallets from "./pages/admin/AdminWallets";
 import AdminTeamChat from "./pages/admin/AdminTeamChat";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminRanking from "./pages/admin/AdminRanking";
+import AdminRewards from "./pages/admin/AdminRewards";
 
 const queryClient = new QueryClient();
 
