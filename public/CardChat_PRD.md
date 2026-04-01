@@ -836,7 +836,7 @@ Two-section management page:
   - Action performed
 - Toast notifications for all actions
 
-### 5.14 Sensitive Words Filter (`/admin/sensitive-words`)
+### 5.15 Sensitive Words Filter (`/admin/sensitive-words`)
 
 **Component:** `src/pages/admin/AdminSensitiveWords.tsx`  
 **Access:** Super Admin only
