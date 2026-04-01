@@ -164,8 +164,8 @@ const guides: GuideSection[] = [
     description: "Earn rewards through ranking achievements and referrals.",
     steps: [
       { text: "Tap 'Rewards' from the Me tab to view your total rewards earned — broken down into Ranking and Referral earnings." },
-      { text: "Ranking rewards are earned by achieving higher tiers (e.g., Gold, Platinum) through consistent trading activity." },
-      { text: "Referral rewards are earned when someone you invite completes their first trade. Share your alias as your referral code." },
+      { text: "Ranking rewards are based on bi-weekly trading volume periods (H1: 1st–15th, H2: 16th–end of month). After all orders are settled, rankings are generated and rewards are distributed by the platform." },
+      { text: "Referral rewards are automatic — earned instantly when someone you invite completes their first trade. Share your alias as your referral code." },
       { text: "You can enter an invite code from another user on the Rewards screen — this links you to their referral.", tip: "Invite codes can be entered at any time via the Rewards screen." },
       { text: "Tap the info icon (ℹ) in the Rewards header to see 'How it Works' — a step-by-step explanation of the rewards program." },
       { text: "Your reward history lists every bonus received, with type, description, date, and amount." },

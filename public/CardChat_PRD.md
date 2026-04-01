@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.5  
+**Version:** 4.6  
 **Date:** April 1, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -562,8 +562,8 @@ Four roles with hierarchical access:
 | Customers | ✅ | ✅ | ✅ | ❌ |
 | Card Rates | ✅ | ✅ | ✅ | ❌ |
 | Orders | ✅ | ✅ | ✅ | ✅ |
-| Volume Ranking | ✅ | ✅ | ✅ | ✅ |
-| Rewards | ✅ | ✅ | ✅ | ✅ |
+| Volume Ranking | ✅ | ✅ | ✅ | ❌ |
+| Rewards | ✅ | ✅ | ✅ | ❌ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
@@ -577,6 +577,7 @@ Four roles with hierarchical access:
 
 - Role stored in React Context (`AdminRoleContext`) — supports 4 roles: `super_admin`, `team_lead`, `agent`, `finance`
 - Sidebar items filtered by role — items with `roles` array are only shown if current role is included; items without `roles` are visible to all
+- Finance role is restricted: no access to Volume Ranking, Rewards, Messages, Customers, Card Rates, Customer Guide, or Admin Guide
 - "View as" switcher is **demo-only** — in production, roles would come from server-side auth
 
 ### 5.4 Messages Page (`/admin`)
@@ -771,7 +772,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 ### 5.9 Volume Ranking (`/admin/ranking`)
 
 **Component:** `src/pages/admin/AdminRanking.tsx`  
-**Access:** All roles
+**Access:** Super Admin, Team Lead, Agent (Finance excluded)
 
 Admin view of the trading volume ranking system.
 
@@ -793,22 +794,32 @@ Admin view of the trading volume ranking system.
 ### 5.10 Rewards Management (`/admin/rewards`)
 
 **Component:** `src/pages/admin/AdminRewards.tsx`  
-**Access:** All roles
+**Access:** Super Admin, Team Lead, Agent (Finance excluded)
 
-Admin view of all rewards distributed to customers.
+Admin view of all rewards distributed to customers. Ranking rewards require **manual distribution by Super Admin only**; referral rewards are automated.
 
 #### Summary Cards (3-column grid)
 - **Total Rewards** — accent color, sum of all rewards
 - **Ranking Rewards** — success color, sum of ranking-type rewards
 - **Referral Rewards** — warning color, sum of referral-type rewards
 
+#### Ranking Reward Distribution (Super Admin only)
+- **"Distribute Ranking Rewards" button** — visible only to Super Admin
+- Requires selecting a bi-weekly period (H1: 1st–15th, H2: 16th–end of month)
+- **Pre-distribution checks:**
+  - All orders in the selected period must be closed/settled
+  - If open orders exist, distribution is blocked and pending orders are displayed in a table
+  - Already-distributed periods cannot be re-distributed
+- On successful distribution: ranking rewards are generated based on the leaderboard for that period and added to the rewards table
+
 #### Filters
 - **Alias search:** Filter by customer alias (case-insensitive)
 - **Type filter:** Select dropdown — All Types, Ranking, Referral
+- **Date/Time range:** From and To date-time pickers for filtering reward records by date
 
 #### Rewards Table
-- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date
-- 12 mock reward records covering both ranking and referral types
+- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date, Time
+- Mock reward records covering referral types (ranking records added via distribution)
 - Empty state: "No rewards found"
 
 ### 5.11 Orders (`/admin/orders`)
@@ -1394,7 +1405,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.4 → v4.5 (Current)
+### v4.5 → v4.6 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Ranking Rewards Manual Distribution** | Ranking rewards are no longer auto-distributed. Super Admin must manually trigger distribution per bi-weekly period via a "Distribute Ranking Rewards" button. System validates all orders are closed before allowing distribution. |
+| **Referral Rewards Automated** | Referral rewards remain automated — triggered when an invited user completes their first trade. |
+| **Finance Role Restricted** | Finance role removed from Volume Ranking and Rewards access. Updated RBAC table and sidebar visibility. |
+| **Rewards Date/Time Filter** | Added From/To date-time pickers to the Rewards Management page for granular filtering of reward records. |
+| **Platform Wallet Filters & Export** | Added date/time range filters, search, type filter (deposit/disbursement), and CSV export to the Platform Wallet page. |
+| **PRD Updated** | PRD bumped to v4.6 with rewards distribution workflow, RBAC changes, and filter/export features. |
+
+### v4.4 → v4.5
 
 | Change | Description |
 |--------|-------------|
