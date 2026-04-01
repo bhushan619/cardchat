@@ -85,7 +85,6 @@ export const agentStatusStyles: Record<AgentOrderStatus, { color: string; bg: st
   pending_sale: { color: "text-warning", bg: "bg-warning/10" },
   pending: { color: "text-primary", bg: "bg-primary/10" },
   in_trade: { color: "text-accent", bg: "bg-accent/10" },
-  negotiation: { color: "text-warning", bg: "bg-warning/10" },
   order_cancelled: { color: "text-destructive", bg: "bg-destructive/10" },
   success: { color: "text-success", bg: "bg-success/10" },
 };
