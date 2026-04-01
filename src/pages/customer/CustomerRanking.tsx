@@ -32,6 +32,14 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState("2");
+
+  const months = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December",
+  ];
+  const periodStart = startOfMonth(new Date(2026, Number(selectedMonth)));
+  const periodEnd = endOfMonth(new Date(2026, Number(selectedMonth)));
 
   const me = rankingList.find((u) => u.alias === currentUserAlias)!;
   const currentTier = getCurrentTier(me.volume);
