@@ -769,7 +769,7 @@ Admin view of the trading volume ranking system.
   - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
   - Created (timestamp)
 
-### 5.10 Naira Rate (`/admin/naira-rate`)
+### 5.11 Naira Rate (`/admin/naira-rate`)
 
 **Component:** `src/pages/admin/AdminNairaRate.tsx`  
 **Access:** Super Admin, Team Lead
