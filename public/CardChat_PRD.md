@@ -790,7 +790,28 @@ Admin view of the trading volume ranking system.
 - Scrollable with sticky header (max 500px height)
 - Medal icons: Trophy (gold) for #1, Medal (silver) for #2, Award (bronze) for #3
 
-### 5.10 Orders (`/admin/orders`)
+### 5.10 Rewards Management (`/admin/rewards`)
+
+**Component:** `src/pages/admin/AdminRewards.tsx`  
+**Access:** All roles
+
+Admin view of all rewards distributed to customers.
+
+#### Summary Cards (3-column grid)
+- **Total Rewards** — accent color, sum of all rewards
+- **Ranking Rewards** — success color, sum of ranking-type rewards
+- **Referral Rewards** — warning color, sum of referral-type rewards
+
+#### Filters
+- **Alias search:** Filter by customer alias (case-insensitive)
+- **Type filter:** Select dropdown — All Types, Ranking, Referral
+
+#### Rewards Table
+- **Columns:** ID, Alias, Type (badge: ranking=success, referral=warning), Description, Amount (success green), Date
+- 12 mock reward records covering both ranking and referral types
+- Empty state: "No rewards found"
+
+### 5.11 Orders (`/admin/orders`)
 
 **Component:** `src/pages/admin/AdminOrders.tsx`
 
