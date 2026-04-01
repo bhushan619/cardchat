@@ -67,7 +67,7 @@ export default function AdminRanking() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rankingList.map((u) => (
+                  {filteredList.map((u) => (
                     <tr key={u.rank} className="border-b border-border/50 hover:bg-muted/30">
                       <td className="py-2.5 pl-3">
                         <span className="flex items-center gap-1.5">
