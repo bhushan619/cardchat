@@ -140,10 +140,12 @@ export default function AdminRewards() {
               Track all rewards distributed to customers. Referral rewards are automatic; ranking rewards require manual distribution.
             </p>
           </div>
-          <Button onClick={handleOpenDistribute} className="gap-2">
-            <Trophy className="w-4 h-4" />
-            Distribute Ranking Rewards
-          </Button>
+          {isSuperAdmin && (
+            <Button onClick={handleOpenDistribute} className="gap-2">
+              <Trophy className="w-4 h-4" />
+              Distribute Ranking Rewards
+            </Button>
+          )}
         </div>
 
         {/* Summary Cards */}
