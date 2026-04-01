@@ -563,6 +563,7 @@ Four roles with hierarchical access:
 | Card Rates | ✅ | ✅ | ✅ | ❌ |
 | Orders | ✅ | ✅ | ✅ | ✅ |
 | Volume Ranking | ✅ | ✅ | ✅ | ✅ |
+| Rewards | ✅ | ✅ | ✅ | ✅ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
