@@ -66,6 +66,8 @@ export default function AdminRewards() {
   const isSuperAdmin = role === "super_admin";
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "ranking" | "referral">("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [distributeOpen, setDistributeOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("2-h1");
   const [checking, setChecking] = useState(false);
