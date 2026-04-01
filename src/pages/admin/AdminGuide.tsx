@@ -241,9 +241,10 @@ const guides: GuideSection[] = [
     description: "Learn what each admin role can see and do.",
     roles: ["All Roles"],
     steps: [
-      { text: "Super Admin: Full access to all features including Naira Rate, User Management, IP & Country Restrictions, Sensitive Words, API Config, and SMS Broadcast." },
-      { text: "Team Lead: Access to Messages, Customers, Card Rates, Orders, Naira Rate, and the Team Dashboard for monitoring agents." },
-      { text: "Agent: Access to Messages, Customers, Card Rates, and Orders — focused on customer interaction and order processing." },
+      { text: "Super Admin: Full access to all features including Naira Rate, User Management, IP & Country Restrictions, Sensitive Words, API Config, SMS Broadcast, and ranking reward distribution." },
+      { text: "Team Lead: Access to Messages, Customers, Card Rates, Orders, Naira Rate, Volume Ranking, Rewards (view only), and the Team Dashboard." },
+      { text: "Agent: Access to Messages, Customers, Card Rates, Orders, Volume Ranking, and Rewards (view only) — focused on customer interaction and order processing." },
+      { text: "Finance: Access to Orders (read-only), Platform Wallet, Naira Rate, and Team Chat. No access to Volume Ranking or Rewards." },
       { text: "Use the 'View as' switcher at the bottom of the sidebar to preview the experience for each role.", tip: "The 'View as' switcher is for demo purposes — in production, roles are assigned by a Super Admin." },
       { text: "Navigation items are automatically hidden based on your role — you'll only see what you have access to." },
     ],
