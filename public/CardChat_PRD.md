@@ -942,16 +942,14 @@ A finite state machine governing order lifecycle:
 
 ```
 pending_sale → pending → in_trade → success → pending_payment → payment_completed
-                                  ↘ negotiation → success
-                                                ↘ order_cancelled
+                                  ↘ order_cancelled
 ```
 
 | Status | Label | Next Statuses |
 |--------|-------|---------------|
 | `pending_sale` | Pending Sale | `pending` |
 | `pending` | Pending | `in_trade` |
-| `in_trade` | In Trade | `success`, `negotiation` |
-| `negotiation` | Negotiation | `success`, `order_cancelled` |
+| `in_trade` | In Trade | `success`, `order_cancelled` |
 | `order_cancelled` | Order Cancelled | (terminal) |
 | `success` | Success | `pending_payment` |
 | `pending_payment` | Pending Payment | `payment_completed` |
