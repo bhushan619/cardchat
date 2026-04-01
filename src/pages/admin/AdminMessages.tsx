@@ -327,10 +327,7 @@ export default function AdminMessages() {
           if (mappedStatus === "success") {
             setTimeout(() => orderStatus.transitionStatus(selectedId, "success"), 50);
           } else if (mappedStatus === "order_cancelled") {
-            setTimeout(() => {
-              orderStatus.transitionStatus(selectedId, "negotiation");
-              setTimeout(() => orderStatus.transitionStatus(selectedId, "order_cancelled"), 50);
-            }, 50);
+            setTimeout(() => orderStatus.transitionStatus(selectedId, "order_cancelled"), 50);
           }
         }, 50);
       }, 50);
