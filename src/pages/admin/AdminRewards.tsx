@@ -195,8 +195,8 @@ export default function AdminRewards() {
               <SelectItem value="referral">Referral</SelectItem>
             </SelectContent>
           </Select>
-          <DateTimePicker date={dateFrom} setDate={setDateFrom} label="From" />
-          <DateTimePicker date={dateTo} setDate={setDateTo} label="To" />
+          <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From" />
+          <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To" />
           {(dateFrom || dateTo) && (
             <button
               onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
