@@ -1328,7 +1328,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.2 → v4.3 (Current)
+### v4.3 → v4.4 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Customer Ranking Page** | New `/customer/ranking` page with personal achievement card, progress bar, motivational CTA, and smart leaderboard (top 20 or top 10 + context around user) |
+| **Admin Ranking Page** | New `/admin/ranking` page with reward tiers panel, searchable leaderboard with alias filter, and month selector |
+| **Ranking Mock Data** | New `src/data/rankingMock.ts` with 9 reward tiers, 25 mock users, and tier helper functions |
+| **Re-negotiation Removed** | Removed `negotiation` status from the order state machine — `in_trade` now transitions directly to `success` or `order_cancelled` |
+| **RBAC Updated** | Volume Ranking added to RBAC table — accessible to all roles |
+| **PRD Updated** | PRD bumped to v4.4 with ranking pages, order flow simplification, renumbered admin sections |
+
+### v4.2 → v4.3
 
 | Change | Description |
 |--------|-------------|
