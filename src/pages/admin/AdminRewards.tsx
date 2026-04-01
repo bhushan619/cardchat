@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
