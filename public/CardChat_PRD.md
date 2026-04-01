@@ -913,7 +913,7 @@ Two-section management page:
 - Quick-nav buttons for jumping to sections
 - Expand All / Collapse All controls
 
-### 5.18 Customer Guide Reference (`/admin/customer-guide`)
+### 5.19 Customer Guide Reference (`/admin/customer-guide`)
 
 **Component:** `src/pages/admin/AdminCustomerGuide.tsx`
 
