@@ -50,7 +50,7 @@ const PERMISSIONS: Record<string, string[]> = {
   ],
   finance: [
     "View Orders (Read-only)", "Platform Wallet", "Set Naira Rate",
-    "Volume Ranking", "Rewards", "Team Chat",
+    "Team Chat",
   ],
 };
 
