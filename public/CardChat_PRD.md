@@ -1279,6 +1279,7 @@ src/
 │       ├── CustomerChatView.tsx      # Chat view with order tracking
 │       ├── CustomerContacts.tsx      # Agent directory
 │       ├── CustomerMe.tsx            # Profile (309 lines — multi-section)
+│       ├── CustomerRanking.tsx       # Trading volume ranking (customer)
 │       └── CustomerGuide.tsx         # User guide
 └── test/
     ├── setup.ts
