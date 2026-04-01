@@ -61,7 +61,7 @@ export default function AdminRanking() {
                 <thead className="sticky top-0 bg-card">
                   <tr className="text-xs text-muted-foreground border-b">
                     <th className="text-left py-2 pl-3 w-16">Rank</th>
-                    <th className="text-left py-2">Nickname</th>
+                    <th className="text-left py-2">Alias</th>
                     <th className="text-right py-2">Volume</th>
                     <th className="text-right py-2 pr-3">Reward</th>
                   </tr>
