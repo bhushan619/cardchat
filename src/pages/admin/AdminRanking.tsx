@@ -1,6 +1,8 @@
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { rankingTiers, rankingList } from "@/data/rankingMock";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const medalIcons: Record<number, JSX.Element> = {
   1: <Trophy className="w-4 h-4 text-yellow-500" />,
