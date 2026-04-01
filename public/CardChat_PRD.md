@@ -72,6 +72,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /customer/chat             → Chat list → Chat view
 /customer/contacts         → Agent directory
 /customer/me               → Profile, bank accounts, transactions, dashboard, settings
+/customer/rewards          → Rewards overview, referral, history
 /customer/ranking          → Trading volume ranking
 /customer/guide            → User guide (accordion)
 
