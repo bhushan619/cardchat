@@ -873,7 +873,7 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
-### 5.16 SMS Broadcast (`/admin/broadcast`)
+### 5.17 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
 **Access:** Super Admin only
