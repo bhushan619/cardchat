@@ -1,8 +1,10 @@
 import { useState, useMemo } from "react";
+import { parse } from "date-fns";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -64,6 +66,8 @@ export default function AdminRewards() {
   const isSuperAdmin = role === "super_admin";
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "ranking" | "referral">("all");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
   const [distributeOpen, setDistributeOpen] = useState(false);
   const [selectedPeriod, setSelectedPeriod] = useState("2-h1");
   const [checking, setChecking] = useState(false);
@@ -78,7 +82,13 @@ export default function AdminRewards() {
   const filtered = allRecords.filter(r => {
     const matchSearch = !search || r.alias.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "all" || r.type === typeFilter;
-    return matchSearch && matchType;
+    let matchDate = true;
+    if (dateFrom || dateTo) {
+      const recordDate = parse(`${r.date} ${r.time}`, "MMM dd, yyyy hh:mm aa", new Date());
+      if (dateFrom && recordDate < dateFrom) matchDate = false;
+      if (dateTo && recordDate > dateTo) matchDate = false;
+    }
+    return matchSearch && matchType && matchDate;
   });
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
@@ -165,7 +175,7 @@ export default function AdminRewards() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 mb-4">
+        <div className="flex flex-wrap items-center gap-3 mb-4">
           <div className="relative flex-1 max-w-xs">
             <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
             <Input
@@ -185,6 +195,16 @@ export default function AdminRewards() {
               <SelectItem value="referral">Referral</SelectItem>
             </SelectContent>
           </Select>
+          <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From" />
+          <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To" />
+          {(dateFrom || dateTo) && (
+            <button
+              onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
+              className="text-xs text-muted-foreground hover:text-foreground underline"
+            >
+              Clear dates
+            </button>
+          )}
         </div>
 
         {/* Table */}
