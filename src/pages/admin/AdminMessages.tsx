@@ -372,9 +372,7 @@ export default function AdminMessages() {
     const fallbackCardlightResult: CardlightResult | undefined =
       currentOrderStatus === "success"
         ? "successful"
-        : currentOrderStatus === "negotiation"
-          ? "negotiate"
-          : currentOrderStatus === "in_trade"
+        : currentOrderStatus === "in_trade"
             ? "pending"
             : undefined;
     const cardlightResult = currentOrderId ? (cardlightResults[currentOrderId] ?? fallbackCardlightResult) : fallbackCardlightResult;
