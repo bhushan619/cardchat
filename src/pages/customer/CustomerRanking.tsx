@@ -1,5 +1,7 @@
 import { useRef, useEffect, useState } from "react";
-import { Trophy, ArrowLeft, Medal, Info, ChevronRight, Flame } from "lucide-react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
+import { Trophy, ArrowLeft, Medal, Info, ChevronRight, Flame, CalendarIcon } from "lucide-react";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
