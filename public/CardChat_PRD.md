@@ -525,6 +525,7 @@ Four roles with hierarchical access:
 | Customers | ✅ | ✅ | ✅ | ❌ |
 | Card Rates | ✅ | ✅ | ✅ | ❌ |
 | Orders | ✅ | ✅ | ✅ | ✅ |
+| Volume Ranking | ✅ | ✅ | ✅ | ✅ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
