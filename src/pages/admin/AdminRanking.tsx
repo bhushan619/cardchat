@@ -11,12 +11,21 @@ const medalIcons: Record<number, JSX.Element> = {
 };
 
 export default function AdminRanking() {
+  const [search, setSearch] = useState("");
+
+  const filteredList = useMemo(() => {
+    if (!search.trim()) return rankingList;
+    return rankingList.filter((u) => u.alias.toLowerCase().includes(search.toLowerCase()));
+  }, [search]);
+
   return (
     <AdminLayout>
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
-          <p className="text-sm text-muted-foreground">Mar 01 – Mar 31, 2026</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
+            <p className="text-sm text-muted-foreground">Mar 01 – Mar 31, 2026</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
