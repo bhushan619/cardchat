@@ -4,7 +4,7 @@ import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
   BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
-  Sun, Moon, Wallet
+  Sun, Moon, Wallet, Gift
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
