@@ -1405,7 +1405,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.4 → v4.5 (Current)
+### v4.5 → v4.6 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Ranking Rewards Manual Distribution** | Ranking rewards are no longer auto-distributed. Super Admin must manually trigger distribution per bi-weekly period via a "Distribute Ranking Rewards" button. System validates all orders are closed before allowing distribution. |
+| **Referral Rewards Automated** | Referral rewards remain automated — triggered when an invited user completes their first trade. |
+| **Finance Role Restricted** | Finance role removed from Volume Ranking and Rewards access. Updated RBAC table and sidebar visibility. |
+| **Rewards Date/Time Filter** | Added From/To date-time pickers to the Rewards Management page for granular filtering of reward records. |
+| **Platform Wallet Filters & Export** | Added date/time range filters, search, type filter (deposit/disbursement), and CSV export to the Platform Wallet page. |
+| **PRD Updated** | PRD bumped to v4.6 with rewards distribution workflow, RBAC changes, and filter/export features. |
+
+### v4.4 → v4.5
 
 | Change | Description |
 |--------|-------------|
