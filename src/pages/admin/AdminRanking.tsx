@@ -49,7 +49,7 @@ export default function AdminRanking() {
               <div className="relative w-48">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <Input
-                  placeholder="Search nickname..."
+                  placeholder="Search alias..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   className="h-8 pl-8 text-xs"
@@ -61,7 +61,7 @@ export default function AdminRanking() {
                 <thead className="sticky top-0 bg-card">
                   <tr className="text-xs text-muted-foreground border-b">
                     <th className="text-left py-2 pl-3 w-16">Rank</th>
-                    <th className="text-left py-2">Nickname</th>
+                    <th className="text-left py-2">Alias</th>
                     <th className="text-right py-2">Volume</th>
                     <th className="text-right py-2 pr-3">Reward</th>
                   </tr>
