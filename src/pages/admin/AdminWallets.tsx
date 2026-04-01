@@ -171,11 +171,11 @@ export default function AdminWallets() {
           <div className="flex items-end gap-2">
             <div>
               <label className="text-[10px] font-medium text-muted-foreground mb-1 block">From</label>
-              <DateTimePicker date={dateFrom} setDate={setDateFrom} />
+              <DateTimePicker value={dateFrom} onChange={setDateFrom} />
             </div>
             <div>
               <label className="text-[10px] font-medium text-muted-foreground mb-1 block">To</label>
-              <DateTimePicker date={dateTo} setDate={setDateTo} />
+              <DateTimePicker value={dateTo} onChange={setDateTo} />
             </div>
             {hasDateFilter && (
               <Button variant="ghost" size="sm" className="h-9 px-2 text-xs text-muted-foreground" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
