@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
-import { Users, Plus, Search, MoreVertical, Shield, X } from "lucide-react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";

@@ -118,106 +118,110 @@ export default function AdminProfile() {
           <Button onClick={handleSaveProfile} className="w-full">Save Profile</Button>
         </div>
 
-        <Separator className="mb-6" />
+        {role === "super_admin" && (
+          <>
+            <Separator className="mb-6" />
 
-        {/* Transaction PIN */}
-        <div className="bg-card border rounded-xl p-5 space-y-4">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Transaction PIN</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {hasPin ? "Your PIN is set. Use it to authorize fund adjustments." : "Create a 6-digit PIN to authorize fund adjustments."}
-              </p>
-            </div>
-            {hasPin && (
-              <span className="flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-1 rounded-full">
-                <Check className="w-3 h-3" /> Active
-              </span>
-            )}
-          </div>
+            {/* Transaction PIN */}
+            <div className="bg-card border rounded-xl p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Transaction PIN</p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {hasPin ? "Your PIN is set. Use it to authorize fund adjustments." : "Create a 6-digit PIN to authorize fund adjustments."}
+                  </p>
+                </div>
+                {hasPin && (
+                  <span className="flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-1 rounded-full">
+                    <Check className="w-3 h-3" /> Active
+                  </span>
+                )}
+              </div>
 
-          {pinMode === "idle" ? (
-            <Button
-              variant="outline"
-              className="gap-1.5"
-              onClick={() => setPinMode(hasPin ? "update" : "create")}
-            >
-              <Lock className="w-3.5 h-3.5" />
-              {hasPin ? "Change PIN" : "Create PIN"}
-            </Button>
-          ) : (
-            <div className="space-y-3 bg-muted/30 rounded-lg p-4">
-              {pinMode === "update" && (
-                <div className="space-y-1.5">
-                  <label className="text-xs font-medium">Current PIN</label>
-                  <div className="relative">
-                    <Input
-                      type={showCurrentPin ? "text" : "password"}
-                      maxLength={6}
-                      placeholder="••••••"
-                      value={currentPin}
-                      onChange={e => setCurrentPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                      className="pr-9"
-                    />
-                    <button
-                      type="button"
-                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                      onClick={() => setShowCurrentPin(!showCurrentPin)}
-                    >
-                      {showCurrentPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                    </button>
+              {pinMode === "idle" ? (
+                <Button
+                  variant="outline"
+                  className="gap-1.5"
+                  onClick={() => setPinMode(hasPin ? "update" : "create")}
+                >
+                  <Lock className="w-3.5 h-3.5" />
+                  {hasPin ? "Change PIN" : "Create PIN"}
+                </Button>
+              ) : (
+                <div className="space-y-3 bg-muted/30 rounded-lg p-4">
+                  {pinMode === "update" && (
+                    <div className="space-y-1.5">
+                      <label className="text-xs font-medium">Current PIN</label>
+                      <div className="relative">
+                        <Input
+                          type={showCurrentPin ? "text" : "password"}
+                          maxLength={6}
+                          placeholder="••••••"
+                          value={currentPin}
+                          onChange={e => setCurrentPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                          className="pr-9"
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          onClick={() => setShowCurrentPin(!showCurrentPin)}
+                        >
+                          {showCurrentPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium">New PIN</label>
+                    <div className="relative">
+                      <Input
+                        type={showNewPin ? "text" : "password"}
+                        maxLength={6}
+                        placeholder="••••••"
+                        value={newPin}
+                        onChange={e => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        className="pr-9"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowNewPin(!showNewPin)}
+                      >
+                        {showNewPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium">Confirm PIN</label>
+                    <div className="relative">
+                      <Input
+                        type={showConfirmPin ? "text" : "password"}
+                        maxLength={6}
+                        placeholder="••••••"
+                        value={confirmPin}
+                        onChange={e => setConfirmPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        className="pr-9"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowConfirmPin(!showConfirmPin)}
+                      >
+                        {showConfirmPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 pt-1">
+                    <Button variant="outline" className="flex-1" onClick={handleCancelPin}>Cancel</Button>
+                    <Button className="flex-1" onClick={handleSavePin}>
+                      {pinMode === "create" ? "Create PIN" : "Update PIN"}
+                    </Button>
                   </div>
                 </div>
               )}
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium">New PIN</label>
-                <div className="relative">
-                    <Input
-                    type={showNewPin ? "text" : "password"}
-                    maxLength={6}
-                    placeholder="••••••"
-                    value={newPin}
-                    onChange={e => setNewPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    className="pr-9"
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    onClick={() => setShowNewPin(!showNewPin)}
-                  >
-                    {showNewPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs font-medium">Confirm PIN</label>
-                <div className="relative">
-                    <Input
-                    type={showConfirmPin ? "text" : "password"}
-                    maxLength={6}
-                    placeholder="••••••"
-                    value={confirmPin}
-                    onChange={e => setConfirmPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    className="pr-9"
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                    onClick={() => setShowConfirmPin(!showConfirmPin)}
-                  >
-                    {showConfirmPin ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-              </div>
-              <div className="flex gap-2 pt-1">
-                <Button variant="outline" className="flex-1" onClick={handleCancelPin}>Cancel</Button>
-                <Button className="flex-1" onClick={handleSavePin}>
-                  {pinMode === "create" ? "Create PIN" : "Update PIN"}
-                </Button>
-              </div>
             </div>
-          )}
-        </div>
+          </>
+        )}
       </div>
     </AdminLayout>
   );
