@@ -1,8 +1,15 @@
 import { useState, useMemo } from "react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { rankingTiers, rankingList } from "@/data/rankingMock";
-import { Trophy, Medal, Award, Search } from "lucide-react";
+import { Trophy, Medal, Award, Search, CalendarIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December",
+];
 
 const medalIcons: Record<number, JSX.Element> = {
   1: <Trophy className="w-4 h-4 text-yellow-500" />,
@@ -12,11 +19,15 @@ const medalIcons: Record<number, JSX.Element> = {
 
 export default function AdminRanking() {
   const [search, setSearch] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("2"); // March (0-indexed)
 
   const filteredList = useMemo(() => {
     if (!search.trim()) return rankingList;
     return rankingList.filter((u) => u.alias.toLowerCase().includes(search.toLowerCase()));
   }, [search]);
+
+  const periodStart = startOfMonth(new Date(2026, Number(selectedMonth)));
+  const periodEnd = endOfMonth(new Date(2026, Number(selectedMonth)));
 
   return (
     <AdminLayout>
@@ -24,8 +35,21 @@ export default function AdminRanking() {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
-            <p className="text-sm text-muted-foreground">Mar 01 – Mar 31, 2026</p>
+            <p className="text-sm text-muted-foreground">
+              {format(periodStart, "MMM dd")} – {format(periodEnd, "MMM dd, yyyy")}
+            </p>
           </div>
+          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
+            <SelectTrigger className="w-40 h-8 text-xs">
+              <CalendarIcon className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {months.map((m, i) => (
+                <SelectItem key={i} value={String(i)} className="text-xs">{m} 2026</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
