@@ -828,7 +828,7 @@ Admin view of all rewards distributed to customers.
   - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
   - Created (timestamp)
 
-### 5.11 Naira Rate (`/admin/naira-rate`)
+### 5.12 Naira Rate (`/admin/naira-rate`)
 
 **Component:** `src/pages/admin/AdminNairaRate.tsx`  
 **Access:** Super Admin, Team Lead
@@ -847,7 +847,7 @@ Admin view of all rewards distributed to customers.
   - Changed By (admin name)
   - Reason
 
-### 5.12 User Management (`/admin/users`)
+### 5.13 User Management (`/admin/users`)
 
 **Component:** `src/pages/admin/AdminUsers.tsx`  
 **Access:** Super Admin only
@@ -859,7 +859,7 @@ Admin view of all rewards distributed to customers.
   - Status (Active / Offline) — color-coded badges
   - Last Login (relative time)
 
-### 5.13 Team Dashboard (`/admin/team`)
+### 5.14 Team Dashboard (`/admin/team`)
 
 **Component:** `src/pages/admin/AdminTeam.tsx`  
 **Access:** Super Admin, Team Lead
@@ -867,7 +867,7 @@ Admin view of all rewards distributed to customers.
 - Team performance metrics
 - Agent activity monitoring
 
-### 5.14 IP & Country Restrictions (`/admin/ip-restrictions`)
+### 5.15 IP & Country Restrictions (`/admin/ip-restrictions`)
 
 **Component:** `src/pages/admin/AdminIpRestrictions.tsx`  
 **Access:** Super Admin only
@@ -895,7 +895,7 @@ Two-section management page:
   - Action performed
 - Toast notifications for all actions
 
-### 5.15 Sensitive Words Filter (`/admin/sensitive-words`)
+### 5.16 Sensitive Words Filter (`/admin/sensitive-words`)
 
 **Component:** `src/pages/admin/AdminSensitiveWords.tsx`  
 **Access:** Super Admin only
@@ -923,7 +923,7 @@ Two-section management page:
 - Super Admins see original text
 - (Not enforced in prototype — specification only)
 
-### 5.16 API Config (`/admin/api-config`)
+### 5.17 API Config (`/admin/api-config`)
 
 **Component:** `src/pages/admin/AdminApiConfig.tsx`  
 **Access:** Super Admin only
@@ -932,7 +932,7 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
-### 5.17 SMS Broadcast (`/admin/broadcast`)
+### 5.18 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
 **Access:** Super Admin only
@@ -941,7 +941,7 @@ Two-section management page:
 - Audience selection
 - Send functionality
 
-### 5.18 Admin User Guide (`/admin/guide`)
+### 5.19 Admin User Guide (`/admin/guide`)
 
 **Component:** `src/pages/admin/AdminGuide.tsx`
 
@@ -972,7 +972,7 @@ Two-section management page:
 - Quick-nav buttons for jumping to sections
 - Expand All / Collapse All controls
 
-### 5.19 Customer Guide Reference (`/admin/customer-guide`)
+### 5.20 Customer Guide Reference (`/admin/customer-guide`)
 
 **Component:** `src/pages/admin/AdminCustomerGuide.tsx`
 
