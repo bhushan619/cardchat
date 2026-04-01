@@ -297,7 +297,7 @@ export default function AdminUsers() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-accent" />
-              {getUserPinStatus(pinUser!) ? "Update" : "Create"} Transaction PIN
+              {getUserPinStatus(pinUser) ? "Update" : "Create"} Transaction PIN
             </DialogTitle>
             <DialogDescription>
               {getUserPinStatus(pinUser!) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
