@@ -332,16 +332,20 @@ A minimalist, iOS-inspired layout:
 A multi-section profile page with drill-down sub-views.
 
 #### Main Profile View
-- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), masked phone number
+- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon
+- **Edit Profile** — pencil icon opens modal with name/email editing and OTP verification for email changes
+- **Wallet Card** — gradient card showing:
+  - Total balance (masked by default, toggleable)
+  - **Breakdown:** `(550,000 Trading + 6,200 Rewards)` when visible
+  - Withdraw button → opens withdrawal form
+  - My Wallet button → navigates to wallet sub-view
 - **Menu Items** (each with icon, label, description, chevron):
-  - Verified Bank Accounts — shows account count
-  - Transaction Records — shows transaction count
-  - Rewards — enter invite code, view referral bonuses
+  - My Orders — order history with status filters
+  - Bank Accounts — add/manage verified bank accounts
   - Data Dashboard — "View your stats"
   - Security Settings — "2FA, password"
   - App Settings — "Notifications, language"
   - User Guide — navigates to `/customer/guide`
-- **Theme Toggle** — sun/moon icon, "Light Mode" / "Dark Mode" label
 - **Log Out** — destructive-colored button
 
 #### Bank Accounts Sub-View
