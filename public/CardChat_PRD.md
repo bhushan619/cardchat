@@ -577,6 +577,7 @@ Four roles with hierarchical access:
 
 - Role stored in React Context (`AdminRoleContext`) — supports 4 roles: `super_admin`, `team_lead`, `agent`, `finance`
 - Sidebar items filtered by role — items with `roles` array are only shown if current role is included; items without `roles` are visible to all
+- Finance role is restricted: no access to Volume Ranking, Rewards, Messages, Customers, Card Rates, Customer Guide, or Admin Guide
 - "View as" switcher is **demo-only** — in production, roles would come from server-side auth
 
 ### 5.4 Messages Page (`/admin`)
