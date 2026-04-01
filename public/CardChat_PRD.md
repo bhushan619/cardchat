@@ -214,20 +214,21 @@ A minimalist, iOS-inspired layout:
 - App name "CardChat"
 - Tagline: "Your trusted gift card trading platform"
 
-#### Search Bar
-- Full-width search input with magnifying glass icon
-- Placeholder: "Search cards, rates..."
-- Filters the live rates list in real-time by card type name
-
 #### Core Actions Grid
 - **4-column modular grid** (iOS system app style)
 - Each tile: icon in accent-colored container (`bg-accent/10`), label, short description
 - Rounded-2xl borders with `border-border/50`, hover accent highlight
 - Actions:
-  - **Sell Cards** (Gift icon) → navigates to `/customer/chat`
-  - **Live Rates** (TrendingUp icon) → scrolls to rates (no navigation)
-  - **Chat** (MessageCircle icon) → navigates to `/customer/chat`
-  - **Guide** (BookOpen icon) → navigates to `/customer/guide`
+  - **Sell Cards** (Gift icon) → navigates to `/customer/contacts`
+  - **Rewards** (Star icon) → navigates to `/customer/rewards`
+  - **Ranking** (Trophy icon) → navigates to `/customer/ranking`
+  - **Calculator** (Calculator icon) → opens rate calculator modal
+
+#### Wallet Section
+- Gradient card (`from-accent to-accent/80`) with wallet icon
+- **Balance display:** masked by default, toggleable via Eye/EyeOff icon
+- **Breakdown:** When visible, shows `(550,000 Trading + 6,200 Rewards)` beneath total
+- "View Details" button → navigates to Me tab wallet view
 
 #### Live Rates Section
 - Section header: "Live Rates" with "Auto-refresh 60s" indicator
