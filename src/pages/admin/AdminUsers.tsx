@@ -149,7 +149,7 @@ export default function AdminUsers() {
     setPinUser(null);
   };
 
-  const getUserPinStatus = (u: User) => !!localStorage.getItem(`adminPin_${u.role}`);
+  const getUserPinStatus = (u: User | null) => !!u && !!localStorage.getItem(`adminPin_${u.role}`);
 
   return (
     <AdminLayout>
@@ -297,10 +297,10 @@ export default function AdminUsers() {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Lock className="w-4 h-4 text-accent" />
-              {getUserPinStatus(pinUser!) ? "Update" : "Create"} Transaction PIN
+              {getUserPinStatus(pinUser) ? "Update" : "Create"} Transaction PIN
             </DialogTitle>
             <DialogDescription>
-              {getUserPinStatus(pinUser!) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
+              {getUserPinStatus(pinUser) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
@@ -357,7 +357,7 @@ export default function AdminUsers() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setPinUser(null)}>Cancel</Button>
             <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSavePin} disabled={pinNew.length !== 6}>
-              {getUserPinStatus(pinUser!) ? "Update PIN" : "Create PIN"}
+              {getUserPinStatus(pinUser) ? "Update PIN" : "Create PIN"}
             </Button>
           </DialogFooter>
         </DialogContent>
