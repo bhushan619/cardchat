@@ -103,9 +103,23 @@ const guides: GuideSection[] = [
     description: "What customers see in their profile.",
     steps: [
       { text: "The 'Me' tab displays the customer's 6-character alias prominently at the top." },
+      { text: "Total wallet balance is shown with a breakdown: Trading Balance (from card trades) and Rewards Balance (from ranking + referrals)." },
       { text: "Registered bank accounts are listed — used for receiving payouts." },
       { text: "Transaction history shows past trades and payment statuses." },
       { text: "VIP and Repeat customer badges are visible here.", tip: "If a customer needs to update bank details, direct them to the Me tab." },
+    ],
+  },
+  {
+    id: "rewards",
+    title: "Rewards & Referrals",
+    icon: Gift,
+    description: "How the rewards system works for customers.",
+    steps: [
+      { text: "Customers access Rewards from the Me tab — it shows total rewards earned with a breakdown of Ranking vs. Referral earnings." },
+      { text: "Ranking rewards are earned by achieving higher tiers through consistent trading." },
+      { text: "Referral rewards are earned when an invited user completes their first trade." },
+      { text: "Customers can enter an invite code on the Rewards screen at any time." },
+      { text: "Tapping the info icon (ℹ) in the Rewards header shows a 'How it Works' modal explaining the program.", tip: "If a customer asks about invite codes, direct them to the Rewards screen — it's no longer part of registration." },
     ],
   },
   {

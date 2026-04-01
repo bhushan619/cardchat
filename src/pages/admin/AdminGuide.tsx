@@ -249,6 +249,33 @@ const guides: GuideSection[] = [
     ],
   },
   {
+    id: "wallets",
+    title: "Wallet Management",
+    icon: DollarSign,
+    description: "View customer wallet balances split into trading and rewards.",
+    roles: ["Super Admin", "Team Lead", "Finance"],
+    steps: [
+      { text: "Navigate to 'Wallets' from the sidebar." },
+      { text: "Each customer's total wallet balance is split into Trading Balance (from card trades) and Rewards Balance (from ranking + referrals)." },
+      { text: "The table shows Alias, Trading Balance, Rewards Balance, Total Balance, and Last Updated." },
+      { text: "Use the search bar to filter by customer alias.", tip: "Total Balance = Trading Balance + Rewards Balance. Both are maintained independently." },
+    ],
+  },
+  {
+    id: "rewards",
+    title: "Rewards Management",
+    icon: BarChart3,
+    description: "View and monitor all rewards distributed to customers.",
+    roles: ["All Roles"],
+    steps: [
+      { text: "Navigate to 'Rewards' from the sidebar." },
+      { text: "Summary cards show Total Rewards Given, Ranking Rewards, and Referral Rewards across all customers." },
+      { text: "The table lists individual reward entries: Alias, Type (Ranking/Referral), Amount, Description, and Date." },
+      { text: "Use the search bar to filter rewards by customer alias." },
+      { text: "Rewards are read-only — they are system-generated based on ranking achievements and referral completions.", tip: "Monitor reward trends to understand customer engagement and referral effectiveness." },
+    ],
+  },
+  {
     id: "search",
     title: "Using Global Search",
     icon: Search,
