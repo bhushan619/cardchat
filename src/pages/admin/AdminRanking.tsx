@@ -1,6 +1,8 @@
+import { useState, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { rankingTiers, rankingList } from "@/data/rankingMock";
-import { Trophy, Medal, Award } from "lucide-react";
+import { Trophy, Medal, Award, Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 const medalIcons: Record<number, JSX.Element> = {
   1: <Trophy className="w-4 h-4 text-yellow-500" />,
@@ -9,12 +11,21 @@ const medalIcons: Record<number, JSX.Element> = {
 };
 
 export default function AdminRanking() {
+  const [search, setSearch] = useState("");
+
+  const filteredList = useMemo(() => {
+    if (!search.trim()) return rankingList;
+    return rankingList.filter((u) => u.alias.toLowerCase().includes(search.toLowerCase()));
+  }, [search]);
+
   return (
     <AdminLayout>
       <div className="p-6 space-y-6">
-        <div>
-          <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
-          <p className="text-sm text-muted-foreground">Mar 01 – Mar 31, 2026</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
+            <p className="text-sm text-muted-foreground">Mar 01 – Mar 31, 2026</p>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -33,7 +44,18 @@ export default function AdminRanking() {
 
           {/* Leaderboard */}
           <div className="lg:col-span-2 bg-card border rounded-xl p-5">
-            <h2 className="text-sm font-semibold mb-4">Leaderboard ({rankingList.length} users)</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold">Leaderboard ({filteredList.length} users)</h2>
+              <div className="relative w-48">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Search nickname..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="h-8 pl-8 text-xs"
+                />
+              </div>
+            </div>
             <div className="overflow-auto max-h-[500px]">
               <table className="w-full text-sm">
                 <thead className="sticky top-0 bg-card">
@@ -45,7 +67,7 @@ export default function AdminRanking() {
                   </tr>
                 </thead>
                 <tbody>
-                  {rankingList.map((u) => (
+                  {filteredList.map((u) => (
                     <tr key={u.rank} className="border-b border-border/50 hover:bg-muted/30">
                       <td className="py-2.5 pl-3">
                         <span className="flex items-center gap-1.5">
