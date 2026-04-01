@@ -1231,7 +1231,7 @@ export default function AdminMessages() {
                         ["Order amount", `${detailOrder.payout.toLocaleString()}`],
                         ["Settlement amount", detailOrder.bank ? `₦${detailOrder.payout.toLocaleString()}` : "—"],
                         ["Order Status", detailOrder.status],
-                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : currentOrderStatus === "negotiation" ? "Under negotiation" : "Pending"],
+                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                         ["Arbitration status", "No arbitrated"],
                         ["Dispute Amount", "—"],
                       ].map(([label, value]) => (
