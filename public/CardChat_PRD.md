@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.3  
-**Date:** March 30, 2026
+**Version:** 4.4  
+**Date:** April 1, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -72,6 +72,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /customer/chat             → Chat list → Chat view
 /customer/contacts         → Agent directory
 /customer/me               → Profile, bank accounts, transactions, dashboard, settings
+/customer/ranking          → Trading volume ranking
 /customer/guide            → User guide (accordion)
 
 # Admin Panel
@@ -87,6 +88,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/ip-restrictions     → IP & country restrictions
 /admin/sensitive-words     → Sensitive words filter
 /admin/api-config          → API configuration
+/admin/ranking             → Trading volume ranking (all roles)
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
@@ -415,7 +417,44 @@ A **navigation-aware floating tooltip overlay** shown on first login:
 - Persistence: `localStorage` keys `beginner_guide_done` and `beginner_guide_step`
 - Viewport-aware positioning to prevent overflow on mobile devices
 
-### 4.8 Customer App Navigation
+### 4.8 Trading Volume Ranking (`/customer/ranking`)
+
+**Component:** `src/pages/customer/CustomerRanking.tsx`
+
+A motivation-first ranking page showing the user's trading volume standing within the current month.
+
+#### Header
+- Back arrow to Home, page title "Trading Volume Ranking"
+- Period label (e.g., "Mar 01 – Mar 31, 2026")
+- "Rules" button (Info icon) → opens Dialog with tier explanations and reset schedule
+
+#### Personal Achievement Card
+- Gradient card (`from-accent/10 via-card to-accent/5`) with decorative circle
+- **My Rank** — large `#N` display (5xl font)
+- **Current Reward** — accent-colored ₦ amount
+- **2-column stats grid:**
+  - Trading Volume (total volume number)
+  - To Next Tier (remaining volume in warning color, or "Max ✓" if at highest tier)
+
+#### Progress & CTA
+- Progress bar to next reward tier with percentage
+- Motivational text: "Trade X more to unlock ₦Y reward — almost there!" (with Flame icon)
+- "Increase Trading Volume" CTA button → navigates to `/customer/contacts`
+
+#### Leaderboard
+- Smart display: Top 20 shown if user is within top 20; otherwise Top 10 + separator + 5 rows around user
+- Grid columns: Rank, Nickname, Volume, Reward
+- Medal icons for top 3 (gold, silver, bronze)
+- Current user row highlighted with `bg-accent/10` and left accent border, "Me" badge
+- Auto-scrolls to user's row on page load
+
+#### Data Source
+- **File:** `src/data/rankingMock.ts`
+- 9 reward tiers (10K–1M volume thresholds)
+- 25 mock users with pre-assigned ranks, volumes, and rewards
+- Helper functions: `getCurrentTier()`, `getNextTier()`
+
+### 4.9 Customer App Navigation
 
 **Bottom Tab Bar** (4 tabs):
 | Tab | Icon | Path | Description |
@@ -486,6 +525,7 @@ Four roles with hierarchical access:
 | Customers | ✅ | ✅ | ✅ | ❌ |
 | Card Rates | ✅ | ✅ | ✅ | ❌ |
 | Orders | ✅ | ✅ | ✅ | ✅ |
+| Volume Ranking | ✅ | ✅ | ✅ | ✅ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
@@ -690,7 +730,29 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Sell Rate (₦ per $1)
   - Last Updated
 
-### 5.9 Orders (`/admin/orders`)
+### 5.9 Volume Ranking (`/admin/ranking`)
+
+**Component:** `src/pages/admin/AdminRanking.tsx`  
+**Access:** All roles
+
+Admin view of the trading volume ranking system.
+
+- Header: "Trading Volume Ranking" with period date range
+- **Month filter:** Select dropdown to switch between months (Jan–Dec 2026)
+- **Two-panel layout (1:2 grid on desktop):**
+
+#### Reward Tiers Panel
+- Lists all 9 reward tiers with threshold and reward amounts
+- Format: "≥ 10,000" → "₦10"
+
+#### Leaderboard Panel
+- **Alias search:** Filter leaderboard by alias (case-insensitive)
+- User count display: "Leaderboard (N users)"
+- **Table columns:** Rank (with medal icons for top 3), Alias (monospace), Volume, Reward
+- Scrollable with sticky header (max 500px height)
+- Medal icons: Trophy (gold) for #1, Medal (silver) for #2, Award (bronze) for #3
+
+### 5.10 Orders (`/admin/orders`)
 
 **Component:** `src/pages/admin/AdminOrders.tsx`
 
@@ -707,7 +769,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
   - Created (timestamp)
 
-### 5.10 Naira Rate (`/admin/naira-rate`)
+### 5.11 Naira Rate (`/admin/naira-rate`)
 
 **Component:** `src/pages/admin/AdminNairaRate.tsx`  
 **Access:** Super Admin, Team Lead
@@ -726,7 +788,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Changed By (admin name)
   - Reason
 
-### 5.11 User Management (`/admin/users`)
+### 5.12 User Management (`/admin/users`)
 
 **Component:** `src/pages/admin/AdminUsers.tsx`  
 **Access:** Super Admin only
@@ -738,7 +800,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Status (Active / Offline) — color-coded badges
   - Last Login (relative time)
 
-### 5.12 Team Dashboard (`/admin/team`)
+### 5.13 Team Dashboard (`/admin/team`)
 
 **Component:** `src/pages/admin/AdminTeam.tsx`  
 **Access:** Super Admin, Team Lead
@@ -746,7 +808,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 - Team performance metrics
 - Agent activity monitoring
 
-### 5.13 IP & Country Restrictions (`/admin/ip-restrictions`)
+### 5.14 IP & Country Restrictions (`/admin/ip-restrictions`)
 
 **Component:** `src/pages/admin/AdminIpRestrictions.tsx`  
 **Access:** Super Admin only
@@ -774,7 +836,7 @@ Two-section management page:
   - Action performed
 - Toast notifications for all actions
 
-### 5.14 Sensitive Words Filter (`/admin/sensitive-words`)
+### 5.15 Sensitive Words Filter (`/admin/sensitive-words`)
 
 **Component:** `src/pages/admin/AdminSensitiveWords.tsx`  
 **Access:** Super Admin only
@@ -802,7 +864,7 @@ Two-section management page:
 - Super Admins see original text
 - (Not enforced in prototype — specification only)
 
-### 5.15 API Config (`/admin/api-config`)
+### 5.16 API Config (`/admin/api-config`)
 
 **Component:** `src/pages/admin/AdminApiConfig.tsx`  
 **Access:** Super Admin only
@@ -811,7 +873,7 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
-### 5.16 SMS Broadcast (`/admin/broadcast`)
+### 5.17 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
 **Access:** Super Admin only
@@ -820,7 +882,7 @@ Two-section management page:
 - Audience selection
 - Send functionality
 
-### 5.17 Admin User Guide (`/admin/guide`)
+### 5.18 Admin User Guide (`/admin/guide`)
 
 **Component:** `src/pages/admin/AdminGuide.tsx`
 
@@ -851,7 +913,7 @@ Two-section management page:
 - Quick-nav buttons for jumping to sections
 - Expand All / Collapse All controls
 
-### 5.18 Customer Guide Reference (`/admin/customer-guide`)
+### 5.19 Customer Guide Reference (`/admin/customer-guide`)
 
 **Component:** `src/pages/admin/AdminCustomerGuide.tsx`
 
@@ -880,16 +942,14 @@ A finite state machine governing order lifecycle:
 
 ```
 pending_sale → pending → in_trade → success → pending_payment → payment_completed
-                                  ↘ negotiation → success
-                                                ↘ order_cancelled
+                                  ↘ order_cancelled
 ```
 
 | Status | Label | Next Statuses |
 |--------|-------|---------------|
 | `pending_sale` | Pending Sale | `pending` |
 | `pending` | Pending | `in_trade` |
-| `in_trade` | In Trade | `success`, `negotiation` |
-| `negotiation` | Negotiation | `success`, `order_cancelled` |
+| `in_trade` | In Trade | `success`, `order_cancelled` |
 | `order_cancelled` | Order Cancelled | (terminal) |
 | `success` | Success | `pending_payment` |
 | `pending_payment` | Pending Payment | `payment_completed` |
@@ -900,7 +960,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Customer Sees |
 |-------------|---------------|
 | `pending_sale`, `pending` | Order Created |
-| `in_trade`, `negotiation` | Order Processing |
+| `in_trade` | Order Processing |
 | `order_cancelled` | Failed |
 | `success` | Success |
 | `pending_payment` | Pending Payment |
@@ -911,7 +971,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Tab |
 |-------------|-----|
 | No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` | Consulting |
-| `in_trade` / `negotiation` / `success` | Trading |
+| `in_trade` / `success` | Trading |
 | `pending_payment` | Pending Payment |
 
 ### 6.4 Status Persistence
@@ -930,7 +990,6 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Pending Sale | `text-warning` | `bg-warning/10` |
 | Pending | `text-primary` | `bg-primary/10` |
 | In Trade | `text-accent` | `bg-accent/10` |
-| Negotiation | `text-warning` | `bg-warning/10` |
 | Order Cancelled | `text-destructive` | `bg-destructive/10` |
 | Success | `text-success` | `bg-success/10` |
 | Pending Payment | `text-primary` | `bg-primary/10` |
@@ -1183,7 +1242,8 @@ src/
 ├── contexts/
 │   └── AdminRoleContext.tsx          # RBAC role state (super_admin/team_lead/agent)
 ├── data/
-│   └── mock.ts                      # All mock data
+│   ├── mock.ts                      # All mock data
+│   └── rankingMock.ts               # Ranking tiers, users, helpers
 ├── hooks/
 │   ├── use-mobile.tsx                # Mobile viewport detection
 │   ├── use-theme.tsx                 # Theme provider + toggle
@@ -1209,6 +1269,7 @@ src/
 │   │   ├── AdminSensitiveWords.tsx   # Sensitive words filter
 │   │   ├── AdminApiConfig.tsx        # API configuration
 │   │   ├── AdminBroadcast.tsx        # SMS broadcast
+│   │   ├── AdminRanking.tsx           # Trading volume ranking (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
@@ -1218,6 +1279,7 @@ src/
 │       ├── CustomerChatView.tsx      # Chat view with order tracking
 │       ├── CustomerContacts.tsx      # Agent directory
 │       ├── CustomerMe.tsx            # Profile (309 lines — multi-section)
+│       ├── CustomerRanking.tsx       # Trading volume ranking (customer)
 │       └── CustomerGuide.tsx         # User guide
 └── test/
     ├── setup.ts
@@ -1266,7 +1328,18 @@ src/
 
 ## 12. Full Changelog
 
-### v4.2 → v4.3 (Current)
+### v4.3 → v4.4 (Current)
+
+| Change | Description |
+|--------|-------------|
+| **Customer Ranking Page** | New `/customer/ranking` page with personal achievement card, progress bar, motivational CTA, and smart leaderboard (top 20 or top 10 + context around user) |
+| **Admin Ranking Page** | New `/admin/ranking` page with reward tiers panel, searchable leaderboard with alias filter, and month selector |
+| **Ranking Mock Data** | New `src/data/rankingMock.ts` with 9 reward tiers, 25 mock users, and tier helper functions |
+| **Re-negotiation Removed** | Removed `negotiation` status from the order state machine — `in_trade` now transitions directly to `success` or `order_cancelled` |
+| **RBAC Updated** | Volume Ranking added to RBAC table — accessible to all roles |
+| **PRD Updated** | PRD bumped to v4.4 with ranking pages, order flow simplification, renumbered admin sections |
+
+### v4.2 → v4.3
 
 | Change | Description |
 |--------|-------------|

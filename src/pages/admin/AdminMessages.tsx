@@ -327,10 +327,7 @@ export default function AdminMessages() {
           if (mappedStatus === "success") {
             setTimeout(() => orderStatus.transitionStatus(selectedId, "success"), 50);
           } else if (mappedStatus === "order_cancelled") {
-            setTimeout(() => {
-              orderStatus.transitionStatus(selectedId, "negotiation");
-              setTimeout(() => orderStatus.transitionStatus(selectedId, "order_cancelled"), 50);
-            }, 50);
+            setTimeout(() => orderStatus.transitionStatus(selectedId, "order_cancelled"), 50);
           }
         }, 50);
       }, 50);
@@ -375,9 +372,7 @@ export default function AdminMessages() {
     const fallbackCardlightResult: CardlightResult | undefined =
       currentOrderStatus === "success"
         ? "successful"
-        : currentOrderStatus === "negotiation"
-          ? "negotiate"
-          : currentOrderStatus === "in_trade"
+        : currentOrderStatus === "in_trade"
             ? "pending"
             : undefined;
     const cardlightResult = currentOrderId ? (cardlightResults[currentOrderId] ?? fallbackCardlightResult) : fallbackCardlightResult;
@@ -392,10 +387,8 @@ export default function AdminMessages() {
           return { icon: "⏳", title: "Waiting for buyer...", desc: "The buyer is reviewing the order.", colorClass: "text-primary" };
         case "in_trade":
           return { icon: "🔄", title: "In Trade — Card Decision", desc: "The buyer has received the order. What's the result?", colorClass: "text-foreground" };
-        case "negotiation":
-          return { icon: "⚠️", title: "Negotiation in Progress", desc: "The card was flagged. What's the negotiation result?", colorClass: "text-warning" };
         case "order_cancelled":
-          return { icon: "❌", title: "Order Cancelled", desc: "Negotiation failed. This order has been cancelled.", colorClass: "text-destructive" };
+          return { icon: "❌", title: "Order Cancelled", desc: "This order has been cancelled.", colorClass: "text-destructive" };
         case "success":
           return { icon: "✅", title: "Trade Successful — Wallet Credited", desc: "Funds have been credited to the customer's wallet.", colorClass: "text-success" };
       }
@@ -459,31 +452,6 @@ export default function AdminMessages() {
                 onClick={() => { setNegotiateDenom(""); setNegotiateRate(""); setNegotiateOpen(true); }}
               >
                 Agree
-              </Button>
-            </div>
-          );
-        case "negotiation":
-          return (
-            <div className="flex gap-2">
-              <Button
-                size="sm"
-                variant="outline"
-                className="flex-1 h-8 text-xs"
-                onClick={() => statusOrder && setDetailOrderId(statusOrder.id)}
-              >
-                Details
-              </Button>
-              <Button
-                size="sm"
-                className="flex-1 h-8 text-xs bg-success text-success-foreground hover:bg-success/90"
-                onClick={() => setConfirmAction({
-                  type: "successful",
-                  title: "Confirm Negotiated Trade",
-                  desc: `This will complete the transaction and credit the negotiated payout to the customer's wallet.`,
-                  onConfirm: () => { handleStatusTransition(selectedId, "success", statusOrder?.payout); setConfirmAction(null); }
-                })}
-              >
-                <CheckCircle2 className="w-3.5 h-3.5 mr-1" /> Confirm
               </Button>
             </div>
           );
@@ -1263,7 +1231,7 @@ export default function AdminMessages() {
                         ["Order amount", `${detailOrder.payout.toLocaleString()}`],
                         ["Settlement amount", detailOrder.bank ? `₦${detailOrder.payout.toLocaleString()}` : "—"],
                         ["Order Status", detailOrder.status],
-                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : currentOrderStatus === "negotiation" ? "Under negotiation" : "Pending"],
+                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                         ["Arbitration status", "No arbitrated"],
                         ["Dispute Amount", "—"],
                       ].map(([label, value]) => (
@@ -1436,9 +1404,8 @@ export default function AdminMessages() {
                           newDenom: parseFloat(negotiateDenom), newRate: parseFloat(negotiateRate), newAmount: payout,
                         }
                       }));
-                      // Transition through negotiation to success (completing the transaction)
-                      handleStatusTransition(selectedId, "negotiation");
-                      setTimeout(() => handleStatusTransition(selectedId, "success", payout), 100);
+                      // Transition directly to success
+                      handleStatusTransition(selectedId, "success", payout);
                       addSystemMessage(`✅ Negotiation confirmed. Payout ₦${payout.toLocaleString()}.`);
                     }
                     setNegotiateOpen(false);

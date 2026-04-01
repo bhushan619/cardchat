@@ -4,7 +4,6 @@ export type AgentOrderStatus =
   | "pending_sale"
   | "pending"
   | "in_trade"
-  | "negotiation"
   | "order_cancelled"
   | "success";
 
@@ -20,8 +19,7 @@ export type ConversationTab = "consulting" | "trading";
 const validTransitions: Record<AgentOrderStatus, AgentOrderStatus[]> = {
   pending_sale: ["pending"],
   pending: ["in_trade"],
-  in_trade: ["success", "negotiation", "order_cancelled"],
-  negotiation: ["success", "order_cancelled", "negotiation"],
+  in_trade: ["success", "order_cancelled"],
   order_cancelled: [],
   success: [],
 };
@@ -41,7 +39,6 @@ export function toCustomerStatus(status: AgentOrderStatus): CustomerOrderStatus 
     case "pending":
       return "order_created";
     case "in_trade":
-    case "negotiation":
       return "order_processing";
     case "order_cancelled":
       return "failed";
@@ -60,7 +57,6 @@ export function getTabForStatus(status: AgentOrderStatus | null): ConversationTa
     case "success":
       return "consulting";
     case "in_trade":
-    case "negotiation":
       return "trading";
     default:
       return "consulting";
@@ -72,7 +68,6 @@ export const agentStatusLabels: Record<AgentOrderStatus, string> = {
   pending_sale: "Pending Sale",
   pending: "Pending",
   in_trade: "In Trade",
-  negotiation: "Negotiation",
   order_cancelled: "Order Cancelled",
   success: "Success",
 };
@@ -90,7 +85,6 @@ export const agentStatusStyles: Record<AgentOrderStatus, { color: string; bg: st
   pending_sale: { color: "text-warning", bg: "bg-warning/10" },
   pending: { color: "text-primary", bg: "bg-primary/10" },
   in_trade: { color: "text-accent", bg: "bg-accent/10" },
-  negotiation: { color: "text-warning", bg: "bg-warning/10" },
   order_cancelled: { color: "text-destructive", bg: "bg-destructive/10" },
   success: { color: "text-success", bg: "bg-success/10" },
 };
