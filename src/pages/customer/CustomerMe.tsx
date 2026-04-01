@@ -147,6 +147,11 @@ export default function CustomerMe() {
                 </button>
               </div>
               <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
+              {balanceVisible && (
+                <p className="text-xs opacity-80 mt-1">
+                  ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
+                </p>
+              )}
               <div className="flex gap-2 mt-4">
                 <Button
                   size="sm"

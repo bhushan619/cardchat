@@ -97,7 +97,9 @@ export const customerContacts = [
 ];
 
 // Wallet data
-export const walletBalance = 556200;
+export const tradingBalance = 550000;
+export const rewardsBalance = 6200;
+export const walletBalance = tradingBalance + rewardsBalance;
 
 export const walletTransactions = [
   { id: "WT-001", type: "credit" as const, amount: 215200, description: "Order #ORD-20260318-001 — iTunes US", date: "Mar 18, 2026", time: "10:42 AM" },

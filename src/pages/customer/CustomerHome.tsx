@@ -89,6 +89,11 @@ export default function CustomerHome() {
           <p className="text-2xl font-heading font-bold">
             {balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}
           </p>
+          {balanceVisible && (
+            <p className="text-[11px] opacity-80 mt-0.5">
+              ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
+            </p>
+          )}
           <div className="flex gap-2 mt-3">
             <button
               onClick={() => navigate("/customer/me", { state: { openWallet: true } })}
