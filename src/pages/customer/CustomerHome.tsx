@@ -1,6 +1,6 @@
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { cardRates, walletBalance } from "@/data/mock";
+import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
 import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
