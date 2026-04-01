@@ -990,7 +990,6 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Pending Sale | `text-warning` | `bg-warning/10` |
 | Pending | `text-primary` | `bg-primary/10` |
 | In Trade | `text-accent` | `bg-accent/10` |
-| Negotiation | `text-warning` | `bg-warning/10` |
 | Order Cancelled | `text-destructive` | `bg-destructive/10` |
 | Success | `text-success` | `bg-success/10` |
 | Pending Payment | `text-primary` | `bg-primary/10` |
