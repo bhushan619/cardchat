@@ -357,7 +357,7 @@ export default function AdminUsers() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setPinUser(null)}>Cancel</Button>
             <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSavePin} disabled={pinNew.length !== 6}>
-              {getUserPinStatus(pinUser!) ? "Update PIN" : "Create PIN"}
+              {getUserPinStatus(pinUser) ? "Update PIN" : "Create PIN"}
             </Button>
           </DialogFooter>
         </DialogContent>
