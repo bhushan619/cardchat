@@ -775,6 +775,11 @@ export default function CustomerMe() {
             <div>
               <p className="text-xs opacity-80">Wallet Balance</p>
               <p className="text-2xl font-heading font-bold">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
+              {balanceVisible && (
+                <p className="text-[11px] opacity-80 mt-0.5">
+                  ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
+                </p>
+              )}
             </div>
             <button onClick={() => setBalanceVisible(!balanceVisible)} className="opacity-70 hover:opacity-100 transition-opacity">
               {balanceVisible ? <Eye className="w-6 h-6" /> : <EyeOff className="w-6 h-6" />}
