@@ -66,3 +66,48 @@ export function getNextTier(volume: number): RankingTier | null {
   }
   return null;
 }
+
+export type BiWeeklyPeriod = {
+  start: Date;
+  end: Date;
+  label: string;
+};
+
+/**
+ * Returns the two bi-weekly periods for a given month/year.
+ * Period 1: 1st to 15th (or 16th depending on month length)
+ * Period 2: 15th/16th to 1st of next month
+ * Split: first half gets floor(days/2), second half gets ceil(days/2)
+ */
+export function getBiWeeklyPeriods(year: number, month: number): [BiWeeklyPeriod, BiWeeklyPeriod] {
+  const start = new Date(year, month, 1);
+  const nextMonthStart = new Date(year, month + 1, 1);
+  const totalDays = (nextMonthStart.getTime() - start.getTime()) / (1000 * 60 * 60 * 24);
+  const firstHalfDays = Math.floor(totalDays / 2);
+  const midDate = new Date(year, month, 1 + firstHalfDays);
+
+  const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+  const mn = monthNames[month];
+  const nextMn = monthNames[nextMonthStart.getMonth()];
+
+  return [
+    {
+      start,
+      end: midDate,
+      label: `${mn} 01 – ${mn} ${String(midDate.getDate()).padStart(2, "0")}, ${year} (H1)`,
+    },
+    {
+      start: midDate,
+      end: nextMonthStart,
+      label: `${mn} ${String(midDate.getDate()).padStart(2, "0")} – ${nextMn} 01, ${nextMonthStart.getFullYear()} (H2)`,
+    },
+  ];
+}
+
+/**
+ * Returns the current bi-weekly period for a given date.
+ */
+export function getCurrentBiWeeklyPeriod(date: Date): BiWeeklyPeriod {
+  const [p1, p2] = getBiWeeklyPeriods(date.getFullYear(), date.getMonth());
+  return date < p2.start ? p1 : p2;
+}

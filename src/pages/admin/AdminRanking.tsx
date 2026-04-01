@@ -1,15 +1,12 @@
 import { useState, useMemo } from "react";
-import { format, startOfMonth, endOfMonth } from "date-fns";
+import { format } from "date-fns";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { rankingTiers, rankingList } from "@/data/rankingMock";
-import { Trophy, Medal, Award, Search, CalendarIcon } from "lucide-react";
+import { rankingTiers, rankingList, getBiWeeklyPeriods } from "@/data/rankingMock";
+import { Trophy, Medal, Award, Search, Download } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-
-const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
 
 const medalIcons: Record<number, JSX.Element> = {
   1: <Trophy className="w-4 h-4 text-yellow-500" />,
@@ -17,39 +14,98 @@ const medalIcons: Record<number, JSX.Element> = {
   3: <Award className="w-4 h-4 text-amber-600" />,
 };
 
+function getPeriodOptions() {
+  const options: { value: string; label: string; start: Date; end: Date }[] = [];
+  // Generate periods for 2026
+  for (let month = 0; month < 12; month++) {
+    const [p1, p2] = getBiWeeklyPeriods(2026, month);
+    options.push({
+      value: `${month}-h1`,
+      label: p1.label,
+      start: p1.start,
+      end: p1.end,
+    });
+    options.push({
+      value: `${month}-h2`,
+      label: p2.label,
+      start: p2.start,
+      end: p2.end,
+    });
+  }
+  return options;
+}
+
+const periodOptions = getPeriodOptions();
+
 export default function AdminRanking() {
   const [search, setSearch] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState("2"); // March (0-indexed)
+  const [selectedPeriod, setSelectedPeriod] = useState("2-h1"); // Mar H1
+  const [dateFrom, setDateFrom] = useState<Date | undefined>();
+  const [dateTo, setDateTo] = useState<Date | undefined>();
+
+  const activePeriod = periodOptions.find((p) => p.value === selectedPeriod);
 
   const filteredList = useMemo(() => {
     if (!search.trim()) return rankingList;
     return rankingList.filter((u) => u.alias.toLowerCase().includes(search.toLowerCase()));
   }, [search]);
 
-  const periodStart = startOfMonth(new Date(2026, Number(selectedMonth)));
-  const periodEnd = endOfMonth(new Date(2026, Number(selectedMonth)));
+  const handleExport = () => {
+    const headers = ["Rank", "Alias", "Volume", "Reward (₦)"];
+    const rows = filteredList.map((u) => [u.rank, u.alias, u.volume, u.reward]);
+    const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ranking_${selectedPeriod}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <AdminLayout>
       <div className="p-6 space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between flex-wrap gap-3">
           <div>
             <h1 className="text-xl font-bold">Trading Volume Ranking</h1>
-            <p className="text-sm text-muted-foreground">
-              {format(periodStart, "MMM dd")} – {format(periodEnd, "MMM dd, yyyy")}
-            </p>
+            {activePeriod && (
+              <p className="text-sm text-muted-foreground">
+                {activePeriod.label}
+              </p>
+            )}
           </div>
-          <Select value={selectedMonth} onValueChange={setSelectedMonth}>
-            <SelectTrigger className="w-40 h-8 text-xs">
-              <CalendarIcon className="w-3.5 h-3.5 mr-1.5 text-muted-foreground" />
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {months.map((m, i) => (
-                <SelectItem key={i} value={String(i)} className="text-xs">{m} 2026</SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Select value={selectedPeriod} onValueChange={(v) => {
+              setSelectedPeriod(v);
+              const p = periodOptions.find((o) => o.value === v);
+              if (p) { setDateFrom(p.start); setDateTo(p.end); }
+            }}>
+              <SelectTrigger className="w-56 h-8 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {periodOptions.map((p) => (
+                  <SelectItem key={p.value} value={p.value} className="text-xs">{p.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Date range filter */}
+        <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">From:</span>
+            <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="Start date & time" />
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">To:</span>
+            <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="End date & time" />
+          </div>
+          <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={handleExport}>
+            <Download className="w-3.5 h-3.5" /> Export CSV
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

@@ -12,6 +12,7 @@ import {
   getCurrentTier,
   getNextTier,
   rankingTiers,
+  getCurrentBiWeeklyPeriod,
   type RankingUser,
 } from "@/data/rankingMock";
 
@@ -30,6 +31,8 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
+
+  const currentPeriod = getCurrentBiWeeklyPeriod(new Date(2026, 2, 10)); // Mock: March 2026
 
   const me = rankingList.find((u) => u.alias === currentUserAlias)!;
   const currentTier = getCurrentTier(me.volume);
@@ -62,7 +65,7 @@ export default function CustomerRanking() {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
-      {/* 1. Header */}
+      {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0 sticky top-0 z-20">
         <div className="flex items-center gap-3">
           <button
@@ -76,7 +79,7 @@ export default function CustomerRanking() {
               Trading Volume Ranking
             </h2>
             <p className="text-[11px] text-muted-foreground">
-              Mar 01 – Mar 31, 2026
+              {currentPeriod.label}
             </p>
           </div>
         </div>
@@ -91,7 +94,8 @@ export default function CustomerRanking() {
               <DialogTitle>Ranking Rules</DialogTitle>
             </DialogHeader>
             <div className="space-y-3 text-sm text-muted-foreground">
-              <p>Rankings are based on your total trading volume within the current calendar month.</p>
+              <p>Rankings are based on your total trading volume within the current <span className="font-semibold text-foreground">bi-weekly period</span>.</p>
+              <p className="text-xs">Each month is split into two periods: the 1st to mid-month, and mid-month to the 1st of the next month. The exact split depends on the number of days in the month.</p>
               <p className="font-medium text-foreground">Reward Tiers:</p>
               <div className="space-y-1.5">
                 {rankingTiers.map((t) => (
@@ -101,7 +105,7 @@ export default function CustomerRanking() {
                   </div>
                 ))}
               </div>
-              <p className="text-xs">Rankings reset on the 1st of every month. Rewards are credited within 48 hours after the month ends.</p>
+              <p className="text-xs">Rankings reset at the start of every bi-weekly period. Rewards are credited within 48 hours after the period ends.</p>
             </div>
           </DialogContent>
         </Dialog>
@@ -109,7 +113,7 @@ export default function CustomerRanking() {
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
-          {/* 2. Personal Achievement Card */}
+          {/* Personal Achievement Card */}
           <Card className="relative overflow-hidden border-0 bg-gradient-to-br from-accent/10 via-card to-accent/5 shadow-md">
             <div className="absolute top-0 right-0 w-24 h-24 bg-accent/5 rounded-full -translate-y-8 translate-x-8" />
             <div className="p-5">
@@ -159,7 +163,7 @@ export default function CustomerRanking() {
             </div>
           </Card>
 
-          {/* 3. Progress & CTA */}
+          {/* Progress & CTA */}
           <Card className="border shadow-sm">
             <div className="p-4 space-y-3">
               <div className="flex items-center justify-between text-xs">
@@ -189,14 +193,13 @@ export default function CustomerRanking() {
             </div>
           </Card>
 
-          {/* 4. Ranking List */}
+          {/* Ranking List */}
           <div>
             <h3 className="font-heading font-bold text-sm mb-3 flex items-center gap-2">
               <Trophy className="w-4 h-4 text-accent" /> Leaderboard
             </h3>
 
             <div className="rounded-xl border overflow-hidden bg-card">
-              {/* Table header */}
               <div className="grid grid-cols-[3rem_1fr_5.5rem_4rem] text-[10px] uppercase tracking-wider text-muted-foreground font-medium px-3 py-2.5 bg-muted/50 border-b">
                 <span>Rank</span>
                 <span>Nickname</span>
@@ -204,7 +207,6 @@ export default function CustomerRanking() {
                 <span className="text-right">Reward</span>
               </div>
 
-              {/* Rows */}
               <div>
                 {(displayList as (RankingUser | "separator")[]).map((item, idx) => {
                   if (item === "separator") {
