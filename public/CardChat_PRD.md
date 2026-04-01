@@ -491,7 +491,7 @@ A motivation-first ranking page showing the user's trading volume standing withi
 - 25 mock users with pre-assigned ranks, volumes, and rewards
 - Helper functions: `getCurrentTier()`, `getNextTier()`
 
-### 4.9 Customer App Navigation
+### 4.10 Customer App Navigation
 
 **Bottom Tab Bar** (4 tabs):
 | Tab | Icon | Path | Description |
