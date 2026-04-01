@@ -19,8 +19,7 @@ export type ConversationTab = "consulting" | "trading";
 const validTransitions: Record<AgentOrderStatus, AgentOrderStatus[]> = {
   pending_sale: ["pending"],
   pending: ["in_trade"],
-  in_trade: ["success", "negotiation", "order_cancelled"],
-  negotiation: ["success", "order_cancelled", "negotiation"],
+  in_trade: ["success", "order_cancelled"],
   order_cancelled: [],
   success: [],
 };
