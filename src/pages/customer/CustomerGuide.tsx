@@ -148,7 +148,8 @@ const guides: GuideSection[] = [
     icon: Banknote,
     description: "Manage your wallet balance and cash withdrawals.",
     steps: [
-      { text: "Your wallet balance is visible on the Me tab and updated in real-time as trades complete." },
+      { text: "Your total wallet balance is the sum of your Trading Balance and Rewards Balance — both are visible on the Me tab." },
+      { text: "Trading Balance reflects earnings from completed card trades. Rewards Balance reflects earnings from ranking achievements and referral bonuses." },
       { text: "To withdraw funds, navigate to your wallet and tap 'Withdraw'." },
       { text: "The minimum withdrawal amount is ₦2,000 per transaction.", tip: "Amounts below ₦2,000 will be rejected — accumulate a balance first." },
       { text: "The maximum withdrawal amount is ₦790,000 per transaction." },
