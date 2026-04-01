@@ -1337,6 +1337,7 @@ src/
 │   │   ├── AdminApiConfig.tsx        # API configuration
 │   │   ├── AdminBroadcast.tsx        # SMS broadcast
 │   │   ├── AdminRanking.tsx           # Trading volume ranking (admin)
+│   │   ├── AdminRewards.tsx          # Rewards management (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
