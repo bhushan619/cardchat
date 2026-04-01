@@ -1,9 +1,10 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
-import { Users, Plus, Search, MoreVertical, Shield, X } from "lucide-react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
@@ -44,6 +45,13 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [suspendUser, setSuspendUser] = useState<User | null>(null);
+
+  // PIN management
+  const [pinUser, setPinUser] = useState<User | null>(null);
+  const [pinNew, setPinNew] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
+  const [showPinNew, setShowPinNew] = useState(false);
+  const [showPinConfirm, setShowPinConfirm] = useState(false);
 
   // Form state
   const [formName, setFormName] = useState("");
@@ -102,6 +110,31 @@ export default function AdminUsers() {
     setDeleteUser(null);
   };
 
+  const openPinModal = (u: User) => {
+    setPinUser(u);
+    setPinNew("");
+    setPinConfirm("");
+    setShowPinNew(false);
+    setShowPinConfirm(false);
+  };
+
+  const handleSavePin = () => {
+    if (!pinUser) return;
+    if (pinNew.length !== 6 || !/^\d{6}$/.test(pinNew)) {
+      toast.error("PIN must be exactly 6 digits");
+      return;
+    }
+    if (pinNew !== pinConfirm) {
+      toast.error("PINs do not match");
+      return;
+    }
+    localStorage.setItem(`adminPin_${pinUser.role}`, pinNew);
+    toast.success(`Transaction PIN ${localStorage.getItem(`adminPin_${pinUser.role}`) ? "updated" : "created"} for ${pinUser.name}`);
+    setPinUser(null);
+  };
+
+  const getUserPinStatus = (u: User) => !!localStorage.getItem(`adminPin_${u.role}`);
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -127,6 +160,7 @@ export default function AdminUsers() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">User</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Email</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Role</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">PIN</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Last Login</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3"></th>
@@ -150,6 +184,15 @@ export default function AdminUsers() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
+                    {getUserPinStatus(u) ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
+                        <Check className="w-3 h-3" /> Set
+                      </span>
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground">Not set</span>
+                    )}
+                  </td>
+                  <td className="px-4 py-3 text-center">
                     {u.status === "suspended" ? (
                       <span className="status-badge bg-destructive/10 text-destructive">Suspended</span>
                     ) : (
@@ -164,6 +207,10 @@ export default function AdminUsers() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => openEdit(u)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => openPinModal(u)}>
+                          <Lock className="w-3.5 h-3.5 mr-2" />
+                          {getUserPinStatus(u) ? "Update PIN" : "Create PIN"}
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setSuspendUser(u)}>
                           {u.status === "suspended" ? "Reactivate" : "Suspend"}
                         </DropdownMenuItem>
@@ -223,6 +270,78 @@ export default function AdminUsers() {
             <Button variant="outline" onClick={() => setModalOpen(false)}>Cancel</Button>
             <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSave} disabled={!formName || !formEmail}>
               {editingUser ? "Save Changes" : "Create User"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* PIN Management Modal */}
+      <Dialog open={!!pinUser} onOpenChange={() => setPinUser(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="w-4 h-4 text-accent" />
+              {getUserPinStatus(pinUser!) ? "Update" : "Create"} Transaction PIN
+            </DialogTitle>
+            <DialogDescription>
+              {getUserPinStatus(pinUser!) ? "Set a new" : "Create a"} 6-digit transaction PIN for {pinUser?.name}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
+              <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                {pinUser?.name.split(" ").map(n => n[0]).join("")}
+              </div>
+              <div>
+                <p className="text-sm font-medium">{pinUser?.name}</p>
+                <p className="text-[10px] text-muted-foreground">{roleLabels[pinUser?.role || "agent"]?.label}</p>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">New PIN</label>
+              <div className="relative">
+                <Input
+                  type={showPinNew ? "text" : "password"}
+                  maxLength={6}
+                  placeholder="••••••"
+                  value={pinNew}
+                  onChange={e => setPinNew(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="pr-9"
+                />
+                <button
+                  type="button"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPinNew(!showPinNew)}
+                >
+                  {showPinNew ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium">Confirm PIN</label>
+              <div className="relative">
+                <Input
+                  type={showPinConfirm ? "text" : "password"}
+                  maxLength={6}
+                  placeholder="••••••"
+                  value={pinConfirm}
+                  onChange={e => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="pr-9"
+                />
+                <button
+                  type="button"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                  onClick={() => setShowPinConfirm(!showPinConfirm)}
+                >
+                  {showPinConfirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setPinUser(null)}>Cancel</Button>
+            <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSavePin} disabled={pinNew.length !== 6}>
+              {getUserPinStatus(pinUser!) ? "Update PIN" : "Create PIN"}
             </Button>
           </DialogFooter>
         </DialogContent>
