@@ -447,11 +447,13 @@ export default function CardlightPanel({
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
+                      XC /*{" "}
                       {cardSources.map((s) => (
                         <SelectItem key={s} value={s} className="text-xs">
                           {s}
                         </SelectItem>
-                      ))}
+                      ))}{" "}
+                      */
                     </SelectContent>
                   </Select>
                 </div>
