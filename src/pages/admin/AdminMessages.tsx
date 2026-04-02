@@ -52,6 +52,20 @@ type ChatMessage = {
 export default function AdminMessages() {
   const { role } = useAdminRole();
   const orderStatus = useOrderStatus();
+
+  // One-time reset of stale persisted state (bump version to re-trigger)
+  useEffect(() => {
+    const RESET_VERSION = "v2";
+    if (localStorage.getItem("cardchat_reset_version") !== RESET_VERSION) {
+      orderStatus.resetAll();
+      sessionStorage.removeItem("cardchat_completed_orders");
+      sessionStorage.removeItem("cardchat_transfer_completed");
+      sessionStorage.removeItem("cardchat_cardlight_results");
+      sessionStorage.removeItem("cardchat_fund_adjustments");
+      localStorage.setItem("cardchat_reset_version", RESET_VERSION);
+      window.location.reload();
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
