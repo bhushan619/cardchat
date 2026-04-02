@@ -1043,106 +1043,74 @@ export default function AdminMessages() {
                     </div>
                   )}
 
-                  {/* Orders */}
+                  {/* Orders — ongoing only, sorted latest first */}
                   <div className="p-4 border-b">
-                    <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
+                    <h3 className="font-heading font-semibold text-sm mb-3">Orders ({ongoingOrders.length})</h3>
                     <div className="space-y-1.5">
-                      {allOrders.map(o => {
+                      {ongoingOrders.map(o => {
                         const isSelected = selectedOrderId === o.id;
                         return (
-                          <div key={o.id}>
-                            <div
-                              onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
-                              className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
-                                isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
-                              }`}
-                            >
-                              <div className="flex items-center gap-2.5">
-                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                                  <CreditCard className="w-4 h-4 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center justify-between mb-0.5">
-                                    <span className="text-[11px] font-semibold truncate">
-                                      {o.cardType} {o.cardCurrency && <span className="text-muted-foreground font-normal">/ {o.cardCurrency}</span>}
-                                    </span>
-                                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 ml-1">
-                                      {o.status}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                                    <div className="flex items-center gap-1 truncate">
-                                      <span className="font-mono truncate">{o.id}</span>
-                                      <button
-                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.id, o.id); }}
-                                        className="text-muted-foreground hover:text-primary shrink-0"
-                                        title="Copy Order ID"
-                                      >
-                                        <Copy className="w-3 h-3" />
-                                      </button>
-                                      {copyFeedback === o.id && <span className="text-[8px] text-success">Copied!</span>}
-                                    </div>
-                                    <span className="shrink-0">${o.amount}</span>
-                                  </div>
-                                  {o.cardNumbers.length > 0 && (
-                                    <div className="flex items-center gap-1 mt-0.5 text-[10px] text-muted-foreground">
-                                      <span className="truncate font-mono">{o.cardNumbers[0]}{o.cardNumbers.length > 1 ? ` +${o.cardNumbers.length - 1}` : ""}</span>
-                                      <button
-                                        onClick={(e) => { e.stopPropagation(); handleCopy(o.cardNumbers.join(", "), `cn-${o.id}`); }}
-                                        className="text-muted-foreground hover:text-primary shrink-0"
-                                        title="Copy Card Number(s)"
-                                      >
-                                        <Copy className="w-3 h-3" />
-                                      </button>
-                                      {copyFeedback === `cn-${o.id}` && <span className="text-[8px] text-success">Copied!</span>}
-                                    </div>
-                                  )}
-                                </div>
+                          <div
+                            key={o.id}
+                            onClick={() => {
+                              setSelectedOrderId(isSelected ? null : o.id);
+                              // Also update the Order Status area to show this order
+                              if (!isSelected && selectedId) {
+                                // If order has a matching conversation order, sync it
+                              }
+                            }}
+                            className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
+                              isSelected ? "bg-accent/10 border border-accent/30" : "bg-muted hover:bg-muted/80 border border-transparent"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                                <CreditCard className="w-4 h-4 text-primary" />
                               </div>
-                            </div>
-                            {isSelected && (
-                              <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
-                                <div className="flex items-center justify-between">
-                                  <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    onClick={() => setDetailOrderId(o.id)}
-                                    className="h-6 px-2.5 text-[10px] gap-1"
-                                  >
-                                    <ExternalLink className="w-3 h-3" /> Details
-                                  </Button>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center justify-between mb-0.5">
+                                  <span className="text-[11px] font-semibold truncate">
+                                    {o.cardType} {o.cardCurrency && <span className="text-muted-foreground font-normal">/ {o.cardCurrency}</span>}
+                                  </span>
+                                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 ml-1">
+                                    {o.status.replace("_", " ")}
+                                  </span>
                                 </div>
-                                <div className="space-y-1.5">
-                                  {[
-                                    ["Order ID", o.id],
-                                    ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
-                                    ["Amount", `$${o.amount}`],
-                                    ["Card Rate", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
-                                    ["Payout", `₦${o.payout.toLocaleString()}`],
-                                    ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
-                                    ["Time", o.timestamp],
-                                  ].map(([k, v]) => (
-                                    <div key={k} className="flex justify-between text-xs">
-                                      <span className="text-muted-foreground">{k}</span>
-                                      <span className="font-medium">{v}</span>
-                                    </div>
-                                  ))}
+                                <div className="flex items-center justify-between text-[10px] text-muted-foreground">
+                                  <div className="flex items-center gap-1 truncate">
+                                    <span className="font-mono truncate">{o.id}</span>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleCopy(o.id, o.id); }}
+                                      className="text-muted-foreground hover:text-primary shrink-0"
+                                      title="Copy Order ID"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </button>
+                                    {copyFeedback === o.id && <span className="text-[8px] text-success">Copied!</span>}
+                                  </div>
+                                  <span className="shrink-0">${o.amount}</span>
                                 </div>
-
-                                {/* Wallet credit indicator */}
-                                {currentOrderStatus === "success" && (
-                                  <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                                    <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                    <p className="text-xs font-medium text-success">Wallet Credited</p>
-                                    <p className="text-[10px] text-muted-foreground">₦{o.payout.toLocaleString()} added to customer's wallet</p>
+                                {o.cardNumbers.length > 0 && (
+                                  <div className="flex items-center gap-1 mt-0.5 text-[10px] text-muted-foreground">
+                                    <span className="truncate font-mono">{o.cardNumbers[0]}{o.cardNumbers.length > 1 ? ` +${o.cardNumbers.length - 1}` : ""}</span>
+                                    <button
+                                      onClick={(e) => { e.stopPropagation(); handleCopy(o.cardNumbers.join(", "), `cn-${o.id}`); }}
+                                      className="text-muted-foreground hover:text-primary shrink-0"
+                                      title="Copy Card Number(s)"
+                                    >
+                                      <Copy className="w-3 h-3" />
+                                    </button>
+                                    {copyFeedback === `cn-${o.id}` && <span className="text-[8px] text-success">Copied!</span>}
                                   </div>
                                 )}
                               </div>
-                            )}
+                            </div>
                           </div>
                         );
                       })}
+                      {ongoingOrders.length === 0 && (
+                        <p className="text-xs text-muted-foreground text-center py-4">No ongoing orders</p>
+                      )}
                     </div>
                   </div>
 
