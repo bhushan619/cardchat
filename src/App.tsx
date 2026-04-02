@@ -40,6 +40,7 @@ import AdminTeamChat from "./pages/admin/AdminTeamChat";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminRanking from "./pages/admin/AdminRanking";
 import AdminRewards from "./pages/admin/AdminRewards";
+import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
 
 const queryClient = new QueryClient();
 
@@ -87,6 +88,7 @@ const App = () => (
             <Route path="/admin/profile" element={<AdminRoleProvider><AdminProfile /></AdminRoleProvider>} />
             <Route path="/admin/ranking" element={<AdminRoleProvider><AdminRanking /></AdminRoleProvider>} />
             <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
+            <Route path="/admin/screens" element={<AdminScreensGallery />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
