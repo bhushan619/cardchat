@@ -4,7 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
 
@@ -32,11 +41,12 @@ interface CardEntry {
 
 export type CardlightResult = "pending" | "successful" | "negotiate";
 
-export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> = {
-  pending:    { label: "Pending",    color: "text-warning",     bg: "bg-warning/10",     rowBg: "bg-warning/5" },
-  successful: { label: "Successful", color: "text-success",     bg: "bg-success/20",     rowBg: "bg-success/10" },
-  negotiate:  { label: "Negotiate",  color: "text-primary",     bg: "bg-primary/20",     rowBg: "bg-primary/10" },
-};
+export const cardlightResultMeta: Record<CardlightResult, { label: string; color: string; bg: string; rowBg: string }> =
+  {
+    pending: { label: "Pending", color: "text-warning", bg: "bg-warning/10", rowBg: "bg-warning/5" },
+    successful: { label: "Successful", color: "text-success", bg: "bg-success/20", rowBg: "bg-success/10" },
+    negotiate: { label: "Negotiate", color: "text-primary", bg: "bg-primary/20", rowBg: "bg-primary/10" },
+  };
 
 interface OrderEntry {
   id: string;
@@ -97,15 +107,46 @@ interface SellerEntry {
 }
 
 const mockSellers: SellerEntry[] = [
-  { id: "s1", seller: "GRTEAM", rate: 5.88, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||and One Card Only||Cards Only", transactions: 0 },
-  { id: "s2", seller: "GRTEAM", rate: 5.65, information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||Horizontal Cards Only", transactions: 1344793 },
-  { id: "s3", seller: "GRTEAM", rate: 5.25, information: "E-codes||Fast card||Accepts Multiples of 5", transactions: 0 },
-  { id: "s4", seller: "GRTEAM", rate: 5, information: "Physical||Single Card Only||Fast card||Vertical Cards Only", transactions: 1344793 },
+  {
+    id: "s1",
+    seller: "GRTEAM",
+    rate: 5.88,
+    information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||and One Card Only||Cards Only",
+    transactions: 0,
+  },
+  {
+    id: "s2",
+    seller: "GRTEAM",
+    rate: 5.65,
+    information: "Physical||Fast card||Accepts Multiples of 5||Clear Picture Required||Horizontal Cards Only",
+    transactions: 1344793,
+  },
+  {
+    id: "s3",
+    seller: "GRTEAM",
+    rate: 5.25,
+    information: "E-codes||Fast card||Accepts Multiples of 5",
+    transactions: 0,
+  },
+  {
+    id: "s4",
+    seller: "GRTEAM",
+    rate: 5,
+    information: "Physical||Single Card Only||Fast card||Vertical Cards Only",
+    transactions: 1344793,
+  },
 ];
 
-const cardSources = ["W", "E", "M"];
+const cardSources = ["XC"];
 
-export default function CardlightPanel({ open, onClose, onComplete, customerAlias, embedded, onBuyerSelected }: CardlightPanelProps) {
+export default function CardlightPanel({
+  open,
+  onClose,
+  onComplete,
+  customerAlias,
+  embedded,
+  onBuyerSelected,
+}: CardlightPanelProps) {
   // Login state - persisted in sessionStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("cardlight_logged_in") === "true");
   const [account, setAccount] = useState(() => sessionStorage.getItem("cardlight_account") || "");
@@ -128,7 +169,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     try {
       const saved = sessionStorage.getItem("cardlight_orders");
       return saved ? JSON.parse(saved) : [];
-    } catch { return []; }
+    } catch {
+      return [];
+    }
   });
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
@@ -159,16 +202,16 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
   };
 
   const addCard = () => {
-    setCards(prev => [...prev, makeCard()]);
+    setCards((prev) => [...prev, makeCard()]);
   };
 
   const removeCard = (id: number) => {
     if (cards.length <= 1) return;
-    setCards(prev => prev.filter(c => c.id !== id));
+    setCards((prev) => prev.filter((c) => c.id !== id));
   };
 
   const updateCard = (id: number, updates: Partial<CardEntry>) => {
-    setCards(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
+    setCards((prev) => prev.map((c) => (c.id === id ? { ...c, ...updates } : c)));
   };
 
   const handleCreateOrder = () => {
@@ -199,7 +242,13 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       const cr3Value = Number(nairaPrice) > 0 && cr2Value > 0 ? cr2Value / Number(nairaPrice) : 0;
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
-        cards: cards.map(c => ({ cardType, cardAmount: c.cardAmount || "0", unitPrice: cardRate, status: "Wait For Sale", cardNo: c.cardNo })),
+        cards: cards.map((c) => ({
+          cardType,
+          cardAmount: c.cardAmount || "0",
+          unitPrice: cardRate,
+          status: "Wait For Sale",
+          cardNo: c.cardNo,
+        })),
         totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * cr2Value,
         totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
         bank: "",
@@ -209,7 +258,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
         timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         status: "processing",
         cardCurrency: cardCurrency,
-        cardNumbers: cards.map(c => c.cardNo).filter(Boolean),
+        cardNumbers: cards.map((c) => c.cardNo).filter(Boolean),
         cr2: cr2Value,
         cr3: cr3Value,
       };
@@ -228,19 +277,30 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
   const handleConfirmSell = () => {
     if (saleOrderId) {
-      updateOrderList(orderList.map(o => o.id === saleOrderId ? { ...o, status: "Selling", cardlightResult: "pending" as CardlightResult } : o));
+      updateOrderList(
+        orderList.map((o) =>
+          o.id === saleOrderId ? { ...o, status: "Selling", cardlightResult: "pending" as CardlightResult } : o,
+        ),
+      );
 
-      const plannedResult: CardlightResult = simulatedResult === "random"
-        ? (["successful", "declined", "negotiate"] as CardlightResult[])[Math.floor(Math.random() * 3)]
-        : simulatedResult;
+      const plannedResult: CardlightResult =
+        simulatedResult === "random"
+          ? (["successful", "declined", "negotiate"] as CardlightResult[])[Math.floor(Math.random() * 3)]
+          : simulatedResult;
 
       // Simulate CardLight webhook response after 3-6 seconds
       const webhookDelay = 3000 + Math.random() * 3000;
       const capturedOrderId = saleOrderId;
       setTimeout(() => {
-        setOrderList(prev => {
-          const updated = prev.map(o =>
-            o.id === capturedOrderId ? { ...o, cardlightResult: plannedResult, status: plannedResult === "successful" ? "Successful" : "Negotiate" } : o
+        setOrderList((prev) => {
+          const updated = prev.map((o) =>
+            o.id === capturedOrderId
+              ? {
+                  ...o,
+                  cardlightResult: plannedResult,
+                  status: plannedResult === "successful" ? "Successful" : "Negotiate",
+                }
+              : o,
           );
           sessionStorage.setItem("cardlight_orders", JSON.stringify(updated));
           return updated;
@@ -266,9 +326,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
             <h3 className="font-heading font-semibold text-sm">Sales Order</h3>
           </div>
           <div className="flex items-center gap-2">
-            {isLoggedIn && (
-              <span className="text-[10px] text-success font-medium">● Connected</span>
-            )}
+            {isLoggedIn && <span className="text-[10px] text-success font-medium">● Connected</span>}
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>
@@ -296,7 +354,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 <Input
                   placeholder="Please enter account"
                   value={account}
-                  onChange={e => setAccount(e.target.value)}
+                  onChange={(e) => setAccount(e.target.value)}
                   className="h-9 text-sm"
                 />
               </div>
@@ -306,9 +364,11 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                   type="password"
                   placeholder="Please enter your password"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={(e) => setPassword(e.target.value)}
                   className="h-9 text-sm"
-                  onKeyDown={e => { if (e.key === "Enter") handleLogin(); }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") handleLogin();
+                  }}
                 />
               </div>
               <Button
@@ -316,7 +376,11 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 onClick={handleLogin}
                 disabled={loginLoading || !account.trim() || !password.trim()}
               >
-                {loginLoading ? <RefreshCw className="w-4 h-4 animate-spin mr-2" /> : <LogIn className="w-4 h-4 mr-2" />}
+                {loginLoading ? (
+                  <RefreshCw className="w-4 h-4 animate-spin mr-2" />
+                ) : (
+                  <LogIn className="w-4 h-4 mr-2" />
+                )}
                 Login
               </Button>
             </div>
@@ -342,7 +406,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                       <div className="flex">
                         {/* Brand list */}
                         <div className="w-[130px] border-r max-h-[240px] overflow-y-auto">
-                          {cardBrands.map(brand => (
+                          {cardBrands.map((brand) => (
                             <button
                               key={brand.name}
                               onMouseEnter={() => setHoveredBrand(brand.name)}
@@ -356,7 +420,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                         </div>
                         {/* Currency list */}
                         <div className="w-[90px] max-h-[240px] overflow-y-auto">
-                          {(cardBrands.find(b => b.name === (hoveredBrand || cardBrands[0].name))?.currencies || []).map(cur => (
+                          {(
+                            cardBrands.find((b) => b.name === (hoveredBrand || cardBrands[0].name))?.currencies || []
+                          ).map((cur) => (
                             <button
                               key={cur}
                               onClick={() => {
@@ -381,8 +447,10 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {cardSources.map(s => (
-                        <SelectItem key={s} value={s} className="text-xs">{s}</SelectItem>
+                      {cardSources.map((s) => (
+                        <SelectItem key={s} value={s} className="text-xs">
+                          {s}
+                        </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -402,7 +470,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
-                    onChange={e => setCardRate(e.target.value.replace(/[^0-9.]/g, ""))}
+                    onChange={(e) => setCardRate(e.target.value.replace(/[^0-9.]/g, ""))}
                     className="h-8 text-xs"
                   />
                 </div>
@@ -425,7 +493,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     <div className="grid grid-cols-[1fr,auto] gap-3 items-start">
                       <div className="space-y-0.5">
                         <label className="text-[11px] font-medium text-destructive">* Card Image</label>
-                        <p className="text-[9px] text-muted-foreground">Accept JPG, PNG, WebP. Max 10MB per image, up to 10 images.</p>
+                        <p className="text-[9px] text-muted-foreground">
+                          Accept JPG, PNG, WebP. Max 10MB per image, up to 10 images.
+                        </p>
                       </div>
                       <div className="space-y-1 min-w-[100px]">
                         <label className="text-[10px] font-medium text-muted-foreground">Card Rate</label>
@@ -440,7 +510,10 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     {/* Row 2: Scrollable image uploads */}
                     <div className="flex gap-2 overflow-x-auto pb-1">
                       {card.cardImages.map((img, imgIdx) => (
-                        <div key={imgIdx} className="relative w-16 h-16 rounded-md overflow-hidden border group flex-shrink-0">
+                        <div
+                          key={imgIdx}
+                          className="relative w-16 h-16 rounded-md overflow-hidden border group flex-shrink-0"
+                        >
                           <img src={img} alt={`Card ${imgIdx + 1}`} className="w-full h-full object-cover" />
                           <button
                             onClick={() => {
@@ -461,10 +534,10 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                             multiple
                             className="hidden"
                             id={`card-images-${card.id}`}
-                            onChange={e => {
+                            onChange={(e) => {
                               const files = Array.from(e.target.files || []);
                               const remaining = 10 - card.cardImages.length;
-                              const newUrls = files.slice(0, remaining).map(f => URL.createObjectURL(f));
+                              const newUrls = files.slice(0, remaining).map((f) => URL.createObjectURL(f));
                               updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
                               e.target.value = "";
                             }}
@@ -487,7 +560,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                         <Input
                           placeholder="Please enter the card No."
                           value={card.cardNo}
-                          onChange={e => updateCard(card.id, { cardNo: e.target.value })}
+                          onChange={(e) => updateCard(card.id, { cardNo: e.target.value })}
                           className="h-7 text-xs"
                         />
                       </div>
@@ -496,7 +569,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                         <Input
                           placeholder="Please enter amount"
                           value={card.cardAmount}
-                          onChange={e => updateCard(card.id, { cardAmount: e.target.value })}
+                          onChange={(e) => updateCard(card.id, { cardAmount: e.target.value })}
                           className="h-7 text-xs"
                         />
                       </div>
@@ -517,14 +590,26 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
               {(() => {
                 const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
                 const totalPayout = totalFaceValue * (Number(cardRate) || 0);
-                const currencySymbol = cardCurrency === "GBP" ? "£" : cardCurrency === "EUR" ? "€" : cardCurrency === "CAD" ? "C$" : cardCurrency === "AUD" ? "A$" : "$";
+                const currencySymbol =
+                  cardCurrency === "GBP"
+                    ? "£"
+                    : cardCurrency === "EUR"
+                      ? "€"
+                      : cardCurrency === "CAD"
+                        ? "C$"
+                        : cardCurrency === "AUD"
+                          ? "A$"
+                          : "$";
                 const hasValues = totalFaceValue > 0 || totalPayout > 0;
 
                 return hasValues ? (
                   <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Total Face Value</span>
-                      <span className="font-semibold">{currencySymbol}{totalFaceValue.toLocaleString()}</span>
+                      <span className="font-semibold">
+                        {currencySymbol}
+                        {totalFaceValue.toLocaleString()}
+                      </span>
                     </div>
                     {nairaPrice && (
                       <div className="flex items-center justify-between text-[11px]">
@@ -534,7 +619,9 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     )}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">Total Payout</span>
-                      <span className="font-bold text-success">₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                      <span className="font-bold text-success">
+                        ₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      </span>
                     </div>
                   </div>
                 ) : null;
@@ -542,11 +629,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
 
               {/* Create Now button */}
               <div className="flex justify-end pt-1">
-                <Button
-                  onClick={handleCreateOrder}
-                  disabled={!cardType}
-                  className="h-8 px-6 text-xs"
-                >
+                <Button onClick={handleCreateOrder} disabled={!cardType} className="h-8 px-6 text-xs">
                   Create Now
                 </Button>
               </div>
@@ -579,10 +662,13 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     </tr>
                   </thead>
                   <tbody>
-                    {pagedOrders.map(o => {
+                    {pagedOrders.map((o) => {
                       const resultMeta = o.cardlightResult ? cardlightResultMeta[o.cardlightResult] : null;
                       return (
-                        <tr key={o.id} className={`border-b last:border-0 transition-colors ${resultMeta ? resultMeta.rowBg : "hover:bg-muted/30"}`}>
+                        <tr
+                          key={o.id}
+                          className={`border-b last:border-0 transition-colors ${resultMeta ? resultMeta.rowBg : "hover:bg-muted/30"}`}
+                        >
                           <td className="py-2 px-2">{o.supplier || "—"}</td>
                           <td className="py-2 px-1">
                             <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
@@ -591,21 +677,31 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
                           <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
-                          <td className="py-2 px-1 text-right">₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">
+                            ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
+                          </td>
                           <td className="py-2 px-1">
-                            <span className={`text-[9px] font-medium ${
-                              o.status === "Negotiation" ? "text-warning" :
-                              o.status === "Selling" ? "text-primary" :
-                             o.status === "Successful" ? "text-success" :
-                               o.status === "Negotiate" ? "text-primary" :
-                              "text-muted-foreground"
-                            }`}>
+                            <span
+                              className={`text-[9px] font-medium ${
+                                o.status === "Negotiation"
+                                  ? "text-warning"
+                                  : o.status === "Selling"
+                                    ? "text-primary"
+                                    : o.status === "Successful"
+                                      ? "text-success"
+                                      : o.status === "Negotiate"
+                                        ? "text-primary"
+                                        : "text-muted-foreground"
+                              }`}
+                            >
                               {o.status}
                             </span>
                           </td>
                           <td className="py-2 px-1">
                             {resultMeta ? (
-                              <span className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${resultMeta.bg} ${resultMeta.color}`}>
+                              <span
+                                className={`text-[9px] font-semibold px-1.5 py-0.5 rounded-full ${resultMeta.bg} ${resultMeta.color}`}
+                              >
                                 {resultMeta.label}
                               </span>
                             ) : (
@@ -635,13 +731,13 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
               {totalPages > 1 && (
                 <div className="flex items-center justify-center gap-1 pt-1">
                   <button
-                    onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                     disabled={currentPage === 1}
                     className="text-xs px-2 py-1 rounded hover:bg-muted disabled:opacity-40"
                   >
                     &lt;
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                     <button
                       key={p}
                       onClick={() => setCurrentPage(p)}
@@ -653,7 +749,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                     </button>
                   ))}
                   <button
-                    onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                     disabled={currentPage === totalPages}
                     className="text-xs px-2 py-1 rounded hover:bg-muted disabled:opacity-40"
                   >
@@ -667,7 +763,15 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       </div>
 
       {/* Choose Buyer Modal */}
-      <Dialog open={sellerModalOpen} onOpenChange={(open) => { if (!open) { setSellerModalOpen(false); setSaleOrderId(null); } }}>
+      <Dialog
+        open={sellerModalOpen}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSellerModalOpen(false);
+            setSaleOrderId(null);
+          }
+        }}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Choose buyer and sell</DialogTitle>
@@ -679,9 +783,15 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="random" className="text-xs">Random</SelectItem>
-                <SelectItem value="successful" className="text-xs">🟢 Successful</SelectItem>
-                <SelectItem value="negotiate" className="text-xs">🔵 Negotiate</SelectItem>
+                <SelectItem value="random" className="text-xs">
+                  Random
+                </SelectItem>
+                <SelectItem value="successful" className="text-xs">
+                  🟢 Successful
+                </SelectItem>
+                <SelectItem value="negotiate" className="text-xs">
+                  🔵 Negotiate
+                </SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -697,7 +807,7 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
                 </tr>
               </thead>
               <tbody>
-                {mockSellers.map(seller => (
+                {mockSellers.map((seller) => (
                   <tr key={seller.id} className="border-b last:border-0 hover:bg-muted/30">
                     <td className="py-3 px-4 font-medium">{seller.seller}</td>
                     <td className="py-3 px-4">{seller.rate}</td>
@@ -724,12 +834,18 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
       </Dialog>
 
       {/* Confirmation Alert */}
-      <AlertDialog open={!!confirmSeller} onOpenChange={(open) => { if (!open) setConfirmSeller(null); }}>
+      <AlertDialog
+        open={!!confirmSeller}
+        onOpenChange={(open) => {
+          if (!open) setConfirmSeller(null);
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure you want to sell?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will sell to <span className="font-semibold text-foreground">{confirmSeller?.seller}</span> at rate <span className="font-semibold text-foreground">{confirmSeller?.rate}</span>.
+              This will sell to <span className="font-semibold text-foreground">{confirmSeller?.seller}</span> at rate{" "}
+              <span className="font-semibold text-foreground">{confirmSeller?.rate}</span>.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -745,9 +861,5 @@ export default function CardlightPanel({ open, onClose, onComplete, customerAlia
     return <div className="flex flex-col h-full overflow-hidden">{content}</div>;
   }
 
-  return (
-    <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
-      {content}
-    </div>
-  );
+  return <div className="w-[630px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">{content}</div>;
 }
