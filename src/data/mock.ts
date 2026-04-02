@@ -54,6 +54,9 @@ export const orders = [
   { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, created: "10:37 AM" },
   { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM" },
   { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM" },
+  { id: "ORD-20260318-004", customer: "A7X3KP", cardType: "AMEX", amount: 1000, nairaRate: 289, unitPrice: 1000, status: "in_trade" as const, created: "11:02 AM" },
+  { id: "ORD-20260318-005", customer: "A7X3KP", cardType: "Google Play US", amount: 500, nairaRate: 289, unitPrice: 720, status: "pending" as const, created: "11:15 AM" },
+  { id: "ORD-20260318-006", customer: "K9M2BL", cardType: "Steam UK", amount: 100, nairaRate: 289, unitPrice: 580, status: "pending_sale" as const, created: "10:50 AM" },
 ];
 
 export const bankAccounts = [
