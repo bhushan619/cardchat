@@ -52,6 +52,15 @@ type ChatMessage = {
 export default function AdminMessages() {
   const { role } = useAdminRole();
   const orderStatus = useOrderStatus();
+
+  // Clear stale persisted state on first mount
+  useEffect(() => {
+    orderStatus.resetAll();
+    sessionStorage.removeItem("cardchat_completed_orders");
+    sessionStorage.removeItem("cardchat_transfer_completed");
+    sessionStorage.removeItem("cardchat_cardlight_results");
+    sessionStorage.removeItem("cardchat_fund_adjustments");
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
