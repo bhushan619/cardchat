@@ -15,12 +15,12 @@ type RewardEntry = {
 };
 
 const rewardHistory: RewardEntry[] = [
-  { id: "RW-005", type: "ranking", amount: 50, description: "Ranking reward — Rank #18", date: "Mar 31, 2026" },
+  { id: "RW-005", type: "ranking", amount: 10000, description: "Ranking reward — Rank #18", date: "Mar 31, 2026" },
   { id: "RW-006", type: "referral", amount: 500, description: "Referral — invited K9M2BL", date: "Mar 20, 2026" },
   { id: "RW-011", type: "referral", amount: 500, description: "Referral — invited D3F9RX", date: "Mar 10, 2026" },
-  { id: "RW-013", type: "ranking", amount: 30, description: "Ranking reward — Rank #22", date: "Feb 28, 2026" },
+  { id: "RW-013", type: "ranking", amount: 20000, description: "Ranking reward — Rank #14", date: "Feb 28, 2026" },
   { id: "RW-014", type: "referral", amount: 500, description: "Referral — invited W8T4FJ", date: "Feb 15, 2026" },
-  { id: "RW-015", type: "ranking", amount: 20, description: "Ranking reward — Rank #25", date: "Jan 31, 2026" },
+  { id: "RW-015", type: "ranking", amount: 10000, description: "Ranking reward — Rank #17", date: "Jan 31, 2026" },
 ];
 
 export default function CustomerRewards() {
