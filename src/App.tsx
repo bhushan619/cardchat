@@ -68,31 +68,25 @@ const App = () => (
             <Route path="/admin/login" element={<AdminLogin />} />
 
             {/* Admin Panel - wrapped in role provider */}
-            <Route path="/admin/*" element={
-              <AdminRoleProvider>
-                <Routes>
-                  <Route path="" element={<AdminMessages />} />
-                  <Route path="chat/:id" element={<AdminChatView />} />
-                  <Route path="card-rates" element={<AdminCardRates />} />
-                  <Route path="orders" element={<AdminOrders />} />
-                  <Route path="naira-rate" element={<AdminNairaRate />} />
-                  <Route path="users" element={<AdminUsers />} />
-                  <Route path="team" element={<AdminTeam />} />
-                  <Route path="api-config" element={<AdminApiConfig />} />
-                  <Route path="broadcast" element={<AdminBroadcast />} />
-                  <Route path="guide" element={<AdminGuide />} />
-                  <Route path="ip-restrictions" element={<AdminIpRestrictions />} />
-                  <Route path="customer-guide" element={<AdminCustomerGuide />} />
-                  <Route path="sensitive-words" element={<AdminSensitiveWords />} />
-                  <Route path="customers" element={<AdminCustomers />} />
-                  <Route path="wallets" element={<AdminWallets />} />
-                  <Route path="team-chat" element={<AdminTeamChat />} />
-                  <Route path="profile" element={<AdminProfile />} />
-                  <Route path="ranking" element={<AdminRanking />} />
-                  <Route path="rewards" element={<AdminRewards />} />
-                </Routes>
-              </AdminRoleProvider>
-            } />
+            <Route path="/admin" element={<AdminRoleProvider><AdminMessages /></AdminRoleProvider>} />
+            <Route path="/admin/chat/:id" element={<AdminRoleProvider><AdminChatView /></AdminRoleProvider>} />
+            <Route path="/admin/card-rates" element={<AdminRoleProvider><AdminCardRates /></AdminRoleProvider>} />
+            <Route path="/admin/orders" element={<AdminRoleProvider><AdminOrders /></AdminRoleProvider>} />
+            <Route path="/admin/naira-rate" element={<AdminRoleProvider><AdminNairaRate /></AdminRoleProvider>} />
+            <Route path="/admin/users" element={<AdminRoleProvider><AdminUsers /></AdminRoleProvider>} />
+            <Route path="/admin/team" element={<AdminRoleProvider><AdminTeam /></AdminRoleProvider>} />
+            <Route path="/admin/api-config" element={<AdminRoleProvider><AdminApiConfig /></AdminRoleProvider>} />
+            <Route path="/admin/broadcast" element={<AdminRoleProvider><AdminBroadcast /></AdminRoleProvider>} />
+            <Route path="/admin/guide" element={<AdminRoleProvider><AdminGuide /></AdminRoleProvider>} />
+            <Route path="/admin/ip-restrictions" element={<AdminRoleProvider><AdminIpRestrictions /></AdminRoleProvider>} />
+            <Route path="/admin/customer-guide" element={<AdminRoleProvider><AdminCustomerGuide /></AdminRoleProvider>} />
+            <Route path="/admin/sensitive-words" element={<AdminRoleProvider><AdminSensitiveWords /></AdminRoleProvider>} />
+            <Route path="/admin/customers" element={<AdminRoleProvider><AdminCustomers /></AdminRoleProvider>} />
+            <Route path="/admin/wallets" element={<AdminRoleProvider><AdminWallets /></AdminRoleProvider>} />
+            <Route path="/admin/team-chat" element={<AdminRoleProvider><AdminTeamChat /></AdminRoleProvider>} />
+            <Route path="/admin/profile" element={<AdminRoleProvider><AdminProfile /></AdminRoleProvider>} />
+            <Route path="/admin/ranking" element={<AdminRoleProvider><AdminRanking /></AdminRoleProvider>} />
+            <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
