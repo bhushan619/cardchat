@@ -4,15 +4,12 @@ export type RankingTier = {
 };
 
 export const rankingTiers: RankingTier[] = [
-  { threshold: 10000, reward: 10 },
-  { threshold: 25000, reward: 20 },
-  { threshold: 50000, reward: 30 },
-  { threshold: 75000, reward: 50 },
-  { threshold: 100000, reward: 80 },
-  { threshold: 150000, reward: 120 },
-  { threshold: 250000, reward: 200 },
-  { threshold: 500000, reward: 500 },
-  { threshold: 1000000, reward: 1000 },
+  { threshold: 2000000, reward: 10000 },
+  { threshold: 3000000, reward: 20000 },
+  { threshold: 5000000, reward: 30000 },
+  { threshold: 7000000, reward: 50000 },
+  { threshold: 10000000, reward: 80000 },
+  { threshold: 20000000, reward: 170000 },
 ];
 
 export type RankingUser = {
