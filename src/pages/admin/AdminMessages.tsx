@@ -1007,6 +1007,39 @@ export default function AdminMessages() {
                         {currentOrderId && <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>}
                       </h3>
                       {renderStatusActions()}
+
+                      {/* Show selected order details inside Order Status area */}
+                      {selectedOrder && selectedOrderId === currentOrderId && (
+                        <div className="mt-3 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
+                          <div className="flex items-center justify-between">
+                            <h4 className="font-heading font-semibold text-xs text-muted-foreground uppercase tracking-wider">Order Details</h4>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => setDetailOrderId(selectedOrder.id)}
+                              className="h-6 px-2.5 text-[10px] gap-1"
+                            >
+                              <ExternalLink className="w-3 h-3" /> Details
+                            </Button>
+                          </div>
+                          <div className="space-y-1.5">
+                            {[
+                              ["Order ID", selectedOrder.id],
+                              ["Card", `${selectedOrder.cardType}${selectedOrder.cardCurrency ? ` / ${selectedOrder.cardCurrency}` : ""}`],
+                              ["Amount", `$${selectedOrder.amount}`],
+                              ["Card Rate", `₦${(selectedOrder.unitPrice || selectedOrder.nairaRate).toLocaleString()}`],
+                              ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
+                              ...(selectedOrder.cardNumbers.length > 0 ? [["Card No.", selectedOrder.cardNumbers.join(", ")]] : []),
+                              ["Time", selectedOrder.timestamp],
+                            ].map(([k, v]) => (
+                              <div key={k} className="flex justify-between text-xs">
+                                <span className="text-muted-foreground">{k}</span>
+                                <span className="font-medium">{v}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
 
