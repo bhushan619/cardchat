@@ -280,17 +280,22 @@ export default function AdminMessages() {
   ];
 
   // Only ongoing orders (exclude success and order_cancelled), sorted latest first
+  // Use live status from orderStatus state machine when available
   const ongoingOrders = useMemo(() => {
     return allOrders
-      .filter(o => o.status !== "success" && o.status !== "order_cancelled")
+      .filter(o => {
+        // Check live status from orderStatus hook first (keyed by conversation id or order id)
+        const liveEntry = Object.values(orderStatus.entries).find(e => e.orderId === o.id);
+        const effectiveStatus = liveEntry ? liveEntry.status : o.status;
+        return effectiveStatus !== "success" && effectiveStatus !== "order_cancelled";
+      })
       .sort((a, b) => {
-        // Try to parse dates; if not parseable, use string comparison
         const dateA = new Date(a.createdAt).getTime();
         const dateB = new Date(b.createdAt).getTime();
         if (!isNaN(dateA) && !isNaN(dateB)) return dateB - dateA;
         return b.createdAt > a.createdAt ? 1 : -1;
       });
-  }, [allOrders]);
+  }, [allOrders, orderStatus.entries]);
 
   const selectedOrder = selectedOrderId ? allOrders.find(o => o.id === selectedOrderId) : null;
 
