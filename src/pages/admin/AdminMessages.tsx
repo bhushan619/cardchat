@@ -279,6 +279,19 @@ export default function AdminMessages() {
     })),
   ];
 
+  // Only ongoing orders (exclude success and order_cancelled), sorted latest first
+  const ongoingOrders = useMemo(() => {
+    return allOrders
+      .filter(o => o.status !== "success" && o.status !== "order_cancelled")
+      .sort((a, b) => {
+        // Try to parse dates; if not parseable, use string comparison
+        const dateA = new Date(a.createdAt).getTime();
+        const dateB = new Date(b.createdAt).getTime();
+        if (!isNaN(dateA) && !isNaN(dateB)) return dateB - dateA;
+        return b.createdAt > a.createdAt ? 1 : -1;
+      });
+  }, [allOrders]);
+
   const selectedOrder = selectedOrderId ? allOrders.find(o => o.id === selectedOrderId) : null;
 
   const handleExecuteTransfer = (orderId: string, payout: number) => {
