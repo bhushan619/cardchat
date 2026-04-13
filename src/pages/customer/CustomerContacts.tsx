@@ -42,9 +42,9 @@ const statusConfig: Record<AgentStatus, { label: string; color: string; dotClass
 };
 
 // Map mock statuses to the new 3-tier system
-function getAgentStatus(agent: typeof customerContacts[number]): AgentStatus {
+function getAgentStatus(agent: { status: string }): AgentStatus {
   if (agent.status === "online") return "online";
-  if (agent.status === "away") return "busy";
+  if (agent.status === "away" || agent.status === "busy") return "busy";
   return "saturated";
 }
 
