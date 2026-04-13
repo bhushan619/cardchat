@@ -94,6 +94,7 @@ export const customerContacts = [
   { id: 1, name: "CardChat Support", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 2, name: "Agent Mike", status: "online" as const, isAgent: true, lastSeen: "Online" },
   { id: 3, name: "Agent Tunde", status: "away" as const, isAgent: true, lastSeen: "15 min ago" },
+  { id: 4, name: "Agent Joy", status: "saturated" as const, isAgent: true, lastSeen: "Active — high volume" },
 ];
 
 // Wallet data
