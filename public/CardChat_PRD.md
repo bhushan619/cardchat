@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.6  
-**Date:** April 1, 2026
+**Version:** 4.7  
+**Date:** April 15, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -302,20 +302,32 @@ A minimalist, iOS-inspired layout:
 - **Smile icon** — inline beside input (for emoji)
 - **Send button** — accent green circle with Send icon
 
-### 4.4 Contacts (`/customer/contacts`)
+### 4.4 Contacts (`/customer/contacts`) — Traffic Shunting
 
 **Component:** `src/pages/customer/CustomerContacts.tsx`
 
+**Objective:** Leverage the user's desire for a "fast response" to achieve proactive traffic shunting via visual cues.
+
 - Header: "Agents" title
 - Search/filter input: "Filter by agent name..."
-- Agent list from mock data (3 agents):
-  - Avatar circle with initial (primary-tinted)
-  - **Online status indicator** (absolute-positioned dot on avatar):
-    - Green dot (`bg-success`) = Online
-    - Yellow dot (`bg-warning`) = Away
-  - Agent name and last seen text
-  - Message button (muted circle with MessageCircle icon)
-  - Clicking an agent navigates to their **Agent Profile** page (`/customer/agent/:id`)
+- **Status legend** — inline dot + label chips for all three tiers
+- Agent list (4 agents), **auto-sorted by availability** (Online → Busy → Saturated):
+  - Avatar circle with initial (primary-tinted for available/busy, muted for saturated)
+  - **3-Tier Status System** (absolute-positioned dot on avatar + badge):
+    - 🟢 **Available** (Green / `bg-success`) — Badge: "Instant Reply", description: "Available now". Encourages users to select these agents first.
+    - 🟡 **Busy** (Yellow / `bg-warning`) — Badge: "Potential Delay", description: "May take a moment". Manages user expectations and reduces anxiety/follow-up pestering.
+    - ⚫ **Saturated** (Grey / `bg-muted-foreground`) — Badge: "Heavily Occupied", description: "Long wait expected". Row rendered at 60% opacity.
+  - Agent name and status description with contextual icon (Zap/Clock/AlertCircle)
+  - Clicking an available or busy agent navigates to their **Agent Profile** page (`/customer/agent/:id`)
+  - **Clicking a saturated agent triggers a pop-up notice** (without hard-locking the click):
+
+#### Saturated Agent Pop-Up Notice
+- **Dialog** with AlertCircle icon and "Agent Heavily Occupied" title
+- Informs user that the agent is handling many conversations and response times may be significantly longer
+- If available agents exist, suggests trying one of the N available agents marked "Instant Reply"
+- **Two actions:**
+  - "Try an Available Agent" (primary button, shown only if available agents exist) — closes dialog and scrolls to top
+  - "Continue Anyway" (outline button) — proceeds to agent profile despite warning
 
 #### Agent Profile Page
 **Component:** `src/pages/customer/AgentProfile.tsx`
@@ -1177,7 +1189,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | **Transactions** | id, orderId, amount, status (success/failed), date, bank |
 | **Admin Users** | id, name, email, role (super_admin/team_lead/agent), status (active/offline), lastLogin |
 | **Naira Rate History** | timestamp, oldRate, newRate, changedBy, reason |
-| **Customer Contacts** | id, name, status (online/away), isAgent, lastSeen |
+| **Customer Contacts** | id, name, status (online/away/saturated), isAgent, lastSeen — mapped to 3-tier system: online→Available, away/busy→Busy, saturated→Saturated |
 | **Card Brands** | name, currencies[] (used in Cardlight cascading selector) |
 
 ### 7.9 Wallet Balance
@@ -1520,3 +1532,12 @@ src/
 | Chat Image Drag & Drop | Draggable chat images for card entries |
 | Admin User Guide | 12-section guide |
 | Customer User Guide | 10-section guide |
+
+### v4.7 — April 15, 2026
+
+| Change | Description |
+|--------|-------------|
+| Traffic Shunting | 3-tier agent status system (Available/Busy/Saturated) with proactive visual cues on Contacts page |
+| Saturated Agent Pop-Up | Warning dialog when clicking heavily-occupied agents, suggesting available alternatives |
+| Auto-Sort by Availability | Agent list sorted Online → Busy → Saturated to guide user selection |
+| Admin Screens Gallery | Interactive gallery page (`/admin/screens`) showing all admin panel pages as scaled iframe previews |
