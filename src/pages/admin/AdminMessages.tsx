@@ -1487,8 +1487,48 @@ export default function AdminMessages() {
                       onChange={e => setFundAdjustReason(e.target.value)}
                     />
                   </div>
+                  <div className="space-y-1.5">
+                    <label className="text-xs font-medium">Related Order (optional)</label>
+                    <Select value={fundAdjustOrderId} onValueChange={setFundAdjustOrderId}>
+                      <SelectTrigger className="h-9 text-sm">
+                        <SelectValue placeholder="Select an order..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="none">No related order</SelectItem>
+                        {orders.filter(o => selectedConvo ? o.customer === selectedConvo.alias : true).map(o => (
+                          <SelectItem key={o.id} value={o.id}>
+                            <span className="font-medium">{o.id}</span>
+                            <span className="text-muted-foreground ml-1">— {o.cardType} · ${o.amount}</span>
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {fundAdjustOrderId && fundAdjustOrderId !== "none" && (() => {
+                      const relOrder = orders.find(o => o.id === fundAdjustOrderId);
+                      if (!relOrder) return null;
+                      return (
+                        <div className="bg-muted/50 border rounded-lg p-2.5 space-y-1 text-[10px]">
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Card Type</span>
+                            <span className="font-medium">{relOrder.cardType}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Amount</span>
+                            <span className="font-medium">${relOrder.amount}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Rate</span>
+                            <span className="font-medium">₦{relOrder.nairaRate}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-muted-foreground">Status</span>
+                            <span className={`font-medium capitalize ${relOrder.status === "success" ? "text-success" : relOrder.status === "order_cancelled" ? "text-destructive" : "text-warning"}`}>{relOrder.status.replace("_", " ")}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
+                  </div>
 
-                  {/* Wallet Transactions */}
                   {custTxns.length > 0 && (
                     <div className="border rounded-lg p-2.5 space-y-1.5 max-h-36 overflow-y-auto">
                       <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Recent Transactions</p>
