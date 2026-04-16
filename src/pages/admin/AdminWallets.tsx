@@ -32,12 +32,12 @@ type PlatformRecord = {
 };
 
 const initialRecords: PlatformRecord[] = [
-  { id: "PW-001", transferId: "TRF-001", orderId: "—", customer: "—", type: "deposit", amount: 2000000, nairaRate: 289, description: "Admin deposit — operational funding", date: "Mar 18, 2026", time: "08:00 AM", remark: "Weekly ops funding" },
-  { id: "PW-002", transferId: "TRF-002", orderId: "ORD-20260318-001", customer: "A7X3KP", type: "disbursement", amount: 215200, nairaRate: 289, description: "Auto-credit → A7X3KP — Order #ORD-20260318-001", date: "Mar 18, 2026", time: "10:42 AM", remark: "iTunes US trade" },
-  { id: "PW-003", transferId: "TRF-003", orderId: "ORD-20260317-005", customer: "K9M2BL", type: "disbursement", amount: 93000, nairaRate: 270, description: "Auto-credit → K9M2BL — Order #ORD-20260317-005", date: "Mar 17, 2026", time: "03:20 PM", remark: "Amazon US trade" },
-  { id: "PW-004", transferId: "TRF-004", orderId: "—", customer: "—", type: "deposit", amount: 1500000, nairaRate: 270, description: "Admin deposit — weekly top-up", date: "Mar 15, 2026", time: "09:00 AM", remark: "Scheduled top-up" },
-  { id: "PW-005", transferId: "TRF-005", orderId: "ORD-20260315-008", customer: "B5N1QW", type: "disbursement", amount: 62000, nairaRate: 255, description: "Auto-credit → B5N1QW — Order #ORD-20260315-008", date: "Mar 15, 2026", time: "02:10 PM", remark: "iTunes UK trade" },
-  { id: "PW-006", transferId: "TRF-006", orderId: "ORD-20260316-003", customer: "R4P8TN", type: "disbursement", amount: 186000, nairaRate: 255, description: "Auto-credit → R4P8TN — Order #ORD-20260316-003", date: "Mar 16, 2026", time: "09:30 AM", remark: "Steam US trade" },
+  { id: "PW-001", transferId: "TRF-001", orderId: "—", customer: "—", type: "deposit", amount: 2000000, nairaRate: 289, description: "Operational funding", date: "Mar 18, 2026", time: "08:00 AM", remark: "Weekly ops funding" },
+  { id: "PW-002", transferId: "TRF-002", orderId: "ORD-20260318-001", customer: "A7X3KP", type: "disbursement", amount: 215200, nairaRate: 289, description: "Auto-credit — iTunes US trade", date: "Mar 18, 2026", time: "10:42 AM", remark: "iTunes US trade" },
+  { id: "PW-003", transferId: "TRF-003", orderId: "ORD-20260317-005", customer: "K9M2BL", type: "disbursement", amount: 93000, nairaRate: 270, description: "Auto-credit — Amazon US trade", date: "Mar 17, 2026", time: "03:20 PM", remark: "Amazon US trade" },
+  { id: "PW-004", transferId: "TRF-004", orderId: "—", customer: "—", type: "deposit", amount: 1500000, nairaRate: 270, description: "Weekly top-up", date: "Mar 15, 2026", time: "09:00 AM", remark: "Scheduled top-up" },
+  { id: "PW-005", transferId: "TRF-005", orderId: "ORD-20260315-008", customer: "B5N1QW", type: "disbursement", amount: 62000, nairaRate: 255, description: "Auto-credit — iTunes UK trade", date: "Mar 15, 2026", time: "02:10 PM", remark: "iTunes UK trade" },
+  { id: "PW-006", transferId: "TRF-006", orderId: "ORD-20260316-003", customer: "R4P8TN", type: "disbursement", amount: 186000, nairaRate: 255, description: "Auto-credit — Steam US trade", date: "Mar 16, 2026", time: "09:30 AM", remark: "Steam US trade" },
 ];
 
 function parseRecordDate(r: PlatformRecord): Date {
