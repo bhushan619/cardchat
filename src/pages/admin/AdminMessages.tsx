@@ -1422,7 +1422,7 @@ export default function AdminMessages() {
       })()}
 
       {/* Fund Adjustment Modal */}
-      <Dialog open={fundAdjustOpen} onOpenChange={(open) => { setFundAdjustOpen(open); if (!open) { setFundPinStep(false); setFundPin(""); } }}>
+      <Dialog open={fundAdjustOpen} onOpenChange={(open) => { setFundAdjustOpen(open); if (!open) { setFundPinStep(false); setFundPin(""); setFundAdjustOrderId("none"); } }}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
