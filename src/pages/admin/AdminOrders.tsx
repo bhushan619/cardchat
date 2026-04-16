@@ -108,6 +108,7 @@ export default function AdminOrders() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Code</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Naira Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
