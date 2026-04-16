@@ -242,6 +242,7 @@ export default function AdminMessages() {
   const [fundAdjustReason, setFundAdjustReason] = useState("");
   const [fundPinStep, setFundPinStep] = useState(false);
   const [fundPin, setFundPin] = useState("");
+  const [fundAdjustOrderId, setFundAdjustOrderId] = useState("none");
   const [fundAdjustments, setFundAdjustments] = useState<FundAdjustment[]>(() => {
     try {
       const saved = sessionStorage.getItem("cardchat_fund_adjustments");
