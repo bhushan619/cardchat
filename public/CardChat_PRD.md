@@ -1401,6 +1401,9 @@ src/
 │   │   ├── AdminRanking.tsx           # Trading volume ranking (admin)
 │   │   ├── AdminRewards.tsx          # Rewards management (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
+│   │   ├── AdminWallets.tsx          # Platform wallet ledger
+│   │   ├── AdminProfile.tsx          # Admin profile settings
+│   │   ├── AdminScreensGallery.tsx   # Interactive screens gallery
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
 │       ├── CustomerAuth.tsx          # Auth flow (splash → onboarding → auth)
