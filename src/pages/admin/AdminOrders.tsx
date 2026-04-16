@@ -134,6 +134,7 @@ export default function AdminOrders() {
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
+                      <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
@@ -144,7 +145,7 @@ export default function AdminOrders() {
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={7} className="px-6 py-4 bg-muted/20">
+                        <td colSpan={8} className="px-6 py-4 bg-muted/20">
                           <div className="grid grid-cols-3 gap-6 animate-slide-up">
                             {/* Order Info */}
                             <div className="space-y-2">
@@ -155,6 +156,7 @@ export default function AdminOrders() {
                                   ["Card", o.cardType],
                                   ["Amount", `$${o.amount}`],
                                   ["Card Rate", `₦${o.unitPrice.toLocaleString()}`],
+                                  ["Naira Rate", `₦${o.nairaRate}`],
                                   ["Payout", `₦${(o.amount * o.unitPrice).toLocaleString()}`],
                                 ].map(([k, v]) => (
                                   <div key={k} className="flex justify-between text-xs">
