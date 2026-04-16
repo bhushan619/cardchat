@@ -19,20 +19,25 @@ import { parse } from "date-fns";
 
 type PlatformRecord = {
   id: string;
+  transferId: string;
+  orderId: string;
+  customer: string;
   type: "deposit" | "disbursement";
   amount: number;
+  nairaRate: number;
   description: string;
   date: string;
   time: string;
+  remark: string;
 };
 
 const initialRecords: PlatformRecord[] = [
-  { id: "PW-001", type: "deposit", amount: 2000000, description: "Admin deposit — operational funding", date: "Mar 18, 2026", time: "08:00 AM" },
-  { id: "PW-002", type: "disbursement", amount: 215200, description: "Auto-credit → A7X3KP — Order #ORD-20260318-001", date: "Mar 18, 2026", time: "10:42 AM" },
-  { id: "PW-003", type: "disbursement", amount: 93000, description: "Auto-credit → K9M2BL — Order #ORD-20260317-005", date: "Mar 17, 2026", time: "03:20 PM" },
-  { id: "PW-004", type: "deposit", amount: 1500000, description: "Admin deposit — weekly top-up", date: "Mar 15, 2026", time: "09:00 AM" },
-  { id: "PW-005", type: "disbursement", amount: 62000, description: "Auto-credit → B5N1QW — Order #ORD-20260315-008", date: "Mar 15, 2026", time: "02:10 PM" },
-  { id: "PW-006", type: "disbursement", amount: 186000, description: "Auto-credit → R4P8TN — Order #ORD-20260316-003", date: "Mar 16, 2026", time: "09:30 AM" },
+  { id: "PW-001", transferId: "TRF-001", orderId: "—", customer: "—", type: "deposit", amount: 2000000, nairaRate: 289, description: "Admin deposit — operational funding", date: "Mar 18, 2026", time: "08:00 AM", remark: "Weekly ops funding" },
+  { id: "PW-002", transferId: "TRF-002", orderId: "ORD-20260318-001", customer: "A7X3KP", type: "disbursement", amount: 215200, nairaRate: 289, description: "Auto-credit → A7X3KP — Order #ORD-20260318-001", date: "Mar 18, 2026", time: "10:42 AM", remark: "iTunes US trade" },
+  { id: "PW-003", transferId: "TRF-003", orderId: "ORD-20260317-005", customer: "K9M2BL", type: "disbursement", amount: 93000, nairaRate: 270, description: "Auto-credit → K9M2BL — Order #ORD-20260317-005", date: "Mar 17, 2026", time: "03:20 PM", remark: "Amazon US trade" },
+  { id: "PW-004", transferId: "TRF-004", orderId: "—", customer: "—", type: "deposit", amount: 1500000, nairaRate: 270, description: "Admin deposit — weekly top-up", date: "Mar 15, 2026", time: "09:00 AM", remark: "Scheduled top-up" },
+  { id: "PW-005", transferId: "TRF-005", orderId: "ORD-20260315-008", customer: "B5N1QW", type: "disbursement", amount: 62000, nairaRate: 255, description: "Auto-credit → B5N1QW — Order #ORD-20260315-008", date: "Mar 15, 2026", time: "02:10 PM", remark: "iTunes UK trade" },
+  { id: "PW-006", transferId: "TRF-006", orderId: "ORD-20260316-003", customer: "R4P8TN", type: "disbursement", amount: 186000, nairaRate: 255, description: "Auto-credit → R4P8TN — Order #ORD-20260316-003", date: "Mar 16, 2026", time: "09:30 AM", remark: "Steam US trade" },
 ];
 
 function parseRecordDate(r: PlatformRecord): Date {
@@ -43,15 +48,19 @@ function parseRecordDate(r: PlatformRecord): Date {
   }
 }
 
+const uniqueCustomers = [...new Set(initialRecords.map(r => r.customer).filter(c => c !== "—"))];
+
 export default function AdminWallets() {
   const [records, setRecords] = useState<PlatformRecord[]>(initialRecords);
   const [showDeposit, setShowDeposit] = useState(false);
   const [depositAmount, setDepositAmount] = useState("");
   const [depositDescription, setDepositDescription] = useState("");
+  const [depositRemark, setDepositRemark] = useState("");
 
   // Filters
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "deposit" | "disbursement">("all");
+  const [customerFilter, setCustomerFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
@@ -60,15 +69,21 @@ export default function AdminWallets() {
   const platformBalance = totalDeposits - totalDisbursements;
 
   const filtered = records.filter(r => {
-    const matchSearch = !search || r.id.toLowerCase().includes(search.toLowerCase()) || r.description.toLowerCase().includes(search.toLowerCase());
+    const matchSearch = !search ||
+      r.id.toLowerCase().includes(search.toLowerCase()) ||
+      r.transferId.toLowerCase().includes(search.toLowerCase()) ||
+      r.orderId.toLowerCase().includes(search.toLowerCase()) ||
+      r.description.toLowerCase().includes(search.toLowerCase()) ||
+      r.remark.toLowerCase().includes(search.toLowerCase());
     const matchType = typeFilter === "all" || r.type === typeFilter;
+    const matchCustomer = customerFilter === "all" || r.customer === customerFilter;
     let matchDate = true;
     if (dateFrom || dateTo) {
       const rd = parseRecordDate(r);
       if (dateFrom && rd < dateFrom) matchDate = false;
       if (dateTo && rd > dateTo) matchDate = false;
     }
-    return matchSearch && matchType && matchDate;
+    return matchSearch && matchType && matchCustomer && matchDate;
   });
 
   const handleDeposit = () => {
@@ -79,28 +94,38 @@ export default function AdminWallets() {
     }
     const record: PlatformRecord = {
       id: `PW-${Date.now().toString(36).toUpperCase()}`,
+      transferId: `TRF-${Date.now().toString(36).toUpperCase()}`,
+      orderId: "—",
+      customer: "—",
       type: "deposit",
       amount,
+      nairaRate: 289,
       description: depositDescription || "Admin deposit",
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      remark: depositRemark || "Manual deposit",
     };
     setRecords(prev => [record, ...prev]);
     toast.success(`₦${amount.toLocaleString()} added to platform wallet`);
     setDepositAmount("");
     setDepositDescription("");
+    setDepositRemark("");
     setShowDeposit(false);
   };
 
   const handleExport = () => {
-    const header = ["ID", "Type", "Description", "Amount (₦)", "Date", "Time"];
+    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Naira Rate", "Amount (₦)", "Date", "Time", "Remark"];
     const rows = filtered.map(r => [
-      r.id,
+      r.transferId,
+      r.orderId,
+      r.customer,
       r.type,
       `"${r.description}"`,
+      r.nairaRate.toString(),
       r.amount.toString(),
       r.date,
       r.time,
+      `"${r.remark}"`,
     ]);
     const csv = [header.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -114,6 +139,7 @@ export default function AdminWallets() {
   };
 
   const hasDateFilter = !!dateFrom || !!dateTo;
+  const hasActiveFilters = search || typeFilter !== "all" || customerFilter !== "all" || hasDateFilter;
 
   return (
     <AdminLayout>
@@ -168,6 +194,17 @@ export default function AdminWallets() {
               <SelectItem value="disbursement">Disbursements</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={customerFilter} onValueChange={setCustomerFilter}>
+            <SelectTrigger className="w-[140px] h-9 text-sm">
+              <SelectValue placeholder="All Customers" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Customers</SelectItem>
+              {uniqueCustomers.map(c => (
+                <SelectItem key={c} value={c}>{c}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <div className="flex items-end gap-2">
             <div>
               <label className="text-[10px] font-medium text-muted-foreground mb-1 block">From</label>
@@ -177,9 +214,9 @@ export default function AdminWallets() {
               <label className="text-[10px] font-medium text-muted-foreground mb-1 block">To</label>
               <DateTimePicker value={dateTo} onChange={setDateTo} />
             </div>
-            {hasDateFilter && (
-              <Button variant="ghost" size="sm" className="h-9 px-2 text-xs text-muted-foreground" onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}>
-                <X className="w-3 h-3 mr-1" /> Clear
+            {hasActiveFilters && (
+              <Button variant="ghost" size="sm" className="h-9 px-2 text-xs text-muted-foreground" onClick={() => { setSearch(""); setTypeFilter("all"); setCustomerFilter("all"); setDateFrom(undefined); setDateTo(undefined); }}>
+                <X className="w-3 h-3 mr-1" /> Clear All
               </Button>
             )}
           </div>
@@ -190,17 +227,34 @@ export default function AdminWallets() {
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
-                <TableHead className="text-xs font-semibold">ID</TableHead>
+                <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
+                <TableHead className="text-xs font-semibold">Order ID</TableHead>
+                <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold">Type</TableHead>
                 <TableHead className="text-xs font-semibold">Description</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Naira Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Date</TableHead>
+                <TableHead className="text-xs font-semibold">Remark</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {filtered.map(r => (
                 <TableRow key={r.id} className="hover:bg-muted/30">
-                  <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
+                  <TableCell className="text-xs font-medium text-accent">{r.transferId}</TableCell>
+                  <TableCell className="text-xs font-medium">{r.orderId === "—" ? <span className="text-muted-foreground">—</span> : <span className="text-accent">{r.orderId}</span>}</TableCell>
+                  <TableCell>
+                    {r.customer === "—" ? (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    ) : (
+                      <div className="flex items-center gap-1.5">
+                        <div className="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center text-[8px] font-bold text-primary">
+                          {r.customer.slice(-2)}
+                        </div>
+                        <span className="text-xs font-medium">{r.customer}</span>
+                      </div>
+                    )}
+                  </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1.5">
                       {r.type === "deposit" ? (
@@ -213,16 +267,18 @@ export default function AdminWallets() {
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate">{r.description}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{r.description}</TableCell>
+                  <TableCell className="text-right text-xs font-medium">₦{r.nairaRate.toLocaleString()}</TableCell>
                   <TableCell className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
                     {r.type === "deposit" ? "+" : "-"}₦{r.amount.toLocaleString()}
                   </TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
+                  <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
                 </TableRow>
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={5} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={9} className="text-center py-8 text-muted-foreground text-sm">
                     No records found
                   </TableCell>
                 </TableRow>
@@ -257,6 +313,14 @@ export default function AdminWallets() {
                 value={depositDescription}
                 onChange={e => setDepositDescription(e.target.value)}
                 rows={2}
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-xs font-medium">Remark (optional)</label>
+              <Input
+                placeholder="e.g. Scheduled top-up..."
+                value={depositRemark}
+                onChange={e => setDepositRemark(e.target.value)}
               />
             </div>
             <Button className="w-full" onClick={handleDeposit}>
