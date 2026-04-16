@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.7  
-**Date:** April 15, 2026
+**Version:** 4.8  
+**Date:** April 16, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -91,9 +91,12 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/api-config          → API configuration
 /admin/ranking             → Trading volume ranking (all roles)
 /admin/rewards             → Rewards management (all roles)
+/admin/wallets             → Platform wallet (deposits, disbursements)
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
+/admin/profile             → Admin profile settings
+/admin/screens             → Admin screens gallery (interactive preview)
 ```
 
 ### 2.3 Theming
@@ -650,6 +653,7 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Send button (accent circle)
    - "Create Order" button (opens Order Wizard)
    - **"Fund Deduction/Addition" button** (Super Admin and Team Lead only) — opens Fund Adjustment Modal to add/deduct money from customer wallet. Shows current wallet balance, transaction history, and records all operations.
+   - **Related Order dropdown** in Fund Adjustment Modal — links the adjustment to a specific order. Dropdown filters orders by the selected customer's alias and displays order summary (Card Type, Amount, Naira Rate, Status) when selected.
 
 - **Order Status Controls:**
   - When an order exists for the conversation, status action buttons appear
@@ -844,12 +848,13 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
   - **Alias** (first column — customer identifier)
   - Order ID
   - Card Type
-  - Denomination
-  - Amount
-  - Naira Rate
-  - Unit Price
+  - Card Rate (₦)
+  - **Naira Rate (₦)** — per-order naira rate at time of trade
+  - Amount ($)
   - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
   - Created (timestamp)
+- **Expanded details** include Naira Rate alongside other order fields
+- **CSV export** includes Naira Rate column
 
 ### 5.12 Naira Rate (`/admin/naira-rate`)
 
@@ -955,7 +960,41 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
-### 5.18 SMS Broadcast (`/admin/broadcast`)
+### 5.18 Platform Wallet (`/admin/wallets`)
+
+**Component:** `src/pages/admin/AdminWallets.tsx`  
+**Access:** Super Admin, Finance
+
+A ledger-style view of all platform wallet transactions used to auto-credit customer wallets on successful orders.
+
+#### Summary Cards (3-column grid)
+- **Platform Balance** — accent color, deposits minus disbursements
+- **Total Deposits** — success color, sum of all deposits
+- **Total Disbursements** — warning color, sum of all disbursements
+
+#### Filters
+- **Search:** Free-text search across Transfer ID, Order ID, description, remark
+- **Type filter:** All Types / Deposits / Disbursements
+- **Customer filter:** Dropdown of unique customer aliases
+- **Date range:** From/To date-time pickers
+- **Clear All:** Resets all filters
+- **Record count:** Displays filtered count
+
+#### Transaction Table
+- **Columns:** Transfer ID, Order ID, Customer (avatar + alias), Type (deposit with green ArrowDownLeft / disbursement with amber ArrowUpRight), Description, Naira Rate (₦), Amount (₦, color-coded +/-), Date · Time, Remark
+- Each record includes: unique PW ID, transfer ID, optional order ID, optional customer alias, naira rate at time of transaction
+
+#### Add Money Modal
+- Amount input (₦) with comma-stripped validation
+- Description (optional)
+- Remark (optional)
+- Creates a new deposit record with current timestamp and system naira rate
+
+#### CSV Export
+- Exports filtered records with all columns including Naira Rate
+- Filename: `platform-wallet-YYYY-MM-DD.csv`
+
+### 5.19 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
 **Access:** Super Admin only
@@ -1392,6 +1431,11 @@ src/
 | No real Cardlight API | Cardlight integration is UI-only |
 | No file uploads | Image attachments use placeholders, not real uploads |
 | Large page files | `AdminMessages.tsx` (998 lines) and `OrderWizardModal.tsx` (642 lines) should be refactored |
+| No real wallet ledger | Platform Wallet uses mock data — no real bank integration or double-entry bookkeeping |
+| No order-wallet linking | Fund adjustments reference orders by ID but no backend enforces the relationship |
+| No naira rate history per order | Orders store a snapshot naira rate but rate changes are not audited per-order |
+| No real CSV export | CSV exports are generated client-side from filtered mock data |
+| No audit trail | Fund adjustments, rate changes, and role switches have no server-side audit log |
 
 ---
 
@@ -1417,7 +1461,7 @@ src/
 
 ## 12. Full Changelog
 
-### v4.5 → v4.6 (Current)
+### v4.5 → v4.6
 
 | Change | Description |
 |--------|-------------|
@@ -1533,11 +1577,23 @@ src/
 | Admin User Guide | 12-section guide |
 | Customer User Guide | 10-section guide |
 
-### v4.7 — April 15, 2026
+### v4.6 → v4.7
 
 | Change | Description |
 |--------|-------------|
-| Traffic Shunting | 3-tier agent status system (Available/Busy/Saturated) with proactive visual cues on Contacts page |
-| Saturated Agent Pop-Up | Warning dialog when clicking heavily-occupied agents, suggesting available alternatives |
-| Auto-Sort by Availability | Agent list sorted Online → Busy → Saturated to guide user selection |
-| Admin Screens Gallery | Interactive gallery page (`/admin/screens`) showing all admin panel pages as scaled iframe previews |
+| **Traffic Shunting** | 3-tier agent status system (Available/Busy/Saturated) with proactive visual cues on Contacts page |
+| **Saturated Agent Pop-Up** | Warning dialog when clicking heavily-occupied agents, suggesting available alternatives |
+| **Auto-Sort by Availability** | Agent list sorted Online → Busy → Saturated to guide user selection |
+| **Admin Screens Gallery** | Interactive gallery page (`/admin/screens`) showing all admin panel pages as scaled iframe previews |
+
+### v4.7 → v4.8 (Current) — April 16, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Platform Wallet Enhanced** | Full ledger page with Transfer ID, Order ID, Customer, Type, Description, Naira Rate, Amount, Date/Time, Remark columns. Includes search, type/customer/date filters, and CSV export. |
+| **Platform Wallet Add Money** | Deposit modal with amount, description, and remark fields |
+| **Orders Naira Rate Column** | Added per-order Naira Rate column to Orders table, expanded details, and CSV export |
+| **Fund Adjustment Order Linking** | Related Order dropdown in Fund Adjustment modal filters by customer alias, shows order summary (Card Type, Amount, Naira Rate, Status) |
+| **Cleaned Wallet Descriptions** | Removed redundant customer/order details from wallet description field — now uses clean labels |
+| **Known Limitations Expanded** | Added limitations for wallet ledger, order-wallet linking, naira rate auditing, CSV exports, and audit trail |
+| **PRD Updated** | PRD bumped to v4.8 with Platform Wallet section (5.18), updated Orders section, enhanced Fund Adjustment docs |
