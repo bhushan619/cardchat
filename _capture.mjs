@@ -46,7 +46,7 @@ const customerScreens = [
 const misc = [['index', '/']];
 
 (async () => {
-  const browser = await chromium.launch();
+  const browser = await chromium.launch({ executablePath: '/bin/chromium', args: ['--no-sandbox'] });
 
   // DESKTOP for admin
   const desktopCtx = await browser.newContext({
