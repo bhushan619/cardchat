@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Switch } from "@/components/ui/switch";
 import CardlightPanel, { type CompletedOrder, cardlightResultMeta, type CardlightResult } from "@/components/admin/OrderWizardModal";
+import ChannelBadge from "@/components/admin/ChannelBadge";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
 import {
@@ -628,12 +629,23 @@ export default function AdminMessages() {
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                        {c.alias.slice(-2)}
+                      <div className="relative shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                          {c.alias.slice(-2)}
+                        </div>
+                        <span
+                          className={`absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 rounded-full border-2 border-card ${
+                            c.channel === "whatsapp" ? "bg-emerald-500" : "bg-primary"
+                          }`}
+                          title={c.channel === "whatsapp" ? "Messaging via WhatsApp" : "Messaging via in-app chat"}
+                        />
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center justify-between">
-                          <span className="text-xs font-semibold">{c.alias}</span>
+                          <div className="flex items-center gap-1.5 min-w-0">
+                            <span className="text-xs font-semibold truncate">{c.alias}</span>
+                            <ChannelBadge channel={c.channel} size="xs" showLabel={false} />
+                          </div>
                           <div className="flex items-center gap-1">
                             {cStatus && (
                               <span className={`text-[8px] font-medium px-1 py-0.5 rounded ${agentStatusStyles[cStatus].bg} ${agentStatusStyles[cStatus].color}`}>
