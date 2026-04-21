@@ -11,6 +11,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ChannelBadge from "@/components/admin/ChannelBadge";
 
 const customers = conversations.map(c => {
   const wallet = customerWallets.find(w => w.alias === c.alias);
@@ -28,6 +29,8 @@ const customers = conversations.map(c => {
     walletBalance: wallet?.balance ?? 0,
     totalCredits: wallet?.totalCredits ?? 0,
     totalWithdrawals: wallet?.totalWithdrawals ?? 0,
+    channel: c.channel,
+    whatsappNumber: c.whatsappNumber,
   };
 });
 

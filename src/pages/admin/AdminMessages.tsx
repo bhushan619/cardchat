@@ -694,6 +694,7 @@ export default function AdminMessages() {
                   <div>
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-semibold">{selectedConvo.alias}</p>
+                      <ChannelBadge channel={selectedConvo.channel} size="sm" />
                       {currentOrderStatus && (
                         <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${agentStatusStyles[currentOrderStatus].bg} ${agentStatusStyles[currentOrderStatus].color}`}>
                           {agentStatusLabels[currentOrderStatus]}
