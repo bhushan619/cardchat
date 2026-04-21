@@ -692,16 +692,16 @@ export default function AdminMessages() {
                     {selectedConvo.alias.slice(-2)}
                   </div>
                   <div>
-                    <div className="flex items-center gap-2">
-                      <p className="text-sm font-semibold">{selectedConvo.alias}</p>
-                      <ChannelBadge channel={selectedConvo.channel} size="sm" />
+                    <div className="flex items-center gap-1.5">
+                      <p className="text-sm font-semibold whitespace-nowrap">{selectedConvo.alias}</p>
+                      <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
                       {currentOrderStatus && (
-                        <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full ${agentStatusStyles[currentOrderStatus].bg} ${agentStatusStyles[currentOrderStatus].color}`}>
+                        <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded-full whitespace-nowrap leading-none ${agentStatusStyles[currentOrderStatus].bg} ${agentStatusStyles[currentOrderStatus].color}`}>
                           {agentStatusLabels[currentOrderStatus]}
                         </span>
                       )}
                       {isGroupChat && (
-                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5">
+                        <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
                           <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
                         </span>
                       )}
