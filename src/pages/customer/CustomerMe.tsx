@@ -72,9 +72,11 @@ export default function CustomerMe() {
   const [editStep, setEditStep] = useState<"info" | "otp">("info");
   const [editName, setEditName] = useState("John Doe");
   const [editEmail, setEditEmail] = useState("johndoe@gmail.com");
+  const [editWhatsapp, setEditWhatsapp] = useState("");
   const [otp, setOtp] = useState("");
   const [savedName, setSavedName] = useState("John Doe");
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
+  const [savedWhatsapp, setSavedWhatsapp] = useState("");
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
