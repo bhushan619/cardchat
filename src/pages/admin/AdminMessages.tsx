@@ -711,31 +711,33 @@ export default function AdminMessages() {
                 </div>
                 <div className="flex items-center gap-3">
                   <TooltipProvider>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] font-semibold text-muted-foreground">TTV</span>
-                      <span className="text-[10px] font-bold text-foreground">₦4,850,000</span>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-3 h-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                          <p className="font-semibold">Total Transaction Volume</p>
-                          <p className="text-muted-foreground">Lifetime transaction total for this customer</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-[10px] font-semibold text-muted-foreground">TMTV</span>
-                      <span className="text-[10px] font-bold text-foreground">₦1,250,000</span>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <Info className="w-3 h-3 text-muted-foreground cursor-help" />
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                          <p className="font-semibold">Total Monthly Transaction Volume</p>
-                          <p className="text-muted-foreground">Transaction total for this customer in the current month</p>
-                        </TooltipContent>
-                      </Tooltip>
+                    <div className="flex flex-col gap-0.5 leading-tight">
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] font-semibold text-muted-foreground w-9">TTV</span>
+                        <span className="text-[10px] font-bold text-foreground">₦4,850,000</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3 h-3 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="text-xs max-w-[180px]">
+                            <p className="font-semibold">Total Transaction Volume</p>
+                            <p className="text-muted-foreground">Lifetime transaction total for this customer</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-[10px] font-semibold text-muted-foreground w-9">TMTV</span>
+                        <span className="text-[10px] font-bold text-foreground">₦1,250,000</span>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Info className="w-3 h-3 text-muted-foreground cursor-help" />
+                          </TooltipTrigger>
+                          <TooltipContent side="bottom" className="text-xs max-w-[180px]">
+                            <p className="font-semibold">Total Monthly Transaction Volume</p>
+                            <p className="text-muted-foreground">Transaction total for this customer in the current month</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </div>
                     </div>
                   </TooltipProvider>
 
