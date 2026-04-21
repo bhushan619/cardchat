@@ -11,6 +11,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import ChannelBadge from "@/components/admin/ChannelBadge";
 
 const customers = conversations.map(c => {
   const wallet = customerWallets.find(w => w.alias === c.alias);
@@ -28,6 +29,8 @@ const customers = conversations.map(c => {
     walletBalance: wallet?.balance ?? 0,
     totalCredits: wallet?.totalCredits ?? 0,
     totalWithdrawals: wallet?.totalWithdrawals ?? 0,
+    channel: c.channel,
+    whatsappNumber: c.whatsappNumber,
   };
 });
 
@@ -78,6 +81,7 @@ export default function AdminCustomers() {
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Alias</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold text-center">Channel</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Total Value</TableHead>
@@ -103,6 +107,9 @@ export default function AdminCustomers() {
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}>
                       {c.status}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <ChannelBadge channel={c.channel} size="sm" />
                   </TableCell>
                   <TableCell className="text-center">
                     <span className="text-sm font-medium">{c.goodRate}%</span>
@@ -136,7 +143,7 @@ export default function AdminCustomers() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
@@ -166,6 +173,23 @@ export default function AdminCustomers() {
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Active channel</span>
+                  <ChannelBadge channel={selectedCustomer.channel} size="sm" />
+                </div>
+                {selectedCustomer.whatsappNumber && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">WhatsApp number</span>
+                    <a
+                      href={`https://wa.me/${selectedCustomer.whatsappNumber.replace(/[^0-9]/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+                    >
+                      {selectedCustomer.whatsappNumber}
+                    </a>
+                  </div>
+                )}
                 {[
                   ["Status", selectedCustomer.status],
                   ["Good Rate", `${selectedCustomer.goodRate}%`],

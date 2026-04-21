@@ -31,14 +31,17 @@ export type FundAdjustment = {
 
 export const fundAdjustments: FundAdjustment[] = [];
 
+// Channel a customer is currently messaging from. TRTC.io = native in-app chat; WhatsApp = WhatsApp Business Cloud API (Meta).
+export type MessagingChannel = "trtc" | "whatsapp";
+
 export const conversations = [
-  { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"] },
-  { id: "c2", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"] },
-  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "trading" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"] },
-  { id: "c4", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [] },
-  { id: "c5", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"] },
-  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "consulting" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"] },
-  { id: "c7", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [] },
+  { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 803 111 2222" },
+  { id: "c2", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 805 444 7788" },
+  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "trading" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 809 222 3344" },
+  { id: "c4", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 812 998 5566" },
+  { id: "c5", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 807 661 2233" },
+  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "consulting" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 814 770 9911" },
+  { id: "c7", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [], channel: "trtc" as MessagingChannel, whatsappNumber: "" },
 ];
 
 export const chatMessages = [

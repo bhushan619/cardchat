@@ -72,9 +72,11 @@ export default function CustomerMe() {
   const [editStep, setEditStep] = useState<"info" | "otp">("info");
   const [editName, setEditName] = useState("John Doe");
   const [editEmail, setEditEmail] = useState("johndoe@gmail.com");
+  const [editWhatsapp, setEditWhatsapp] = useState("");
   const [otp, setOtp] = useState("");
   const [savedName, setSavedName] = useState("John Doe");
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
+  const [savedWhatsapp, setSavedWhatsapp] = useState("");
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -98,6 +100,7 @@ export default function CustomerMe() {
       setEditStep("otp");
     } else {
       setSavedName(editName);
+      setSavedWhatsapp(editWhatsapp);
       setShowEditProfile(false);
     }
   };
@@ -106,6 +109,7 @@ export default function CustomerMe() {
     if (otp.length === 4) {
       setSavedName(editName);
       setSavedEmail(editEmail);
+      setSavedWhatsapp(editWhatsapp);
       setShowEditProfile(false);
       setEditStep("info");
       setOtp("");
@@ -759,9 +763,17 @@ export default function CustomerMe() {
                 <Mail className="w-3 h-3 text-muted-foreground" />
                 <p className="text-xs text-muted-foreground">{savedEmail}</p>
               </div>
+              {savedWhatsapp && (
+                <div className="flex items-center gap-1 mt-0.5">
+                  <svg viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3 text-emerald-500" aria-hidden="true">
+                    <path d="M20.52 3.48A11.78 11.78 0 0 0 12.05 0C5.5 0 .2 5.3.2 11.84c0 2.09.55 4.12 1.6 5.92L0 24l6.4-1.68a11.83 11.83 0 0 0 5.65 1.44h.01c6.55 0 11.84-5.3 11.84-11.84a11.77 11.77 0 0 0-3.38-8.44Z" />
+                  </svg>
+                  <p className="text-xs text-muted-foreground">{savedWhatsapp}</p>
+                </div>
+              )}
             </div>
             <button
-              onClick={() => { setShowEditProfile(true); setEditName(savedName); setEditEmail(savedEmail); setEditStep("info"); setOtp(""); }}
+              onClick={() => { setShowEditProfile(true); setEditName(savedName); setEditEmail(savedEmail); setEditWhatsapp(savedWhatsapp); setEditStep("info"); setOtp(""); }}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center hover:bg-muted/80 transition-colors"
             >
               <Pencil className="w-4 h-4 text-muted-foreground" />
@@ -825,6 +837,19 @@ export default function CustomerMe() {
                         <ShieldCheck className="w-3 h-3" /> Email change requires OTP verification
                       </p>
                     )}
+                  </div>
+                  <div>
+                    <label className="text-xs text-muted-foreground font-medium">WhatsApp number</label>
+                    <Input
+                      type="tel"
+                      placeholder="+234 800 000 0000"
+                      value={editWhatsapp}
+                      onChange={e => setEditWhatsapp(e.target.value)}
+                      className="mt-1"
+                    />
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      Optional — lets agents reach you on WhatsApp in addition to in-app chat.
+                    </p>
                   </div>
                   <div className="flex gap-2 pt-2">
                     <Button variant="outline" className="flex-1" onClick={() => setShowEditProfile(false)}>Cancel</Button>
