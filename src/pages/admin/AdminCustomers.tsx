@@ -143,7 +143,7 @@ export default function AdminCustomers() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
@@ -173,6 +173,23 @@ export default function AdminCustomers() {
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Active channel</span>
+                  <ChannelBadge channel={selectedCustomer.channel} size="sm" />
+                </div>
+                {selectedCustomer.whatsappNumber && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">WhatsApp number</span>
+                    <a
+                      href={`https://wa.me/${selectedCustomer.whatsappNumber.replace(/[^0-9]/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="font-medium text-emerald-600 dark:text-emerald-400 hover:underline"
+                    >
+                      {selectedCustomer.whatsappNumber}
+                    </a>
+                  </div>
+                )}
                 {[
                   ["Status", selectedCustomer.status],
                   ["Good Rate", `${selectedCustomer.goodRate}%`],
