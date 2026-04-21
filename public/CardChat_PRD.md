@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.8  
-**Date:** April 16, 2026
+**Version:** 4.9  
+**Date:** April 21, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -347,8 +347,8 @@ A minimalist, iOS-inspired layout:
 A multi-section profile page with drill-down sub-views.
 
 #### Main Profile View
-- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon
-- **Edit Profile** — pencil icon opens modal with name/email editing and OTP verification for email changes
+- **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon, optional **WhatsApp number** (with WhatsApp glyph) when set
+- **Edit Profile** — pencil icon opens modal with name/email/**WhatsApp number** editing and OTP verification for email changes. WhatsApp number is optional and lets agents reach the customer via WhatsApp Business Cloud API in addition to in-app chat.
 - **Wallet Card** — gradient card showing:
   - Total balance (masked by default, toggleable)
   - **Breakdown:** `(550,000 Trading + 6,200 Rewards)` when visible
@@ -608,6 +608,8 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Active order (pending_sale through success) → Trading
   - Pending payment → Pending Payment
 - Each conversation card shows:
+  - Avatar with a small **channel dot** on the bottom-right corner (emerald = WhatsApp, primary = TRTC in-app)
+  - **Channel badge** (icon-only chip) next to the alias indicating the active messaging channel
   - Star toggle (favorites)
   - Alias (6-char code)
   - Last message (truncated)
@@ -619,13 +621,14 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
 - Click to select → loads chat in center panel
 
 #### Center Panel — Chat View
-- **Chat Header:**
+- **Chat Header (48px height, single row):**
   - Avatar with status dot (green = online)
-  - Customer alias, online status, good rate
+  - Customer alias + **channel icon badge** (WhatsApp glyph or in-app chat bubble) — shows whether the customer is currently messaging via TRTC.io in-app chat or WhatsApp Business Cloud API
+  - **TTV / TMTV** stacked in a single column (right-aligned) with info tooltips
+  - Order status pills (Success / Order Cancelled / etc.) are **not** shown in the header — status is surfaced in the order sidebar and via system messages instead
   - **Identity toggle** (Eye/EyeOff) — reveals/hides full customer name
   - **Reassign button** (Agents icon) — opens popover to transfer chat to another agent (Team Lead/Super Admin only)
   - **Escalate button** (Agents icon) — opens popover to add Team Leads/Super Admins to the chat
-  - Status info tooltip (Info icon) — shows current order status
 
 - **Escalation / Group Chat:**
   - Clicking escalate shows a popover with available Team Leads and Super Admins
@@ -750,6 +753,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
     - Consulting = amber
     - Trading = emerald
     - Pending = blue
+  - **Channel** — badge showing whether the customer is on **WhatsApp** (emerald) or **In-app / TRTC** (primary)
   - Tags (VIP, Repeat, New, Priority badges)
   - Good Rate (percentage)
   - Total Value (₦ amount)
@@ -759,10 +763,12 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Actions: Eye icon → opens profile modal
 - **Profile Modal (Dialog):**
   - Customer alias prominently displayed
+  - **Active channel** row + **WhatsApp number** (when set) rendered as a click-to-chat `wa.me` link
   - Status badge
   - All metrics: Good Rate, Total Value, Total Orders, Joined Date, Last Active
   - Tags list
   - Last message preview
+  - Wallet tab with balance, credits, withdrawals, transactions
   - Close button
 
 ### 5.8 Card Rates (`/admin/card-rates`)
@@ -1589,7 +1595,7 @@ src/
 | **Auto-Sort by Availability** | Agent list sorted Online → Busy → Saturated to guide user selection |
 | **Admin Screens Gallery** | Interactive gallery page (`/admin/screens`) showing all admin panel pages as scaled iframe previews |
 
-### v4.7 → v4.8 (Current) — April 16, 2026
+### v4.7 → v4.8 — April 16, 2026
 
 | Change | Description |
 |--------|-------------|
@@ -1600,3 +1606,14 @@ src/
 | **Cleaned Wallet Descriptions** | Removed redundant customer/order details from wallet description field — now uses clean labels |
 | **Known Limitations Expanded** | Added limitations for wallet ledger, order-wallet linking, naira rate auditing, CSV exports, and audit trail |
 | **PRD Updated** | PRD bumped to v4.8 with Platform Wallet section (5.18), updated Orders section, enhanced Fund Adjustment docs |
+
+### v4.8 → v4.9 (Current) — April 21, 2026
+
+| Change | Description |
+|--------|-------------|
+| **WhatsApp Channel Integration** | WhatsApp Business Cloud API (Meta) added as a parallel messaging channel alongside TRTC.io. Unified-inbox model: one conversation thread per customer regardless of channel. |
+| **Channel Indicators** | New `ChannelBadge` component (`src/components/admin/ChannelBadge.tsx`). Shown in `/admin` conversation list (icon-only chip + colored avatar dot), in the chat header (icon-only chip), and in `/admin/customers` (full pill in dedicated **Channel** column). |
+| **Customer WhatsApp Number** | Optional WhatsApp number on the Customer profile (`/customer/me`). Editable via the Edit Profile modal. Surfaced to admins as a click-to-chat `wa.me` link in the Customer details modal. |
+| **Mock Data** | `conversations` mock now carries `channel: "trtc" \| "whatsapp"` and `whatsappNumber` per customer. |
+| **Chat Header Cleanup** | Removed order status pill (Success / Order Cancelled / etc.) from the 48px chat header. TTV and TMTV are now stacked in a single right-aligned column. Status remains visible in the order sidebar and via in-thread system messages. |
+| **PRD Updated** | PRD bumped to v4.9 documenting WhatsApp channel, profile WhatsApp field, and chat-header re-arrangement. |
