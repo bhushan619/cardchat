@@ -81,6 +81,7 @@ export default function AdminCustomers() {
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Alias</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold text-center">Channel</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Total Value</TableHead>
@@ -106,6 +107,9 @@ export default function AdminCustomers() {
                     <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}>
                       {c.status}
                     </span>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <ChannelBadge channel={c.channel} size="sm" />
                   </TableCell>
                   <TableCell className="text-center">
                     <span className="text-sm font-medium">{c.goodRate}%</span>
