@@ -506,12 +506,12 @@ A single-page rewards overview combining earnings summary, referral tools, and h
 
 **Component:** `src/pages/customer/CustomerRanking.tsx`
 
-A motivation-first ranking page showing the user's trading volume standing within the current month.
+A motivation-first ranking page showing the user's trading volume standing within the **current bi-weekly period**. The system splits each month into two cycles (1st–15th and 16th–end) — see [Ranking Cycle Logic](mem://features/ranking-system/cycle-logic).
 
 #### Header
 - Back arrow to Home, page title "Trading Volume Ranking"
-- Period label (e.g., "Mar 01 – Mar 31, 2026")
-- "Rules" button (Info icon) → opens Dialog with tier explanations and reset schedule
+- Period label reflecting the active bi-weekly window (e.g., "Mar 16 – Mar 31, 2026")
+- "Rules" button (Info icon) → opens Dialog with tier explanations and bi-weekly reset schedule
 
 #### Personal Achievement Card
 - Gradient card (`from-accent/10 via-card to-accent/5`) with decorative circle
