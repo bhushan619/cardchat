@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, MessageSquare, CreditCard, FileText, DollarSign, Users, BarChart3, Globe, Send, Shield, Search, BookOpen, CheckCircle2, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquare, CreditCard, FileText, DollarSign, Users, BarChart3, Globe, Send, Shield, Search, BookOpen, CheckCircle2, ArrowRight, KeyRound, MessagesSquare } from "lucide-react";
 
 interface GuideStep {
   text: string;
