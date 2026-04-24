@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.9  
-**Date:** April 21, 2026
+**Version:** 5.0  
+**Date:** April 24, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1642,7 +1642,7 @@ src/
 | **Known Limitations Expanded** | Added limitations for wallet ledger, order-wallet linking, naira rate auditing, CSV exports, and audit trail |
 | **PRD Updated** | PRD bumped to v4.8 with Platform Wallet section (5.18), updated Orders section, enhanced Fund Adjustment docs |
 
-### v4.8 → v4.9 (Current) — April 21, 2026
+### v4.8 → v4.9 — April 21, 2026
 
 | Change | Description |
 |--------|-------------|
