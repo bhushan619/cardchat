@@ -1537,6 +1537,18 @@ src/
 
 ## 12. Full Changelog
 
+### v5.0 → v5.1
+
+| Change | Description |
+|--------|-------------|
+| **Customer Chat Tracker Corrected** | Reduced from a 5-step (Order Created → Settled → Billing Sent → Transfer Processing → Transfer Complete) to the actual **3-step** customer flow (Order Created → Order Processing → Success). Failed state rendered as a destructive inline alert, not a tracker step. |
+| **Order Details Modal Realigned** | Modal now documents Card Details (Type, Amount, Card Rate, Payout) and a 3-step Timeline matching the implementation; removed the obsolete Payout Summary and Bank Transfer sections. |
+| **Me Tab — New Sub-Views** | Added Wallet (balance toggle, withdrawal form with ₦2,000–₦790,000 limits, Credits/Debits filters), Security Settings (2FA toggle, Change Password, Active Sessions, Login alerts), and App Settings (Notifications toggles, Language selector, Theme, Build info) sub-views. |
+| **Edit Profile 2-Step Flow** | Documented the 2-step modal (Info → 4-digit OTP) with WhatsApp helper text. |
+| **Agent Profile Expanded** | Added documentation for the gradient header, About copy variants, Details card (Role/Availability/Rating 4.8 ⁄ 5.0), and Specialties chips (iTunes, Amazon, Steam, Google Play). |
+| **Ranking Reconciled to Bi-Weekly** | Customer Trading Volume Ranking corrected from "monthly / 9 tiers" to **bi-weekly / 6 tiers**, aligned with admin-side cycle logic and reward tier specification. |
+| **PRD Updated** | PRD bumped to v5.1 to address customer-section gaps surfaced in the v5.0 audit. |
+
 ### v4.5 → v4.6
 
 | Change | Description |
