@@ -352,7 +352,10 @@ A multi-section profile page with drill-down sub-views.
 
 #### Main Profile View
 - **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon, optional **WhatsApp number** (with WhatsApp glyph) when set
-- **Edit Profile** — pencil icon opens modal with name/email/**WhatsApp number** editing and OTP verification for email changes. WhatsApp number is optional and lets agents reach the customer via WhatsApp Business Cloud API in addition to in-app chat.
+- **Edit Profile** — pencil icon opens a 2-step modal:
+  - **Step 1 — Info:** edit name, email, and optional WhatsApp number (with helper text explaining that agents can reach the customer via WhatsApp Business Cloud API in addition to in-app chat)
+  - **Step 2 — Verify:** 4-digit OTP entry (auto-sent to the new email when email changed)
+  - "Resend code" link, success toast on confirmation
 - **Wallet Card** — gradient card showing:
   - Total balance (masked by default, toggleable)
   - **Breakdown:** `(550,000 Trading + 6,200 Rewards)` when visible
