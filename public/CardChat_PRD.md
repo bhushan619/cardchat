@@ -333,10 +333,16 @@ A minimalist, iOS-inspired layout:
 #### Agent Profile Page
 **Component:** `src/pages/customer/AgentProfile.tsx`
 
-- Agent avatar, name, online status
-- **"Message" button** — navigates directly to the agent's chat window (passes `chatId` via router state to `/customer/chat`, which auto-opens the chat view instead of showing the chat list)
-- Agent details and stats
-- Empty state: "No agents match your search"
+- **Gradient header** — `bg-gradient-to-b from-primary/20 to-background`, back button on top-left, large 24×24 avatar with initial, online/busy dot indicator on avatar (`bg-success` if online, `bg-warning` otherwise)
+- Agent name, last-seen text underneath
+- **"Message" button** (full-width primary, with MessageCircle icon) — navigates directly to the agent's chat window (passes `chatId` via router state to `/customer/chat`, which auto-opens the chat view instead of showing the chat list)
+- **About** — short bio. Special copy for "CardChat Support" ("Official CardChat support channel. Available 24/7…"); generic intro for other agents
+- **Details card** (3 rows, each with circular icon background):
+  - Role (Shield icon) — "Official Support" for CardChat Support, "Support Agent" for others
+  - Availability (Clock icon) — "Available now" if online, otherwise the last-seen string
+  - Rating (Star icon) — fixed display "4.8 / 5.0"
+- **Specialties** — chip row with `iTunes`, `Amazon`, `Steam`, `Google Play` (primary-tinted pills)
+- Empty state on contacts list: "No agents match your search"
 
 ### 4.5 Profile / Me Tab (`/customer/me`)
 
