@@ -535,7 +535,7 @@ A motivation-first ranking page showing the user's trading volume standing withi
 
 #### Data Source
 - **File:** `src/data/rankingMock.ts`
-- 9 reward tiers (10K–1M volume thresholds)
+- **6 reward tiers** matching the admin-side specification (volume thresholds from 200K up to 2M+, payouts from ₦1,000 up to ₦10,000) — see [Reward Tiers](mem://features/ranking-system/reward-tiers)
 - 25 mock users with pre-assigned ranks, volumes, and rewards
 - Helper functions: `getCurrentTier()`, `getNextTier()`
 
