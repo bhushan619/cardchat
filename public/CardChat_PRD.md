@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 4.9  
-**Date:** April 21, 2026
+**Version:** 5.0  
+**Date:** April 24, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -86,6 +86,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/naira-rate          → Naira rate management
 /admin/users               → User management
 /admin/team                → Team dashboard
+/admin/team-chat           → Internal team chat (DMs + channels)
 /admin/ip-restrictions     → IP & country restrictions
 /admin/sensitive-words     → Sensitive words filter
 /admin/api-config          → API configuration
@@ -113,13 +114,13 @@ The app supports **light and dark modes** via a `ThemeProvider` context. The the
 
 **Component:** `src/pages/Index.tsx`
 
-A centered splash screen serving as the entry point to both interfaces:
+A minimal centered selector serving as the entry point to both interfaces:
 
-- CardChat logo (green "LC" on accent background, `rounded-2xl`)
+- CardChat "CC" logo on accent background (`rounded-2xl`, 80×80)
 - App title "CardChat" with tagline "Gift card trading platform — interactive UI prototype"
-- Two CTA buttons:
-  - **Customer App** (accent/green) — navigates to `/customer/auth`
-  - **Admin Panel** (outline) — navigates to `/admin/login`
+- Two CTA buttons (stacked on mobile, side-by-side on desktop):
+  - **Customer App** (accent fill, Smartphone icon) → `/customer/auth`
+  - **Admin Panel** (outline, Monitor icon) → `/admin/login`
 - Footer note: "All screens use mock data · No backend connected"
 
 ---
@@ -602,11 +603,10 @@ Four roles with hierarchical access:
 A **3-panel layout** combining conversation list, chat, and order sidebar:
 
 #### Left Panel — Conversation Tabs (25% width, 240–336px)
-- **3 tab columns:** Consulting (amber), Trading (emerald), Pending Payment (blue)
+- **2 tab columns:** Consulting (amber gradient) and Trading (emerald gradient). Pending Payment is treated as a sub-status surfaced inline within the Trading column rather than as its own tab.
 - Conversations are categorized by their order status via the state machine:
-  - No order / payment completed → Consulting
-  - Active order (pending_sale through success) → Trading
-  - Pending payment → Pending Payment
+  - No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` → Consulting
+  - `in_trade` / `pending_payment` / `success` → Trading
 - Each conversation card shows:
   - Avatar with a small **channel dot** on the bottom-right corner (emerald = WhatsApp, primary = TRTC in-app)
   - **Channel badge** (icon-only chip) next to the alias indicating the active messaging channel
@@ -626,9 +626,9 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Customer alias + **channel icon badge** (WhatsApp glyph or in-app chat bubble) — shows whether the customer is currently messaging via TRTC.io in-app chat or WhatsApp Business Cloud API
   - **TTV / TMTV** stacked in a single column (right-aligned) with info tooltips
   - Order status pills (Success / Order Cancelled / etc.) are **not** shown in the header — status is surfaced in the order sidebar and via system messages instead
-  - **Identity toggle** (Eye/EyeOff) — reveals/hides full customer name
-  - **Reassign button** (Agents icon) — opens popover to transfer chat to another agent (Team Lead/Super Admin only)
+  - **Identity toggle** (Eye/EyeOff) — reveals/hides full customer name (Super Admin only)
   - **Escalate button** (Agents icon) — opens popover to add Team Leads/Super Admins to the chat
+  - **Reassign control** lives in the **Dedicated Chat View** (`/admin/chat/:id`) header, not in the Messages page header — opens a popover to transfer the chat to another agent (Team Lead/Super Admin only)
 
 - **Escalation / Group Chat:**
   - Clicking escalate shows a popover with available Team Leads and Super Admins
@@ -657,6 +657,7 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
    - "Create Order" button (opens Order Wizard)
    - **"Fund Deduction/Addition" button** (Super Admin and Team Lead only) — opens Fund Adjustment Modal to add/deduct money from customer wallet. Shows current wallet balance, transaction history, and records all operations.
    - **Related Order dropdown** in Fund Adjustment Modal — links the adjustment to a specific order. Dropdown filters orders by the selected customer's alias and displays order summary (Card Type, Amount, Naira Rate, Status) when selected.
+   - **6-digit Transaction PIN gate** — Before any fund adjustment is committed, the modal switches to a `fundPinStep` view requiring the operator to enter their 6-digit Transaction PIN. Submission is blocked until PIN is verified. Adjustment records (`FundAdjustment`) are persisted to `sessionStorage` under key `cardchat_fund_adjustments`.
 
 - **Order Status Controls:**
   - When an order exists for the conversation, status action buttons appear
@@ -798,13 +799,15 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 
 Admin view of the trading volume ranking system.
 
-- Header: "Trading Volume Ranking" with period date range
-- **Month filter:** Select dropdown to switch between months (Jan–Dec 2026)
+- Header: "Trading Volume Ranking" with active period date range
+- **Bi-weekly period selector:** Select dropdown listing all H1 (1st–15th) and H2 (16th–end) periods for 2026 (24 entries) — defaults to current period
+- **Date/Time range filters:** Optional From/To `DateTimePicker`s for additional ad-hoc filtering of leaderboard entries
+- **CSV Export button** (Download icon) — exports the currently filtered leaderboard (Rank, Alias, Volume, Reward ₦) for the active period
 - **Two-panel layout (1:2 grid on desktop):**
 
 #### Reward Tiers Panel
-- Lists all 9 reward tiers with threshold and reward amounts
-- Format: "≥ 10,000" → "₦10"
+- Lists all 6 reward tiers with threshold and reward amounts (sourced from `rankingMock.rankingTiers`)
+- Format: "≥ 2,000,000" → "₦10,000"
 
 #### Leaderboard Panel
 - **Alias search:** Filter leaderboard by alias (case-insensitive)
@@ -898,8 +901,26 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
 **Component:** `src/pages/admin/AdminTeam.tsx`  
 **Access:** Super Admin, Team Lead
 
-- Team performance metrics
-- Agent activity monitoring
+#### Stats Grid (4 cards)
+- **Active Chats** — current open conversations (with delta vs prior period)
+- **Online Agents** — fraction of online vs total agents (e.g. `3/4`)
+- **Orders Today** — today's order count with delta
+- **Avg Response** — average first-response time across agents (with delta)
+
+#### Agent Performance Table
+- Columns: **Agent**, Active Chats, Orders, Settled (success color), Pending (warning color), Avg Time
+- Hover-highlighted rows; muted header band
+
+#### Active Escalations Panel
+- Lists chats currently escalated to the viewing user
+- Each row shows requesting agent → recipient, customer alias, brief reason, and an "Active" status pill
+
+### 5.14b Team Chat (`/admin/team-chat`)
+
+**Component:** `src/pages/admin/AdminTeamChat.tsx`  
+**Access:** All admin roles
+
+Internal collaboration workspace for staff. See `mem://features/admin-panel/collaboration` for full role-color and unread-badge specifications. Provides direct messages, role-colored bubbles, automated system notifications, and persistent message history (mock).
 
 ### 5.15 IP & Country Restrictions (`/admin/ip-restrictions`)
 
@@ -1098,8 +1119,9 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Tab |
 |-------------|-----|
 | No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` | Consulting |
-| `in_trade` / `success` | Trading |
-| `pending_payment` | Pending Payment |
+| `in_trade` / `pending_payment` / `success` | Trading |
+
+> Pending Payment is no longer a separate tab column — it surfaces as an in-row status indicator within the Trading tab.
 
 ### 6.4 Status Persistence
 
@@ -1257,6 +1279,19 @@ walletBalance: number;    // tradingBalance + rewardsBalance (computed)
 - Max cards per order: 15
 - Max images per card entry: 10
 - Max bank accounts per customer: 5
+
+### 7.11 Persistence Keys
+
+The prototype uses browser storage to simulate backend persistence. All keys are documented here for parity with future backend implementation.
+
+| Key | Storage | Purpose |
+|-----|---------|---------|
+| `cardchat-theme` | localStorage | Active UI theme (`light` / `dark`) |
+| `cardchat_order_statuses` | localStorage | Per-conversation order id + status + updatedAt (state machine) |
+| `adminAuth` | sessionStorage | Mock admin login session (role + email) |
+| `cardchat_completed_orders` | sessionStorage | Orders created via the Order Wizard / Cardlight panel |
+| `cardchat_transfer_completed` | sessionStorage | Set of order IDs whose payment transfer has been confirmed |
+| `cardchat_fund_adjustments` | sessionStorage | `FundAdjustment[]` log of customer wallet additions/deductions |
 
 ---
 
@@ -1607,7 +1642,7 @@ src/
 | **Known Limitations Expanded** | Added limitations for wallet ledger, order-wallet linking, naira rate auditing, CSV exports, and audit trail |
 | **PRD Updated** | PRD bumped to v4.8 with Platform Wallet section (5.18), updated Orders section, enhanced Fund Adjustment docs |
 
-### v4.8 → v4.9 (Current) — April 21, 2026
+### v4.8 → v4.9 — April 21, 2026
 
 | Change | Description |
 |--------|-------------|
@@ -1617,3 +1652,17 @@ src/
 | **Mock Data** | `conversations` mock now carries `channel: "trtc" \| "whatsapp"` and `whatsappNumber` per customer. |
 | **Chat Header Cleanup** | Removed order status pill (Success / Order Cancelled / etc.) from the 48px chat header. TTV and TMTV are now stacked in a single right-aligned column. Status remains visible in the order sidebar and via in-thread system messages. |
 | **PRD Updated** | PRD bumped to v4.9 documenting WhatsApp channel, profile WhatsApp field, and chat-header re-arrangement. |
+
+### v4.9 → v5.0 (Current) — April 24, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Conversation Tabs Reduced to 2** | The Messages page (`/admin`) now ships with **two** conversation tabs (Consulting, Trading) rather than three. Pending Payment is treated as an in-row sub-status within Trading. PRD §5.4 and §6.3 updated. |
+| **Reassign Location Clarified** | Reassign control documented in the **Dedicated Chat View** (`/admin/chat/:id`) header rather than the Messages page header. |
+| **6-digit Transaction PIN Gate** | Documented the `fundPinStep` PIN-confirmation step required before any Fund Adjustment is committed. |
+| **Persistence Keys Catalog** | New §7.11 enumerates all `localStorage` and `sessionStorage` keys (`adminAuth`, `cardchat_order_statuses`, `cardchat_completed_orders`, `cardchat_transfer_completed`, `cardchat_fund_adjustments`, `cardchat-theme`). |
+| **Team Dashboard Spec** | §5.14 expanded with full stats grid (Active Chats, Online Agents, Orders Today, Avg Response), agent performance table columns, and Active Escalations panel. |
+| **Team Chat Route** | Added `/admin/team-chat` to §2.2 route table and a §5.14b summary section pointing to the collaboration memory. |
+| **Admin Ranking Refinements** | §5.9 now documents the **bi-weekly period selector** (24 H1/H2 entries), optional **DateTimePicker** From/To filters, and **CSV Export** button. Tier count corrected from 9 to 6. |
+| **Landing Page Spec Aligned** | §3 rewritten to match the current minimal 2-button selector (Smartphone / Monitor icons) instead of the legacy splash description. |
+| **PRD Updated** | PRD bumped to v5.0 covering tab-count fix, PIN gate, persistence catalog, Team Dashboard spec, Team Chat route, ranking filters, and landing-page alignment. |
