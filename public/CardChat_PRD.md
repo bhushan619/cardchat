@@ -1119,8 +1119,9 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 | Agent Status | Tab |
 |-------------|-----|
 | No order / `pending_sale` / `pending` / `order_cancelled` / `payment_completed` | Consulting |
-| `in_trade` / `success` | Trading |
-| `pending_payment` | Pending Payment |
+| `in_trade` / `pending_payment` / `success` | Trading |
+
+> Pending Payment is no longer a separate tab column — it surfaces as an in-row status indicator within the Trading tab.
 
 ### 6.4 Status Persistence
 
