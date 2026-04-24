@@ -1,6 +1,6 @@
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Home, MessageCircle, Users, User, CreditCard, Gift, BookOpen, CheckCircle2, ShieldCheck, Bell, Banknote } from "lucide-react";
+import { ChevronDown, ChevronRight, Home, MessageCircle, Users, User, CreditCard, Gift, BookOpen, CheckCircle2, ShieldCheck, Bell, Banknote, Settings } from "lucide-react";
 
 interface GuideStep {
   text: string;
@@ -72,7 +72,8 @@ const guides: GuideSection[] = [
       { text: "Tap on a conversation to open it and continue chatting." },
       { text: "Type your message in the input field at the bottom and tap the Send button." },
       { text: "Use the image and emoji icons beside the send button to attach card photos or add reactions.", tip: "Always send clear, well-lit photos for faster verification." },
-      { text: "System messages (styled differently) show only key updates you need: Order Created, Order Processing, Success, Pending Payment, and Payment Completed." },
+      { text: "A 3-step progress tracker shows your order's live status: 1) Order Created → 2) Order Processing → 3) Success.", tip: "Failed orders display a destructive inline alert so you know what went wrong immediately." },
+      { text: "Tap any system 'Order Created' message to open the Order Details modal — it shows your card breakdown and the same 3-step timeline." },
       { text: "If your chat has been escalated to a group, you'll see multiple agent names on messages." },
     ],
   },
@@ -110,10 +111,24 @@ const guides: GuideSection[] = [
     steps: [
       { text: "Tap the 'Me' tab at the bottom of the screen." },
       { text: "Your 6-character alias is displayed prominently at the top — this is your trading identity." },
-      { text: "Your total wallet balance is shown with a breakdown: Trading Balance (earnings from card trades) and Rewards Balance (earnings from ranking + referrals)." },
-      { text: "Your registered bank accounts are listed here — these are used for receiving payouts." },
+      { text: "Your total wallet balance is shown with a breakdown: Trading Balance (earnings from card trades) and Rewards Balance (earnings from ranking + referrals). Tap the eye icon to mask/unmask the amount." },
+      { text: "Your registered bank accounts are listed under 'Bank Accounts' — these are used for receiving payouts." },
       { text: "Review your transaction history to track past trades and payments." },
       { text: "Check your account status and any VIP/Repeat customer badges.", tip: "Keep your bank details up-to-date to avoid payout delays." },
+      { text: "Tap 'Edit Profile' to update your contact info. Step 1 enters new info (with a WhatsApp helper text for the phone field), Step 2 confirms via a 4-digit OTP sent to your email.", tip: "OTP verification protects your account from unauthorized changes." },
+    ],
+  },
+  {
+    id: "agent-profile",
+    title: "Viewing an Agent's Profile",
+    icon: User,
+    description: "What you'll see when you tap an agent's name or avatar.",
+    steps: [
+      { text: "From Contacts or any chat, tap an agent's avatar or name to open their profile." },
+      { text: "The gradient header shows the agent's avatar, alias, and a live status indicator (online green, busy amber)." },
+      { text: "The details card shows their average rating (e.g., 4.8/5.0) and total completed trades." },
+      { text: "Specialty chips list the cards this agent handles best (e.g., iTunes, Steam, Amazon, Razer Gold).", tip: "Pick agents whose specialties match your card type for the smoothest trade." },
+      { text: "Tap 'Message' to start or resume a conversation with that agent." },
     ],
   },
   {
@@ -146,15 +161,16 @@ const guides: GuideSection[] = [
     id: "wallet",
     title: "Wallet & Withdrawals",
     icon: Banknote,
-    description: "Manage your wallet balance and cash withdrawals.",
+    description: "Manage your wallet balance, withdrawals, and transaction history.",
     steps: [
       { text: "Your total wallet balance is the sum of your Trading Balance and Rewards Balance — both are visible on the Me tab." },
       { text: "Trading Balance reflects earnings from completed card trades. Rewards Balance reflects earnings from ranking achievements and referral bonuses." },
+      { text: "Tap the eye icon next to any balance to mask or unmask the amount for privacy in public spaces." },
       { text: "To withdraw funds, navigate to your wallet and tap 'Withdraw'." },
       { text: "The minimum withdrawal amount is ₦2,000 per transaction.", tip: "Amounts below ₦2,000 will be rejected — accumulate a balance first." },
-      { text: "The maximum withdrawal amount is ₦790,000 per transaction." },
-      { text: "For larger amounts, split your withdrawal into multiple transactions of up to ₦790,000 each." },
+      { text: "The maximum withdrawal amount is ₦790,000 per transaction. For larger amounts, split into multiple transactions." },
       { text: "Withdrawals are sent to your verified bank account. Processing time depends on your bank." },
+      { text: "Use the transaction filters (type, date range) to narrow down your wallet history when reviewing past activity." },
     ],
   },
   {
@@ -164,11 +180,48 @@ const guides: GuideSection[] = [
     description: "Earn rewards through ranking achievements and referrals.",
     steps: [
       { text: "Tap 'Rewards' from the Me tab to view your total rewards earned — broken down into Ranking and Referral earnings." },
-      { text: "Ranking rewards are based on bi-weekly trading volume periods (H1: 1st–15th, H2: 16th–end of month). After all orders are settled, rankings are generated and rewards are distributed by the platform." },
+      { text: "Ranking rewards follow a bi-weekly cycle (H1: 1st–15th, H2: 16th–end of month). After all orders for the period are settled, the platform distributes rewards across 6 tiers based on your trading volume." },
       { text: "Referral rewards are automatic — earned instantly when someone you invite completes their first trade. Share your alias as your referral code." },
       { text: "You can enter an invite code from another user on the Rewards screen — this links you to their referral.", tip: "Invite codes can be entered at any time via the Rewards screen." },
       { text: "Tap the info icon (ℹ) in the Rewards header to see 'How it Works' — a step-by-step explanation of the rewards program." },
       { text: "Your reward history lists every bonus received, with type, description, date, and amount." },
+    ],
+  },
+  {
+    id: "ranking",
+    title: "Trading Volume Ranking",
+    icon: Gift,
+    description: "Climb the bi-weekly leaderboard to earn tier-based rewards.",
+    steps: [
+      { text: "Tap 'Ranking' from the Home grid or Me tab to view the live trading volume leaderboard." },
+      { text: "A sticky achievement card at the top shows your current rank, your bi-weekly volume, and the volume needed to reach the next tier." },
+      { text: "The leaderboard truncates intelligently — top performers and your nearby ranks are always visible without endless scrolling." },
+      { text: "Cycles are bi-weekly: H1 covers the 1st–15th of each month, H2 covers the 16th to month-end.", tip: "Trade consistently across the full cycle to qualify for higher reward tiers." },
+      { text: "Six reward tiers are available, each with a fixed payout based on trading volume thresholds. Higher volumes unlock larger rewards." },
+    ],
+  },
+  {
+    id: "security",
+    title: "Security Settings",
+    icon: ShieldCheck,
+    description: "Protect your account with 2FA, password, and session controls.",
+    steps: [
+      { text: "From the Me tab, open 'Security' to manage account protection." },
+      { text: "Toggle Two-Factor Authentication (2FA) on to require a one-time code at every login." },
+      { text: "Change your password from this screen — you'll need to confirm with your current password." },
+      { text: "Review active login sessions and tap 'Sign out' next to any device you don't recognize.", tip: "Sign out unfamiliar sessions immediately if you suspect unauthorized access." },
+    ],
+  },
+  {
+    id: "settings",
+    title: "App Settings",
+    icon: Settings,
+    description: "Customize language, theme, and view app information.",
+    steps: [
+      { text: "From the Me tab, open 'Settings' to personalize your app experience." },
+      { text: "Choose your preferred language (English, Français, and more)." },
+      { text: "Switch between light, dark, and system theme to match your preference." },
+      { text: "Scroll to the bottom to see app build info and version — useful when reporting an issue.", tip: "Mention your app version when contacting support so they can reproduce your issue." },
     ],
   },
   {

@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, MessageSquare, CreditCard, FileText, DollarSign, Users, BarChart3, Globe, Send, Shield, Search, BookOpen, CheckCircle2, ArrowRight } from "lucide-react";
+import { ChevronDown, ChevronRight, MessageSquare, CreditCard, FileText, DollarSign, Users, BarChart3, Globe, Send, Shield, Search, BookOpen, CheckCircle2, ArrowRight, KeyRound, MessagesSquare } from "lucide-react";
 
 interface GuideStep {
   text: string;
@@ -25,14 +25,15 @@ const guides: GuideSection[] = [
     roles: ["All Roles"],
     steps: [
       { text: "Navigate to 'Messages' from the sidebar — this is the main dashboard." },
-      { text: "Conversations are organized into 3 columns: Consulting (new inquiries), Trading (active card trades), and Pending (awaiting action)." },
+      { text: "Conversations are organized into 2 tabs: Consulting (new inquiries, pending_sale, pending, payment_completed, order_cancelled) and Trading (in_trade, pending_payment, success).", tip: "Pending Payment is now an inline sub-status within the Trading tab, not a separate column." },
       { text: "Click on any conversation to open the full chat view with a responsive tabbed sidebar (Orders + Sales Order). The left panel (25%), chat area, and right panel (35%) scale fluidly across screen sizes." },
       { text: "Type your response in the message input at the bottom and press Send or hit Enter." },
-      { text: "Use the status dropdown at the top of a chat to move conversations between Consulting, Trading, and Pending.", tip: "Moving to 'Trading' signals an active deal is in progress." },
-      { text: "Only customer-facing status changes appear as system messages in chat (e.g., Order Created, Order Processing, Success, Payment Completed). Internal agent transitions like Pending → In Trade are silent.", tip: "This keeps the customer's chat clean — they only see statuses relevant to them." },
-      { text: "Look for unread count badges on each conversation card to prioritize responses." },
-      { text: "VIP and Repeat customer tags are shown on conversation cards — prioritize these customers." },
-      { text: "Super Admin and Team Lead: Use the 'Fund Deduction/Addition' button next to 'Create Order' to add or deduct funds from the customer's wallet. The modal shows current wallet balance and transaction history.", tip: "All fund adjustment operations are recorded for audit purposes." },
+      { text: "Use the status dropdown at the top of a chat to move conversations between Consulting and Trading. Sub-statuses (e.g., Pending Payment) are auto-managed by the order workflow.", tip: "Conversations move tabs automatically based on the order state machine." },
+      { text: "Channel badges next to each conversation indicate the source: TRTC (in-app) or WhatsApp Business. Customer WhatsApp numbers are visible to authorized roles." },
+      { text: "Only customer-facing status changes appear as system messages in chat (e.g., Order Created, Order Processing, Success, Payment Completed). Internal agent transitions are silent.", tip: "This keeps the customer's chat clean — they only see statuses relevant to them." },
+      { text: "Look for unread count badges on each conversation card to prioritize responses. VIP and Repeat customer tags are shown — prioritize these customers." },
+      { text: "Reassign a customer to another agent from the chat header (Super Admin and Team Lead only). The Reassign control lives in the dedicated chat view header." },
+      { text: "Super Admin and Team Lead: Use the 'Fund Deduction/Addition' button next to 'Create Order' to add or deduct funds from the customer's wallet. The modal shows current wallet balance and transaction history.", tip: "All fund adjustments require a 6-digit Transaction PIN before commit, and are recorded for audit." },
     ],
   },
   {
@@ -166,13 +167,58 @@ const guides: GuideSection[] = [
     id: "team",
     title: "Team Dashboard",
     icon: BarChart3,
-    description: "Monitor team performance metrics and agent activity.",
+    description: "Monitor team performance metrics and agent activity in real time.",
     roles: ["Team Lead", "Super Admin"],
     steps: [
-      { text: "Navigate to 'Team Dashboard' from the sidebar (Team Lead and Super Admin)." },
-      { text: "View aggregate team performance metrics and individual agent statistics." },
-      { text: "Monitor active conversations, resolution times, and customer satisfaction indicators." },
-      { text: "Use this data to identify bottlenecks and optimize team workload distribution.", tip: "Check the dashboard at the start and end of each shift for best oversight." },
+      { text: "Navigate to 'Team Dashboard' from the sidebar (Team Lead and Super Admin only)." },
+      { text: "The top stats grid shows four KPIs: Active Chats, Online Agents, Orders Today, and Avg Response time." },
+      { text: "The Agent Performance table lists each agent with their TTV (Total Trade Volume), TMTV (Total Merchant Trade Volume), active chats, and resolution rate." },
+      { text: "TTV and TMTV are now grouped in a single column for compact comparison — the badge color indicates relative performance.", tip: "Use this single-column view to quickly spot agents whose TMTV diverges from TTV." },
+      { text: "The Active Escalations panel shows ongoing escalated chats requiring supervisor attention, with the originating agent and the customer alias." },
+      { text: "Click any agent row to drill into their full chat history and order log.", tip: "Check the dashboard at the start and end of each shift for best oversight." },
+    ],
+  },
+  {
+    id: "volume-ranking",
+    title: "Volume Ranking (Bi-Weekly Leaderboard)",
+    icon: BarChart3,
+    description: "View customer trading rankings by bi-weekly cycle.",
+    roles: ["Super Admin", "Team Lead", "Agent"],
+    steps: [
+      { text: "Navigate to 'Volume Ranking' from the sidebar." },
+      { text: "Use the bi-weekly period selector (24 entries covering the past year) to choose H1 (1st–15th) or H2 (16th–end of month) for any month." },
+      { text: "Combine the period filter with From/To DateTimePicker filters for granular slicing within the selected cycle." },
+      { text: "The leaderboard ranks customers by trading volume for the period, with achievement icons for the top 3 (gold, silver, bronze)." },
+      { text: "Six reward tiers are applied based on volume thresholds — see the Rewards Management section for the exact payout amounts." },
+      { text: "Click 'Export CSV' to download the current filtered leaderboard for external reporting.", tip: "Bi-weekly cycles align with the Rewards distribution flow — distribute rewards only after all orders for that period are settled." },
+    ],
+  },
+  {
+    id: "team-chat",
+    title: "Team Chat & Direct Messages",
+    icon: MessagesSquare,
+    description: "Internal collaboration channels and 1:1 DMs between admins.",
+    roles: ["All Roles"],
+    steps: [
+      { text: "Navigate to 'Team Chat' from the sidebar to access internal collaboration channels." },
+      { text: "Use the channel list on the left to switch between team channels and 1:1 direct messages with other admins." },
+      { text: "Message bubbles are color-coded by sender role (Super Admin, Team Lead, Agent, Finance) for at-a-glance attribution." },
+      { text: "System notifications appear automatically for key events: customer reassignments, escalations, and reward distributions." },
+      { text: "Unread badges on the channel list and sidebar item indicate new messages.", tip: "Use Team Chat for sensitive coordination — it is not visible to customers." },
+    ],
+  },
+  {
+    id: "transaction-pin",
+    title: "Transaction PIN (Sensitive Operations)",
+    icon: KeyRound,
+    description: "Configure and use the 6-digit PIN required for sensitive actions.",
+    roles: ["All Roles"],
+    steps: [
+      { text: "Sensitive operations — fund adjustments, ranking reward distribution, and other financial actions — require a 6-digit Transaction PIN." },
+      { text: "Set or change your PIN from your Admin Profile page under the Transaction PIN section." },
+      { text: "Super Admin: You can configure the platform-wide PIN policy and reset other admins' PINs from the Profile page." },
+      { text: "When prompted, enter your 6-digit PIN. The action is only committed after a successful PIN match.", tip: "PIN entry is gated by a fundPinStep modal — never share your PIN with anyone." },
+      { text: "All PIN-protected actions are logged with the admin alias, action type, and timestamp for audit." },
     ],
   },
   {
