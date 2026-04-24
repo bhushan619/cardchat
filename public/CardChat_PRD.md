@@ -272,15 +272,14 @@ A minimalist, iOS-inspired layout:
 
 **Pinned Order Card:**
 - Displayed at top when an order exists
-- Shows: Order ID, card details (type, denomination, rate), current status badge
-- **5-step progress tracker** with connected dots:
-  1. Order Created
-  2. Settled
-  3. Billing Sent
-  4. Transfer Processing
-  5. Transfer Complete
+- Shows: Order ID (e.g. `#ORD-20260318-001`), card details (type, amount, card rate), current status badge with status-specific icon (Clock / Loader2 spinning / CheckCircle / XCircle)
+- **3-step progress tracker** (customer-facing simplified flow) with connected dots:
+  1. **Order Created** — agent statuses `pending_sale` and `pending` map here
+  2. **Order Processing** — agent status `in_trade` maps here
+  3. **Success** — agent status `success` maps here
+- Failed state (`order_cancelled` agent status → `failed` customer status) is shown as a destructive-themed inline alert below the messages, not as a tracker step
 - "View Details" button opens order details modal
-- "Demo: Next Status →" button for prototype demonstration
+- "Demo: Next Status →" button cycles through statuses for prototype demonstration
 
 **Message Area:**
 - Scrollable message list
@@ -288,17 +287,15 @@ A minimalist, iOS-inspired layout:
 - Agent/system messages: left-aligned, neutral bubble (`chat-bubble-other`)
 - Image messages: placeholder rectangle with ImageIcon and "Card Image" label
 - Order system messages: centered, accent-bordered card with order details
-- Billing system message: centered, accent-bordered with payout amount
-- Transfer complete: success-bordered card with transfer details + proof screenshot placeholder
+- **Wallet credit confirmation** — when status reaches Success, a success-themed banner appears: "✅ ₦{amount} has been added to your wallet"
+- **Failure banner** — when status is Failed, a destructive-themed banner appears with the message "❌ Order Failed — Please contact support"
 
 **Order Details Modal:**
-- Bottom sheet overlay (slides up from bottom, `animate-slide-up`)
+- Bottom sheet overlay (slides up from bottom, `animate-slide-up`, `max-h-[85vh]` scrollable)
 - Sections:
-  - **Order ID & Status** — centered card with status badge
-  - **Card Details** — Card Type, Denomination, Total Face Value, Rate, Naira Rate
-  - **Payout Summary** — Card Value (NGN), Fee (₦0), Total Payout (bold accent)
-  - **Bank Transfer** — completion status icon, bank details, amount, reference
-  - **Timeline** — vertical timeline with connected dots showing all 5 status steps
+  - **Order ID & Status** — centered card with Order ID and status pill (color-themed by current status)
+  - **Card Details** — Card Type, Amount, Card Rate, Payout (₦)
+  - **Timeline** — vertical timeline with 3 connected dots: Order created → Order processing → Success, each with a timestamp; completed steps render filled accent dots with check icons
 
 **Chat Input:**
 - Text input field ("Type a message...")
