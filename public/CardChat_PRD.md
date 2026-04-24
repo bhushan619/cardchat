@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.0  
+**Version:** 5.1  
 **Date:** April 24, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
