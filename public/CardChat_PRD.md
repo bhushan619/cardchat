@@ -1652,3 +1652,17 @@ src/
 | **Mock Data** | `conversations` mock now carries `channel: "trtc" \| "whatsapp"` and `whatsappNumber` per customer. |
 | **Chat Header Cleanup** | Removed order status pill (Success / Order Cancelled / etc.) from the 48px chat header. TTV and TMTV are now stacked in a single right-aligned column. Status remains visible in the order sidebar and via in-thread system messages. |
 | **PRD Updated** | PRD bumped to v4.9 documenting WhatsApp channel, profile WhatsApp field, and chat-header re-arrangement. |
+
+### v4.9 → v5.0 (Current) — April 24, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Conversation Tabs Reduced to 2** | The Messages page (`/admin`) now ships with **two** conversation tabs (Consulting, Trading) rather than three. Pending Payment is treated as an in-row sub-status within Trading. PRD §5.4 and §6.3 updated. |
+| **Reassign Location Clarified** | Reassign control documented in the **Dedicated Chat View** (`/admin/chat/:id`) header rather than the Messages page header. |
+| **6-digit Transaction PIN Gate** | Documented the `fundPinStep` PIN-confirmation step required before any Fund Adjustment is committed. |
+| **Persistence Keys Catalog** | New §7.11 enumerates all `localStorage` and `sessionStorage` keys (`adminAuth`, `cardchat_order_statuses`, `cardchat_completed_orders`, `cardchat_transfer_completed`, `cardchat_fund_adjustments`, `cardchat-theme`). |
+| **Team Dashboard Spec** | §5.14 expanded with full stats grid (Active Chats, Online Agents, Orders Today, Avg Response), agent performance table columns, and Active Escalations panel. |
+| **Team Chat Route** | Added `/admin/team-chat` to §2.2 route table and a §5.14b summary section pointing to the collaboration memory. |
+| **Admin Ranking Refinements** | §5.9 now documents the **bi-weekly period selector** (24 H1/H2 entries), optional **DateTimePicker** From/To filters, and **CSV Export** button. Tier count corrected from 9 to 6. |
+| **Landing Page Spec Aligned** | §3 rewritten to match the current minimal 2-button selector (Smartphone / Monitor icons) instead of the legacy splash description. |
+| **PRD Updated** | PRD bumped to v5.0 covering tab-count fix, PIN gate, persistence catalog, Team Dashboard spec, Team Chat route, ranking filters, and landing-page alignment. |
