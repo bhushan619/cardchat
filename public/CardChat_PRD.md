@@ -406,6 +406,32 @@ A multi-section profile page with drill-down sub-views.
   - Avg. Turnaround: 12 min
 - **Monthly Volume Chart:** Bar chart (7 days, Mon-Sun) with accent-colored bars and lighter background bars
 
+#### Wallet Sub-View
+- Header with back button: "My Wallet"
+- **Balance card** (gradient) with eye-toggle to mask/unmask balance and a `Trading + Rewards` breakdown
+- **Withdraw form:**
+  - Destination bank account selector (only verified accounts from Bank Accounts list)
+  - Amount input with validation: minimum **₦2,000**, maximum **₦790,000** per request
+  - Inline error states for under/over-limit and unverified-account selection
+  - Confirm button → success toast and pending transaction row
+- **Transaction filter tabs:** All, Credits (rewards/payouts), Debits (withdrawals)
+- Transaction list with status dot, amount, source, timestamp, chevron to detail
+- Deep-link target from the Main Profile View "My Wallet" button
+
+#### Security Settings Sub-View
+- Header with back button: "Security Settings"
+- **Two-Factor Authentication** — toggle switch (Off by default); when enabled, prompts for 6-digit code on next login
+- **Change Password** — current/new/confirm fields with strength indicator; success toast on save
+- **Active Sessions** — list of logged-in devices (device name, location, last-active time) with per-row "Sign out" and a global "Sign out of all other sessions" action
+- **Login alerts** — toggle to receive email notification on new device sign-in
+
+#### App Settings Sub-View
+- Header with back button: "App Settings"
+- **Notifications** — granular toggles (Order updates, Chat messages, Promotions)
+- **Language selector** — English (default), Français, Español, Português, 中文
+- **Theme** — Light / Dark / System (mirrors `useTheme` hook)
+- **Build info** — app version, build number, "Check for updates" link
+
 ### 4.6 User Guide (`/customer/guide`)
 
 **Component:** `src/pages/customer/CustomerGuide.tsx`
