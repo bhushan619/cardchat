@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.0  
+**Version:** 5.1  
 **Date:** April 24, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -272,15 +272,14 @@ A minimalist, iOS-inspired layout:
 
 **Pinned Order Card:**
 - Displayed at top when an order exists
-- Shows: Order ID, card details (type, denomination, rate), current status badge
-- **5-step progress tracker** with connected dots:
-  1. Order Created
-  2. Settled
-  3. Billing Sent
-  4. Transfer Processing
-  5. Transfer Complete
+- Shows: Order ID (e.g. `#ORD-20260318-001`), card details (type, amount, card rate), current status badge with status-specific icon (Clock / Loader2 spinning / CheckCircle / XCircle)
+- **3-step progress tracker** (customer-facing simplified flow) with connected dots:
+  1. **Order Created** — agent statuses `pending_sale` and `pending` map here
+  2. **Order Processing** — agent status `in_trade` maps here
+  3. **Success** — agent status `success` maps here
+- Failed state (`order_cancelled` agent status → `failed` customer status) is shown as a destructive-themed inline alert below the messages, not as a tracker step
 - "View Details" button opens order details modal
-- "Demo: Next Status →" button for prototype demonstration
+- "Demo: Next Status →" button cycles through statuses for prototype demonstration
 
 **Message Area:**
 - Scrollable message list
@@ -288,17 +287,15 @@ A minimalist, iOS-inspired layout:
 - Agent/system messages: left-aligned, neutral bubble (`chat-bubble-other`)
 - Image messages: placeholder rectangle with ImageIcon and "Card Image" label
 - Order system messages: centered, accent-bordered card with order details
-- Billing system message: centered, accent-bordered with payout amount
-- Transfer complete: success-bordered card with transfer details + proof screenshot placeholder
+- **Wallet credit confirmation** — when status reaches Success, a success-themed banner appears: "✅ ₦{amount} has been added to your wallet"
+- **Failure banner** — when status is Failed, a destructive-themed banner appears with the message "❌ Order Failed — Please contact support"
 
 **Order Details Modal:**
-- Bottom sheet overlay (slides up from bottom, `animate-slide-up`)
+- Bottom sheet overlay (slides up from bottom, `animate-slide-up`, `max-h-[85vh]` scrollable)
 - Sections:
-  - **Order ID & Status** — centered card with status badge
-  - **Card Details** — Card Type, Denomination, Total Face Value, Rate, Naira Rate
-  - **Payout Summary** — Card Value (NGN), Fee (₦0), Total Payout (bold accent)
-  - **Bank Transfer** — completion status icon, bank details, amount, reference
-  - **Timeline** — vertical timeline with connected dots showing all 5 status steps
+  - **Order ID & Status** — centered card with Order ID and status pill (color-themed by current status)
+  - **Card Details** — Card Type, Amount, Card Rate, Payout (₦)
+  - **Timeline** — vertical timeline with 3 connected dots: Order created → Order processing → Success, each with a timestamp; completed steps render filled accent dots with check icons
 
 **Chat Input:**
 - Text input field ("Type a message...")
@@ -336,10 +333,16 @@ A minimalist, iOS-inspired layout:
 #### Agent Profile Page
 **Component:** `src/pages/customer/AgentProfile.tsx`
 
-- Agent avatar, name, online status
-- **"Message" button** — navigates directly to the agent's chat window (passes `chatId` via router state to `/customer/chat`, which auto-opens the chat view instead of showing the chat list)
-- Agent details and stats
-- Empty state: "No agents match your search"
+- **Gradient header** — `bg-gradient-to-b from-primary/20 to-background`, back button on top-left, large 24×24 avatar with initial, online/busy dot indicator on avatar (`bg-success` if online, `bg-warning` otherwise)
+- Agent name, last-seen text underneath
+- **"Message" button** (full-width primary, with MessageCircle icon) — navigates directly to the agent's chat window (passes `chatId` via router state to `/customer/chat`, which auto-opens the chat view instead of showing the chat list)
+- **About** — short bio. Special copy for "CardChat Support" ("Official CardChat support channel. Available 24/7…"); generic intro for other agents
+- **Details card** (3 rows, each with circular icon background):
+  - Role (Shield icon) — "Official Support" for CardChat Support, "Support Agent" for others
+  - Availability (Clock icon) — "Available now" if online, otherwise the last-seen string
+  - Rating (Star icon) — fixed display "4.8 / 5.0"
+- **Specialties** — chip row with `iTunes`, `Amazon`, `Steam`, `Google Play` (primary-tinted pills)
+- Empty state on contacts list: "No agents match your search"
 
 ### 4.5 Profile / Me Tab (`/customer/me`)
 
@@ -349,7 +352,10 @@ A multi-section profile page with drill-down sub-views.
 
 #### Main Profile View
 - **Profile Card:** Avatar (initials "JD"), full name "John Doe", 6-character alias badge (`J4D9KP` in monospace, accent pill), email with Mail icon, optional **WhatsApp number** (with WhatsApp glyph) when set
-- **Edit Profile** — pencil icon opens modal with name/email/**WhatsApp number** editing and OTP verification for email changes. WhatsApp number is optional and lets agents reach the customer via WhatsApp Business Cloud API in addition to in-app chat.
+- **Edit Profile** — pencil icon opens a 2-step modal:
+  - **Step 1 — Info:** edit name, email, and optional WhatsApp number (with helper text explaining that agents can reach the customer via WhatsApp Business Cloud API in addition to in-app chat)
+  - **Step 2 — Verify:** 4-digit OTP entry (auto-sent to the new email when email changed)
+  - "Resend code" link, success toast on confirmation
 - **Wallet Card** — gradient card showing:
   - Total balance (masked by default, toggleable)
   - **Breakdown:** `(550,000 Trading + 6,200 Rewards)` when visible
@@ -399,6 +405,32 @@ A multi-section profile page with drill-down sub-views.
   - Success Rate: 96%
   - Avg. Turnaround: 12 min
 - **Monthly Volume Chart:** Bar chart (7 days, Mon-Sun) with accent-colored bars and lighter background bars
+
+#### Wallet Sub-View
+- Header with back button: "My Wallet"
+- **Balance card** (gradient) with eye-toggle to mask/unmask balance and a `Trading + Rewards` breakdown
+- **Withdraw form:**
+  - Destination bank account selector (only verified accounts from Bank Accounts list)
+  - Amount input with validation: minimum **₦2,000**, maximum **₦790,000** per request
+  - Inline error states for under/over-limit and unverified-account selection
+  - Confirm button → success toast and pending transaction row
+- **Transaction filter tabs:** All, Credits (rewards/payouts), Debits (withdrawals)
+- Transaction list with status dot, amount, source, timestamp, chevron to detail
+- Deep-link target from the Main Profile View "My Wallet" button
+
+#### Security Settings Sub-View
+- Header with back button: "Security Settings"
+- **Two-Factor Authentication** — toggle switch (Off by default); when enabled, prompts for 6-digit code on next login
+- **Change Password** — current/new/confirm fields with strength indicator; success toast on save
+- **Active Sessions** — list of logged-in devices (device name, location, last-active time) with per-row "Sign out" and a global "Sign out of all other sessions" action
+- **Login alerts** — toggle to receive email notification on new device sign-in
+
+#### App Settings Sub-View
+- Header with back button: "App Settings"
+- **Notifications** — granular toggles (Order updates, Chat messages, Promotions)
+- **Language selector** — English (default), Français, Español, Português, 中文
+- **Theme** — Light / Dark / System (mirrors `useTheme` hook)
+- **Build info** — app version, build number, "Check for updates" link
 
 ### 4.6 User Guide (`/customer/guide`)
 
@@ -474,12 +506,12 @@ A single-page rewards overview combining earnings summary, referral tools, and h
 
 **Component:** `src/pages/customer/CustomerRanking.tsx`
 
-A motivation-first ranking page showing the user's trading volume standing within the current month.
+A motivation-first ranking page showing the user's trading volume standing within the **current bi-weekly period**. The system splits each month into two cycles (1st–15th and 16th–end) — see [Ranking Cycle Logic](mem://features/ranking-system/cycle-logic).
 
 #### Header
 - Back arrow to Home, page title "Trading Volume Ranking"
-- Period label (e.g., "Mar 01 – Mar 31, 2026")
-- "Rules" button (Info icon) → opens Dialog with tier explanations and reset schedule
+- Period label reflecting the active bi-weekly window (e.g., "Mar 16 – Mar 31, 2026")
+- "Rules" button (Info icon) → opens Dialog with tier explanations and bi-weekly reset schedule
 
 #### Personal Achievement Card
 - Gradient card (`from-accent/10 via-card to-accent/5`) with decorative circle
@@ -503,7 +535,7 @@ A motivation-first ranking page showing the user's trading volume standing withi
 
 #### Data Source
 - **File:** `src/data/rankingMock.ts`
-- 9 reward tiers (10K–1M volume thresholds)
+- **6 reward tiers** matching the admin-side specification (volume thresholds from 200K up to 2M+, payouts from ₦1,000 up to ₦10,000) — see [Reward Tiers](mem://features/ranking-system/reward-tiers)
 - 25 mock users with pre-assigned ranks, volumes, and rewards
 - Helper functions: `getCurrentTier()`, `getNextTier()`
 
@@ -1504,6 +1536,18 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.0 → v5.1
+
+| Change | Description |
+|--------|-------------|
+| **Customer Chat Tracker Corrected** | Reduced from a 5-step (Order Created → Settled → Billing Sent → Transfer Processing → Transfer Complete) to the actual **3-step** customer flow (Order Created → Order Processing → Success). Failed state rendered as a destructive inline alert, not a tracker step. |
+| **Order Details Modal Realigned** | Modal now documents Card Details (Type, Amount, Card Rate, Payout) and a 3-step Timeline matching the implementation; removed the obsolete Payout Summary and Bank Transfer sections. |
+| **Me Tab — New Sub-Views** | Added Wallet (balance toggle, withdrawal form with ₦2,000–₦790,000 limits, Credits/Debits filters), Security Settings (2FA toggle, Change Password, Active Sessions, Login alerts), and App Settings (Notifications toggles, Language selector, Theme, Build info) sub-views. |
+| **Edit Profile 2-Step Flow** | Documented the 2-step modal (Info → 4-digit OTP) with WhatsApp helper text. |
+| **Agent Profile Expanded** | Added documentation for the gradient header, About copy variants, Details card (Role/Availability/Rating 4.8 ⁄ 5.0), and Specialties chips (iTunes, Amazon, Steam, Google Play). |
+| **Ranking Reconciled to Bi-Weekly** | Customer Trading Volume Ranking corrected from "monthly / 9 tiers" to **bi-weekly / 6 tiers**, aligned with admin-side cycle logic and reward tier specification. |
+| **PRD Updated** | PRD bumped to v5.1 to address customer-section gaps surfaced in the v5.0 audit. |
 
 ### v4.5 → v4.6
 
