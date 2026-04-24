@@ -1280,6 +1280,19 @@ walletBalance: number;    // tradingBalance + rewardsBalance (computed)
 - Max images per card entry: 10
 - Max bank accounts per customer: 5
 
+### 7.11 Persistence Keys
+
+The prototype uses browser storage to simulate backend persistence. All keys are documented here for parity with future backend implementation.
+
+| Key | Storage | Purpose |
+|-----|---------|---------|
+| `cardchat-theme` | localStorage | Active UI theme (`light` / `dark`) |
+| `cardchat_order_statuses` | localStorage | Per-conversation order id + status + updatedAt (state machine) |
+| `adminAuth` | sessionStorage | Mock admin login session (role + email) |
+| `cardchat_completed_orders` | sessionStorage | Orders created via the Order Wizard / Cardlight panel |
+| `cardchat_transfer_completed` | sessionStorage | Set of order IDs whose payment transfer has been confirmed |
+| `cardchat_fund_adjustments` | sessionStorage | `FundAdjustment[]` log of customer wallet additions/deductions |
+
 ---
 
 ## 8. Design System
