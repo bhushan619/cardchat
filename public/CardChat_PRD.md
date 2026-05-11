@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.1  
-**Date:** April 24, 2026
+**Version:** 5.2  
+**Date:** May 11, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1019,6 +1019,15 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
+#### Withdrawal Kill Switch (v5.2)
+A dedicated card at the top of the page lets Super Admins globally disable all customer withdrawal requests:
+- **Toggle switch** — flips `cc_withdrawals_disabled` flag (sessionStorage in prototype; backend config in production)
+- **Destructive alert banner** appears when the switch is ON
+- **User-facing message** — editable textarea (`cc_withdrawals_reason`) shown to customers when they attempt to withdraw while disabled. Default copy: *"Withdrawals are temporarily paused for system maintenance. Please try again later."*
+- **Save Message** button persists the copy without toggling the switch
+- Existing balances remain intact; only new withdrawal requests are blocked
+- Toast confirms each state change
+
 ### 5.18 Platform Wallet (`/admin/wallets`)
 
 **Component:** `src/pages/admin/AdminWallets.tsx`  
@@ -1026,10 +1035,15 @@ Two-section management page:
 
 A ledger-style view of all platform wallet transactions used to auto-credit customer wallets on successful orders.
 
-#### Summary Cards (3-column grid)
+#### Summary Row (5-column grid, v5.2)
+A single row combines internal balances with third-party provider balances:
 - **Platform Balance** — accent color, deposits minus disbursements
 - **Total Deposits** — success color, sum of all deposits
 - **Total Disbursements** — warning color, sum of all disbursements
+- **PalmPay 1** widget — masked account (****8821), available balance, ● Connected status, last sync timestamp, refresh icon button
+- **PalmPay 2** widget — masked account (****4477), available balance, ● Connected status, last sync timestamp, refresh icon button
+
+The PalmPay widgets represent live balances pulled from the third-party payment provider used to fund customer disbursements. Refresh button triggers a re-sync (mocked toast in prototype).
 
 #### Filters
 - **Search:** Free-text search across Transfer ID, Order ID, description, remark
@@ -1536,6 +1550,15 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.1 → v5.2
+
+| Change | Description |
+|--------|-------------|
+| **Withdrawal Kill Switch** | Added a global "Disable User Withdrawals" toggle to `/admin/api-config` (Super Admin only). When enabled, all customer withdrawal requests are blocked and an admin-editable message is displayed to users. State persisted via `cc_withdrawals_disabled` and `cc_withdrawals_reason`. |
+| **Platform Wallet — PalmPay Widgets** | Added third-party provider balance widgets (PalmPay 1, PalmPay 2) to `/admin/wallets`. Shows masked account, available balance, Connected status, last-sync timestamp, and a manual refresh button. |
+| **Platform Wallet Summary Layout** | Consolidated the three platform summary cards and the two PalmPay widgets into a single 5-column row for at-a-glance monitoring. |
+| **PRD Updated** | PRD bumped to v5.2 to capture the withdrawal kill-switch and PalmPay provider integration. |
 
 ### v5.0 → v5.1
 
