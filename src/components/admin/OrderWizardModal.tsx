@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
+import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -326,7 +326,18 @@ export default function CardlightPanel({
             <h3 className="font-heading font-semibold text-sm">Sales Order</h3>
           </div>
           <div className="flex items-center gap-2">
-            {isLoggedIn && <span className="text-[10px] text-success font-medium">● Connected</span>}
+            {isLoggedIn && (
+              <>
+                <span className="text-[10px] text-success font-medium">● Connected</span>
+                <button
+                  onClick={() => { sessionStorage.removeItem("cardlight_logged_in"); setIsLoggedIn(false); }}
+                  className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1 px-1.5 py-0.5 rounded border border-border"
+                  title="Logout from Cardlight"
+                >
+                  <LogOut className="w-3 h-3" /> Logout
+                </button>
+              </>
+            )}
             <button onClick={onClose} className="text-muted-foreground hover:text-foreground">
               <X className="w-4 h-4" />
             </button>
@@ -334,8 +345,15 @@ export default function CardlightPanel({
         </div>
       )}
       {embedded && isLoggedIn && (
-        <div className="flex items-center justify-end px-4 py-1.5 border-b bg-muted/30">
+        <div className="flex items-center justify-end gap-2 px-4 py-1.5 border-b bg-muted/30">
           <span className="text-[10px] text-success font-medium">● Connected</span>
+          <button
+            onClick={() => { sessionStorage.removeItem("cardlight_logged_in"); setIsLoggedIn(false); }}
+            className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1 px-1.5 py-0.5 rounded border border-border"
+            title="Logout from Cardlight"
+          >
+            <LogOut className="w-3 h-3" /> Logout
+          </button>
         </div>
       )}
 
