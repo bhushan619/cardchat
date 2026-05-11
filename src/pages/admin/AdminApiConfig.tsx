@@ -49,6 +49,45 @@ export default function AdminApiConfig() {
         </div>
 
         <div className="space-y-6">
+          {/* Withdrawal Kill Switch */}
+          <div className={`border rounded-xl p-5 space-y-4 ${withdrawalsDisabled ? "bg-destructive/5 border-destructive/40" : "bg-card"}`}>
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <div className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${withdrawalsDisabled ? "bg-destructive/15" : "bg-muted"}`}>
+                  <Ban className={`w-4 h-4 ${withdrawalsDisabled ? "text-destructive" : "text-muted-foreground"}`} />
+                </div>
+                <div>
+                  <h2 className="font-heading font-semibold text-sm">Disable User Withdrawals</h2>
+                  <p className="text-xs text-muted-foreground mt-0.5">
+                    Globally block all customer withdrawal requests. Existing balances stay intact; users will see your message when attempting to withdraw.
+                  </p>
+                </div>
+              </div>
+              <Switch checked={withdrawalsDisabled} onCheckedChange={toggleWithdrawals} />
+            </div>
+
+            {withdrawalsDisabled && (
+              <div className="flex items-center gap-2 text-xs text-destructive bg-destructive/10 border border-destructive/30 rounded-lg px-3 py-2">
+                <AlertTriangle className="w-3.5 h-3.5" />
+                Withdrawals are currently DISABLED for all users.
+              </div>
+            )}
+
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Message shown to users</label>
+              <Textarea
+                value={disableReason}
+                onChange={(e) => setDisableReason(e.target.value)}
+                rows={2}
+                className="mt-1 text-sm"
+                placeholder="e.g. Withdrawals are temporarily paused for maintenance."
+              />
+              <div className="flex justify-end mt-2">
+                <Button size="sm" variant="outline" onClick={saveReason}>Save Message</Button>
+              </div>
+            </div>
+          </div>
+
           {/* Base Config */}
           <div className="bg-card border rounded-xl p-5 space-y-4">
             <h2 className="font-heading font-semibold text-sm">Base Configuration</h2>
