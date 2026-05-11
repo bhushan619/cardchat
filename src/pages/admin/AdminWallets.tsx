@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Wallet, Plus, ArrowDownLeft, ArrowUpRight, Download, Search, X } from "lucide-react";
+import { Wallet, Plus, ArrowDownLeft, ArrowUpRight, Download, Search, X, Building2, RefreshCw } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -178,7 +178,42 @@ export default function AdminWallets() {
           </div>
         </div>
 
-        {/* Filters */}
+        {/* Third-party provider balances */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          {[
+            { name: "PalmPay 1", account: "****8821", balance: 4820500, status: "active" as const, lastSync: "2 min ago" },
+            { name: "PalmPay 2", account: "****4477", balance: 1265300, status: "active" as const, lastSync: "5 min ago" },
+          ].map((p) => (
+            <div key={p.name} className="bg-card border rounded-xl p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <Building2 className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold leading-tight">{p.name}</p>
+                    <p className="text-[10px] text-muted-foreground">{p.account}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-success">
+                    <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected
+                  </span>
+                  <button
+                    onClick={() => toast.success(`${p.name} balance refreshed`)}
+                    className="text-muted-foreground hover:text-foreground"
+                    title="Refresh balance"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+              <p className="text-2xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground mt-1">Available balance · synced {p.lastSync}</p>
+            </div>
+          ))}
+        </div>
+
         <div className="flex flex-wrap items-end gap-3 mb-4">
           <div className="relative max-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
