@@ -1019,6 +1019,15 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
+#### Withdrawal Kill Switch (v5.2)
+A dedicated card at the top of the page lets Super Admins globally disable all customer withdrawal requests:
+- **Toggle switch** — flips `cc_withdrawals_disabled` flag (sessionStorage in prototype; backend config in production)
+- **Destructive alert banner** appears when the switch is ON
+- **User-facing message** — editable textarea (`cc_withdrawals_reason`) shown to customers when they attempt to withdraw while disabled. Default copy: *"Withdrawals are temporarily paused for system maintenance. Please try again later."*
+- **Save Message** button persists the copy without toggling the switch
+- Existing balances remain intact; only new withdrawal requests are blocked
+- Toast confirms each state change
+
 ### 5.18 Platform Wallet (`/admin/wallets`)
 
 **Component:** `src/pages/admin/AdminWallets.tsx`  
@@ -1026,10 +1035,15 @@ Two-section management page:
 
 A ledger-style view of all platform wallet transactions used to auto-credit customer wallets on successful orders.
 
-#### Summary Cards (3-column grid)
+#### Summary Row (5-column grid, v5.2)
+A single row combines internal balances with third-party provider balances:
 - **Platform Balance** — accent color, deposits minus disbursements
 - **Total Deposits** — success color, sum of all deposits
 - **Total Disbursements** — warning color, sum of all disbursements
+- **PalmPay 1** widget — masked account (****8821), available balance, ● Connected status, last sync timestamp, refresh icon button
+- **PalmPay 2** widget — masked account (****4477), available balance, ● Connected status, last sync timestamp, refresh icon button
+
+The PalmPay widgets represent live balances pulled from the third-party payment provider used to fund customer disbursements. Refresh button triggers a re-sync (mocked toast in prototype).
 
 #### Filters
 - **Search:** Free-text search across Transfer ID, Order ID, description, remark
