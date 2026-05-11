@@ -1,11 +1,32 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Globe, Eye, EyeOff, RefreshCw, CheckCircle, AlertTriangle } from "lucide-react";
+import { Globe, Eye, EyeOff, RefreshCw, CheckCircle, AlertTriangle, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function AdminApiConfig() {
   const [showSecret, setShowSecret] = useState(false);
+  const [withdrawalsDisabled, setWithdrawalsDisabled] = useState(
+    sessionStorage.getItem("cc_withdrawals_disabled") === "1"
+  );
+  const [disableReason, setDisableReason] = useState(
+    sessionStorage.getItem("cc_withdrawals_reason") || "Withdrawals are temporarily paused for system maintenance. Please try again later."
+  );
+
+  const toggleWithdrawals = (next: boolean) => {
+    setWithdrawalsDisabled(next);
+    sessionStorage.setItem("cc_withdrawals_disabled", next ? "1" : "0");
+    sessionStorage.setItem("cc_withdrawals_reason", disableReason);
+    toast.success(next ? "All user withdrawals have been disabled" : "User withdrawals have been re-enabled");
+  };
+
+  const saveReason = () => {
+    sessionStorage.setItem("cc_withdrawals_reason", disableReason);
+    toast.success("Message saved");
+  };
 
   return (
     <AdminLayout>
