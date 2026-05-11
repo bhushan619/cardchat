@@ -163,7 +163,7 @@ export default function AdminWallets() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-5 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold text-accent">₦{platformBalance.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Platform Balance</p>
@@ -176,43 +176,38 @@ export default function AdminWallets() {
             <p className="text-2xl font-heading font-bold text-warning">₦{totalDisbursements.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
-        </div>
-
-        {/* Third-party provider balances */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
           {[
-            { name: "PalmPay 1", account: "****8821", balance: 4820500, status: "active" as const, lastSync: "2 min ago" },
-            { name: "PalmPay 2", account: "****4477", balance: 1265300, status: "active" as const, lastSync: "5 min ago" },
+            { name: "PalmPay 1", account: "****8821", balance: 4820500, lastSync: "2 min ago" },
+            { name: "PalmPay 2", account: "****4477", balance: 1265300, lastSync: "5 min ago" },
           ].map((p) => (
             <div key={p.name} className="bg-card border rounded-xl p-4">
-              <div className="flex items-start justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Building2 className="w-4 h-4 text-primary" />
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-2 min-w-0">
+                  <div className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Building2 className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <div>
-                    <p className="text-sm font-semibold leading-tight">{p.name}</p>
+                  <div className="min-w-0">
+                    <p className="text-xs font-semibold leading-tight truncate">{p.name}</p>
                     <p className="text-[10px] text-muted-foreground">{p.account}</p>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 text-[10px] text-success">
-                    <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected
-                  </span>
-                  <button
-                    onClick={() => toast.success(`${p.name} balance refreshed`)}
-                    className="text-muted-foreground hover:text-foreground"
-                    title="Refresh balance"
-                  >
-                    <RefreshCw className="w-3.5 h-3.5" />
-                  </button>
-                </div>
+                <button
+                  onClick={() => toast.success(`${p.name} balance refreshed`)}
+                  className="text-muted-foreground hover:text-foreground shrink-0"
+                  title="Refresh balance"
+                >
+                  <RefreshCw className="w-3 h-3" />
+                </button>
               </div>
-              <p className="text-2xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
-              <p className="text-[10px] text-muted-foreground mt-1">Available balance · synced {p.lastSync}</p>
+              <p className="text-xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
+              </p>
             </div>
           ))}
         </div>
+
+        {/* Filters */}
 
         <div className="flex flex-wrap items-end gap-3 mb-4">
           <div className="relative max-w-[200px]">
