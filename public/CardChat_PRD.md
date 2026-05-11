@@ -1551,6 +1551,15 @@ src/
 
 ## 12. Full Changelog
 
+### v5.1 → v5.2
+
+| Change | Description |
+|--------|-------------|
+| **Withdrawal Kill Switch** | Added a global "Disable User Withdrawals" toggle to `/admin/api-config` (Super Admin only). When enabled, all customer withdrawal requests are blocked and an admin-editable message is displayed to users. State persisted via `cc_withdrawals_disabled` and `cc_withdrawals_reason`. |
+| **Platform Wallet — PalmPay Widgets** | Added third-party provider balance widgets (PalmPay 1, PalmPay 2) to `/admin/wallets`. Shows masked account, available balance, Connected status, last-sync timestamp, and a manual refresh button. |
+| **Platform Wallet Summary Layout** | Consolidated the three platform summary cards and the two PalmPay widgets into a single 5-column row for at-a-glance monitoring. |
+| **PRD Updated** | PRD bumped to v5.2 to capture the withdrawal kill-switch and PalmPay provider integration. |
+
 ### v5.0 → v5.1
 
 | Change | Description |
