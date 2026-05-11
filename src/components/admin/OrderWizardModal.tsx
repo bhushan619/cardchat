@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { X, Plus, Trash2, LogIn, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
+import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
