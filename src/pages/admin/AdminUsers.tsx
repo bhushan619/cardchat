@@ -248,6 +248,10 @@ export default function AdminUsers() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => openEdit(u)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => issueInvite(u, true)}>
+                          <Send className="w-3.5 h-3.5 mr-2" />
+                          Resend Password Email
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openPinModal(u)}>
                           <Lock className="w-3.5 h-3.5 mr-2" />
                           {getUserPinStatus(u) ? "Update PIN" : "Create PIN"}
