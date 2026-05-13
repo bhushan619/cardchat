@@ -98,20 +98,42 @@ export default function AdminUsers() {
     setModalOpen(true);
   };
 
+  const issueInvite = (user: User, resent = false) => {
+    const token = `inv_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    const list = (() => {
+      try { return JSON.parse(sessionStorage.getItem("cc_password_invites") || "[]"); }
+      catch { return []; }
+    })();
+    // Invalidate any prior invites for this user
+    const filtered = list.filter((i: { userId: number }) => i.userId !== user.id);
+    filtered.push({
+      token, userId: user.id, name: user.name, email: user.email, role: user.role, createdAt: Date.now(),
+    });
+    sessionStorage.setItem("cc_password_invites", JSON.stringify(filtered));
+    setInviteModal({ user, token, resent });
+    toast.success(resent
+      ? `Password setup email resent to ${user.email}`
+      : `Password setup email sent to ${user.email}`);
+  };
+
   const handleSave = () => {
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, name: formName, email: formEmail, role: formRole } : u));
+      setModalOpen(false);
     } else {
-      setUsers(prev => [...prev, {
+      const newUser: User = {
         id: Date.now(),
         name: formName,
         email: formEmail,
         role: formRole,
-        status: "active" as const,
-        lastLogin: "Just now",
-      }]);
+        status: "active",
+        lastLogin: "Pending password setup",
+      };
+      setUsers(prev => [...prev, newUser]);
+      setModalOpen(false);
+      // Trigger the email-based password setup flow
+      setTimeout(() => issueInvite(newUser, false), 150);
     }
-    setModalOpen(false);
   };
 
   const handleSuspend = () => {
