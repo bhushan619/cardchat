@@ -21,6 +21,7 @@ import CustomerRanking from "./pages/customer/CustomerRanking";
 
 // Admin Panel
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminSetPassword from "./pages/admin/AdminSetPassword";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminChatView from "./pages/admin/AdminChatView";
 import AdminCardRates from "./pages/admin/AdminCardRates";
@@ -67,6 +68,7 @@ const App = () => (
 
             {/* Admin Login */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/set-password" element={<AdminSetPassword />} />
 
             {/* Admin Panel - wrapped in role provider */}
             <Route path="/admin" element={<AdminRoleProvider><AdminMessages /></AdminRoleProvider>} />

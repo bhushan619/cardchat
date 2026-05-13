@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
-import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check } from "lucide-react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -62,6 +62,9 @@ export default function AdminUsers() {
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [suspendUser, setSuspendUser] = useState<User | null>(null);
 
+  // Password invite (simulated email)
+  const [inviteModal, setInviteModal] = useState<{ user: User; token: string; resent?: boolean } | null>(null);
+
   // PIN management
   const [pinUser, setPinUser] = useState<User | null>(null);
   const [pinNew, setPinNew] = useState("");
@@ -95,20 +98,42 @@ export default function AdminUsers() {
     setModalOpen(true);
   };
 
+  const issueInvite = (user: User, resent = false) => {
+    const token = `inv_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 10)}`;
+    const list = (() => {
+      try { return JSON.parse(sessionStorage.getItem("cc_password_invites") || "[]"); }
+      catch { return []; }
+    })();
+    // Invalidate any prior invites for this user
+    const filtered = list.filter((i: { userId: number }) => i.userId !== user.id);
+    filtered.push({
+      token, userId: user.id, name: user.name, email: user.email, role: user.role, createdAt: Date.now(),
+    });
+    sessionStorage.setItem("cc_password_invites", JSON.stringify(filtered));
+    setInviteModal({ user, token, resent });
+    toast.success(resent
+      ? `Password setup email resent to ${user.email}`
+      : `Password setup email sent to ${user.email}`);
+  };
+
   const handleSave = () => {
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, name: formName, email: formEmail, role: formRole } : u));
+      setModalOpen(false);
     } else {
-      setUsers(prev => [...prev, {
+      const newUser: User = {
         id: Date.now(),
         name: formName,
         email: formEmail,
         role: formRole,
-        status: "active" as const,
-        lastLogin: "Just now",
-      }]);
+        status: "active",
+        lastLogin: "Pending password setup",
+      };
+      setUsers(prev => [...prev, newUser]);
+      setModalOpen(false);
+      // Trigger the email-based password setup flow
+      setTimeout(() => issueInvite(newUser, false), 150);
     }
-    setModalOpen(false);
   };
 
   const handleSuspend = () => {
@@ -223,6 +248,10 @@ export default function AdminUsers() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => openEdit(u)}>Edit</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => issueInvite(u, true)}>
+                          <Send className="w-3.5 h-3.5 mr-2" />
+                          Resend Password Email
+                        </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => openPinModal(u)}>
                           <Lock className="w-3.5 h-3.5 mr-2" />
                           {getUserPinStatus(u) ? "Update PIN" : "Create PIN"}
@@ -397,6 +426,68 @@ export default function AdminUsers() {
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteUser(null)}>Cancel</Button>
             <Button variant="destructive" onClick={handleDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Simulated Password Setup Email */}
+      <Dialog open={!!inviteModal} onOpenChange={() => setInviteModal(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-accent" />
+              {inviteModal?.resent ? "Password Email Resent" : "Password Email Sent"}
+            </DialogTitle>
+            <DialogDescription>
+              We sent a secure link to <span className="font-medium text-foreground">{inviteModal?.user.email}</span> so they can create their password.
+            </DialogDescription>
+          </DialogHeader>
+          {inviteModal && (() => {
+            const link = `${window.location.origin}/admin/set-password?token=${inviteModal.token}`;
+            return (
+              <div className="space-y-3 py-1">
+                <div className="border rounded-xl p-4 bg-muted/30 space-y-3">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <Mail className="w-3 h-3" /> Email Preview
+                  </div>
+                  <div className="text-xs space-y-1">
+                    <p><span className="text-muted-foreground">From:</span> CardChat Admin &lt;noreply@cardchat.com&gt;</p>
+                    <p><span className="text-muted-foreground">To:</span> {inviteModal.user.email}</p>
+                    <p><span className="text-muted-foreground">Subject:</span> Set up your CardChat Admin password</p>
+                  </div>
+                  <div className="border-t pt-3 text-sm space-y-2">
+                    <p>Hi {inviteModal.user.name},</p>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      You've been added to CardChat Admin as <span className="font-medium text-foreground capitalize">{roleLabels[inviteModal.user.role]?.label}</span>. Click the secure link below to create your password. The link is valid for 24 hours.
+                    </p>
+                    <a href={link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline break-all">
+                      <ExternalLink className="w-3 h-3 shrink-0" /> {link}
+                    </a>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 gap-1.5"
+                    onClick={() => {
+                      navigator.clipboard.writeText(link);
+                      toast.success("Link copied to clipboard");
+                    }}
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copy Link
+                  </Button>
+                  <Button
+                    className="flex-1 gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                    onClick={() => window.open(link, "_blank")}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Open Link
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setInviteModal(null)}>Close</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
