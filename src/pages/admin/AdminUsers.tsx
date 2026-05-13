@@ -429,6 +429,68 @@ export default function AdminUsers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Simulated Password Setup Email */}
+      <Dialog open={!!inviteModal} onOpenChange={() => setInviteModal(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Mail className="w-4 h-4 text-accent" />
+              {inviteModal?.resent ? "Password Email Resent" : "Password Email Sent"}
+            </DialogTitle>
+            <DialogDescription>
+              We sent a secure link to <span className="font-medium text-foreground">{inviteModal?.user.email}</span> so they can create their password.
+            </DialogDescription>
+          </DialogHeader>
+          {inviteModal && (() => {
+            const link = `${window.location.origin}/admin/set-password?token=${inviteModal.token}`;
+            return (
+              <div className="space-y-3 py-1">
+                <div className="border rounded-xl p-4 bg-muted/30 space-y-3">
+                  <div className="flex items-center gap-2 text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                    <Mail className="w-3 h-3" /> Email Preview
+                  </div>
+                  <div className="text-xs space-y-1">
+                    <p><span className="text-muted-foreground">From:</span> CardChat Admin &lt;noreply@cardchat.com&gt;</p>
+                    <p><span className="text-muted-foreground">To:</span> {inviteModal.user.email}</p>
+                    <p><span className="text-muted-foreground">Subject:</span> Set up your CardChat Admin password</p>
+                  </div>
+                  <div className="border-t pt-3 text-sm space-y-2">
+                    <p>Hi {inviteModal.user.name},</p>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
+                      You've been added to CardChat Admin as <span className="font-medium text-foreground capitalize">{roleLabels[inviteModal.user.role]?.label}</span>. Click the secure link below to create your password. The link is valid for 24 hours.
+                    </p>
+                    <a href={link} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline break-all">
+                      <ExternalLink className="w-3 h-3 shrink-0" /> {link}
+                    </a>
+                  </div>
+                </div>
+                <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    className="flex-1 gap-1.5"
+                    onClick={() => {
+                      navigator.clipboard.writeText(link);
+                      toast.success("Link copied to clipboard");
+                    }}
+                  >
+                    <Copy className="w-3.5 h-3.5" /> Copy Link
+                  </Button>
+                  <Button
+                    className="flex-1 gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                    onClick={() => window.open(link, "_blank")}
+                  >
+                    <ExternalLink className="w-3.5 h-3.5" /> Open Link
+                  </Button>
+                </div>
+              </div>
+            );
+          })()}
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setInviteModal(null)}>Close</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
