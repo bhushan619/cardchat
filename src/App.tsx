@@ -21,6 +21,7 @@ import CustomerRanking from "./pages/customer/CustomerRanking";
 
 // Admin Panel
 import AdminLogin from "./pages/admin/AdminLogin";
+import AdminSetPassword from "./pages/admin/AdminSetPassword";
 import AdminMessages from "./pages/admin/AdminMessages";
 import AdminChatView from "./pages/admin/AdminChatView";
 import AdminCardRates from "./pages/admin/AdminCardRates";
