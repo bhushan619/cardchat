@@ -68,6 +68,7 @@ const App = () => (
 
             {/* Admin Login */}
             <Route path="/admin/login" element={<AdminLogin />} />
+            <Route path="/admin/set-password" element={<AdminSetPassword />} />
 
             {/* Admin Panel - wrapped in role provider */}
             <Route path="/admin" element={<AdminRoleProvider><AdminMessages /></AdminRoleProvider>} />
