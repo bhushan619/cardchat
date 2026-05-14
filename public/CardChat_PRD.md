@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.2  
-**Date:** May 11, 2026
+**Version:** 5.3  
+**Date:** May 14, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -921,12 +921,71 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
 **Component:** `src/pages/admin/AdminUsers.tsx`  
 **Access:** Super Admin only
 
-- Admin users table:
-  - Name
-  - Email
-  - Role (Super Admin / Team Lead / Agent)
-  - Status (Active / Offline) — color-coded badges
-  - Last Login (relative time)
+#### Header
+- Title: "User Management" with subtitle "Manage roles and permissions"
+- **Add User** button (accent, top-right) opens the create modal
+- Search input (filters by name or email, case-insensitive)
+
+#### Users Table
+Columns: User (avatar + name) · Email · Role · PIN · Status · Last Login · Actions (kebab)
+
+- **Role badge** — color-coded: Super Admin (accent), Team Lead (warning), Agent (primary), Finance (success)
+- **PIN column** — shows "Set" (success pill with check) when a 6-digit Transaction PIN exists for the user's role, otherwise "Not set"
+- **Status** — `active` (green dot), `offline` (muted dot), `suspended` (destructive pill)
+- **Last Login** — relative time, or `"Pending password setup"` for newly-created users until they complete the email flow
+
+#### Row Actions (kebab menu)
+1. **Edit** — opens the edit modal pre-filled with the user's details
+2. **Resend Password Email** (`Send` icon) — issues a fresh invite token, invalidates any prior pending invite for that user, and opens the simulated email preview
+3. **Create / Update PIN** (`Lock` icon) — opens the 6-digit Transaction PIN modal
+4. **Suspend / Reactivate** — toggles `suspended` ↔ `active`
+5. **Delete** (destructive) — removes the user after confirmation
+
+#### Add / Edit User Modal
+- Fields: **Name**, **Email** (type=email), **Role** (Super Admin / Team Lead / Agent / Finance)
+- **Permissions** checklist — auto-renders the permissions tied to the selected role (see matrix below); checkboxes default to enabled
+- **Create User** triggers the **password setup email flow** (see below); editing an existing user does NOT re-issue an invite
+- New users are inserted with `status: "active"` and `lastLogin: "Pending password setup"`
+
+#### Password Setup Email Flow (v5.3)
+On user creation (or "Resend Password Email"):
+1. A unique token is generated: `inv_{base36-timestamp}_{random8}`
+2. Any pre-existing pending invite for that user is invalidated
+3. The new invite is appended to `sessionStorage["cc_password_invites"]` with `{ token, userId, name, email, role, createdAt, used? }`
+4. A simulated email preview modal opens showing:
+   - "Password Email Sent" / "Password Email Resent" header
+   - The deep link `…/admin/set-password?token={token}` with **Copy** and **Open** actions
+5. A toast confirms `Password setup email sent to {email}` (or "resent")
+
+The link routes to **`/admin/set-password`** (`AdminSetPassword.tsx`), which:
+- Validates the token against `cc_password_invites`; renders distinct error states for **invalid/expired** and **already used** tokens
+- Displays the user's name, email, and role chip
+- Requires a password ≥ 8 characters with confirm-match
+- Renders a 4-segment **strength meter** (Too weak → Weak → Fair → Good → Strong) based on length, uppercase, digit, and symbol checks
+- On submit: marks the invite `used: true`, persists the password to `sessionStorage["cc_password_{email}"]`, and shows a success state with a **Continue to Login** button routing to `/admin/login`
+
+#### Transaction PIN Modal
+- 6-digit numeric input with show/hide toggle for both fields
+- Confirm-match validation; rejects non-digits and length ≠ 6
+- PIN persisted to `localStorage["adminPin_{role}"]` (role-scoped, used by sensitive operations elsewhere in the admin panel)
+- Toast confirms create vs. update based on prior existence
+
+#### Suspend / Delete Confirmations
+- Both render a confirmation dialog with destructive styling for delete
+- Suspend toggles between `Suspend` and `Reactivate` based on current status
+
+#### Permissions Matrix
+| Role | Permissions |
+|------|-------------|
+| **Super Admin** | View All Chats, Manage Customers, Manage Card Rates, Process Orders, Platform Wallet, Set Naira Rate, Manage Users, Team Dashboard, IP & Country Restrictions, Sensitive Words, API Config, SMS Broadcast, Volume Ranking, Rewards, Customer Guide, Admin Guide, Team Chat, Manage Transaction PINs |
+| **Team Lead** | View Team Chats, Manage Customers, Manage Card Rates, Process Orders, Set Naira Rate, Team Dashboard, Volume Ranking, Rewards, Customer Guide, Admin Guide, Team Chat |
+| **Agent** | View Assigned Chats, View Customers, View Card Rates, Process Orders, Volume Ranking, Rewards, Customer Guide, Admin Guide, Team Chat |
+| **Finance** | View Orders (Read-only), Platform Wallet, Set Naira Rate, Team Chat |
+
+#### Persistence Keys
+- `cc_password_invites` (sessionStorage) — list of pending/used password invites
+- `cc_password_{email}` (sessionStorage) — simulated stored password from the setup flow
+- `adminPin_{role}` (localStorage) — 6-digit Transaction PIN per role
 
 ### 5.14 Team Dashboard (`/admin/team`)
 
@@ -1550,6 +1609,16 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.2 → v5.3 — May 14, 2026
+
+| Change | Description |
+|--------|-------------|
+| **User Management — Full Spec** | Expanded §5.13 from a stub to a complete specification covering header actions, table columns (incl. PIN status), row actions, add/edit modal, permissions matrix for all four roles (Super Admin / Team Lead / Agent / Finance), suspend/delete flows, and persistence keys. |
+| **Password Setup Email Flow** | Documented the new email-driven password setup: token issuance on user creation, "Resend Password Email" action, simulated email preview modal with copy/open link, and the dedicated `/admin/set-password` page (`AdminSetPassword.tsx`) with token validation, strength meter, and error states for invalid / already-used links. |
+| **Transaction PIN Modal** | Documented the 6-digit numeric PIN modal scoped per role, persisted to `localStorage["adminPin_{role}"]`, with show/hide toggles and confirm-match validation. |
+| **Persistence Keys** | Added `cc_password_invites` and `cc_password_{email}` (sessionStorage) and clarified `adminPin_{role}` (localStorage) usage. |
+| **PRD Updated** | PRD bumped to v5.3 to address the User Management gap and document the password setup flow shipped alongside it. |
 
 ### v5.1 → v5.2
 
