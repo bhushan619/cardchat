@@ -37,6 +37,7 @@ import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
 import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminWallets from "./pages/admin/AdminWallets";
+import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminTeamChat from "./pages/admin/AdminTeamChat";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminRanking from "./pages/admin/AdminRanking";
@@ -86,6 +87,7 @@ const App = () => (
             <Route path="/admin/sensitive-words" element={<AdminRoleProvider><AdminSensitiveWords /></AdminRoleProvider>} />
             <Route path="/admin/customers" element={<AdminRoleProvider><AdminCustomers /></AdminRoleProvider>} />
             <Route path="/admin/wallets" element={<AdminRoleProvider><AdminWallets /></AdminRoleProvider>} />
+            <Route path="/admin/withdrawals" element={<AdminRoleProvider><AdminWithdrawals /></AdminRoleProvider>} />
             <Route path="/admin/team-chat" element={<AdminRoleProvider><AdminTeamChat /></AdminRoleProvider>} />
             <Route path="/admin/profile" element={<AdminRoleProvider><AdminProfile /></AdminRoleProvider>} />
             <Route path="/admin/ranking" element={<AdminRoleProvider><AdminRanking /></AdminRoleProvider>} />

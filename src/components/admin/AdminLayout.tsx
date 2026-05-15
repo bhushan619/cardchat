@@ -4,7 +4,7 @@ import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
   BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
-  Sun, Moon, Wallet, Gift
+  Sun, Moon, Wallet, Gift, ArrowDownToLine
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -18,6 +18,7 @@ const navItems = [
   { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates", roles: ["super_admin", "team_lead", "agent"] },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
+  { id: "withdrawals", label: "Withdrawals", icon: ArrowDownToLine, path: "/admin/withdrawals", roles: ["super_admin", "team_lead", "finance"] },
   { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
