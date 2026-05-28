@@ -1646,6 +1646,16 @@ src/
 
 ## 12. Full Changelog
 
+### v5.3 → v5.4 — May 28, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Customer Withdrawals** | New `/admin/withdrawals` page (`AdminWithdrawals.tsx`) providing a consolidated view of all customer withdrawal requests. Features 4 summary widgets (Total Requests, Total Volume, Pending, Approved), search + status + channel filters, an 8-column table with status badges, a detail dialog with Approve/Reject actions (Super Admin / Finance only), and CSV export. Access: Super Admin, Team Lead, Finance. |
+| **Route Table Updated** | Added `/admin/withdrawals` and `/admin/set-password` to §2.2. |
+| **RBAC Updated** | Added "Withdrawals" row to the access matrix in §5.3. |
+| **File Structure Updated** | Added `AdminWithdrawals.tsx` and `AdminSetPassword.tsx` to §9. |
+| **PRD Updated** | PRD bumped to v5.4 to document the Customer Withdrawals page and capture all recent changes. |
+
 ### v5.2 → v5.3 — May 14, 2026
 
 | Change | Description |
