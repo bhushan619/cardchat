@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.3  
-**Date:** May 14, 2026
+**Version:** 5.4  
+**Date:** May 28, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -93,11 +93,13 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/ranking             → Trading volume ranking (all roles)
 /admin/rewards             → Rewards management (all roles)
 /admin/wallets             → Platform wallet (deposits, disbursements)
+/admin/withdrawals        → Consolidated customer withdrawals
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
 /admin/profile             → Admin profile settings
 /admin/screens             → Admin screens gallery (interactive preview)
+/admin/set-password        → Agent password setup (invite link)
 ```
 
 ### 2.3 Theming
@@ -613,6 +615,7 @@ Four roles with hierarchical access:
 | Volume Ranking | ✅ | ✅ | ✅ | ❌ |
 | Rewards | ✅ | ✅ | ✅ | ❌ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
+| Withdrawals | ✅ | ✅ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
 | Naira Rate | ✅ | ✅ | ❌ | ✅ |
@@ -1126,6 +1129,37 @@ The PalmPay widgets represent live balances pulled from the third-party payment 
 - Exports filtered records with all columns including Naira Rate
 - Filename: `platform-wallet-YYYY-MM-DD.csv`
 
+### 5.18b Customer Withdrawals (`/admin/withdrawals`)
+
+**Component:** `src/pages/admin/AdminWithdrawals.tsx`  
+**Access:** Super Admin, Team Lead, Finance
+
+A consolidated ledger of all customer withdrawal requests across the platform, derived from customer wallet data.
+
+#### Summary Widgets (4-column grid)
+- **Total Requests** — count of records in the current filtered view
+- **Total Volume** — sum of all filtered amounts
+- **Pending** — sum of pending withdrawal amounts (warning tone)
+- **Approved** — sum of approved withdrawal amounts (success tone)
+
+#### Filters
+- **Search:** Free-text across alias, request ID, bank name, and reference
+- **Status filter:** All / Pending / Processing / Approved / Rejected
+- **Channel filter:** All / PalmPay 1 / PalmPay 2 / Manual
+
+#### Withdrawals Table
+- **Columns:** Request ID (monospace), Customer (avatar + alias), Amount (₦, right-aligned), Bank (name + masked account number), Channel (outline badge), Status (colored pill: Pending=amber, Processing=blue, Approved=emerald, Rejected=rose), Requested (timestamp), Actions (View button)
+- **Empty state:** "No withdrawal requests match your filters"
+
+#### Details Dialog
+- Triggered by the "View" row action
+- Shows: Customer, Amount, Bank, Account Number, Account Name, Channel, Reference, Requested time, Status
+- **Approve / Reject actions** (Super Admin and Finance only) — shown only when the selected withdrawal status is `pending`
+
+#### CSV Export
+- Exports filtered records with all columns
+- Filename: `withdrawals-{timestamp}.csv`
+
 ### 5.19 SMS Broadcast (`/admin/broadcast`)
 
 **Component:** `src/pages/admin/AdminBroadcast.tsx`  
@@ -1548,8 +1582,10 @@ src/
 │   │   ├── AdminRewards.tsx          # Rewards management (admin)
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   ├── AdminWallets.tsx          # Platform wallet ledger
+│   │   ├── AdminWithdrawals.tsx      # Consolidated customer withdrawals
 │   │   ├── AdminProfile.tsx          # Admin profile settings
 │   │   ├── AdminScreensGallery.tsx   # Interactive screens gallery
+│   │   ├── AdminSetPassword.tsx      # Invite link password setup
 │   │   └── AdminCustomerGuide.tsx    # Customer guide reference
 │   └── customer/
 │       ├── CustomerAuth.tsx          # Auth flow (splash → onboarding → auth)
@@ -1609,6 +1645,16 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.3 → v5.4 — May 28, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Customer Withdrawals** | New `/admin/withdrawals` page (`AdminWithdrawals.tsx`) providing a consolidated view of all customer withdrawal requests. Features 4 summary widgets (Total Requests, Total Volume, Pending, Approved), search + status + channel filters, an 8-column table with status badges, a detail dialog with Approve/Reject actions (Super Admin / Finance only), and CSV export. Access: Super Admin, Team Lead, Finance. |
+| **Route Table Updated** | Added `/admin/withdrawals` and `/admin/set-password` to §2.2. |
+| **RBAC Updated** | Added "Withdrawals" row to the access matrix in §5.3. |
+| **File Structure Updated** | Added `AdminWithdrawals.tsx` and `AdminSetPassword.tsx` to §9. |
+| **PRD Updated** | PRD bumped to v5.4 to document the Customer Withdrawals page and capture all recent changes. |
 
 ### v5.2 → v5.3 — May 14, 2026
 
