@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, tradingBalance, rewardsBalance, walletTransactions } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette, KeyRound } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { toast } from "sonner";
+
+const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -94,6 +99,48 @@ export default function CustomerMe() {
   const [withdrawComplete, setWithdrawComplete] = useState(false);
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
   const [balanceVisible, setBalanceVisible] = useState(false);
+
+  // Transaction PIN state
+  const [txnPin, setTxnPin] = useState<string | null>(() =>
+    typeof window !== "undefined" ? sessionStorage.getItem(PIN_STORAGE_KEY) : null
+  );
+  const [pinCurrent, setPinCurrent] = useState("");
+  const [pinNew, setPinNew] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
+  const [pinShow, setPinShow] = useState(false);
+
+  // Withdraw PIN dialog
+  const [withdrawPinOpen, setWithdrawPinOpen] = useState(false);
+  const [withdrawPinInput, setWithdrawPinInput] = useState("");
+  const [withdrawPinError, setWithdrawPinError] = useState("");
+
+  const resetPinForm = () => { setPinCurrent(""); setPinNew(""); setPinConfirm(""); };
+
+  const handleSavePin = () => {
+    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+    if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
+    if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
+    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
+    setTxnPin(pinNew);
+    resetPinForm();
+    toast.success(txnPin ? "Transaction PIN updated" : "Transaction PIN created");
+  };
+
+  const handleConfirmWithdrawClick = () => {
+    if (!txnPin) {
+      toast.error("Please set your Transaction PIN in Security Settings first");
+      return;
+    }
+    setWithdrawPinInput("");
+    setWithdrawPinError("");
+    setWithdrawPinOpen(true);
+  };
+
+  const handleVerifyWithdrawPin = () => {
+    if (withdrawPinInput !== txnPin) { setWithdrawPinError("Incorrect PIN"); return; }
+    setWithdrawPinOpen(false);
+    handleWithdraw();
+  };
 
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
@@ -221,7 +268,7 @@ export default function CustomerMe() {
                         size="sm"
                         className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
                         disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > walletBalance || Number(withdrawAmount) < 2000 || Number(withdrawAmount) > 790000}
-                        onClick={handleWithdraw}
+                        onClick={handleConfirmWithdrawClick}
                       >
                         Confirm Withdrawal
                       </Button>
@@ -268,6 +315,45 @@ export default function CustomerMe() {
             </div>
           </div>
         </div>
+
+        <Dialog open={withdrawPinOpen} onOpenChange={setWithdrawPinOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <KeyRound className="w-4 h-4 text-accent" />
+                Enter Transaction PIN
+              </DialogTitle>
+              <DialogDescription>
+                Confirm your 6-digit Transaction PIN to authorize this withdrawal of ₦{withdrawAmount ? Number(withdrawAmount).toLocaleString() : "0"}.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-3 py-2">
+              <InputOTP
+                maxLength={6}
+                value={withdrawPinInput}
+                onChange={(v) => { setWithdrawPinInput(v.replace(/\D/g, "")); setWithdrawPinError(""); }}
+              >
+                <InputOTPGroup>
+                  {[0,1,2,3,4,5].map(i => <InputOTPSlot key={i} index={i} />)}
+                </InputOTPGroup>
+              </InputOTP>
+              {withdrawPinError && (
+                <p className="text-xs text-destructive">{withdrawPinError}</p>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" size="sm" onClick={() => setWithdrawPinOpen(false)}>Cancel</Button>
+              <Button
+                size="sm"
+                className="bg-accent text-accent-foreground hover:bg-accent/90"
+                disabled={withdrawPinInput.length !== 6}
+                onClick={handleVerifyWithdrawPin}
+              >
+                Verify & Withdraw
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CustomerLayout>
     );
   }
@@ -573,32 +659,81 @@ export default function CustomerMe() {
           <h2 className="font-heading font-semibold">Security Settings</h2>
         </header>
         <div className="p-4 space-y-4 flex-1 overflow-y-auto">
-          {/* Change Password */}
+          {/* Transaction PIN */}
           <div className="bg-card border rounded-xl p-4 space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-accent" />
+                <KeyRound className="w-5 h-5 text-accent" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold">Change Password</p>
-                <p className="text-xs text-muted-foreground">Update your account password</p>
+                <p className="text-sm font-semibold">
+                  {txnPin ? "Change Transaction PIN" : "Create Transaction PIN"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {txnPin
+                    ? "Update your 6-digit PIN used to confirm withdrawals"
+                    : "Set a 6-digit PIN to confirm withdrawals and sensitive actions"}
+                </p>
               </div>
+              {txnPin && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-success/10 text-success">Set</span>
+              )}
             </div>
             <div className="space-y-2">
+              {txnPin && (
+                <div>
+                  <label className="text-xs text-muted-foreground">Current PIN</label>
+                  <Input
+                    type={pinShow ? "text" : "password"}
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Enter current 6-digit PIN"
+                    value={pinCurrent}
+                    onChange={e => setPinCurrent(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="mt-1 tracking-widest"
+                  />
+                </div>
+              )}
               <div>
-                <label className="text-xs text-muted-foreground">Current Password</label>
-                <Input type="password" placeholder="Enter current password" className="mt-1" />
+                <label className="text-xs text-muted-foreground">New PIN</label>
+                <Input
+                  type={pinShow ? "text" : "password"}
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Enter new 6-digit PIN"
+                  value={pinNew}
+                  onChange={e => setPinNew(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="mt-1 tracking-widest"
+                />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">New Password</label>
-                <Input type="password" placeholder="Enter new password" className="mt-1" />
+                <label className="text-xs text-muted-foreground">Confirm New PIN</label>
+                <Input
+                  type={pinShow ? "text" : "password"}
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Re-enter new 6-digit PIN"
+                  value={pinConfirm}
+                  onChange={e => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="mt-1 tracking-widest"
+                />
               </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Confirm New Password</label>
-                <Input type="password" placeholder="Confirm new password" className="mt-1" />
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setPinShow(!pinShow)}
+                  className="text-[11px] text-muted-foreground flex items-center gap-1 hover:text-foreground"
+                >
+                  {pinShow ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  {pinShow ? "Hide" : "Show"} PIN
+                </button>
               </div>
-              <Button size="sm" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                Update Password
+              <Button
+                size="sm"
+                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={handleSavePin}
+              >
+                {txnPin ? "Update Transaction PIN" : "Create Transaction PIN"}
               </Button>
             </div>
           </div>
@@ -904,7 +1039,7 @@ export default function CustomerMe() {
             { icon: FileText, label: "My Orders", desc: `${customerOrders.length} orders`, key: "orders" },
             { icon: CreditCard, label: "Bank Accounts", desc: "Manage your banks", key: "bank" },
             { icon: BarChart3, label: "Data Dashboard", desc: "View your stats", key: "dashboard" },
-            { icon: Shield, label: "Security Settings", desc: "2FA, password", key: "security" },
+            { icon: Shield, label: "Security Settings", desc: "2FA, transaction PIN", key: "security" },
             { icon: Settings, label: "App Settings", desc: "Notifications, language", key: "settings" },
             { icon: BookOpen, label: "User Guide", desc: "How to use CardChat", key: "guide" },
           ].map(item => (
