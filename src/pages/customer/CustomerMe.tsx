@@ -315,6 +315,45 @@ export default function CustomerMe() {
             </div>
           </div>
         </div>
+
+        <Dialog open={withdrawPinOpen} onOpenChange={setWithdrawPinOpen}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <KeyRound className="w-4 h-4 text-accent" />
+                Enter Transaction PIN
+              </DialogTitle>
+              <DialogDescription>
+                Confirm your 6-digit Transaction PIN to authorize this withdrawal of ₦{withdrawAmount ? Number(withdrawAmount).toLocaleString() : "0"}.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="flex flex-col items-center gap-3 py-2">
+              <InputOTP
+                maxLength={6}
+                value={withdrawPinInput}
+                onChange={(v) => { setWithdrawPinInput(v.replace(/\D/g, "")); setWithdrawPinError(""); }}
+              >
+                <InputOTPGroup>
+                  {[0,1,2,3,4,5].map(i => <InputOTPSlot key={i} index={i} />)}
+                </InputOTPGroup>
+              </InputOTP>
+              {withdrawPinError && (
+                <p className="text-xs text-destructive">{withdrawPinError}</p>
+              )}
+            </div>
+            <DialogFooter>
+              <Button variant="outline" size="sm" onClick={() => setWithdrawPinOpen(false)}>Cancel</Button>
+              <Button
+                size="sm"
+                className="bg-accent text-accent-foreground hover:bg-accent/90"
+                disabled={withdrawPinInput.length !== 6}
+                onClick={handleVerifyWithdrawPin}
+              >
+                Verify & Withdraw
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </CustomerLayout>
     );
   }
