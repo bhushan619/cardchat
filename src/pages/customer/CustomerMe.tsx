@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, tradingBalance, rewardsBalance, walletTransactions } from "@/data/mock";
-import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette } from "lucide-react";
+import { User, CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Image as ImageIcon, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Lock, Smartphone, Bell, Globe, Palette, KeyRound } from "lucide-react";
 import { useTheme } from "@/hooks/use-theme";
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +9,11 @@ import { Input } from "@/components/ui/input";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { toast } from "sonner";
+
+const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
