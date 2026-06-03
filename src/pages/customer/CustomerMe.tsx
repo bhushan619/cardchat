@@ -100,6 +100,48 @@ export default function CustomerMe() {
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
   const [balanceVisible, setBalanceVisible] = useState(false);
 
+  // Transaction PIN state
+  const [txnPin, setTxnPin] = useState<string | null>(() =>
+    typeof window !== "undefined" ? sessionStorage.getItem(PIN_STORAGE_KEY) : null
+  );
+  const [pinCurrent, setPinCurrent] = useState("");
+  const [pinNew, setPinNew] = useState("");
+  const [pinConfirm, setPinConfirm] = useState("");
+  const [pinShow, setPinShow] = useState(false);
+
+  // Withdraw PIN dialog
+  const [withdrawPinOpen, setWithdrawPinOpen] = useState(false);
+  const [withdrawPinInput, setWithdrawPinInput] = useState("");
+  const [withdrawPinError, setWithdrawPinError] = useState("");
+
+  const resetPinForm = () => { setPinCurrent(""); setPinNew(""); setPinConfirm(""); };
+
+  const handleSavePin = () => {
+    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+    if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
+    if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
+    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
+    setTxnPin(pinNew);
+    resetPinForm();
+    toast.success(txnPin ? "Transaction PIN updated" : "Transaction PIN created");
+  };
+
+  const handleConfirmWithdrawClick = () => {
+    if (!txnPin) {
+      toast.error("Please set your Transaction PIN in Security Settings first");
+      return;
+    }
+    setWithdrawPinInput("");
+    setWithdrawPinError("");
+    setWithdrawPinOpen(true);
+  };
+
+  const handleVerifyWithdrawPin = () => {
+    if (withdrawPinInput !== txnPin) { setWithdrawPinError("Incorrect PIN"); return; }
+    setWithdrawPinOpen(false);
+    handleWithdraw();
+  };
+
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
       setEditStep("otp");
