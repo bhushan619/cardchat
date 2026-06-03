@@ -620,32 +620,81 @@ export default function CustomerMe() {
           <h2 className="font-heading font-semibold">Security Settings</h2>
         </header>
         <div className="p-4 space-y-4 flex-1 overflow-y-auto">
-          {/* Change Password */}
+          {/* Transaction PIN */}
           <div className="bg-card border rounded-xl p-4 space-y-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
-                <Lock className="w-5 h-5 text-accent" />
+                <KeyRound className="w-5 h-5 text-accent" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold">Change Password</p>
-                <p className="text-xs text-muted-foreground">Update your account password</p>
+                <p className="text-sm font-semibold">
+                  {txnPin ? "Change Transaction PIN" : "Create Transaction PIN"}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {txnPin
+                    ? "Update your 6-digit PIN used to confirm withdrawals"
+                    : "Set a 6-digit PIN to confirm withdrawals and sensitive actions"}
+                </p>
               </div>
+              {txnPin && (
+                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-success/10 text-success">Set</span>
+              )}
             </div>
             <div className="space-y-2">
+              {txnPin && (
+                <div>
+                  <label className="text-xs text-muted-foreground">Current PIN</label>
+                  <Input
+                    type={pinShow ? "text" : "password"}
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Enter current 6-digit PIN"
+                    value={pinCurrent}
+                    onChange={e => setPinCurrent(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="mt-1 tracking-widest"
+                  />
+                </div>
+              )}
               <div>
-                <label className="text-xs text-muted-foreground">Current Password</label>
-                <Input type="password" placeholder="Enter current password" className="mt-1" />
+                <label className="text-xs text-muted-foreground">New PIN</label>
+                <Input
+                  type={pinShow ? "text" : "password"}
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Enter new 6-digit PIN"
+                  value={pinNew}
+                  onChange={e => setPinNew(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="mt-1 tracking-widest"
+                />
               </div>
               <div>
-                <label className="text-xs text-muted-foreground">New Password</label>
-                <Input type="password" placeholder="Enter new password" className="mt-1" />
+                <label className="text-xs text-muted-foreground">Confirm New PIN</label>
+                <Input
+                  type={pinShow ? "text" : "password"}
+                  inputMode="numeric"
+                  maxLength={6}
+                  placeholder="Re-enter new 6-digit PIN"
+                  value={pinConfirm}
+                  onChange={e => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  className="mt-1 tracking-widest"
+                />
               </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Confirm New Password</label>
-                <Input type="password" placeholder="Confirm new password" className="mt-1" />
+              <div className="flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => setPinShow(!pinShow)}
+                  className="text-[11px] text-muted-foreground flex items-center gap-1 hover:text-foreground"
+                >
+                  {pinShow ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  {pinShow ? "Hide" : "Show"} PIN
+                </button>
               </div>
-              <Button size="sm" className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
-                Update Password
+              <Button
+                size="sm"
+                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={handleSavePin}
+              >
+                {txnPin ? "Update Transaction PIN" : "Create Transaction PIN"}
               </Button>
             </div>
           </div>
