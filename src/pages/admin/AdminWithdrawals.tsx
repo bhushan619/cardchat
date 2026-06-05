@@ -17,7 +17,7 @@ import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { toast } from "@/hooks/use-toast";
 
-type Status = "pending" | "successful" | "rejected" | "processing";
+type Status = "pending" | "successful" | "failed" | "processing";
 
 type Withdrawal = {
   id: string;
@@ -34,7 +34,7 @@ type Withdrawal = {
 
 const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "Kuda"];
 const channels: Withdrawal["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
-const statuses: Status[] = ["pending", "successful", "processing", "rejected"];
+const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
 // Build consolidated withdrawals from customer wallet mock data
 const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
@@ -60,7 +60,7 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
   pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600", icon: Clock },
   processing: { label: "Processing", className: "bg-blue-500/10 text-blue-600", icon: Clock },
   successful: { label: "Successful", className: "bg-emerald-500/10 text-emerald-600", icon: CheckCircle2 },
-  rejected: { label: "Rejected", className: "bg-rose-500/10 text-rose-600", icon: XCircle },
+  failed: { label: "Failed", className: "bg-rose-500/10 text-rose-600", icon: XCircle },
 };
 
 export default function AdminWithdrawals() {
