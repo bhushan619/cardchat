@@ -17,7 +17,7 @@ import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { toast } from "@/hooks/use-toast";
 
-type Status = "pending" | "approved" | "rejected" | "processing";
+type Status = "pending" | "successful" | "rejected" | "processing";
 
 type Withdrawal = {
   id: string;
@@ -34,7 +34,7 @@ type Withdrawal = {
 
 const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "Kuda"];
 const channels: Withdrawal["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
-const statuses: Status[] = ["pending", "approved", "processing", "rejected"];
+const statuses: Status[] = ["pending", "successful", "processing", "rejected"];
 
 // Build consolidated withdrawals from customer wallet mock data
 const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
@@ -59,7 +59,7 @@ const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
 const statusConfig: Record<Status, { label: string; className: string; icon: typeof CheckCircle2 }> = {
   pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600", icon: Clock },
   processing: { label: "Processing", className: "bg-blue-500/10 text-blue-600", icon: Clock },
-  approved: { label: "Approved", className: "bg-emerald-500/10 text-emerald-600", icon: CheckCircle2 },
+  successful: { label: "Successful", className: "bg-emerald-500/10 text-emerald-600", icon: CheckCircle2 },
   rejected: { label: "Rejected", className: "bg-rose-500/10 text-rose-600", icon: XCircle },
 };
 
@@ -87,7 +87,7 @@ export default function AdminWithdrawals() {
     return {
       all: filtered.reduce((a, w) => a + w.amount, 0),
       pending: sum("pending"),
-      approved: sum("approved"),
+      successful: sum("successful"),
       processing: sum("processing"),
       count: filtered.length,
     };
@@ -131,7 +131,7 @@ export default function AdminWithdrawals() {
           <SummaryCard label="Total Requests" value={totals.count.toString()} hint="In current view" />
           <SummaryCard label="Total Volume" value={`₦${totals.all.toLocaleString()}`} hint="All filtered" />
           <SummaryCard label="Pending" value={`₦${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
-          <SummaryCard label="Approved" value={`₦${totals.approved.toLocaleString()}`} hint="Disbursed" tone="success" />
+          <SummaryCard label="Successful" value={`₦${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
         </div>
 
         {/* Filters */}
