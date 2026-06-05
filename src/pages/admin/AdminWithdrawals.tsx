@@ -250,16 +250,6 @@ export default function AdminWithdrawals() {
               ))}
             </div>
           )}
-          {canAct && selected && selected.status === "pending" && (
-            <DialogFooter className="gap-2">
-              <Button variant="outline" onClick={() => updateStatus(selected.id, "rejected")}>
-                <XCircle className="w-4 h-4 mr-1" /> Reject
-              </Button>
-              <Button onClick={() => updateStatus(selected.id, "approved")}>
-                <CheckCircle2 className="w-4 h-4 mr-1" /> Approve
-              </Button>
-            </DialogFooter>
-          )}
         </DialogContent>
       </Dialog>
     </AdminLayout>
