@@ -166,6 +166,7 @@ export default function CustomerMe() {
 
   const handleWithdraw = () => {
     if (withdrawAmount && withdrawBank) {
+      setPendingWithdrawal(prev => prev + Number(withdrawAmount));
       setWithdrawComplete(true);
       setTimeout(() => {
         setShowWithdraw(false);
