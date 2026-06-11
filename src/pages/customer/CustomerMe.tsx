@@ -99,7 +99,7 @@ export default function CustomerMe() {
   const [withdrawComplete, setWithdrawComplete] = useState(false);
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
   const [balanceVisible, setBalanceVisible] = useState(false);
-  const [pendingWithdrawal, setPendingWithdrawal] = useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<{ id: string; amount: number; bank: string; date: string; time: string }[]>([]);
 
   // Transaction PIN state
   const [txnPin, setTxnPin] = useState<string | null>(() =>
