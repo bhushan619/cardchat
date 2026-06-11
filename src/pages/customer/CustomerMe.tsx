@@ -280,7 +280,7 @@ export default function CustomerMe() {
                       <Button
                         size="sm"
                         className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
-                        disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > walletBalance || Number(withdrawAmount) < 2000 || Number(withdrawAmount) > 790000}
+                        disabled={!withdrawAmount || !withdrawBank || Number(withdrawAmount) > availableBalance || Number(withdrawAmount) < 2000 || Number(withdrawAmount) > 790000}
                         onClick={handleConfirmWithdrawClick}
                       >
                         Confirm Withdrawal
