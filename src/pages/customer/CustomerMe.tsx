@@ -258,7 +258,7 @@ export default function CustomerMe() {
                           Amount must be between ₦2,000 and ₦790,000
                         </p>
                       )}
-                      <p className="text-[10px] text-muted-foreground mt-1">Available: ₦{walletBalance.toLocaleString()}</p>
+                      <p className="text-[10px] text-muted-foreground mt-1">Available: ₦{availableBalance.toLocaleString()}</p>
                     </div>
                     <div>
                       <label className="text-xs text-muted-foreground">Select Bank Account</label>
