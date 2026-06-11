@@ -166,7 +166,18 @@ export default function CustomerMe() {
 
   const handleWithdraw = () => {
     if (withdrawAmount && withdrawBank) {
-      setPendingWithdrawal(prev => prev + Number(withdrawAmount));
+      const bank = bankAccounts.find(a => String(a.id) === withdrawBank);
+      const now = new Date();
+      setPendingWithdrawals(prev => [
+        ...prev,
+        {
+          id: `PW-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+          amount: Number(withdrawAmount),
+          bank: bank ? `${bank.bankName} ${bank.accountNumber}` : withdrawBank,
+          date: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+          time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        },
+      ]);
       setWithdrawComplete(true);
       setTimeout(() => {
         setShowWithdraw(false);
