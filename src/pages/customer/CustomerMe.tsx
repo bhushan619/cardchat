@@ -182,6 +182,7 @@ export default function CustomerMe() {
   // ── Wallet ──
   if (activeSection === "wallet") {
     const filteredTx = walletTxFilter === "all" ? walletTransactions : walletTransactions.filter(t => t.type === walletTxFilter);
+    const availableBalance = walletBalance - pendingWithdrawal;
 
     return (
       <CustomerLayout>
@@ -199,11 +200,20 @@ export default function CustomerMe() {
                   {balanceVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
                 </button>
               </div>
-              <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}</p>
+              <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${availableBalance.toLocaleString()}` : "₦ ••••••"}</p>
               {balanceVisible && (
                 <p className="text-xs opacity-80 mt-1">
                   ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
                 </p>
+              )}
+              {pendingWithdrawal > 0 && (
+                <div className="flex items-center justify-between mt-3 px-3 py-2 rounded-lg bg-accent-foreground/10 border border-accent-foreground/20">
+                  <div className="flex items-center gap-1.5 text-[11px] opacity-90">
+                    <Clock className="w-3 h-3" />
+                    <span>Pending Withdrawal</span>
+                  </div>
+                  <p className="text-xs font-semibold">₦{pendingWithdrawal.toLocaleString()}</p>
+                </div>
               )}
               <div className="flex gap-2 mt-4">
                 <Button
@@ -215,6 +225,7 @@ export default function CustomerMe() {
                 </Button>
               </div>
             </div>
+
 
             {/* Withdraw Modal */}
             {showWithdraw && (
