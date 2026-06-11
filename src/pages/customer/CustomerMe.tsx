@@ -99,7 +99,7 @@ export default function CustomerMe() {
   const [withdrawComplete, setWithdrawComplete] = useState(false);
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
   const [balanceVisible, setBalanceVisible] = useState(false);
-  const [pendingWithdrawal, setPendingWithdrawal] = useState(0);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<{ id: string; amount: number; bank: string; date: string; time: string }[]>([]);
 
   // Transaction PIN state
   const [txnPin, setTxnPin] = useState<string | null>(() =>
@@ -166,7 +166,18 @@ export default function CustomerMe() {
 
   const handleWithdraw = () => {
     if (withdrawAmount && withdrawBank) {
-      setPendingWithdrawal(prev => prev + Number(withdrawAmount));
+      const bank = bankAccounts.find(a => String(a.id) === withdrawBank);
+      const now = new Date();
+      setPendingWithdrawals(prev => [
+        ...prev,
+        {
+          id: `PW-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+          amount: Number(withdrawAmount),
+          bank: bank ? `${bank.bankName} ${bank.accountNumber}` : withdrawBank,
+          date: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+          time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+        },
+      ]);
       setWithdrawComplete(true);
       setTimeout(() => {
         setShowWithdraw(false);
@@ -182,7 +193,7 @@ export default function CustomerMe() {
   // ── Wallet ──
   if (activeSection === "wallet") {
     const filteredTx = walletTxFilter === "all" ? walletTransactions : walletTransactions.filter(t => t.type === walletTxFilter);
-    const availableBalance = walletBalance - pendingWithdrawal;
+    const availableBalance = walletBalance - pendingWithdrawals.reduce((sum, w) => sum + w.amount, 0);
 
     return (
       <CustomerLayout>
@@ -206,15 +217,6 @@ export default function CustomerMe() {
                   ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
                 </p>
               )}
-              {pendingWithdrawal > 0 && (
-                <div className="flex items-center justify-between mt-3 px-3 py-2 rounded-lg bg-accent-foreground/10 border border-accent-foreground/20">
-                  <div className="flex items-center gap-1.5 text-[11px] opacity-90">
-                    <Clock className="w-3 h-3" />
-                    <span>Pending Withdrawal</span>
-                  </div>
-                  <p className="text-xs font-semibold">₦{pendingWithdrawal.toLocaleString()}</p>
-                </div>
-              )}
               <div className="flex gap-2 mt-4">
                 <Button
                   size="sm"
@@ -225,6 +227,27 @@ export default function CustomerMe() {
                 </Button>
               </div>
             </div>
+
+            {/* Pending Withdrawals */}
+            {pendingWithdrawals.length > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs font-medium text-muted-foreground">Pending Withdrawals</p>
+                {pendingWithdrawals.map(pw => (
+                  <div key={pw.id} className="flex items-center justify-between p-3 rounded-xl bg-card border border-warning/20">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center">
+                        <Clock className="w-4 h-4 text-warning" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-medium">₦{pw.amount.toLocaleString()}</p>
+                        <p className="text-[10px] text-muted-foreground">{pw.bank}</p>
+                      </div>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">{pw.date} · {pw.time}</p>
+                  </div>
+                ))}
+              </div>
+            )}
 
 
             {/* Withdraw Modal */}
