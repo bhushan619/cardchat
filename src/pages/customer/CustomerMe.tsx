@@ -239,6 +239,21 @@ export default function CustomerMe() {
                 ))}
               </div>
             )}
+
+            {/* Balance Card */}
+            <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-5 text-accent-foreground">
+              <div className="flex items-center justify-between">
+                <p className="text-xs opacity-80">Available Balance</p>
+                <button onClick={() => setBalanceVisible(!balanceVisible)} className="opacity-70 hover:opacity-100 transition-opacity">
+                  {balanceVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                </button>
+              </div>
+              <p className="text-3xl font-heading font-bold mt-1">{balanceVisible ? `₦${availableBalance.toLocaleString()}` : "₦ ••••••"}</p>
+              {balanceVisible && (
+                <p className="text-xs opacity-80 mt-1">
+                  ({tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards)
+                </p>
+              )}
               <div className="flex gap-2 mt-4">
                 <Button
                   size="sm"
