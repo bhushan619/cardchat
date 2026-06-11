@@ -193,7 +193,7 @@ export default function CustomerMe() {
   // ── Wallet ──
   if (activeSection === "wallet") {
     const filteredTx = walletTxFilter === "all" ? walletTransactions : walletTransactions.filter(t => t.type === walletTxFilter);
-    const availableBalance = walletBalance - pendingWithdrawal;
+    const availableBalance = walletBalance - pendingWithdrawals.reduce((sum, w) => sum + w.amount, 0);
 
     return (
       <CustomerLayout>
