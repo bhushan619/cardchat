@@ -7,6 +7,9 @@ import { AdminRoleProvider } from "@/contexts/AdminRoleContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
 import Landing from "./pages/Landing";
+import Privacy from "./pages/Privacy";
+import Terms from "./pages/Terms";
+import DeleteAccount from "./pages/DeleteAccount";
 import NotFound from "./pages/NotFound";
 
 // Customer App
@@ -57,6 +60,9 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/landing" element={<Landing />} />
+            <Route path="/privacy" element={<Privacy />} />
+            <Route path="/terms" element={<Terms />} />
+            <Route path="/delete-account" element={<DeleteAccount />} />
 
             {/* Customer App */}
             <Route path="/customer/auth" element={<CustomerAuth />} />
