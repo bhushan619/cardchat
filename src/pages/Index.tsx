@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Smartphone, Monitor } from "lucide-react";
+import { Smartphone, Monitor, Globe } from "lucide-react";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export default function Index() {
           <h1 className="font-heading text-4xl font-bold mb-3">CardChat</h1>
           <p className="text-muted-foreground">Gift card trading platform — interactive UI prototype</p>
         </div>
-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Button
             size="lg"
             className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2 h-12 px-6"
@@ -25,6 +25,9 @@ export default function Index() {
           </Button>
           <Button size="lg" variant="outline" className="gap-2 h-12 px-6" onClick={() => navigate("/admin/login")}>
             <Monitor className="w-5 h-5" /> Admin Panel
+          </Button>
+          <Button size="lg" variant="outline" className="gap-2 h-12 px-6" onClick={() => navigate("/landing")}>
+            <Globe className="w-5 h-5" /> Website
           </Button>
         </div>
         <p className="text-xs text-muted-foreground">All screens use mock data · No backend connected</p>
