@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AdminRoleProvider } from "@/contexts/AdminRoleContext";
 import { ThemeProvider } from "@/hooks/use-theme";
 import Index from "./pages/Index";
+import Landing from "./pages/Landing";
 import NotFound from "./pages/NotFound";
 
 // Customer App
@@ -55,6 +56,7 @@ const App = () => (
         <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
+            <Route path="/landing" element={<Landing />} />
 
             {/* Customer App */}
             <Route path="/customer/auth" element={<CustomerAuth />} />
