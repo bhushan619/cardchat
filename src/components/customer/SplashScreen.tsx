@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Shield, Zap, HeadphonesIcon, TrendingUp } from "lucide-react";
+import Logo from "@/components/Logo";
 
 const features = [
   { icon: Shield, label: "Bank-Grade Security", delay: 800 },
@@ -25,7 +26,6 @@ export default function SplashScreen({ onComplete }: { onComplete: () => void })
 
       {/* Logo */}
       <div className={`relative z-10 flex flex-col items-center transition-all duration-700 ${phase >= 1 ? "-translate-y-6" : "translate-y-0"}`}>
-        <img src={(await import("@/assets/cardchat-logo.png.asset.json")).default?.url} alt="" className="hidden" />
         <Logo className="w-20 h-20 mb-4 animate-[scale-in_0.6s_ease-out]" />
         <h1 className="font-heading text-3xl font-bold animate-[fade-in_0.5s_ease-out_0.3s_both]">CardChat</h1>
         <p className="text-sm text-muted-foreground mt-1 animate-[fade-in_0.5s_ease-out_0.5s_both]">Trusted Gift Card Exchange</p>
