@@ -562,10 +562,20 @@ export default function CardlightPanel({
                           />
                           <label
                             htmlFor={`card-images-${card.id}`}
+                            onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("border-primary","bg-muted/50"); }}
+                            onDragLeave={(e) => { e.currentTarget.classList.remove("border-primary","bg-muted/50"); }}
+                            onDrop={(e) => {
+                              e.preventDefault();
+                              e.currentTarget.classList.remove("border-primary","bg-muted/50");
+                              const files = Array.from(e.dataTransfer.files).filter(f => /image\/(jpeg|png|webp)/.test(f.type));
+                              const remaining = 10 - card.cardImages.length;
+                              const newUrls = files.slice(0, remaining).map((f) => URL.createObjectURL(f));
+                              if (newUrls.length) updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
+                            }}
                             className="w-16 h-16 border-2 border-dashed rounded-md flex flex-col items-center justify-center text-muted-foreground hover:border-primary/50 hover:bg-muted/30 cursor-pointer transition-colors flex-shrink-0"
                           >
                             <ImageIcon className="w-4 h-4" />
-                            <span className="text-[8px] mt-0.5">Upload</span>
+                            <span className="text-[8px] mt-0.5">Drop / Upload</span>
                           </label>
                         </>
                       )}
