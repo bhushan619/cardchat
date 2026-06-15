@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Shield, Zap, HeadphonesIcon, TrendingUp, Gift, Trophy, Calculator, Star, ArrowRight, CheckCircle2, Smartphone, Twitter, Instagram, Facebook, Linkedin, Youtube, Quote, Users, Target, Sparkles } from "lucide-react";
@@ -51,9 +52,7 @@ export default function Landing() {
       <nav className="sticky top-0 z-40 backdrop-blur-lg bg-background/70 border-b border-border/50">
         <div className="max-w-6xl mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/landing" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
-              <span className="text-accent-foreground font-heading font-bold text-sm">CC</span>
-            </div>
+            <Logo className="w-9 h-9" />
             <span className="font-heading font-bold text-lg">CardChat</span>
           </Link>
           <div className="hidden md:flex items-center gap-6 text-sm">
@@ -247,9 +246,7 @@ export default function Landing() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="md:col-span-2">
               <div className="flex items-center gap-2.5">
-                <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
-                  <span className="text-accent-foreground font-heading font-bold text-sm">CC</span>
-                </div>
+                <Logo className="w-9 h-9" />
                 <span className="font-heading font-bold text-lg">CardChat</span>
               </div>
               <p className="text-sm text-muted-foreground mt-3 max-w-sm">

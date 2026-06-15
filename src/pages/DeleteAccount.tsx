@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -37,9 +38,7 @@ export default function DeleteAccount() {
       <nav className="sticky top-0 z-40 backdrop-blur-lg bg-background/70 border-b border-border/50">
         <div className="max-w-3xl mx-auto flex items-center justify-between px-6 py-4">
           <Link to="/landing" className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-accent flex items-center justify-center">
-              <span className="text-accent-foreground font-heading font-bold text-sm">CC</span>
-            </div>
+            <Logo className="w-9 h-9" />
             <span className="font-heading font-bold text-lg">CardChat</span>
           </Link>
           <Link to="/landing" className="text-sm text-muted-foreground hover:text-foreground flex items-center gap-1.5">

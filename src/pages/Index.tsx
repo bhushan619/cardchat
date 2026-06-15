@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Smartphone, Monitor, Globe } from "lucide-react";
+import Logo from "@/components/Logo";
 
 export default function Index() {
   const navigate = useNavigate();
@@ -8,9 +9,7 @@ export default function Index() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background">
       <div className="text-center max-w-lg px-6 space-y-8">
-        <div className="w-20 h-20 rounded-2xl bg-accent flex items-center justify-center mx-auto">
-          <span className="text-accent-foreground font-heading font-bold text-2xl">CC</span>
-        </div>
+        <Logo className="w-20 h-20 mx-auto" />
         <div>
           <h1 className="font-heading text-4xl font-bold mb-3">CardChat</h1>
           <p className="text-muted-foreground">Gift card trading platform — interactive UI prototype</p>

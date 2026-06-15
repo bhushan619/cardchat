@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
@@ -47,9 +48,7 @@ export default function CustomerHome() {
       <div className="p-4 space-y-5">
         {/* Header */}
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl bg-accent flex items-center justify-center shrink-0 shadow-lg shadow-accent/20">
-            <span className="text-accent-foreground font-heading font-bold text-lg">CC</span>
-          </div>
+          <Logo className="w-11 h-11 shrink-0" />
           <div className="flex-1">
             <h1 className="font-heading text-lg font-bold">CardChat</h1>
             <p className="text-[10px] text-muted-foreground">Your trusted gift card trading platform</p>
