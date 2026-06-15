@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";

@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useNavigate, Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Shield, Zap, HeadphonesIcon, TrendingUp, Gift, Trophy, Calculator, Star, ArrowRight, CheckCircle2, Smartphone, Twitter, Instagram, Facebook, Linkedin, Youtube, Quote, Users, Target, Sparkles } from "lucide-react";

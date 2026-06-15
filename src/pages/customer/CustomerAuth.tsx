@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";

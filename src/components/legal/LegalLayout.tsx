@@ -1,3 +1,4 @@
+import Logo from "@/components/Logo";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { ReactNode } from "react";
