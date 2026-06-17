@@ -1,7 +1,8 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
-import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send } from "lucide-react";
+import { useRef } from "react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -26,6 +27,7 @@ type User = {
   availability?: "online" | "away" | "offline";
   rating?: number;
   specialties?: string[];
+  avatar?: string;
 };
 
 const roleLabels: Record<string, { label: string; color: string }> = {
@@ -84,6 +86,23 @@ export default function AdminUsers() {
   const [formAvailability, setFormAvailability] = useState<"online" | "away" | "offline">("online");
   const [formRating, setFormRating] = useState<string>("4.8");
   const [formSpecialties, setFormSpecialties] = useState<string>("iTunes, Amazon, Steam, Google Play");
+  const [formAvatar, setFormAvatar] = useState<string>("");
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarFile = (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2 MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setFormAvatar(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const filtered = users.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
@@ -99,6 +118,7 @@ export default function AdminUsers() {
     setFormAvailability("online");
     setFormRating("4.8");
     setFormSpecialties("iTunes, Amazon, Steam, Google Play");
+    setFormAvatar("");
     setModalOpen(true);
   };
 
@@ -111,6 +131,7 @@ export default function AdminUsers() {
     setFormAvailability(u.availability ?? (u.status === "active" ? "online" : "offline"));
     setFormRating(String(u.rating ?? 4.8));
     setFormSpecialties((u.specialties ?? ["iTunes", "Amazon", "Steam", "Google Play"]).join(", "));
+    setFormAvatar(u.avatar ?? "");
     setModalOpen(true);
   };
 
@@ -138,6 +159,7 @@ export default function AdminUsers() {
       availability: formAvailability,
       rating: Math.max(0, Math.min(5, parseFloat(formRating) || 0)),
       specialties: formSpecialties.split(",").map(s => s.trim()).filter(Boolean),
+      avatar: formAvatar || undefined,
     };
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id
@@ -238,9 +260,13 @@ export default function AdminUsers() {
                 <tr key={u.id} className="border-b last:border-0 hover:bg-muted/30">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                        {u.name.split(" ").map(n => n[0]).join("")}
-                      </div>
+                      {u.avatar ? (
+                        <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                          {u.name.split(" ").map(n => n[0]).join("")}
+                        </div>
+                      )}
                       <span className="text-sm font-medium">{u.name}</span>
                     </div>
                   </td>
@@ -304,6 +330,47 @@ export default function AdminUsers() {
             <DialogDescription>{editingUser ? "Update user details, public profile and permissions" : "Create a new admin user"}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            {/* Avatar */}
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {formAvatar ? (
+                  <img src={formAvatar} alt="Avatar preview" className="w-20 h-20 rounded-full object-cover border border-border" />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary border border-border">
+                    {(formName || "?").split(" ").map(n => n[0]).filter(Boolean).slice(0, 2).join("") || "?"}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-md hover:bg-accent/90"
+                  aria-label="Upload avatar"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-foreground">Profile photo</p>
+                <p className="text-[11px] text-muted-foreground mb-2">PNG or JPG, up to 2 MB</p>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => avatarInputRef.current?.click()}>
+                    <Upload className="w-3.5 h-3.5" /> Upload
+                  </Button>
+                  {formAvatar && (
+                    <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive hover:text-destructive" onClick={() => setFormAvatar("")}>
+                      <Trash2 className="w-3.5 h-3.5" /> Remove
+                    </Button>
+                  )}
+                </div>
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => { handleAvatarFile(e.target.files?.[0]); e.target.value = ""; }}
+                />
+              </div>
+            </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Name</label>
               <Input value={formName} onChange={e => setFormName(e.target.value)} className="mt-1" placeholder="Full name" />
