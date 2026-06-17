@@ -1732,6 +1732,38 @@ export default function AdminMessages() {
           )}
         </DialogContent>
       </Dialog>
+
+      {viewerImage && (
+        <div className="fixed inset-0 z-[100] bg-black/90 flex flex-col" onClick={() => setViewerImage(null)}>
+          <div className="flex items-center justify-between p-3 bg-black/60 text-white" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center gap-2">
+              <button onClick={() => setViewerZoom(z => Math.max(0.5, z - 0.25))} className="p-2 hover:bg-white/10 rounded"><ZoomOut className="w-4 h-4" /></button>
+              <span className="text-xs w-12 text-center">{Math.round(viewerZoom * 100)}%</span>
+              <button onClick={() => setViewerZoom(z => Math.min(4, z + 0.25))} className="p-2 hover:bg-white/10 rounded"><ZoomIn className="w-4 h-4" /></button>
+              <button
+                onClick={handleExtractText}
+                disabled={ocrLoading}
+                className="ml-2 flex items-center gap-1.5 px-3 py-1.5 bg-accent text-accent-foreground rounded text-xs font-medium disabled:opacity-60"
+              >
+                {ocrLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ScanText className="w-3.5 h-3.5" />}
+                Extract Text
+              </button>
+              {ocrText && (
+                <div className="ml-2 flex items-center gap-2 px-2 py-1 bg-white/10 rounded text-xs font-mono">
+                  {ocrText}
+                  <button onClick={() => { navigator.clipboard.writeText(ocrText); toast.success("Copied"); }} className="hover:bg-white/10 p-1 rounded">
+                    <Copy className="w-3 h-3" />
+                  </button>
+                </div>
+              )}
+            </div>
+            <button onClick={() => setViewerImage(null)} className="p-2 hover:bg-white/10 rounded"><X className="w-4 h-4" /></button>
+          </div>
+          <div className="flex-1 overflow-auto flex items-center justify-center p-4" onClick={e => e.stopPropagation()}>
+            <img src={viewerImage} alt="viewer" style={{ transform: `scale(${viewerZoom})`, transition: "transform 0.15s" }} className="max-w-full max-h-full object-contain" />
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
