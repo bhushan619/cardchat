@@ -102,6 +102,7 @@ export default function CustomerMe() {
   const [walletTxFilter, setWalletTxFilter] = useState<"all" | "credit" | "withdrawal">("all");
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [pendingWithdrawals, setPendingWithdrawals] = useState<{ id: string; amount: number; bank: string; date: string; time: string }[]>([]);
+  const [selectedWithdrawal, setSelectedWithdrawal] = useState<typeof walletTransactions[number] | null>(null);
 
   // Transaction PIN state
   const [txnPin, setTxnPin] = useState<string | null>(() =>
@@ -333,26 +334,98 @@ export default function CustomerMe() {
 
             {/* Transaction List */}
             <div className="space-y-2">
-              {filteredTx.map(t => (
-                <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
-                    {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+              {filteredTx.map(t => {
+                const isWithdrawal = t.type === "withdrawal";
+                const Row = (
+                  <>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
+                      {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-xs font-medium truncate">{t.description}</p>
+                      <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                    </div>
+                    <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
+                      {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
+                    </p>
+                  </>
+                );
+                return isWithdrawal ? (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedWithdrawal(t)}
+                    className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
+                  >
+                    {Row}
+                  </button>
+                ) : (
+                  <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
+                    {Row}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{t.description}</p>
-                    <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
-                  </div>
-                  <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
-                    {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
               {filteredTx.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">No transactions</p>
               )}
             </div>
           </div>
         </div>
+
+        {/* Withdrawal Details Dialog */}
+        <Dialog open={!!selectedWithdrawal} onOpenChange={(open) => !open && setSelectedWithdrawal(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ArrowUpRight className="w-4 h-4 text-warning" />
+                Withdrawal Details
+              </DialogTitle>
+            </DialogHeader>
+            {selectedWithdrawal && (
+              <div className="space-y-4 py-2">
+                {/* Amount */}
+                <div className="text-center py-4 bg-warning/5 rounded-xl">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Amount</p>
+                  <p className="text-3xl font-bold text-warning">-₦{selectedWithdrawal.amount.toLocaleString()}</p>
+                  <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
+                    <CheckCircle className="w-3 h-3" /> Successful
+                  </span>
+                </div>
+
+                {/* Detail rows */}
+                <div className="rounded-xl border bg-card divide-y">
+                  {[
+                    { label: "Destination", value: selectedWithdrawal.description.replace(/^Withdrawal to\s*/i, "") },
+                    { label: "Date", value: selectedWithdrawal.date },
+                    { label: "Time", value: selectedWithdrawal.time },
+                    { label: "Reference ID", value: selectedWithdrawal.id, copy: true },
+                    { label: "Transaction Fee", value: "₦0.00" },
+                    { label: "Payment Method", value: "Bank Transfer" },
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between px-3 py-2.5">
+                      <p className="text-[11px] text-muted-foreground">{row.label}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-medium text-right">{row.value}</p>
+                        {row.copy && (
+                          <button
+                            onClick={() => { navigator.clipboard.writeText(row.value); toast.success("Copied"); }}
+                            className="p-1 hover:bg-muted rounded"
+                          >
+                            <Copy className="w-3 h-3 text-muted-foreground" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button variant="outline" className="w-full" onClick={() => setSelectedWithdrawal(null)}>
+                  Close
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
 
         <Dialog open={withdrawPinOpen} onOpenChange={setWithdrawPinOpen}>
           <DialogContent className="max-w-sm">
