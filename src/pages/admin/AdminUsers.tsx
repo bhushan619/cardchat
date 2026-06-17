@@ -80,6 +80,10 @@ export default function AdminUsers() {
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formRole, setFormRole] = useState<User["role"]>("agent");
+  const [formBio, setFormBio] = useState("");
+  const [formAvailability, setFormAvailability] = useState<"online" | "away" | "offline">("online");
+  const [formRating, setFormRating] = useState<string>("4.8");
+  const [formSpecialties, setFormSpecialties] = useState<string>("iTunes, Amazon, Steam, Google Play");
 
   const filtered = users.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
