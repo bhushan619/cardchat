@@ -334,20 +334,36 @@ export default function CustomerMe() {
 
             {/* Transaction List */}
             <div className="space-y-2">
-              {filteredTx.map(t => (
-                <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
-                  <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
-                    {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+              {filteredTx.map(t => {
+                const isWithdrawal = t.type === "withdrawal";
+                const Row = (
+                  <>
+                    <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
+                      {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+                    </div>
+                    <div className="flex-1 min-w-0 text-left">
+                      <p className="text-xs font-medium truncate">{t.description}</p>
+                      <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                    </div>
+                    <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
+                      {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
+                    </p>
+                  </>
+                );
+                return isWithdrawal ? (
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedWithdrawal(t)}
+                    className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
+                  >
+                    {Row}
+                  </button>
+                ) : (
+                  <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
+                    {Row}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-medium truncate">{t.description}</p>
-                    <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
-                  </div>
-                  <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
-                    {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
-                  </p>
-                </div>
-              ))}
+                );
+              })}
               {filteredTx.length === 0 && (
                 <p className="text-sm text-muted-foreground text-center py-8">No transactions</p>
               )}
