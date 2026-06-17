@@ -159,6 +159,7 @@ export default function AdminUsers() {
       availability: formAvailability,
       rating: Math.max(0, Math.min(5, parseFloat(formRating) || 0)),
       specialties: formSpecialties.split(",").map(s => s.trim()).filter(Boolean),
+      avatar: formAvatar || undefined,
     };
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id
