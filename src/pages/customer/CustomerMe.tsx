@@ -76,14 +76,17 @@ export default function CustomerMe() {
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CustomerVisibleStatus>("all");
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [editStep, setEditStep] = useState<"info" | "otp">("info");
+  const [editStep, setEditStep] = useState<"info" | "verify_current" | "verify_new" | "success">("info");
   const [editName, setEditName] = useState("John Doe");
   const [editEmail, setEditEmail] = useState("johndoe@gmail.com");
   const [editWhatsapp, setEditWhatsapp] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [savedName, setSavedName] = useState("John Doe");
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
   const [savedWhatsapp, setSavedWhatsapp] = useState("");
+
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
