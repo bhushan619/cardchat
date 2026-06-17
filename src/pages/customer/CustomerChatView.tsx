@@ -139,6 +139,22 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         )}
       </div>
 
+      {/* Image Preview Lightbox */}
+      {previewImage && (
+        <div
+          className="absolute inset-0 bg-foreground/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setPreviewImage(null)}
+        >
+          <button
+            onClick={() => setPreviewImage(null)}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/20 text-background flex items-center justify-center"
+          >
+            ✕
+          </button>
+          <img src={previewImage} alt="Card preview" className="max-w-full max-h-full rounded-lg object-contain" />
+        </div>
+      )}
+
       {/* Order Details Modal */}
       {showOrder && (
         <div className="absolute inset-0 bg-foreground/40 flex items-end z-50">
