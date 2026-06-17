@@ -117,6 +117,35 @@ export default function AdminMessages() {
     }))
   );
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const newMsg: ChatMessage = {
+        id: Date.now(), sender: "agent", senderName: "You", text: "",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        image: true, imageUrl: reader.result as string,
+      };
+      setLocalMessages(prev => [...prev, newMsg]);
+    };
+    reader.readAsDataURL(file);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  const openViewer = (url: string) => { setViewerImage(url); setViewerZoom(1); setOcrText(null); };
+  const handleExtractText = () => {
+    setOcrLoading(true);
+    setTimeout(() => {
+      const code = MOCK_OCR_CODES[Math.floor(Math.random() * MOCK_OCR_CODES.length)];
+      setOcrText(code);
+      setOcrLoading(false);
+      navigator.clipboard.writeText(code).catch(() => {});
+      toast.success("Card code extracted & copied");
+    }, 1200);
+  };
+
+
   const selectedConvo = rawConversations.find(c => c.id === selectedId);
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
