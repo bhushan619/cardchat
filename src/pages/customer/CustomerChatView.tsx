@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import itunesCardSample from "@/assets/itunes-card-sample.jpg";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
