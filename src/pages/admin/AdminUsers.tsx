@@ -118,6 +118,7 @@ export default function AdminUsers() {
     setFormAvailability("online");
     setFormRating("4.8");
     setFormSpecialties("iTunes, Amazon, Steam, Google Play");
+    setFormAvatar("");
     setModalOpen(true);
   };
 
@@ -130,6 +131,7 @@ export default function AdminUsers() {
     setFormAvailability(u.availability ?? (u.status === "active" ? "online" : "offline"));
     setFormRating(String(u.rating ?? 4.8));
     setFormSpecialties((u.specialties ?? ["iTunes", "Amazon", "Steam", "Google Play"]).join(", "));
+    setFormAvatar(u.avatar ?? "");
     setModalOpen(true);
   };
 
