@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Smile, FileText as FileTextIcon } from "lucide-react";
+import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Smile, FileText as FileTextIcon, Paperclip, ZoomIn, ZoomOut, ScanText, Copy, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -17,8 +18,16 @@ type ChatMessage = {
   text: string;
   time: string;
   image?: boolean;
+  imageUrl?: string;
   isOrder?: boolean;
 };
+
+// Mock OCR — simulates extracting card codes from an image
+const MOCK_OCR_CODES = [
+  "XJVK-2P9M-4QHR-7TLB",
+  "X7N3-9LMK-2WQV-8CHP",
+  "AAPL-4827-9QXR-1NMV",
+];
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
@@ -40,6 +49,8 @@ export default function AdminChatView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { role } = useAdminRole();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [showWizard, setShowWizard] = useState(false);
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
@@ -49,6 +60,12 @@ export default function AdminChatView() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
+
+  // Image viewer state
+  const [viewerImage, setViewerImage] = useState<string | null>(null);
+  const [viewerZoom, setViewerZoom] = useState(1);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrText, setOcrText] = useState<string | null>(null);
 
   // Payment flow state
   const [paymentMode, setPaymentMode] = useState(false);
@@ -64,6 +81,60 @@ export default function AdminChatView() {
 
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
+
+  const handleSendText = () => {
+    if (!message.trim()) return;
+    setLocalMessages(prev => [...prev, {
+      id: Date.now(),
+      sender: "agent",
+      senderName: "You",
+      text: message.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    }]);
+    setMessage("");
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const url = ev.target?.result as string;
+      setLocalMessages(prev => [...prev, {
+        id: Date.now(),
+        sender: "agent",
+        senderName: "You",
+        text: "",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        image: true,
+        imageUrl: url,
+      }]);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const openViewer = (url?: string) => {
+    setViewerImage(url || "/placeholder.svg");
+    setViewerZoom(1);
+    setOcrText(null);
+  };
+
+  const handleExtractText = () => {
+    setOcrLoading(true);
+    setOcrText(null);
+    setTimeout(() => {
+      const code = MOCK_OCR_CODES[Math.floor(Math.random() * MOCK_OCR_CODES.length)];
+      setOcrText(code);
+      setOcrLoading(false);
+    }, 1200);
+  };
+
+  const copyOcr = () => {
+    if (!ocrText) return;
+    navigator.clipboard.writeText(ocrText);
+    toast({ title: "Copied", description: "Card code copied to clipboard" });
+  };
 
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
@@ -361,10 +432,23 @@ export default function AdminChatView() {
                       </p>
                     )}
                     {msg.image ? (
-                      <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                        <Image className="w-6 h-6 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openViewer(msg.imageUrl)}
+                        className="block group relative overflow-hidden rounded-lg"
+                      >
+                        {msg.imageUrl ? (
+                          <img src={msg.imageUrl} alt="Sent" className="w-48 h-32 object-cover" />
+                        ) : (
+                          <div className="w-48 h-32 bg-muted flex items-center justify-center">
+                            <Image className="w-6 h-6 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground ml-1">Card Image</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors flex items-center justify-center">
+                          <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
+                        </div>
+                      </button>
                     ) : <p>{msg.text}</p>}
                     <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                   </div>
@@ -389,13 +473,32 @@ export default function AdminChatView() {
               </button>
             </div>
             <div className="flex items-center gap-2 px-4 pb-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                title="Attach image"
+              >
+                <Paperclip className="w-4 h-4" />
+              </button>
               <Input
                 value={message}
                 onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleSendText()}
                 placeholder="Type a message..."
                 className="flex-1 border-0 bg-muted"
               />
-              <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+              <button
+                onClick={handleSendText}
+                className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
+              >
                 <Send className="w-4 h-4 text-accent-foreground" />
               </button>
             </div>
@@ -620,6 +723,64 @@ export default function AdminChatView() {
           customerAlias="A7X3KP"
         />
       </div>
+
+      {/* Image viewer with zoom + OCR */}
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-50 bg-foreground/80 flex items-center justify-center p-6"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full max-h-[90vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Toolbar */}
+            <div className="flex items-center justify-between gap-2 mb-3 bg-card rounded-lg px-3 py-2 shadow">
+              <div className="flex items-center gap-1">
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerZoom(z => Math.max(0.5, z - 0.25))}>
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+                <span className="text-xs font-medium tabular-nums w-12 text-center">{Math.round(viewerZoom * 100)}%</span>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerZoom(z => Math.min(4, z + 0.25))}>
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" className="h-7 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleExtractText} disabled={ocrLoading}>
+                  {ocrLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ScanText className="w-3.5 h-3.5" />}
+                  {ocrLoading ? "Extracting..." : "Extract Text"}
+                </Button>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerImage(null)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="flex-1 overflow-auto bg-muted/30 rounded-lg flex items-center justify-center min-h-[300px]">
+              <img
+                src={viewerImage}
+                alt="Preview"
+                style={{ transform: `scale(${viewerZoom})`, transformOrigin: "center" }}
+                className="max-w-full max-h-[70vh] transition-transform"
+              />
+            </div>
+
+            {/* OCR result */}
+            {ocrText && (
+              <div className="mt-3 bg-card border rounded-lg p-3 animate-slide-up">
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Extracted Code</p>
+                  <Button size="sm" variant="ghost" className="h-6 px-2 text-xs gap-1" onClick={copyOcr}>
+                    <Copy className="w-3 h-3" /> Copy
+                  </Button>
+                </div>
+                <p className="font-mono text-sm font-semibold tracking-wide select-all">{ocrText}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
