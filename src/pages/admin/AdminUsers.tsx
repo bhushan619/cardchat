@@ -330,6 +330,47 @@ export default function AdminUsers() {
             <DialogDescription>{editingUser ? "Update user details, public profile and permissions" : "Create a new admin user"}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
+            {/* Avatar */}
+            <div className="flex items-center gap-4">
+              <div className="relative">
+                {formAvatar ? (
+                  <img src={formAvatar} alt="Avatar preview" className="w-20 h-20 rounded-full object-cover border border-border" />
+                ) : (
+                  <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-xl font-bold text-primary border border-border">
+                    {(formName || "?").split(" ").map(n => n[0]).filter(Boolean).slice(0, 2).join("") || "?"}
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => avatarInputRef.current?.click()}
+                  className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-md hover:bg-accent/90"
+                  aria-label="Upload avatar"
+                >
+                  <Camera className="w-3.5 h-3.5" />
+                </button>
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-medium text-foreground">Profile photo</p>
+                <p className="text-[11px] text-muted-foreground mb-2">PNG or JPG, up to 2 MB</p>
+                <div className="flex gap-2">
+                  <Button type="button" size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => avatarInputRef.current?.click()}>
+                    <Upload className="w-3.5 h-3.5" /> Upload
+                  </Button>
+                  {formAvatar && (
+                    <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive hover:text-destructive" onClick={() => setFormAvatar("")}>
+                      <Trash2 className="w-3.5 h-3.5" /> Remove
+                    </Button>
+                  )}
+                </div>
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => { handleAvatarFile(e.target.files?.[0]); e.target.value = ""; }}
+                />
+              </div>
+            </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Name</label>
               <Input value={formName} onChange={e => setFormName(e.target.value)} className="mt-1" placeholder="Full name" />
