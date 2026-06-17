@@ -260,9 +260,13 @@ export default function AdminUsers() {
                 <tr key={u.id} className="border-b last:border-0 hover:bg-muted/30">
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                        {u.name.split(" ").map(n => n[0]).join("")}
-                      </div>
+                      {u.avatar ? (
+                        <img src={u.avatar} alt={u.name} className="w-8 h-8 rounded-full object-cover" />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                          {u.name.split(" ").map(n => n[0]).join("")}
+                        </div>
+                      )}
                       <span className="text-sm font-medium">{u.name}</span>
                     </div>
                   </td>
