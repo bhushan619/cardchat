@@ -723,6 +723,64 @@ export default function AdminChatView() {
           customerAlias="A7X3KP"
         />
       </div>
+
+      {/* Image viewer with zoom + OCR */}
+      {viewerImage && (
+        <div
+          className="fixed inset-0 z-50 bg-foreground/80 flex items-center justify-center p-6"
+          onClick={() => setViewerImage(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full max-h-[90vh] flex flex-col"
+            onClick={e => e.stopPropagation()}
+          >
+            {/* Toolbar */}
+            <div className="flex items-center justify-between gap-2 mb-3 bg-card rounded-lg px-3 py-2 shadow">
+              <div className="flex items-center gap-1">
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerZoom(z => Math.max(0.5, z - 0.25))}>
+                  <ZoomOut className="w-4 h-4" />
+                </Button>
+                <span className="text-xs font-medium tabular-nums w-12 text-center">{Math.round(viewerZoom * 100)}%</span>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerZoom(z => Math.min(4, z + 0.25))}>
+                  <ZoomIn className="w-4 h-4" />
+                </Button>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button size="sm" className="h-7 text-xs gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleExtractText} disabled={ocrLoading}>
+                  {ocrLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <ScanText className="w-3.5 h-3.5" />}
+                  {ocrLoading ? "Extracting..." : "Extract Text"}
+                </Button>
+                <Button size="sm" variant="ghost" className="h-7 w-7 p-0" onClick={() => setViewerImage(null)}>
+                  <X className="w-4 h-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Image */}
+            <div className="flex-1 overflow-auto bg-muted/30 rounded-lg flex items-center justify-center min-h-[300px]">
+              <img
+                src={viewerImage}
+                alt="Preview"
+                style={{ transform: `scale(${viewerZoom})`, transformOrigin: "center" }}
+                className="max-w-full max-h-[70vh] transition-transform"
+              />
+            </div>
+
+            {/* OCR result */}
+            {ocrText && (
+              <div className="mt-3 bg-card border rounded-lg p-3 animate-slide-up">
+                <div className="flex items-center justify-between mb-1.5">
+                  <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">Extracted Code</p>
+                  <Button size="sm" variant="ghost" className="h-6 px-2 text-xs gap-1" onClick={copyOcr}>
+                    <Copy className="w-3 h-3" /> Copy
+                  </Button>
+                </div>
+                <p className="font-mono text-sm font-semibold tracking-wide select-all">{ocrText}</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </AdminLayout>
   );
 }
