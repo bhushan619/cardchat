@@ -150,26 +150,65 @@ export default function CustomerMe() {
     handleWithdraw();
   };
 
+  const startResendCooldown = () => {
+    setResendCooldown(30);
+    const iv = setInterval(() => {
+      setResendCooldown(s => {
+        if (s <= 1) { clearInterval(iv); return 0; }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
-      setEditStep("otp");
+      // Email changed → verify current email first, then new email
+      setOtp("");
+      setOtpError("");
+      setEditStep("verify_current");
+      startResendCooldown();
+      toast.info(`Verification code sent to ${savedEmail}`, { description: "Demo code: 1234" });
     } else {
       setSavedName(editName);
       setSavedWhatsapp(editWhatsapp);
       setShowEditProfile(false);
+      toast.success("Profile updated");
     }
   };
 
   const handleOtpVerify = () => {
-    if (otp.length === 4) {
+    if (otp.length !== 4) return;
+    // Mock: accept "1234" (or any 4 digits — keep lenient demo)
+    if (otp !== "1234" && otp.length === 4) {
+      // accept anything 4 digits for demo, but show error path if 0000
+      if (otp === "0000") { setOtpError("Invalid or expired code"); return; }
+    }
+    setOtpError("");
+    if (editStep === "verify_current") {
+      // Now verify new email
+      setOtp("");
+      setEditStep("verify_new");
+      startResendCooldown();
+      toast.info(`Verification code sent to ${editEmail}`, { description: "Demo code: 1234" });
+      return;
+    }
+    if (editStep === "verify_new") {
       setSavedName(editName);
       setSavedEmail(editEmail);
       setSavedWhatsapp(editWhatsapp);
-      setShowEditProfile(false);
-      setEditStep("info");
+      setEditStep("success");
       setOtp("");
+      return;
     }
   };
+
+  const handleResendOtp = () => {
+    if (resendCooldown > 0) return;
+    const target = editStep === "verify_current" ? savedEmail : editEmail;
+    startResendCooldown();
+    toast.info(`New code sent to ${target}`, { description: "Demo code: 1234" });
+  };
+
 
   const handleWithdraw = () => {
     if (withdrawAmount && withdrawBank) {
