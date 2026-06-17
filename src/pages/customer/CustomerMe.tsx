@@ -337,6 +337,7 @@ export default function CustomerMe() {
             <div className="space-y-2">
               {filteredTx.map(t => {
                 const isWithdrawal = t.type === "withdrawal";
+                const isCredit = t.type === "credit";
                 const Row = (
                   <>
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
@@ -351,15 +352,29 @@ export default function CustomerMe() {
                     </p>
                   </>
                 );
-                return isWithdrawal ? (
-                  <button
-                    key={t.id}
-                    onClick={() => setSelectedWithdrawal(t)}
-                    className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
-                  >
-                    {Row}
-                  </button>
-                ) : (
+                if (isWithdrawal) {
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setSelectedWithdrawal(t)}
+                      className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
+                    >
+                      {Row}
+                    </button>
+                  );
+                }
+                if (isCredit) {
+                  return (
+                    <button
+                      key={t.id}
+                      onClick={() => setSelectedCreditTx(t)}
+                      className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
+                    >
+                      {Row}
+                    </button>
+                  );
+                }
+                return (
                   <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
                     {Row}
                   </div>
