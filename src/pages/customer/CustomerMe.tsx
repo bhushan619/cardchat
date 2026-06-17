@@ -363,21 +363,14 @@ export default function CustomerMe() {
                     </button>
                   );
                 }
-                if (isCredit) {
-                  return (
-                    <button
-                      key={t.id}
-                      onClick={() => setSelectedCreditTx(t)}
-                      className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
-                    >
-                      {Row}
-                    </button>
-                  );
-                }
                 return (
-                  <div key={t.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
+                  <button
+                    key={t.id}
+                    onClick={() => setSelectedCreditTx(t)}
+                    className="w-full flex items-center gap-3 p-3 bg-card border rounded-xl hover:bg-muted/40 transition-colors"
+                  >
                     {Row}
-                  </div>
+                  </button>
                 );
               })}
               {filteredTx.length === 0 && (
