@@ -64,6 +64,11 @@ export default function AdminMessages() {
 
   // Chat state
   const [message, setMessage] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [viewerImage, setViewerImage] = useState<string | null>(null);
+  const [viewerZoom, setViewerZoom] = useState(1);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrText, setOcrText] = useState<string | null>(null);
   const [rightTab, setRightTab] = useState<string>("orders");
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>(() => {
     try {
