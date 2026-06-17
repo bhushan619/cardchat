@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ArrowLeft, Send, Image as ImageIcon, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import itunesCardSample from "@/assets/itunes-card-sample.jpg";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -28,6 +29,7 @@ const TIMELINE_STEPS: { event: string; time: string }[] = [
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<CustomerVisibleStatus>("success");
 
   const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
@@ -98,10 +100,20 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             <div key={msg.id} className={msg.sender === "customer" ? "flex justify-end" : "flex justify-start"}>
               <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
                 {msg.image ? (
-                  <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(itunesCardSample)}
+                    className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                  >
+                    <img
+                      src={itunesCardSample}
+                      alt="Customer-sent gift card"
+                      loading="lazy"
+                      width={1024}
+                      height={1024}
+                      className="w-56 h-40 object-cover"
+                    />
+                  </button>
                 ) : (
                   <p>{msg.text}</p>
                 )}
@@ -126,6 +138,22 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           </div>
         )}
       </div>
+
+      {/* Image Preview Lightbox */}
+      {previewImage && (
+        <div
+          className="absolute inset-0 bg-foreground/80 flex items-center justify-center z-50 p-4"
+          onClick={() => setPreviewImage(null)}
+        >
+          <button
+            onClick={() => setPreviewImage(null)}
+            className="absolute top-4 right-4 w-8 h-8 rounded-full bg-background/20 text-background flex items-center justify-center"
+          >
+            ✕
+          </button>
+          <img src={previewImage} alt="Card preview" className="max-w-full max-h-full rounded-lg object-contain" />
+        </div>
+      )}
 
       {/* Order Details Modal */}
       {showOrder && (
