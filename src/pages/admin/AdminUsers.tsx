@@ -22,6 +22,10 @@ type User = {
   role: "super_admin" | "team_lead" | "agent" | "finance";
   status: "active" | "offline" | "suspended";
   lastLogin: string;
+  bio?: string;
+  availability?: "online" | "away" | "offline";
+  rating?: number;
+  specialties?: string[];
 };
 
 const roleLabels: Record<string, { label: string; color: string }> = {
