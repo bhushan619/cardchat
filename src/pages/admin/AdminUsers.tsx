@@ -86,6 +86,23 @@ export default function AdminUsers() {
   const [formAvailability, setFormAvailability] = useState<"online" | "away" | "offline">("online");
   const [formRating, setFormRating] = useState<string>("4.8");
   const [formSpecialties, setFormSpecialties] = useState<string>("iTunes, Amazon, Steam, Google Play");
+  const [formAvatar, setFormAvatar] = useState<string>("");
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAvatarFile = (file: File | undefined) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be under 2 MB");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setFormAvatar(reader.result as string);
+    reader.readAsDataURL(file);
+  };
 
   const filtered = users.filter(u =>
     u.name.toLowerCase().includes(search.toLowerCase()) ||
