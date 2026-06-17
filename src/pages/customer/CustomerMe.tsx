@@ -396,12 +396,43 @@ export default function CustomerMe() {
     );
   }
 
+  const NIGERIAN_BANKS = [
+    "Access Bank",
+    "Citibank Nigeria",
+    "Ecobank Nigeria",
+    "Fidelity Bank",
+    "First Bank of Nigeria",
+    "First City Monument Bank (FCMB)",
+    "Globus Bank",
+    "Guaranty Trust Bank (GTBank)",
+    "Heritage Bank",
+    "Jaiz Bank",
+    "Keystone Bank",
+    "Kuda Bank",
+    "Moniepoint",
+    "Opay",
+    "Palmpay",
+    "Polaris Bank",
+    "Premium Trust Bank",
+    "Providus Bank",
+    "Stanbic IBTC Bank",
+    "Standard Chartered Bank",
+    "Sterling Bank",
+    "SunTrust Bank",
+    "Titan Trust Bank",
+    "Union Bank of Nigeria",
+    "United Bank for Africa (UBA)",
+    "Unity Bank",
+    "Wema Bank",
+    "Zenith Bank",
+  ];
+
   // ── Bank Accounts ──
   if (activeSection === "bank") {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
-          <button onClick={() => { setActiveSection(null); setShowAddBank(false); }} className="text-sm text-accent">← Back</button>
+          <button onClick={() => { setActiveSection(null); setShowAddBank(false); setNewBankName(""); setNewAccountNumber(""); }} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">Add Bank Accounts</h2>
         </header>
         <div className="flex-1 overflow-y-auto p-4 space-y-3">
@@ -427,19 +458,35 @@ export default function CustomerMe() {
               <h3 className="text-sm font-semibold">Add Bank Account</h3>
               <div>
                 <label className="text-xs text-muted-foreground">Bank Name</label>
-                <Input placeholder="Select bank" className="mt-1" />
+                <Select value={newBankName} onValueChange={setNewBankName}>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select bank" />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-60">
+                    {NIGERIAN_BANKS.map(bank => (
+                      <SelectItem key={bank} value={bank}>{bank}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
               <div>
                 <label className="text-xs text-muted-foreground">Account Number</label>
-                <Input placeholder="Enter 10-digit account number" className="mt-1" />
+                <Input
+                  placeholder="Enter 10-digit account number"
+                  maxLength={10}
+                  inputMode="numeric"
+                  value={newAccountNumber}
+                  onChange={e => setNewAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 10))}
+                  className="mt-1"
+                />
               </div>
               <div className="bg-accent/5 border border-accent/20 rounded-lg p-3">
                 <p className="text-xs text-accent font-medium">✓ Verified: JOHN ADEBAYO</p>
                 <p className="text-[10px] text-muted-foreground mt-1">Name returned by bank verification API</p>
               </div>
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={() => setShowAddBank(false)}>Cancel</Button>
-                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90">Confirm & Save</Button>
+                <Button size="sm" variant="outline" onClick={() => { setShowAddBank(false); setNewBankName(""); setNewAccountNumber(""); }}>Cancel</Button>
+                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" disabled={!newBankName || newAccountNumber.length !== 10}>Confirm & Save</Button>
               </div>
             </div>
           ) : (
