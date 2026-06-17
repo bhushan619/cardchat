@@ -1,11 +1,12 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations as rawConversations, chatMessages, orders, adminUsers, customerWallets, walletTransactions, type FundAdjustment } from "@/data/mock";
 import {
   MessageCircle, Star, Send, Image, MoreVertical, Users, Search,
   CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff,
   AlertTriangle, UserCheck, Smile, FileText as FileTextIcon, Info,
-  CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet, Lock
+  CreditCard, Copy, ExternalLink, PlusCircle, MinusCircle, Wallet, Lock,
+  Paperclip, ZoomIn, ZoomOut, ScanText, Loader2
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
