@@ -298,10 +298,10 @@ export default function AdminUsers() {
 
       {/* Create/Edit Modal */}
       <Dialog open={modalOpen} onOpenChange={setModalOpen}>
-        <DialogContent className="sm:max-w-md">
+        <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editingUser ? "Edit User" : "Add User"}</DialogTitle>
-            <DialogDescription>{editingUser ? "Update user details and permissions" : "Create a new admin user"}</DialogDescription>
+            <DialogDescription>{editingUser ? "Update user details, public profile and permissions" : "Create a new admin user"}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div>
@@ -326,7 +326,70 @@ export default function AdminUsers() {
                 </SelectContent>
               </Select>
             </div>
-            <div>
+
+            {/* Public profile (visible to customers on agent profile page) */}
+            <div className="pt-3 mt-3 border-t border-border">
+              <p className="text-xs font-semibold text-foreground mb-2">Public Profile (shown to customers)</p>
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">About / Bio</label>
+                  <textarea
+                    value={formBio}
+                    onChange={e => setFormBio(e.target.value)}
+                    rows={3}
+                    className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                    placeholder="Short bio shown on the agent's public profile"
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Availability</label>
+                    <Select value={formAvailability} onValueChange={v => setFormAvailability(v as "online" | "away" | "offline")}>
+                      <SelectTrigger className="mt-1">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="online">Online</SelectItem>
+                        <SelectItem value="away">Away</SelectItem>
+                        <SelectItem value="offline">Offline</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-medium text-muted-foreground">Rating (0–5)</label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      min="0"
+                      max="5"
+                      value={formRating}
+                      onChange={e => setFormRating(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Specialties (comma-separated)</label>
+                  <Input
+                    value={formSpecialties}
+                    onChange={e => setFormSpecialties(e.target.value)}
+                    className="mt-1"
+                    placeholder="iTunes, Amazon, Steam, Google Play"
+                  />
+                  {formSpecialties.trim() && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {formSpecialties.split(",").map(s => s.trim()).filter(Boolean).map(tag => (
+                        <span key={tag} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 mt-3 border-t border-border">
               <label className="text-xs font-medium text-muted-foreground">Permissions</label>
               <div className="mt-1.5 space-y-1.5">
                 {PERMISSIONS[formRole]?.map(perm => (
