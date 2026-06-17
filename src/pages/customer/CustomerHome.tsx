@@ -197,7 +197,7 @@ export default function CustomerHome() {
               </div>
 
               <div>
-                <label className="text-xs text-muted-foreground font-medium">Denomination ($)</label>
+                <label className="text-xs text-muted-foreground font-medium">Denomination</label>
                 <Select value={calcDenom} onValueChange={setCalcDenom}>
                   <SelectTrigger className="mt-1"><SelectValue placeholder="Select denomination" /></SelectTrigger>
                   <SelectContent>
