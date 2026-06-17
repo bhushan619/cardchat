@@ -103,6 +103,7 @@ export default function CustomerMe() {
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [pendingWithdrawals, setPendingWithdrawals] = useState<{ id: string; amount: number; bank: string; date: string; time: string }[]>([]);
   const [selectedWithdrawal, setSelectedWithdrawal] = useState<typeof walletTransactions[number] | null>(null);
+  const [selectedCreditTx, setSelectedCreditTx] = useState<typeof walletTransactions[number] | null>(null);
 
   // Transaction PIN state
   const [txnPin, setTxnPin] = useState<string | null>(() =>
