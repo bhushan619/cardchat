@@ -99,10 +99,20 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             <div key={msg.id} className={msg.sender === "customer" ? "flex justify-end" : "flex justify-start"}>
               <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
                 {msg.image ? (
-                  <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewImage(itunesCardSample)}
+                    className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                  >
+                    <img
+                      src={itunesCardSample}
+                      alt="Customer-sent gift card"
+                      loading="lazy"
+                      width={1024}
+                      height={1024}
+                      className="w-56 h-40 object-cover"
+                    />
+                  </button>
                 ) : (
                   <p>{msg.text}</p>
                 )}
