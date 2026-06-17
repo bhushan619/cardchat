@@ -71,6 +71,8 @@ function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: s
 export default function CustomerMe() {
   const [activeSection, setActiveSection] = useState<string | null>(null);
   const [showAddBank, setShowAddBank] = useState(false);
+  const [newBankName, setNewBankName] = useState("");
+  const [newAccountNumber, setNewAccountNumber] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CustomerVisibleStatus>("all");
   const [showEditProfile, setShowEditProfile] = useState(false);
