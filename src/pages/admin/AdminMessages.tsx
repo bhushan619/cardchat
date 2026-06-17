@@ -956,6 +956,21 @@ export default function AdminMessages() {
                   />
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-1">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="w-8 h-8 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                        title="Attach image"
+                      >
+                        <Paperclip className="w-4 h-4" />
+                      </button>
                       <Popover>
                         <PopoverTrigger asChild>
                           <button
