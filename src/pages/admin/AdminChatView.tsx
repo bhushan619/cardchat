@@ -473,13 +473,32 @@ export default function AdminChatView() {
               </button>
             </div>
             <div className="flex items-center gap-2 px-4 pb-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                className="w-9 h-9 rounded-full bg-muted hover:bg-muted/80 flex items-center justify-center shrink-0 text-muted-foreground hover:text-foreground transition-colors"
+                title="Attach image"
+              >
+                <Paperclip className="w-4 h-4" />
+              </button>
               <Input
                 value={message}
                 onChange={e => setMessage(e.target.value)}
+                onKeyDown={e => e.key === "Enter" && handleSendText()}
                 placeholder="Type a message..."
                 className="flex-1 border-0 bg-muted"
               />
-              <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+              <button
+                onClick={handleSendText}
+                className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0"
+              >
                 <Send className="w-4 h-4 text-accent-foreground" />
               </button>
             </div>
