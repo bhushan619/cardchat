@@ -29,6 +29,7 @@ const TIMELINE_STEPS: { event: string; time: string }[] = [
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [orderStatus, setOrderStatus] = useState<CustomerVisibleStatus>("success");
 
   const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
