@@ -95,6 +95,10 @@ export default function AdminUsers() {
     setFormName("");
     setFormEmail("");
     setFormRole("agent");
+    setFormBio("");
+    setFormAvailability("online");
+    setFormRating("4.8");
+    setFormSpecialties("iTunes, Amazon, Steam, Google Play");
     setModalOpen(true);
   };
 
@@ -103,6 +107,10 @@ export default function AdminUsers() {
     setFormName(u.name);
     setFormEmail(u.email);
     setFormRole(u.role);
+    setFormBio(u.bio ?? `Hi, I'm ${u.name}. I'm here to help you with your gift card trades.`);
+    setFormAvailability(u.availability ?? (u.status === "active" ? "online" : "offline"));
+    setFormRating(String(u.rating ?? 4.8));
+    setFormSpecialties((u.specialties ?? ["iTunes", "Amazon", "Steam", "Google Play"]).join(", "));
     setModalOpen(true);
   };
 
@@ -125,9 +133,18 @@ export default function AdminUsers() {
   };
 
   const handleSave = () => {
+    const profileFields = {
+      bio: formBio.trim(),
+      availability: formAvailability,
+      rating: Math.max(0, Math.min(5, parseFloat(formRating) || 0)),
+      specialties: formSpecialties.split(",").map(s => s.trim()).filter(Boolean),
+    };
     if (editingUser) {
-      setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, name: formName, email: formEmail, role: formRole } : u));
+      setUsers(prev => prev.map(u => u.id === editingUser.id
+        ? { ...u, name: formName, email: formEmail, role: formRole, ...profileFields }
+        : u));
       setModalOpen(false);
+      toast.success("User updated");
     } else {
       const newUser: User = {
         id: Date.now(),
@@ -136,6 +153,7 @@ export default function AdminUsers() {
         role: formRole,
         status: "active",
         lastLogin: "Pending password setup",
+        ...profileFields,
       };
       setUsers(prev => [...prev, newUser]);
       setModalOpen(false);
