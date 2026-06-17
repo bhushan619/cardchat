@@ -908,10 +908,22 @@ export default function AdminMessages() {
                           {msg.senderName}
                         </p>
                         {msg.image ? (
-                          <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                            <Image className="w-6 h-6 text-muted-foreground" />
-                            <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                          </div>
+                          msg.imageUrl ? (
+                            <button
+                              onClick={() => openViewer(msg.imageUrl!)}
+                              className="group relative block rounded-lg overflow-hidden"
+                            >
+                              <img src={msg.imageUrl} alt="attachment" className="max-w-[12rem] max-h-40 object-cover" />
+                              <span className="absolute inset-0 bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-colors">
+                                <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
+                              </span>
+                            </button>
+                          ) : (
+                            <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
+                              <Image className="w-6 h-6 text-muted-foreground" />
+                              <span className="text-xs text-muted-foreground ml-1">Card Image</span>
+                            </div>
+                          )
                         ) : <p>{msg.text}</p>}
                         <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                       </div>
