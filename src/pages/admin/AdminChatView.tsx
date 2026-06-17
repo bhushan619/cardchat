@@ -49,6 +49,8 @@ export default function AdminChatView() {
   const navigate = useNavigate();
   const { id } = useParams();
   const { role } = useAdminRole();
+  const { toast } = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [message, setMessage] = useState("");
   const [showWizard, setShowWizard] = useState(false);
   const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>([]);
@@ -58,6 +60,12 @@ export default function AdminChatView() {
   const [showIdentity, setShowIdentity] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
+
+  // Image viewer state
+  const [viewerImage, setViewerImage] = useState<string | null>(null);
+  const [viewerZoom, setViewerZoom] = useState(1);
+  const [ocrLoading, setOcrLoading] = useState(false);
+  const [ocrText, setOcrText] = useState<string | null>(null);
 
   // Payment flow state
   const [paymentMode, setPaymentMode] = useState(false);
