@@ -1246,9 +1246,10 @@ export default function CustomerMe() {
                     <Input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value)} className="mt-1" />
                     {editEmail !== savedEmail && (
                       <p className="text-[10px] text-warning mt-1 flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3" /> Email change requires OTP verification
+                        <ShieldCheck className="w-3 h-3" /> Requires verification of both current and new email
                       </p>
                     )}
+
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground font-medium">WhatsApp number</label>
