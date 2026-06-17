@@ -49,8 +49,11 @@ type ChatMessage = {
   text: string;
   time: string;
   image?: boolean;
+  imageUrl?: string;
   isOrder?: boolean;
 };
+
+const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
 
 export default function AdminMessages() {
   const { role } = useAdminRole();
