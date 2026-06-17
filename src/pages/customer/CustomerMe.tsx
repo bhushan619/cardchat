@@ -371,6 +371,62 @@ export default function CustomerMe() {
           </div>
         </div>
 
+        {/* Withdrawal Details Dialog */}
+        <Dialog open={!!selectedWithdrawal} onOpenChange={(open) => !open && setSelectedWithdrawal(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ArrowUpRight className="w-4 h-4 text-warning" />
+                Withdrawal Details
+              </DialogTitle>
+            </DialogHeader>
+            {selectedWithdrawal && (
+              <div className="space-y-4 py-2">
+                {/* Amount */}
+                <div className="text-center py-4 bg-warning/5 rounded-xl">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Amount</p>
+                  <p className="text-3xl font-bold text-warning">-₦{selectedWithdrawal.amount.toLocaleString()}</p>
+                  <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
+                    <CheckCircle className="w-3 h-3" /> Successful
+                  </span>
+                </div>
+
+                {/* Detail rows */}
+                <div className="rounded-xl border bg-card divide-y">
+                  {[
+                    { label: "Destination", value: selectedWithdrawal.description.replace(/^Withdrawal to\s*/i, "") },
+                    { label: "Date", value: selectedWithdrawal.date },
+                    { label: "Time", value: selectedWithdrawal.time },
+                    { label: "Reference ID", value: selectedWithdrawal.id, copy: true },
+                    { label: "Transaction Fee", value: "₦0.00" },
+                    { label: "Payment Method", value: "Bank Transfer" },
+                  ].map(row => (
+                    <div key={row.label} className="flex items-center justify-between px-3 py-2.5">
+                      <p className="text-[11px] text-muted-foreground">{row.label}</p>
+                      <div className="flex items-center gap-1.5">
+                        <p className="text-xs font-medium text-right">{row.value}</p>
+                        {row.copy && (
+                          <button
+                            onClick={() => { navigator.clipboard.writeText(row.value); toast.success("Copied"); }}
+                            className="p-1 hover:bg-muted rounded"
+                          >
+                            <Copy className="w-3 h-3 text-muted-foreground" />
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                <Button variant="outline" className="w-full" onClick={() => setSelectedWithdrawal(null)}>
+                  Close
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+
         <Dialog open={withdrawPinOpen} onOpenChange={setWithdrawPinOpen}>
           <DialogContent className="max-w-sm">
             <DialogHeader>
