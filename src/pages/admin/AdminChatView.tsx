@@ -432,10 +432,23 @@ export default function AdminChatView() {
                       </p>
                     )}
                     {msg.image ? (
-                      <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                        <Image className="w-6 h-6 text-muted-foreground" />
-                        <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => openViewer(msg.imageUrl)}
+                        className="block group relative overflow-hidden rounded-lg"
+                      >
+                        {msg.imageUrl ? (
+                          <img src={msg.imageUrl} alt="Sent" className="w-48 h-32 object-cover" />
+                        ) : (
+                          <div className="w-48 h-32 bg-muted flex items-center justify-center">
+                            <Image className="w-6 h-6 text-muted-foreground" />
+                            <span className="text-xs text-muted-foreground ml-1">Card Image</span>
+                          </div>
+                        )}
+                        <div className="absolute inset-0 bg-foreground/0 group-hover:bg-foreground/30 transition-colors flex items-center justify-center">
+                          <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
+                        </div>
+                      </button>
                     ) : <p>{msg.text}</p>}
                     <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                   </div>
