@@ -27,6 +27,7 @@ type User = {
   availability?: "online" | "away" | "offline";
   rating?: number;
   specialties?: string[];
+  avatar?: string;
 };
 
 const roleLabels: Record<string, { label: string; color: string }> = {
