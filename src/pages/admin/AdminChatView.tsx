@@ -82,6 +82,60 @@ export default function AdminChatView() {
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
 
+  const handleSendText = () => {
+    if (!message.trim()) return;
+    setLocalMessages(prev => [...prev, {
+      id: Date.now(),
+      sender: "agent",
+      senderName: "You",
+      text: message.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    }]);
+    setMessage("");
+  };
+
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const url = ev.target?.result as string;
+      setLocalMessages(prev => [...prev, {
+        id: Date.now(),
+        sender: "agent",
+        senderName: "You",
+        text: "",
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        image: true,
+        imageUrl: url,
+      }]);
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  const openViewer = (url?: string) => {
+    setViewerImage(url || "/placeholder.svg");
+    setViewerZoom(1);
+    setOcrText(null);
+  };
+
+  const handleExtractText = () => {
+    setOcrLoading(true);
+    setOcrText(null);
+    setTimeout(() => {
+      const code = MOCK_OCR_CODES[Math.floor(Math.random() * MOCK_OCR_CODES.length)];
+      setOcrText(code);
+      setOcrLoading(false);
+    }, 1200);
+  };
+
+  const copyOcr = () => {
+    if (!ocrText) return;
+    navigator.clipboard.writeText(ocrText);
+    toast({ title: "Copied", description: "Card code copied to clipboard" });
+  };
+
   const handleOrderComplete = (order: CompletedOrder) => {
     setCompletedOrders(prev => [order, ...prev]);
 
