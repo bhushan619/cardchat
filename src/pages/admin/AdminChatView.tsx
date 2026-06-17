@@ -18,8 +18,16 @@ type ChatMessage = {
   text: string;
   time: string;
   image?: boolean;
+  imageUrl?: string;
   isOrder?: boolean;
 };
+
+// Mock OCR — simulates extracting card codes from an image
+const MOCK_OCR_CODES = [
+  "XJVK-2P9M-4QHR-7TLB",
+  "X7N3-9LMK-2WQV-8CHP",
+  "AAPL-4827-9QXR-1NMV",
+];
 
 const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; icon: typeof Clock }> = {
   processing: { label: "Processing", color: "text-warning", bg: "bg-warning/10", icon: Clock },
