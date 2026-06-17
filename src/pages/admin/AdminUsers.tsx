@@ -1,7 +1,8 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
-import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send } from "lucide-react";
+import { useRef } from "react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
