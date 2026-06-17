@@ -435,6 +435,74 @@ export default function CustomerMe() {
           </DialogContent>
         </Dialog>
 
+        {/* Order / Credit Details Dialog */}
+        <Dialog open={!!selectedCreditTx} onOpenChange={(open) => !open && setSelectedCreditTx(null)}>
+          <DialogContent className="max-w-sm">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <ArrowDownLeft className="w-4 h-4 text-success" />
+                Order Details
+              </DialogTitle>
+            </DialogHeader>
+            {selectedCreditTx && (
+              <div className="space-y-4 py-2">
+                {/* Amount */}
+                <div className="text-center py-4 bg-success/5 rounded-xl">
+                  <p className="text-[10px] uppercase tracking-wider text-muted-foreground mb-1">Amount Credited</p>
+                  <p className="text-3xl font-bold text-success">+₦{selectedCreditTx.amount.toLocaleString()}</p>
+                  <span className="inline-flex items-center gap-1 mt-2 px-2 py-0.5 rounded-full bg-success/10 text-success text-[10px] font-medium">
+                    <CheckCircle className="w-3 h-3" /> Successful
+                  </span>
+                </div>
+
+                {/* Detail rows */}
+                {(() => {
+                  const orderIdMatch = selectedCreditTx.description.match(/Order\s+#?([^\s—]+)/);
+                  const orderId = orderIdMatch ? orderIdMatch[1] : "—";
+                  const cardTypeMatch = selectedCreditTx.description.match(/—\s*(.+)/);
+                  const cardType = cardTypeMatch ? cardTypeMatch[1] : "—";
+                  const matchedOrder = customerOrders.find(o => o.id === orderId);
+                  return (
+                    <div className="rounded-xl border bg-card divide-y">
+                      {[
+                        { label: "Order ID", value: orderId, copy: true },
+                        { label: "Card Type", value: cardType },
+                        ...(matchedOrder ? [
+                          { label: "Face Value", value: matchedOrder.totalFaceValue },
+                          { label: "Rate", value: matchedOrder.rate },
+                        ] : []),
+                        { label: "Date", value: selectedCreditTx.date },
+                        { label: "Time", value: selectedCreditTx.time },
+                        { label: "Reference ID", value: selectedCreditTx.id, copy: true },
+                        { label: "Transaction Type", value: "Wallet Credit" },
+                        { label: "Payment Method", value: "Gift Card Sale" },
+                      ].map(row => (
+                        <div key={row.label} className="flex items-center justify-between px-3 py-2.5">
+                          <p className="text-[11px] text-muted-foreground">{row.label}</p>
+                          <div className="flex items-center gap-1.5">
+                            <p className="text-xs font-medium text-right">{row.value}</p>
+                            {'copy' in row && row.copy && (
+                              <button
+                                onClick={() => { navigator.clipboard.writeText(row.value); toast.success("Copied"); }}
+                                className="p-1 hover:bg-muted rounded"
+                              >
+                                <Copy className="w-3 h-3 text-muted-foreground" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+
+                <Button variant="outline" className="w-full" onClick={() => setSelectedCreditTx(null)}>
+                  Close
+                </Button>
+              </div>
+            )}
+          </DialogContent>
+        </Dialog>
 
         <Dialog open={withdrawPinOpen} onOpenChange={setWithdrawPinOpen}>
           <DialogContent className="max-w-sm">
