@@ -76,14 +76,17 @@ export default function CustomerMe() {
   const [selectedOrder, setSelectedOrder] = useState<CustomerOrder | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | CustomerVisibleStatus>("all");
   const [showEditProfile, setShowEditProfile] = useState(false);
-  const [editStep, setEditStep] = useState<"info" | "otp">("info");
+  const [editStep, setEditStep] = useState<"info" | "verify_current" | "verify_new" | "success">("info");
   const [editName, setEditName] = useState("John Doe");
   const [editEmail, setEditEmail] = useState("johndoe@gmail.com");
   const [editWhatsapp, setEditWhatsapp] = useState("");
   const [otp, setOtp] = useState("");
+  const [otpError, setOtpError] = useState("");
+  const [resendCooldown, setResendCooldown] = useState(0);
   const [savedName, setSavedName] = useState("John Doe");
   const [savedEmail, setSavedEmail] = useState("johndoe@gmail.com");
   const [savedWhatsapp, setSavedWhatsapp] = useState("");
+
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const location = useLocation();
@@ -147,26 +150,65 @@ export default function CustomerMe() {
     handleWithdraw();
   };
 
+  const startResendCooldown = () => {
+    setResendCooldown(30);
+    const iv = setInterval(() => {
+      setResendCooldown(s => {
+        if (s <= 1) { clearInterval(iv); return 0; }
+        return s - 1;
+      });
+    }, 1000);
+  };
+
   const handleEditSave = () => {
     if (editEmail !== savedEmail) {
-      setEditStep("otp");
+      // Email changed → verify current email first, then new email
+      setOtp("");
+      setOtpError("");
+      setEditStep("verify_current");
+      startResendCooldown();
+      toast.info(`Verification code sent to ${savedEmail}`, { description: "Demo code: 1234" });
     } else {
       setSavedName(editName);
       setSavedWhatsapp(editWhatsapp);
       setShowEditProfile(false);
+      toast.success("Profile updated");
     }
   };
 
   const handleOtpVerify = () => {
-    if (otp.length === 4) {
+    if (otp.length !== 4) return;
+    // Mock: accept "1234" (or any 4 digits — keep lenient demo)
+    if (otp !== "1234" && otp.length === 4) {
+      // accept anything 4 digits for demo, but show error path if 0000
+      if (otp === "0000") { setOtpError("Invalid or expired code"); return; }
+    }
+    setOtpError("");
+    if (editStep === "verify_current") {
+      // Now verify new email
+      setOtp("");
+      setEditStep("verify_new");
+      startResendCooldown();
+      toast.info(`Verification code sent to ${editEmail}`, { description: "Demo code: 1234" });
+      return;
+    }
+    if (editStep === "verify_new") {
       setSavedName(editName);
       setSavedEmail(editEmail);
       setSavedWhatsapp(editWhatsapp);
-      setShowEditProfile(false);
-      setEditStep("info");
+      setEditStep("success");
       setOtp("");
+      return;
     }
   };
+
+  const handleResendOtp = () => {
+    if (resendCooldown > 0) return;
+    const target = editStep === "verify_current" ? savedEmail : editEmail;
+    startResendCooldown();
+    toast.info(`New code sent to ${target}`, { description: "Demo code: 1234" });
+  };
+
 
   const handleWithdraw = () => {
     if (withdrawAmount && withdrawBank) {
@@ -1204,9 +1246,10 @@ export default function CustomerMe() {
                     <Input type="email" value={editEmail} onChange={e => setEditEmail(e.target.value)} className="mt-1" />
                     {editEmail !== savedEmail && (
                       <p className="text-[10px] text-warning mt-1 flex items-center gap-1">
-                        <ShieldCheck className="w-3 h-3" /> Email change requires OTP verification
+                        <ShieldCheck className="w-3 h-3" /> Requires verification of both current and new email
                       </p>
                     )}
+
                   </div>
                   <div>
                     <label className="text-xs text-muted-foreground font-medium">WhatsApp number</label>
@@ -1226,44 +1269,95 @@ export default function CustomerMe() {
                     <Button className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleEditSave}>Save Changes</Button>
                   </div>
                 </>
+              ) : editStep === "success" ? (
+                <>
+                  <div className="text-center space-y-3 py-4">
+                    <div className="w-14 h-14 mx-auto rounded-full bg-success/10 flex items-center justify-center">
+                      <CheckCircle className="w-7 h-7 text-success" />
+                    </div>
+                    <h3 className="font-heading font-semibold text-lg">Email Updated</h3>
+                    <p className="text-xs text-muted-foreground">
+                      Your sign-in email is now <span className="font-medium text-foreground">{savedEmail}</span>.
+                    </p>
+                  </div>
+                  <Button
+                    className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
+                    onClick={() => { setShowEditProfile(false); setEditStep("info"); }}
+                  >
+                    Done
+                  </Button>
+                </>
               ) : (
                 <>
                   <div className="flex items-center justify-between">
-                    <button onClick={() => setEditStep("info")} className="text-sm text-accent flex items-center gap-1">
+                    <button
+                      onClick={() => {
+                        setEditStep(editStep === "verify_new" ? "verify_current" : "info");
+                        setOtp(""); setOtpError("");
+                      }}
+                      className="text-sm text-accent flex items-center gap-1"
+                    >
                       <ArrowLeft className="w-4 h-4" /> Back
                     </button>
                     <button onClick={() => setShowEditProfile(false)} className="text-muted-foreground text-sm">✕</button>
                   </div>
-                  <div className="text-center space-y-2 py-2">
+                  {/* Step indicator */}
+                  <div className="flex items-center justify-center gap-2 pt-1">
+                    <div className={`h-1.5 w-8 rounded-full ${editStep === "verify_current" ? "bg-accent" : "bg-success"}`} />
+                    <div className={`h-1.5 w-8 rounded-full ${editStep === "verify_new" ? "bg-accent" : "bg-muted"}`} />
+                  </div>
+                  <div className="text-center space-y-2 py-1">
                     <div className="w-12 h-12 mx-auto rounded-full bg-accent/10 flex items-center justify-center">
-                      <ShieldCheck className="w-6 h-6 text-accent" />
+                      <Mail className="w-6 h-6 text-accent" />
                     </div>
-                    <h3 className="font-heading font-semibold">Verify Your Email</h3>
-                    <p className="text-xs text-muted-foreground">Enter the 4-digit code sent to <span className="font-medium text-foreground">{editEmail}</span></p>
+                    <h3 className="font-heading font-semibold">
+                      {editStep === "verify_current" ? "Verify Current Email" : "Verify New Email"}
+                    </h3>
+                    <p className="text-xs text-muted-foreground">
+                      Step {editStep === "verify_current" ? "1" : "2"} of 2 — enter the 4-digit code sent to{" "}
+                      <span className="font-medium text-foreground">
+                        {editStep === "verify_current" ? savedEmail : editEmail}
+                      </span>
+                    </p>
                   </div>
                   <div className="flex justify-center gap-2">
                     {[0, 1, 2, 3].map(i => (
                       <Input
                         key={i}
                         maxLength={1}
+                        inputMode="numeric"
                         value={otp[i] || ""}
                         onChange={e => {
                           const val = e.target.value.replace(/\D/g, "");
                           const newOtp = otp.split("");
                           newOtp[i] = val;
                           setOtp(newOtp.join(""));
+                          setOtpError("");
                           if (val && e.target.nextElementSibling) (e.target.nextElementSibling as HTMLInputElement).focus?.();
                         }}
                         className="w-12 h-12 text-center text-lg font-bold"
                       />
                     ))}
                   </div>
+                  {otpError && (
+                    <p className="text-[11px] text-destructive text-center">{otpError}</p>
+                  )}
                   <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleOtpVerify} disabled={otp.length < 4}>
-                    Verify & Update
+                    {editStep === "verify_current" ? "Verify & Continue" : "Verify & Update Email"}
                   </Button>
-                  <p className="text-[10px] text-muted-foreground text-center">Didn't receive a code? <button className="text-accent font-medium">Resend</button></p>
+                  <p className="text-[10px] text-muted-foreground text-center">
+                    Didn't receive a code?{" "}
+                    <button
+                      onClick={handleResendOtp}
+                      disabled={resendCooldown > 0}
+                      className="text-accent font-medium disabled:opacity-50"
+                    >
+                      {resendCooldown > 0 ? `Resend in ${resendCooldown}s` : "Resend"}
+                    </button>
+                  </p>
                 </>
               )}
+
             </div>
           </div>
         )}
