@@ -116,6 +116,55 @@ export default function CustomerMe() {
   const [pinNew, setPinNew] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
   const [pinShow, setPinShow] = useState(false);
+  const [pinDialogOpen, setPinDialogOpen] = useState(false);
+
+  // 2FA state
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [twoFactorDialogOpen, setTwoFactorDialogOpen] = useState(false);
+  const [twoFactorStep, setTwoFactorStep] = useState<"setup" | "verify" | "success">("setup");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [twoFactorError, setTwoFactorError] = useState("");
+  const twoFactorSecret = "JBSWY3DPEHPK3PXP";
+
+  const openPinDialog = () => { resetPinForm(); setPinShow(false); setPinDialogOpen(true); };
+
+  const handleSavePinDialog = () => {
+    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+    if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
+    if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
+    const wasSet = !!txnPin;
+    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
+    setTxnPin(pinNew);
+    resetPinForm();
+    setPinDialogOpen(false);
+    toast.success(wasSet ? "Transaction PIN updated" : "Transaction PIN created");
+  };
+
+  const openTwoFactorDialog = () => {
+    if (twoFactorEnabled) {
+      setTwoFactorEnabled(false);
+      toast.success("Two-Factor Authentication disabled");
+      return;
+    }
+    setTwoFactorStep("setup");
+    setTwoFactorCode("");
+    setTwoFactorError("");
+    setTwoFactorDialogOpen(true);
+  };
+
+  const handleVerify2FA = () => {
+    if (twoFactorCode.length !== 6) { setTwoFactorError("Enter the 6-digit code"); return; }
+    // demo: accept any 6-digit code except 000000
+    if (twoFactorCode === "000000") { setTwoFactorError("Invalid code, try again"); return; }
+    setTwoFactorError("");
+    setTwoFactorStep("success");
+    setTwoFactorEnabled(true);
+  };
+
+  const copySecret = () => {
+    navigator.clipboard.writeText(twoFactorSecret);
+    toast.success("Secret key copied");
+  };
 
   // Withdraw PIN dialog
   const [withdrawPinOpen, setWithdrawPinOpen] = useState(false);
