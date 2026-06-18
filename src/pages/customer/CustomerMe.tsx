@@ -116,6 +116,55 @@ export default function CustomerMe() {
   const [pinNew, setPinNew] = useState("");
   const [pinConfirm, setPinConfirm] = useState("");
   const [pinShow, setPinShow] = useState(false);
+  const [pinDialogOpen, setPinDialogOpen] = useState(false);
+
+  // 2FA state
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(false);
+  const [twoFactorDialogOpen, setTwoFactorDialogOpen] = useState(false);
+  const [twoFactorStep, setTwoFactorStep] = useState<"setup" | "verify" | "success">("setup");
+  const [twoFactorCode, setTwoFactorCode] = useState("");
+  const [twoFactorError, setTwoFactorError] = useState("");
+  const twoFactorSecret = "JBSWY3DPEHPK3PXP";
+
+  const openPinDialog = () => { resetPinForm(); setPinShow(false); setPinDialogOpen(true); };
+
+  const handleSavePinDialog = () => {
+    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+    if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
+    if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
+    const wasSet = !!txnPin;
+    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
+    setTxnPin(pinNew);
+    resetPinForm();
+    setPinDialogOpen(false);
+    toast.success(wasSet ? "Transaction PIN updated" : "Transaction PIN created");
+  };
+
+  const openTwoFactorDialog = () => {
+    if (twoFactorEnabled) {
+      setTwoFactorEnabled(false);
+      toast.success("Two-Factor Authentication disabled");
+      return;
+    }
+    setTwoFactorStep("setup");
+    setTwoFactorCode("");
+    setTwoFactorError("");
+    setTwoFactorDialogOpen(true);
+  };
+
+  const handleVerify2FA = () => {
+    if (twoFactorCode.length !== 6) { setTwoFactorError("Enter the 6-digit code"); return; }
+    // demo: accept any 6-digit code except 000000
+    if (twoFactorCode === "000000") { setTwoFactorError("Invalid code, try again"); return; }
+    setTwoFactorError("");
+    setTwoFactorStep("success");
+    setTwoFactorEnabled(true);
+  };
+
+  const copySecret = () => {
+    navigator.clipboard.writeText(twoFactorSecret);
+    toast.success("Secret key copied");
+  };
 
   // Withdraw PIN dialog
   const [withdrawPinOpen, setWithdrawPinOpen] = useState(false);
@@ -937,82 +986,24 @@ export default function CustomerMe() {
         </header>
         <div className="p-4 space-y-4 flex-1 overflow-y-auto">
           {/* Transaction PIN */}
-          <div className="bg-card border rounded-xl p-4 space-y-3">
+          <div className="bg-card border rounded-xl p-4">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-accent/10 flex items-center justify-center">
                 <KeyRound className="w-5 h-5 text-accent" />
               </div>
               <div className="flex-1">
-                <p className="text-sm font-semibold">
-                  {txnPin ? "Change Transaction PIN" : "Create Transaction PIN"}
-                </p>
+                <p className="text-sm font-semibold">Transaction PIN</p>
                 <p className="text-xs text-muted-foreground">
-                  {txnPin
-                    ? "Update your 6-digit PIN used to confirm withdrawals"
-                    : "Set a 6-digit PIN to confirm withdrawals and sensitive actions"}
+                  {txnPin ? "Used to confirm withdrawals and sensitive actions" : "Set a 6-digit PIN to confirm withdrawals"}
                 </p>
               </div>
-              {txnPin && (
-                <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-success/10 text-success">Set</span>
-              )}
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${txnPin ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                {txnPin ? "Set" : "Not set"}
+              </span>
             </div>
-            <div className="space-y-2">
-              {txnPin && (
-                <div>
-                  <label className="text-xs text-muted-foreground">Current PIN</label>
-                  <Input
-                    type={pinShow ? "text" : "password"}
-                    inputMode="numeric"
-                    maxLength={6}
-                    placeholder="Enter current 6-digit PIN"
-                    value={pinCurrent}
-                    onChange={e => setPinCurrent(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    className="mt-1 tracking-widest"
-                  />
-                </div>
-              )}
-              <div>
-                <label className="text-xs text-muted-foreground">New PIN</label>
-                <Input
-                  type={pinShow ? "text" : "password"}
-                  inputMode="numeric"
-                  maxLength={6}
-                  placeholder="Enter new 6-digit PIN"
-                  value={pinNew}
-                  onChange={e => setPinNew(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="mt-1 tracking-widest"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-muted-foreground">Confirm New PIN</label>
-                <Input
-                  type={pinShow ? "text" : "password"}
-                  inputMode="numeric"
-                  maxLength={6}
-                  placeholder="Re-enter new 6-digit PIN"
-                  value={pinConfirm}
-                  onChange={e => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  className="mt-1 tracking-widest"
-                />
-              </div>
-              <div className="flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={() => setPinShow(!pinShow)}
-                  className="text-[11px] text-muted-foreground flex items-center gap-1 hover:text-foreground"
-                >
-                  {pinShow ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
-                  {pinShow ? "Hide" : "Show"} PIN
-                </button>
-              </div>
-              <Button
-                size="sm"
-                className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                onClick={handleSavePin}
-              >
-                {txnPin ? "Update Transaction PIN" : "Create Transaction PIN"}
-              </Button>
-            </div>
+            <Button size="sm" variant="outline" className="w-full mt-3 text-xs" onClick={openPinDialog}>
+              {txnPin ? "Change Transaction PIN" : "Create Transaction PIN"}
+            </Button>
           </div>
 
           {/* Two-Factor Authentication */}
@@ -1025,12 +1016,168 @@ export default function CustomerMe() {
                 <p className="text-sm font-semibold">Two-Factor Authentication</p>
                 <p className="text-xs text-muted-foreground">Add an extra layer of security</p>
               </div>
-              <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-warning/10 text-warning">Off</span>
+              <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${twoFactorEnabled ? "bg-success/10 text-success" : "bg-warning/10 text-warning"}`}>
+                {twoFactorEnabled ? "On" : "Off"}
+              </span>
             </div>
-            <Button size="sm" variant="outline" className="w-full mt-3 text-xs">
-              Enable 2FA
+            <Button size="sm" variant="outline" className="w-full mt-3 text-xs" onClick={openTwoFactorDialog}>
+              {twoFactorEnabled ? "Disable 2FA" : "Enable 2FA"}
             </Button>
           </div>
+
+          {/* Transaction PIN Dialog */}
+          <Dialog open={pinDialogOpen} onOpenChange={(o) => { setPinDialogOpen(o); if (!o) resetPinForm(); }}>
+            <DialogContent className="max-w-sm">
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <KeyRound className="w-4 h-4 text-accent" />
+                  {txnPin ? "Change Transaction PIN" : "Create Transaction PIN"}
+                </DialogTitle>
+                <DialogDescription>
+                  {txnPin ? "Enter your current PIN, then choose a new 6-digit PIN." : "Choose a 6-digit PIN you'll use to confirm withdrawals."}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="space-y-3">
+                {txnPin && (
+                  <div>
+                    <label className="text-xs text-muted-foreground">Current PIN</label>
+                    <Input
+                      type={pinShow ? "text" : "password"}
+                      inputMode="numeric"
+                      maxLength={6}
+                      placeholder="Enter current 6-digit PIN"
+                      value={pinCurrent}
+                      onChange={e => setPinCurrent(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      className="mt-1 tracking-widest"
+                    />
+                  </div>
+                )}
+                <div>
+                  <label className="text-xs text-muted-foreground">New PIN</label>
+                  <Input
+                    type={pinShow ? "text" : "password"}
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Enter new 6-digit PIN"
+                    value={pinNew}
+                    onChange={e => setPinNew(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="mt-1 tracking-widest"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs text-muted-foreground">Confirm New PIN</label>
+                  <Input
+                    type={pinShow ? "text" : "password"}
+                    inputMode="numeric"
+                    maxLength={6}
+                    placeholder="Re-enter new 6-digit PIN"
+                    value={pinConfirm}
+                    onChange={e => setPinConfirm(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                    className="mt-1 tracking-widest"
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setPinShow(!pinShow)}
+                  className="text-[11px] text-muted-foreground flex items-center gap-1 hover:text-foreground"
+                >
+                  {pinShow ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                  {pinShow ? "Hide" : "Show"} PIN
+                </button>
+              </div>
+              <DialogFooter className="gap-2">
+                <Button variant="outline" size="sm" onClick={() => setPinDialogOpen(false)}>Cancel</Button>
+                <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSavePinDialog}>
+                  {txnPin ? "Update PIN" : "Create PIN"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
+          {/* 2FA Dialog */}
+          <Dialog open={twoFactorDialogOpen} onOpenChange={(o) => { setTwoFactorDialogOpen(o); if (!o) { setTwoFactorCode(""); setTwoFactorError(""); } }}>
+            <DialogContent className="max-w-sm">
+              {twoFactorStep === "setup" && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle className="flex items-center gap-2">
+                      <Smartphone className="w-4 h-4 text-accent" />
+                      Add Authenticator
+                    </DialogTitle>
+                    <DialogDescription>
+                      Scan the QR code with Google Authenticator, Authy, or 1Password.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col items-center gap-3 py-2">
+                    <div className="w-40 h-40 rounded-lg bg-white p-2 border flex items-center justify-center">
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`otpauth://totp/CardChat:${savedEmail}?secret=${twoFactorSecret}&issuer=CardChat`)}`}
+                        alt="2FA QR code"
+                        className="w-full h-full object-contain"
+                      />
+                    </div>
+                    <div className="w-full">
+                      <label className="text-[11px] text-muted-foreground">Or enter this key manually</label>
+                      <div className="flex items-center gap-2 mt-1">
+                        <code className="flex-1 text-xs bg-muted rounded px-2 py-2 tracking-widest font-mono">{twoFactorSecret}</code>
+                        <Button size="sm" variant="outline" onClick={copySecret} className="h-9 px-2">
+                          <Copy className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter className="gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setTwoFactorDialogOpen(false)}>Cancel</Button>
+                    <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setTwoFactorStep("verify")}>
+                      Next
+                    </Button>
+                  </DialogFooter>
+                </>
+              )}
+              {twoFactorStep === "verify" && (
+                <>
+                  <DialogHeader>
+                    <DialogTitle>Verify Code</DialogTitle>
+                    <DialogDescription>
+                      Enter the 6-digit code shown in your authenticator app.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="flex flex-col items-center gap-3 py-3">
+                    <InputOTP maxLength={6} value={twoFactorCode} onChange={(v) => { setTwoFactorCode(v); setTwoFactorError(""); }}>
+                      <InputOTPGroup>
+                        {[0,1,2,3,4,5].map(i => <InputOTPSlot key={i} index={i} />)}
+                      </InputOTPGroup>
+                    </InputOTP>
+                    {twoFactorError && <p className="text-xs text-destructive">{twoFactorError}</p>}
+                  </div>
+                  <DialogFooter className="gap-2">
+                    <Button variant="outline" size="sm" onClick={() => setTwoFactorStep("setup")}>Back</Button>
+                    <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleVerify2FA}>
+                      Verify & Enable
+                    </Button>
+                  </DialogFooter>
+                </>
+              )}
+              {twoFactorStep === "success" && (
+                <>
+                  <div className="flex flex-col items-center gap-3 py-4 text-center">
+                    <div className="w-14 h-14 rounded-full bg-success/10 flex items-center justify-center">
+                      <CheckCircle className="w-7 h-7 text-success" />
+                    </div>
+                    <DialogTitle>Two-Factor Authentication Enabled</DialogTitle>
+                    <DialogDescription>
+                      Your account is now protected with an additional verification step at sign-in.
+                    </DialogDescription>
+                  </div>
+                  <DialogFooter>
+                    <Button size="sm" className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setTwoFactorDialogOpen(false)}>
+                      Done
+                    </Button>
+                  </DialogFooter>
+                </>
+              )}
+            </DialogContent>
+          </Dialog>
 
           {/* Login Activity */}
           <div className="bg-card border rounded-xl p-4 space-y-3">
