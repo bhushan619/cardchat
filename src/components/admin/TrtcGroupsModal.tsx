@@ -160,7 +160,7 @@ export default function TrtcGroupsModal({ open, onOpenChange }: Props) {
                       <Button
                         variant="ghost"
                         size="sm"
-                        className="h-7 text-destructive hover:text-destructive gap-1.5"
+                        className="h-7 text-destructive hover:bg-destructive/10 hover:text-destructive gap-1.5"
                         onClick={() => setConfirmDelete(active)}
                       >
                         <Trash2 className="w-3.5 h-3.5" /> Delete Group
