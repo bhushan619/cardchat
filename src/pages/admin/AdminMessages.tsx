@@ -1398,7 +1398,8 @@ export default function AdminMessages() {
                     </div>
                   </div>
                 </div>
-              )}
+                );
+              })()}
               <div className="flex justify-end pt-4 border-t">
                 <Button onClick={() => setDetailOrderId(null)} className="px-6">Confirm</Button>
               </div>
