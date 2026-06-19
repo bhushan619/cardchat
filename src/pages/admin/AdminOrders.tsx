@@ -180,7 +180,7 @@ export default function AdminOrders() {
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
                         <td colSpan={8} className="px-6 py-4 bg-muted/20">
-                          <div className="grid grid-cols-3 gap-6 animate-slide-up">
+                          <div className="grid grid-cols-4 gap-6 animate-slide-up">
                             {/* Order Info */}
                             <div className="space-y-2">
                               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Order Info</p>
@@ -213,6 +213,31 @@ export default function AdminOrders() {
                                   <span className="text-muted-foreground">Agent</span>
                                   <span className="font-medium">{details.agent}</span>
                                 </div>
+                                <div className="flex justify-between text-xs">
+                                  <span className="text-muted-foreground">Format</span>
+                                  <span className="font-medium">{details.cardFormat}</span>
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* Settlement */}
+                            <div className="space-y-2">
+                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Settlement</p>
+                              <div className="space-y-1.5">
+                                {[
+                                  ["Settle Coin", details.settlement.settleCoin],
+                                  ["Settle Face Value", `$${details.settlement.settleFaceValue.toLocaleString()}`],
+                                  ["Settle Rate", `₦${details.settlement.settleRate.toLocaleString()}`],
+                                  ["Settlement Amount", `₦${details.settlement.settlePrice.toLocaleString()}`],
+                                  ["Sell Cost", `₦${details.settlement.sellCost.toLocaleString()}`],
+                                  ["Purchase Rate", `₦${details.settlement.purchaseRate.toLocaleString()}`],
+                                  ["Purchase Face Value", `$${details.settlement.purchaseFaceValue.toLocaleString()}`],
+                                ].map(([k, v]) => (
+                                  <div key={k} className="flex justify-between text-xs">
+                                    <span className="text-muted-foreground">{k}</span>
+                                    <span className="font-medium">{v}</span>
+                                  </div>
+                                ))}
                               </div>
                             </div>
 
