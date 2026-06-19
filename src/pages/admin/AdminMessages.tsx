@@ -1253,6 +1253,17 @@ export default function AdminMessages() {
                 const orderCode = detailOrder.id;
                 const providerName = (detailOrder as any).providerName || (detailOrder as any).alias || "—";
                 const buyerNickname = (detailOrder as any).buyerNickname || (detailOrder as any).buyer || "—";
+                const sysUserId = (detailOrder as any).sysUserId || "—";
+                const platSellerId = (detailOrder as any).platSellerId || "—";
+                const origin = (detailOrder as any).origin || "—";
+                const cardStatus = (detailOrder as any).cardStatus || "—";
+                const checked = (detailOrder as any).checked || "—";
+                const transferStatus = (detailOrder as any).transferStatus || "—";
+                const viewStatus = (detailOrder as any).viewStatus || "—";
+                const rawCreateTime = (detailOrder as any).createTime;
+                const createTime = rawCreateTime
+                  ? new Date(Number(rawCreateTime)).toLocaleString()
+                  : detailOrder.createdAt || detailOrder.timestamp;
                 const cardFaceValue = detailOrder.amount;
                 const purchaseFaceValue = detailOrder.amount;
                 const purchaseRate = detailOrder.unitPrice || detailOrder.nairaRate || 0;
