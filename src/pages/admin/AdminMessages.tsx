@@ -1253,6 +1253,17 @@ export default function AdminMessages() {
                 const orderCode = detailOrder.id;
                 const providerName = (detailOrder as any).providerName || (detailOrder as any).alias || "—";
                 const buyerNickname = (detailOrder as any).buyerNickname || (detailOrder as any).buyer || "—";
+                const sysUserId = (detailOrder as any).sysUserId || "—";
+                const platSellerId = (detailOrder as any).platSellerId || "—";
+                const origin = (detailOrder as any).origin || "—";
+                const cardStatus = (detailOrder as any).cardStatus || "—";
+                const checked = (detailOrder as any).checked || "—";
+                const transferStatus = (detailOrder as any).transferStatus || "—";
+                const viewStatus = (detailOrder as any).viewStatus || "—";
+                const rawCreateTime = (detailOrder as any).createTime;
+                const createTime = rawCreateTime
+                  ? new Date(Number(rawCreateTime)).toLocaleString()
+                  : detailOrder.createdAt || detailOrder.timestamp;
                 const cardFaceValue = detailOrder.amount;
                 const purchaseFaceValue = detailOrder.amount;
                 const purchaseRate = detailOrder.unitPrice || detailOrder.nairaRate || 0;
@@ -1345,26 +1356,24 @@ export default function AdminMessages() {
                     <div className="pt-3 border-t">
                       <h4 className="font-heading font-semibold text-sm mb-3">Buyer Details</h4>
                       <div className="space-y-3">
-                        <div className="flex gap-3 text-sm">
-                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Buyer Name</span>
-                          <span className="font-medium">{buyerNickname}</span>
-                        </div>
-                        <div className="flex gap-3 text-sm">
-                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Provider</span>
-                          <span className="font-medium">{providerName}</span>
-                        </div>
-                        {selectedConvo && (
-                          <>
-                            <div className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Good Rate</span>
-                              <span className="font-medium">{selectedConvo.goodRate}%</span>
-                            </div>
-                            <div className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Monthly Value</span>
-                              <span className="font-medium">{selectedConvo.totalValue}</span>
-                            </div>
-                          </>
-                        )}
+                        {[
+                          ["Buyer Nickname", buyerNickname],
+                          ["Provider Name", providerName],
+                          ["Alias", (detailOrder as any).alias || providerName],
+                          ["System User ID", sysUserId],
+                          ["Platform Seller ID", platSellerId],
+                          ["Origin", origin],
+                          ["Card Status", cardStatus],
+                          ["Checked", checked],
+                          ["Transfer Status", transferStatus],
+                          ["View Status", viewStatus],
+                          ["Create Time", createTime],
+                        ].filter(([, v]) => v !== "—" && v !== "" && v != null).map(([label, value]) => (
+                          <div key={label} className="flex gap-3 text-sm">
+                            <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                            <span className="font-medium break-all">{value}</span>
+                          </div>
+                        ))}
                       </div>
                     </div>
                   </div>
