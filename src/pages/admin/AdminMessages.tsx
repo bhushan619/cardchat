@@ -1614,8 +1614,6 @@ export default function AdminMessages() {
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
                     ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
-                    ["Order Status", detailOrder.status, false, "status"],
-                    ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
@@ -1779,7 +1777,7 @@ export default function AdminMessages() {
                 })()}
               <div className="flex justify-end pt-4 border-t">
                 <Button onClick={() => setDetailOrderId(null)} className="px-6">
-                  Confirm
+                  Cancel
                 </Button>
               </div>
             </DialogContent>
@@ -1868,7 +1866,9 @@ export default function AdminMessages() {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Settlement Amount</span>
-                  <span className="font-medium">{settleCoin} {Number(settlePrice).toLocaleString()}</span>
+                  <span className="font-medium">
+                    {settleCoin} {Number(settlePrice).toLocaleString()}
+                  </span>
                 </div>
                 <div className="flex justify-between text-xs border-t border-border pt-1.5">
                   <span className="text-muted-foreground font-medium">Original Payout</span>
