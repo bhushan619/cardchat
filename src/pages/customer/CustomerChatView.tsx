@@ -26,14 +26,31 @@ const TIMELINE_STEPS: { event: string; time: string }[] = [
   { event: "Success",          time: "10:40 AM" },
 ];
 
+type PinnedOrder = {
+  id: string;
+  cardType: string;
+  amount: string;
+  rate: string;
+  payout: string;
+  status: CustomerVisibleStatus;
+};
+
+const PINNED_ORDERS: PinnedOrder[] = [
+  { id: "ORD-20260318-001", cardType: "iTunes US",  amount: "$200", rate: "₦680", payout: "₦136,000", status: "success" },
+  { id: "ORD-20260318-002", cardType: "Amazon US",  amount: "$150", rate: "₦620", payout: "₦93,000",  status: "order_processing" },
+  { id: "ORD-20260318-003", cardType: "Steam US",   amount: "$100", rate: "₦600", payout: "₦60,000",  status: "order_created" },
+];
+
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
-  const [orderStatus, setOrderStatus] = useState<CustomerVisibleStatus>("success");
+  const [selectedOrderId, setSelectedOrderId] = useState<string>(PINNED_ORDERS[0].id);
+  const [expanded, setExpanded] = useState(true);
 
+  const selectedOrder = PINNED_ORDERS.find(o => o.id === selectedOrderId) ?? PINNED_ORDERS[0];
+  const orderStatus = selectedOrder.status;
   const statusConfig = ORDER_STATUS_CONFIG[orderStatus];
-  const StatusIcon = statusConfig.icon;
   const currentIdx = STATUS_ORDER.indexOf(orderStatus);
 
   return (
@@ -50,39 +67,69 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       </header>
 
-      {/* Pinned Order */}
-      <div className="pinned-order mx-4 mt-3 animate-slide-up">
-        <div className="flex items-center justify-between mb-2">
-          <div>
-            <p className="text-xs font-semibold">📌 Order #ORD-20260318-001</p>
-            <p className="text-[10px] text-muted-foreground">iTunes US · $200 · Card Rate: ₦680</p>
-          </div>
-          <span className={`status-badge ${statusConfig.bg} ${statusConfig.color} text-[10px] gap-1`}>
-            <StatusIcon className={`w-3 h-3 ${orderStatus === "order_processing" ? "animate-spin" : ""}`} />
-            {statusConfig.label}
-          </span>
+      {/* Pinned Orders (sticky, multi) */}
+      <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b px-3 pt-2 pb-2 shrink-0">
+        <div className="flex items-center justify-between mb-1.5 px-1">
+          <p className="text-[11px] font-semibold text-muted-foreground">
+            📌 Active Orders <span className="text-accent">({PINNED_ORDERS.length})</span>
+          </p>
+          <button
+            onClick={() => setExpanded(e => !e)}
+            className="text-[10px] text-muted-foreground hover:text-foreground"
+          >
+            {expanded ? "Collapse" : "Expand"}
+          </button>
         </div>
-        <div className="flex items-center gap-1 mb-2">
-          {STATUS_ORDER.map((s, i) => (
-            <div key={s} className="flex items-center gap-1 flex-1">
-              <div className={`w-2 h-2 rounded-full shrink-0 ${i <= currentIdx ? "bg-accent" : "bg-muted-foreground/30"}`} />
-              {i < STATUS_ORDER.length - 1 && (
-                <div className={`h-0.5 flex-1 rounded ${i < currentIdx ? "bg-accent" : "bg-muted-foreground/20"}`} />
-              )}
+
+        {/* Horizontal scroll list of order chips */}
+        <div className="flex gap-2 overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+          {PINNED_ORDERS.map(o => {
+            const cfg = ORDER_STATUS_CONFIG[o.status];
+            const Icon = cfg.icon;
+            const active = o.id === selectedOrderId;
+            return (
+              <button
+                key={o.id}
+                onClick={() => { setSelectedOrderId(o.id); setExpanded(true); }}
+                className={`snap-start shrink-0 min-w-[200px] text-left rounded-lg border p-2 transition-colors ${active ? "border-accent bg-accent/5" : "border-border bg-card hover:border-accent/40"}`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <p className="text-[11px] font-semibold truncate">#{o.id.slice(-6)}</p>
+                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full ${cfg.bg} ${cfg.color} text-[9px]`}>
+                    <Icon className={`w-2.5 h-2.5 ${o.status === "order_processing" ? "animate-spin" : ""}`} />
+                    {cfg.label}
+                  </span>
+                </div>
+                <p className="text-[10px] text-muted-foreground truncate">{o.cardType} · {o.amount} · {o.rate}</p>
+                <p className="text-[10px] font-medium text-accent mt-0.5">Payout {o.payout}</p>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Expanded detail for selected order */}
+        {expanded && (
+          <div className="mt-2 rounded-lg border border-accent/30 bg-accent/5 p-2.5 animate-slide-up">
+            <div className="flex items-center gap-1 mb-2">
+              {STATUS_ORDER.map((s, i) => (
+                <div key={s} className="flex items-center gap-1 flex-1">
+                  <div className={`w-2 h-2 rounded-full shrink-0 ${i <= currentIdx ? "bg-accent" : "bg-muted-foreground/30"}`} />
+                  {i < STATUS_ORDER.length - 1 && (
+                    <div className={`h-0.5 flex-1 rounded ${i < currentIdx ? "bg-accent" : "bg-muted-foreground/20"}`} />
+                  )}
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="flex gap-2">
-          <Button size="sm" variant="outline" className="h-7 text-xs" onClick={() => setShowOrder(true)}>
-            View Details
-          </Button>
-          <Button size="sm" variant="ghost" className="h-7 text-xs text-muted-foreground" onClick={() => {
-            const next = STATUS_ORDER[(currentIdx + 1) % STATUS_ORDER.length];
-            setOrderStatus(next);
-          }}>
-            Demo: Next Status →
-          </Button>
-        </div>
+            <div className="flex items-center justify-between">
+              <p className="text-[10px] text-muted-foreground">
+                #{selectedOrder.id} · {statusConfig.label}
+              </p>
+              <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => setShowOrder(true)}>
+                View Details
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Messages */}
