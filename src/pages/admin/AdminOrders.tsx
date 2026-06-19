@@ -19,7 +19,15 @@ const mockOrderDetails: Record<string, {
   cardFormat: string;
   agent: string;
   timeline: { event: string; time: string }[];
-  
+  settlement: {
+    settleCoin: string;
+    settleFaceValue: number;
+    settleRate: number;
+    settlePrice: number;
+    sellCost: number;
+    purchaseRate: number;
+    purchaseFaceValue: number;
+  };
 }> = {
   "ORD-20260318-001": {
     cardFormat: "Physical",
@@ -30,7 +38,15 @@ const mockOrderDetails: Record<string, {
       { event: "Settled", time: "10:40 AM" },
       { event: "Payment sent", time: "10:42 AM" },
     ],
-    
+    settlement: {
+      settleCoin: "USD",
+      settleFaceValue: 200,
+      settleRate: 680,
+      settlePrice: 136000,
+      sellCost: 144000,
+      purchaseRate: 720,
+      purchaseFaceValue: 200,
+    },
   },
   "ORD-20260318-002": {
     cardFormat: "E-Code",
@@ -39,6 +55,15 @@ const mockOrderDetails: Record<string, {
       { event: "Order created", time: "09:15 AM" },
       { event: "Cards submitted", time: "09:20 AM" },
     ],
+    settlement: {
+      settleCoin: "USD",
+      settleFaceValue: 150,
+      settleRate: 620,
+      settlePrice: 93000,
+      sellCost: 99000,
+      purchaseRate: 660,
+      purchaseFaceValue: 150,
+    },
   },
   "ORD-20260318-003": {
     cardFormat: "Physical",
@@ -48,6 +73,15 @@ const mockOrderDetails: Record<string, {
       { event: "Cards verified", time: "08:50 AM" },
       { event: "Settled", time: "09:00 AM" },
     ],
+    settlement: {
+      settleCoin: "USD",
+      settleFaceValue: 200,
+      settleRate: 600,
+      settlePrice: 120000,
+      sellCost: 128000,
+      purchaseRate: 640,
+      purchaseFaceValue: 200,
+    },
   },
 };
 
