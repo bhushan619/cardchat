@@ -429,7 +429,7 @@ export default function CardlightPanel({
                               key={brand.name}
                               onMouseEnter={() => setHoveredBrand(brand.name)}
                               onClick={() => setHoveredBrand(brand.name)}
-                              className={`flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-accent transition-colors ${hoveredBrand === brand.name ? "bg-accent text-primary font-semibold" : "text-foreground"}`}
+                              className={`flex w-full items-center justify-between px-3 py-2 text-xs hover:bg-accent hover:text-accent-foreground transition-colors ${hoveredBrand === brand.name ? "bg-accent text-accent-foreground font-semibold" : "text-foreground"}`}
                             >
                               {brand.name}
                               <ChevronRight className="h-3 w-3 opacity-50" />
