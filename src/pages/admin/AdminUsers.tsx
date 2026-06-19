@@ -68,6 +68,7 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [suspendUser, setSuspendUser] = useState<User | null>(null);
+  const [groupsModalOpen, setGroupsModalOpen] = useState(false);
 
   // Password invite (simulated email)
   const [inviteModal, setInviteModal] = useState<{ user: User; token: string; resent?: boolean } | null>(null);
