@@ -1777,7 +1777,7 @@ export default function AdminMessages() {
                 })()}
               <div className="flex justify-end pt-4 border-t">
                 <Button onClick={() => setDetailOrderId(null)} className="px-6">
-                  Confirm
+                  Close
                 </Button>
               </div>
             </DialogContent>
