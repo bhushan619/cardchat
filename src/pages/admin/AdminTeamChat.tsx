@@ -1,9 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Users, ArrowLeft, MessageCircle } from "lucide-react";
+import { Send, Users, ArrowLeft, MessageCircle, ChevronDown } from "lucide-react";
+import { adminUsers } from "@/data/mock";
+import { getGroups, onGroupsChanged, TrtcGroup } from "@/lib/trtcGroups";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type TeamMessage = {
   id: string;
