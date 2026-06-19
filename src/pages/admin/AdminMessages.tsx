@@ -1262,9 +1262,14 @@ export default function AdminMessages() {
                 const settleFaceValue = (detailOrder as any).settleFaceValue || cardFaceValue;
                 const settlePrice = (detailOrder as any).settlePrice || (settleFaceValue * settleRate);
                 const nairaRate = detailOrder.nairaRate;
-                const cardImageUrl = (detailOrder as any).cardImage as string | undefined;
+                const cardImagesRaw = (detailOrder as any).cardImages || (detailOrder as any).cardImage;
+                const cardImages: string[] = Array.isArray(cardImagesRaw)
+                  ? cardImagesRaw.filter(Boolean)
+                  : cardImagesRaw
+                    ? [cardImagesRaw]
+                    : [];
 
-                const productRows: [string, React.ReactNode, boolean?][] = [
+                const productRowsAll: [string, React.ReactNode, boolean?][] = [
                   ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
                   ["Card type", shoTypeName],
                   ["Card face value", `${cardFaceValue}`],
@@ -1273,8 +1278,9 @@ export default function AdminMessages() {
                   ["Provider", providerName],
                   ["Buyer", buyerNickname],
                 ];
+                const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
-                const orderRows: [string, React.ReactNode, boolean?, string?][] = [
+                const orderRowsAll: [string, React.ReactNode, boolean?, string?][] = [
                   ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
                   ["Order id", orderCode, true],
                   ["Order face value", `${purchaseFaceValue}`],
@@ -1290,6 +1296,7 @@ export default function AdminMessages() {
                   ["Arbitration status", "No arbitrated"],
                   ["Dispute Amount", "—"],
                 ];
+                const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
                 return (
                 <div className="grid grid-cols-2 gap-8 pt-2">
@@ -1311,12 +1318,22 @@ export default function AdminMessages() {
                           </div>
                         </div>
                       ))}
-                      {/* Card image */}
+                      {/* Card images (may be multiple) */}
                       <div className="flex gap-3 text-sm">
-                        <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card image</span>
-                        <div className="flex gap-2">
-                          {cardImageUrl ? (
-                            <img src={cardImageUrl} alt="Card" className="w-20 h-14 object-cover rounded border" />
+                        <span className="text-muted-foreground w-[130px] shrink-0 text-right pt-1">
+                          {cardImages.length > 1 ? `Card images (${cardImages.length})` : "Card image"}
+                        </span>
+                        <div className="flex gap-2 flex-wrap">
+                          {cardImages.length > 0 ? (
+                            cardImages.map((src, i) => (
+                              <a key={i} href={src} target="_blank" rel="noreferrer" className="block">
+                                <img
+                                  src={src}
+                                  alt={`Card ${i + 1}`}
+                                  className="w-20 h-14 object-cover rounded border hover:ring-2 hover:ring-primary transition"
+                                />
+                              </a>
+                            ))
                           ) : (
                             <div className="w-20 h-14 bg-muted rounded flex items-center justify-center">
                               <CreditCard className="w-5 h-5 text-muted-foreground" />
