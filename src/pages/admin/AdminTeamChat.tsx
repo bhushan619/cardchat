@@ -141,7 +141,7 @@ export default function AdminTeamChat() {
   }, [dmTarget, dmConversations]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !activeGroupId) return;
     const newMsg: TeamMessage = {
       id: Date.now().toString(),
       sender: profile.name,
@@ -149,7 +149,10 @@ export default function AdminTeamChat() {
       text: input.trim(),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-    setMessages(prev => [...prev, newMsg]);
+    setGroupMessages(prev => ({
+      ...prev,
+      [activeGroupId]: [...(prev[activeGroupId] || []), newMsg],
+    }));
     setInput("");
   };
 
