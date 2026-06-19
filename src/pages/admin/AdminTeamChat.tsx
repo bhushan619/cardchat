@@ -1,9 +1,14 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Send, Users, ArrowLeft, MessageCircle } from "lucide-react";
+import { Send, Users, ArrowLeft, MessageCircle, ChevronDown } from "lucide-react";
+import { adminUsers } from "@/data/mock";
+import { getGroups, onGroupsChanged, TrtcGroup } from "@/lib/trtcGroups";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 type TeamMessage = {
   id: string;
@@ -71,7 +76,9 @@ const roleProfiles: Record<string, { name: string; label: string }> = {
 
 export default function AdminTeamChat() {
   const { role } = useAdminRole();
-  const [messages, setMessages] = useState<TeamMessage[]>(initialMessages);
+  const [groups, setGroups] = useState<TrtcGroup[]>([]);
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const [groupMessages, setGroupMessages] = useState<Record<string, TeamMessage[]>>({});
   const [input, setInput] = useState("");
   const [dmTarget, setDmTarget] = useState<string | null>(null);
   const [dmConversations, setDmConversations] = useState<Record<string, DMMessage[]>>(initialDMs);
@@ -80,21 +87,61 @@ export default function AdminTeamChat() {
   const dmBottomRef = useRef<HTMLDivElement>(null);
 
   const profile = roleProfiles[role];
-  const onlineCount = teamMembers.filter(m => m.status === "online").length;
 
-  // Filter out self from members list
-  const otherMembers = teamMembers.filter(m => m.name !== profile.name);
+  // Load groups and seed the first group's messages with the initial sample thread
+  useEffect(() => {
+    const load = () => {
+      const all = getGroups();
+      // Only show groups the current admin is a member of
+      const me = adminUsers.find(u => u.name === profile.name);
+      const mine = me ? all.filter(g => g.memberIds.includes(me.id)) : all;
+      setGroups(mine);
+      setGroupMessages(prev => {
+        const next = { ...prev };
+        mine.forEach((g, i) => {
+          if (!next[g.id]) next[g.id] = i === 0 ? initialMessages : [];
+        });
+        return next;
+      });
+      setActiveGroupId(prev => (prev && mine.some(g => g.id === prev) ? prev : mine[0]?.id ?? null));
+    };
+    load();
+    return onGroupsChanged(load);
+  }, [profile.name]);
+
+  const activeGroup = useMemo(() => groups.find(g => g.id === activeGroupId) || null, [groups, activeGroupId]);
+  const messages = activeGroupId ? (groupMessages[activeGroupId] || []) : [];
+
+  // Members of the active group (excluding self)
+  const groupMembers = useMemo(() => {
+    if (!activeGroup) return [] as typeof teamMembers;
+    const byId = new Map(adminUsers.map(u => [u.id, u]));
+    return activeGroup.memberIds
+      .map(id => byId.get(id))
+      .filter(Boolean)
+      .map(u => {
+        const tm = teamMembers.find(m => m.name === u!.name);
+        return tm || {
+          name: u!.name,
+          role: roleProfiles[u!.role]?.label || u!.role,
+          status: u!.status === "active" ? "online" : "offline",
+        };
+      });
+  }, [activeGroup]);
+
+  const otherMembers = groupMembers.filter(m => m.name !== profile.name);
+  const onlineCount = groupMembers.filter(m => m.status === "online").length;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+  }, [messages.length, activeGroupId]);
 
   useEffect(() => {
     dmBottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [dmTarget, dmConversations]);
 
   const handleSend = () => {
-    if (!input.trim()) return;
+    if (!input.trim() || !activeGroupId) return;
     const newMsg: TeamMessage = {
       id: Date.now().toString(),
       sender: profile.name,
@@ -102,7 +149,10 @@ export default function AdminTeamChat() {
       text: input.trim(),
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
     };
-    setMessages(prev => [...prev, newMsg]);
+    setGroupMessages(prev => ({
+      ...prev,
+      [activeGroupId]: [...(prev[activeGroupId] || []), newMsg],
+    }));
     setInput("");
   };
 
@@ -199,7 +249,32 @@ export default function AdminTeamChat() {
               {/* Group Header */}
               <div className="h-12 border-b flex items-center px-4 gap-2 bg-card shrink-0">
                 <Users className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium text-sm">Team Chat</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1.5 font-medium text-sm hover:text-accent transition-colors">
+                      {activeGroup?.name || "No group"}
+                      <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-[220px]">
+                    {groups.length === 0 && (
+                      <div className="px-2 py-3 text-xs text-muted-foreground text-center">
+                        You're not in any groups yet.
+                      </div>
+                    )}
+                    {groups.map(g => (
+                      <DropdownMenuItem
+                        key={g.id}
+                        onClick={() => setActiveGroupId(g.id)}
+                        className={activeGroupId === g.id ? "bg-accent/10" : ""}
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                        <span className="flex-1">{g.name}</span>
+                        <span className="text-[10px] text-muted-foreground">{g.memberIds.length}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <span className="text-xs text-muted-foreground ml-2">
                   {messages.length} messages
                 </span>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
 import { useRef } from "react";
-import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2 } from "lucide-react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -15,6 +15,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
+import TrtcGroupsModal from "@/components/admin/TrtcGroupsModal";
 
 type User = {
   id: number;
@@ -67,6 +68,7 @@ export default function AdminUsers() {
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [suspendUser, setSuspendUser] = useState<User | null>(null);
+  const [groupsModalOpen, setGroupsModalOpen] = useState(false);
 
   // Password invite (simulated email)
   const [inviteModal, setInviteModal] = useState<{ user: User; token: string; resent?: boolean } | null>(null);
@@ -232,9 +234,14 @@ export default function AdminUsers() {
             <h1 className="font-heading text-xl font-bold">User Management</h1>
             <p className="text-sm text-muted-foreground">Manage roles and permissions</p>
           </div>
-          <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2" onClick={openCreate}>
-            <Plus className="w-3.5 h-3.5" /> Add User
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" className="gap-2" onClick={() => setGroupsModalOpen(true)}>
+              <MessageCircle className="w-3.5 h-3.5" /> Manage TRTC Groups
+            </Button>
+            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2" onClick={openCreate}>
+              <Plus className="w-3.5 h-3.5" /> Add User
+            </Button>
+          </div>
         </div>
 
         <div className="relative max-w-sm mb-4">
@@ -647,6 +654,8 @@ export default function AdminUsers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <TrtcGroupsModal open={groupsModalOpen} onOpenChange={setGroupsModalOpen} />
     </AdminLayout>
   );
 }
