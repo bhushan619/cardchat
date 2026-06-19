@@ -1614,7 +1614,6 @@ export default function AdminMessages() {
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
                     ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
-                    ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
