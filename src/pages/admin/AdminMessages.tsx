@@ -1293,8 +1293,6 @@ export default function AdminMessages() {
                   ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
                   ["Order Status", detailOrder.status, false, "status"],
                   ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
-                  ["Arbitration status", "No arbitrated"],
-                  ["Dispute Amount", "—"],
                 ];
                 const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
