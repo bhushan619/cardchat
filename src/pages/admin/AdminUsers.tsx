@@ -364,7 +364,7 @@ export default function AdminUsers() {
                     <Upload className="w-3.5 h-3.5" /> Upload
                   </Button>
                   {formAvatar && (
-                    <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive hover:text-destructive" onClick={() => setFormAvatar("")}>
+                    <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => setFormAvatar("")}>
                       <Trash2 className="w-3.5 h-3.5" /> Remove
                     </Button>
                   )}
