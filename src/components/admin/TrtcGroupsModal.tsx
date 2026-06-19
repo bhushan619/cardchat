@@ -207,7 +207,7 @@ export default function TrtcGroupsModal({ open, onOpenChange }: Props) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 gap-1 text-accent hover:text-accent"
+                              className="h-7 gap-1 text-accent hover:bg-accent/10 hover:text-accent"
                               onClick={() => addMember(active.id, u.id)}
                             >
                               <UserPlus className="w-3.5 h-3.5" /> Add
