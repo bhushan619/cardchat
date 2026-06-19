@@ -1614,7 +1614,6 @@ export default function AdminMessages() {
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
                     ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
-                    ["Order Status", detailOrder.status, false, "status"],
                     ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
@@ -1819,10 +1818,6 @@ export default function AdminMessages() {
         const oldRate = negOrder?.unitPrice || negOrder?.nairaRate || 0;
         const oldPayout = negOrder?.payout || 0;
         const newPayout = negotiateDenom && negotiateRate ? parseFloat(negotiateDenom) * parseFloat(negotiateRate) : 0;
-        const settleCoin = (negOrder as any)?.settleCoin || "USD";
-        const settleRate = (negOrder as any)?.settleRate || 1;
-        const settleFaceValue = (negOrder as any)?.settleFaceValue || oldDenom;
-        const settlePrice = (negOrder as any)?.settlePrice || settleFaceValue * settleRate;
 
         return (
           <Dialog open={negotiateOpen} onOpenChange={setNegotiateOpen}>
@@ -1853,22 +1848,6 @@ export default function AdminMessages() {
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Naira Rate</span>
                   <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Settlement Coin</span>
-                  <span className="font-medium">{settleCoin}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Settle Face Value</span>
-                  <span className="font-medium">{settleFaceValue}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Settle Rate</span>
-                  <span className="font-medium">{settleRate}</span>
-                </div>
-                <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Settlement Amount</span>
-                  <span className="font-medium">{settleCoin} {Number(settlePrice).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs border-t border-border pt-1.5">
                   <span className="text-muted-foreground font-medium">Original Payout</span>
