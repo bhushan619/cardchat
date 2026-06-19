@@ -1293,8 +1293,6 @@ export default function AdminMessages() {
                   ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
                   ["Order Status", detailOrder.status, false, "status"],
                   ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
-                  ["Arbitration status", "No arbitrated"],
-                  ["Dispute Amount", "—"],
                 ];
                 const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
@@ -1343,18 +1341,30 @@ export default function AdminMessages() {
                       </div>
                     </div>
 
-                    {/* Dispute Info */}
+                    {/* Buyer Details */}
                     <div className="pt-3 border-t">
-                      <h4 className="font-heading font-semibold text-sm mb-3">Dispute Info</h4>
+                      <h4 className="font-heading font-semibold text-sm mb-3">Buyer Details</h4>
                       <div className="space-y-3">
                         <div className="flex gap-3 text-sm">
-                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Contact Seller</span>
-                          <span className="text-muted-foreground italic text-xs">No dispute message</span>
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Buyer Name</span>
+                          <span className="font-medium">{buyerNickname}</span>
                         </div>
                         <div className="flex gap-3 text-sm">
-                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Upload Pic</span>
-                          <span className="text-muted-foreground italic text-xs">No uploads</span>
+                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">Provider</span>
+                          <span className="font-medium">{providerName}</span>
                         </div>
+                        {selectedConvo && (
+                          <>
+                            <div className="flex gap-3 text-sm">
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Good Rate</span>
+                              <span className="font-medium">{selectedConvo.goodRate}%</span>
+                            </div>
+                            <div className="flex gap-3 text-sm">
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Monthly Value</span>
+                              <span className="font-medium">{selectedConvo.totalValue}</span>
+                            </div>
+                          </>
+                        )}
                       </div>
                     </div>
                   </div>
