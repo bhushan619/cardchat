@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { orders } from "@/data/mock";
-import { FileText, Search, ChevronDown, ChevronUp, Download } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
@@ -10,25 +10,34 @@ const statusColors: Record<string, string> = {
   pending_sale: "bg-warning/10 text-warning",
   pending: "bg-primary/10 text-primary",
   in_trade: "bg-accent/10 text-accent",
-  
   order_cancelled: "bg-destructive/10 text-destructive",
   success: "bg-success/10 text-success",
 };
 
-const mockOrderDetails: Record<string, {
+interface OrderDetail {
   cardFormat: string;
   agent: string;
   timeline: { event: string; time: string }[];
-  settlement: {
-    settleCoin: string;
-    settleFaceValue: number;
-    settleRate: number;
-    settlePrice: number;
-    sellCost: number;
-    purchaseRate: number;
-    purchaseFaceValue: number;
-  };
-}> = {
+  creationTime: string;
+  cardFaceValue: number;
+  cardCode: string;
+  cardImage?: string;
+  orderReceivingTime: string;
+  orderFaceValue: number;
+  orderUnitPrice: number;
+  orderAmount: number;
+  nairaRate: number;
+  settlementCoin: string;
+  settleFaceValue: number;
+  settleRate: number;
+  settlementAmount: number;
+  buyerNickname: string;
+  cardStatus: string;
+  checked: string;
+  createTime: string;
+}
+
+const mockOrderDetails: Record<string, OrderDetail> = {
   "ORD-20260318-001": {
     cardFormat: "Physical",
     agent: "Mike Agent",
@@ -38,15 +47,22 @@ const mockOrderDetails: Record<string, {
       { event: "Settled", time: "10:40 AM" },
       { event: "Payment sent", time: "10:42 AM" },
     ],
-    settlement: {
-      settleCoin: "USD",
-      settleFaceValue: 200,
-      settleRate: 680,
-      settlePrice: 136000,
-      sellCost: 144000,
-      purchaseRate: 720,
-      purchaseFaceValue: 200,
-    },
+    creationTime: "10:37 AM",
+    cardFaceValue: 200,
+    cardCode: "ORD-20260318-001",
+    orderReceivingTime: "10:37 AM",
+    orderFaceValue: 200,
+    orderUnitPrice: 680,
+    orderAmount: 136000,
+    nairaRate: 289,
+    settlementCoin: "USD",
+    settleFaceValue: 200,
+    settleRate: 680,
+    settlementAmount: 136000,
+    buyerNickname: "Liu Yang",
+    cardStatus: "Verified",
+    checked: "Yes",
+    createTime: "10:37 AM",
   },
   "ORD-20260318-002": {
     cardFormat: "E-Code",
@@ -55,15 +71,22 @@ const mockOrderDetails: Record<string, {
       { event: "Order created", time: "09:15 AM" },
       { event: "Cards submitted", time: "09:20 AM" },
     ],
-    settlement: {
-      settleCoin: "USD",
-      settleFaceValue: 150,
-      settleRate: 620,
-      settlePrice: 93000,
-      sellCost: 99000,
-      purchaseRate: 660,
-      purchaseFaceValue: 150,
-    },
+    creationTime: "09:15 AM",
+    cardFaceValue: 150,
+    cardCode: "ORD-20260318-002",
+    orderReceivingTime: "09:15 AM",
+    orderFaceValue: 150,
+    orderUnitPrice: 620,
+    orderAmount: 93000,
+    nairaRate: 289,
+    settlementCoin: "USD",
+    settleFaceValue: 150,
+    settleRate: 620,
+    settlementAmount: 93000,
+    buyerNickname: "Zhang Wei",
+    cardStatus: "Pending",
+    checked: "No",
+    createTime: "09:15 AM",
   },
   "ORD-20260318-003": {
     cardFormat: "Physical",
@@ -73,17 +96,38 @@ const mockOrderDetails: Record<string, {
       { event: "Cards verified", time: "08:50 AM" },
       { event: "Settled", time: "09:00 AM" },
     ],
-    settlement: {
-      settleCoin: "USD",
-      settleFaceValue: 200,
-      settleRate: 600,
-      settlePrice: 120000,
-      sellCost: 128000,
-      purchaseRate: 640,
-      purchaseFaceValue: 200,
-    },
+    creationTime: "08:45 AM",
+    cardFaceValue: 200,
+    cardCode: "ORD-20260318-003",
+    orderReceivingTime: "08:45 AM",
+    orderFaceValue: 200,
+    orderUnitPrice: 600,
+    orderAmount: 120000,
+    nairaRate: 289,
+    settlementCoin: "USD",
+    settleFaceValue: 200,
+    settleRate: 600,
+    settlementAmount: 120000,
+    buyerNickname: "Wang Fang",
+    cardStatus: "Invalid",
+    checked: "No",
+    createTime: "08:45 AM",
   },
 };
+
+function CopyableValue({ value }: { value: string }) {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(value);
+  };
+  return (
+    <span className="inline-flex items-center gap-1 font-medium">
+      {value}
+      <button onClick={handleCopy} className="text-muted-foreground hover:text-primary transition-colors">
+        <Copy className="w-3 h-3" />
+      </button>
+    </span>
+  );
+}
 
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -179,79 +223,113 @@ export default function AdminOrders() {
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={8} className="px-6 py-4 bg-muted/20">
-                          <div className="grid grid-cols-4 gap-6 animate-slide-up">
-                            {/* Order Info */}
-                            <div className="space-y-2">
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Order Info</p>
-                              <div className="space-y-1.5">
-                                {[
-                                  ["Order ID", o.id],
-                                  ["Card", o.cardType],
-                                  ["Amount", `$${o.amount}`],
-                                  ["Card Rate", `₦${o.unitPrice.toLocaleString()}`],
-                                  ["Naira Rate", `₦${o.nairaRate}`],
-                                  ["Payout", `₦${(o.amount * o.unitPrice).toLocaleString()}`],
-                                ].map(([k, v]) => (
-                                  <div key={k} className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">{k}</span>
-                                    <span className="font-medium">{v}</span>
+                        <td colSpan={8} className="px-6 py-5 bg-muted/20">
+                          <div className="animate-slide-up space-y-5">
+                            {/* Order Details Title */}
+                            <h3 className="text-sm font-bold">Order Details</h3>
+
+                            {/* Two-column grid */}
+                            <div className="grid grid-cols-2 gap-8">
+                              {/* Product Information */}
+                              <div className="space-y-3">
+                                <p className="text-sm font-semibold text-center">Product Information</p>
+                                <div className="space-y-2.5">
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Creation time</span>
+                                    <span className="font-medium">{details.creationTime}</span>
                                   </div>
-                                ))}
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Card type</span>
+                                    <span className="font-medium">{o.cardType}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Card face value</span>
+                                    <span className="font-medium">{details.cardFaceValue}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm items-center">
+                                    <span className="text-muted-foreground">Card code</span>
+                                    <CopyableValue value={details.cardCode} />
+                                  </div>
+                                  <div className="flex justify-between text-sm items-start">
+                                    <span className="text-muted-foreground pt-1">Card image</span>
+                                    <div className="w-16 h-12 bg-muted rounded border flex items-center justify-center">
+                                      <CreditCard className="w-5 h-5 text-muted-foreground" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Order Information */}
+                              <div className="space-y-3">
+                                <p className="text-sm font-semibold text-center">Order Information</p>
+                                <div className="space-y-2.5">
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Order receiving time</span>
+                                    <span className="font-medium">{details.orderReceivingTime}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm items-center">
+                                    <span className="text-muted-foreground">Order id</span>
+                                    <CopyableValue value={o.id} />
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Order face value</span>
+                                    <span className="font-medium">{details.orderFaceValue}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Order unit price</span>
+                                    <span className="font-medium">₦{details.orderUnitPrice.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Order amount</span>
+                                    <span className="font-medium">₦{details.orderAmount.toLocaleString()}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Naira rate</span>
+                                    <span className="font-medium">₦{details.nairaRate}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Settlement coin</span>
+                                    <span className="font-medium">{details.settlementCoin}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Settle face value</span>
+                                    <span className="font-medium">{details.settleFaceValue}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Settle rate</span>
+                                    <span className="font-medium">{details.settleRate}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm">
+                                    <span className="text-muted-foreground">Settlement amount</span>
+                                    <span className="font-medium">{details.settlementCoin} {details.settlementAmount.toLocaleString()}</span>
+                                  </div>
+                                </div>
                               </div>
                             </div>
 
-                            {/* Assignment */}
-                            <div className="space-y-2">
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Assignment</p>
-                              <div className="space-y-1.5">
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-muted-foreground">Customer</span>
-                                  <span className="font-medium">{o.customer}</span>
-                                </div>
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-muted-foreground">Agent</span>
-                                  <span className="font-medium">{details.agent}</span>
-                                </div>
-                                <div className="flex justify-between text-xs">
-                                  <span className="text-muted-foreground">Format</span>
-                                  <span className="font-medium">{details.cardFormat}</span>
-                                </div>
-                              </div>
-                            </div>
+                            {/* Divider */}
+                            <div className="border-t" />
 
-                            {/* Settlement */}
-                            <div className="space-y-2">
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Settlement</p>
-                              <div className="space-y-1.5">
-                                {[
-                                  ["Settle Coin", details.settlement.settleCoin],
-                                  ["Settle Face Value", `$${details.settlement.settleFaceValue.toLocaleString()}`],
-                                  ["Settle Rate", `₦${details.settlement.settleRate.toLocaleString()}`],
-                                  ["Settlement Amount", `₦${details.settlement.settlePrice.toLocaleString()}`],
-                                  ["Sell Cost", `₦${details.settlement.sellCost.toLocaleString()}`],
-                                  ["Purchase Rate", `₦${details.settlement.purchaseRate.toLocaleString()}`],
-                                  ["Purchase Face Value", `$${details.settlement.purchaseFaceValue.toLocaleString()}`],
-                                ].map(([k, v]) => (
-                                  <div key={k} className="flex justify-between text-xs">
-                                    <span className="text-muted-foreground">{k}</span>
-                                    <span className="font-medium">{v}</span>
-                                  </div>
-                                ))}
-                              </div>
-                            </div>
-
-                            {/* Timeline */}
-                            <div className="space-y-2">
-                              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Timeline</p>
-                              <div className="space-y-2 pl-3 border-l-2 border-accent/20">
-                                {details.timeline.map((step, i) => (
-                                  <div key={i} className="relative pl-3">
-                                    <div className="absolute -left-[7px] top-0.5 w-3 h-3 rounded-full bg-accent border-2 border-accent" />
-                                    <p className="text-xs font-medium">{step.event}</p>
-                                    <p className="text-[10px] text-muted-foreground">{step.time}</p>
-                                  </div>
-                                ))}
+                            {/* Buyer Details */}
+                            <div className="space-y-3">
+                              <p className="text-sm font-bold">Buyer Details</p>
+                              <div className="grid grid-cols-2 gap-x-8 gap-y-2.5 max-w-2xl">
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-muted-foreground">Buyer Nickname</span>
+                                  <span className="font-medium">{details.buyerNickname}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-muted-foreground">Card Status</span>
+                                  <span className="font-medium">{details.cardStatus}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-muted-foreground">Checked</span>
+                                  <span className="font-medium">{details.checked}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                  <span className="text-muted-foreground">Create Time</span>
+                                  <span className="font-medium">{details.createTime}</span>
+                                </div>
                               </div>
                             </div>
                           </div>
