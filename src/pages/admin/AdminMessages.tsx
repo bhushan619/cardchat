@@ -1614,6 +1614,7 @@ export default function AdminMessages() {
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
                     ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
+                    ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
@@ -1777,7 +1778,7 @@ export default function AdminMessages() {
                 })()}
               <div className="flex justify-end pt-4 border-t">
                 <Button onClick={() => setDetailOrderId(null)} className="px-6">
-                  Close
+                  Confirm
                 </Button>
               </div>
             </DialogContent>
