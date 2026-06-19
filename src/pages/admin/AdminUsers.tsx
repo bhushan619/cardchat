@@ -234,9 +234,14 @@ export default function AdminUsers() {
             <h1 className="font-heading text-xl font-bold">User Management</h1>
             <p className="text-sm text-muted-foreground">Manage roles and permissions</p>
           </div>
-          <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2" onClick={openCreate}>
-            <Plus className="w-3.5 h-3.5" /> Add User
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button size="sm" variant="outline" className="gap-2" onClick={() => setGroupsModalOpen(true)}>
+              <MessageCircle className="w-3.5 h-3.5" /> Manage TRTC Groups
+            </Button>
+            <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2" onClick={openCreate}>
+              <Plus className="w-3.5 h-3.5" /> Add User
+            </Button>
+          </div>
         </div>
 
         <div className="relative max-w-sm mb-4">
