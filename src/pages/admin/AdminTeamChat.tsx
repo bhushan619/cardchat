@@ -249,7 +249,32 @@ export default function AdminTeamChat() {
               {/* Group Header */}
               <div className="h-12 border-b flex items-center px-4 gap-2 bg-card shrink-0">
                 <Users className="w-4 h-4 text-muted-foreground" />
-                <span className="font-medium text-sm">Team Chat</span>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button className="flex items-center gap-1.5 font-medium text-sm hover:text-accent transition-colors">
+                      {activeGroup?.name || "No group"}
+                      <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="min-w-[220px]">
+                    {groups.length === 0 && (
+                      <div className="px-2 py-3 text-xs text-muted-foreground text-center">
+                        You're not in any groups yet.
+                      </div>
+                    )}
+                    {groups.map(g => (
+                      <DropdownMenuItem
+                        key={g.id}
+                        onClick={() => setActiveGroupId(g.id)}
+                        className={activeGroupId === g.id ? "bg-accent/10" : ""}
+                      >
+                        <MessageCircle className="w-3.5 h-3.5 mr-2 text-muted-foreground" />
+                        <span className="flex-1">{g.name}</span>
+                        <span className="text-[10px] text-muted-foreground">{g.memberIds.length}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
                 <span className="text-xs text-muted-foreground ml-2">
                   {messages.length} messages
                 </span>
