@@ -76,7 +76,9 @@ const roleProfiles: Record<string, { name: string; label: string }> = {
 
 export default function AdminTeamChat() {
   const { role } = useAdminRole();
-  const [messages, setMessages] = useState<TeamMessage[]>(initialMessages);
+  const [groups, setGroups] = useState<TrtcGroup[]>([]);
+  const [activeGroupId, setActiveGroupId] = useState<string | null>(null);
+  const [groupMessages, setGroupMessages] = useState<Record<string, TeamMessage[]>>({});
   const [input, setInput] = useState("");
   const [dmTarget, setDmTarget] = useState<string | null>(null);
   const [dmConversations, setDmConversations] = useState<Record<string, DMMessage[]>>(initialDMs);
@@ -85,14 +87,54 @@ export default function AdminTeamChat() {
   const dmBottomRef = useRef<HTMLDivElement>(null);
 
   const profile = roleProfiles[role];
-  const onlineCount = teamMembers.filter(m => m.status === "online").length;
 
-  // Filter out self from members list
-  const otherMembers = teamMembers.filter(m => m.name !== profile.name);
+  // Load groups and seed the first group's messages with the initial sample thread
+  useEffect(() => {
+    const load = () => {
+      const all = getGroups();
+      // Only show groups the current admin is a member of
+      const me = adminUsers.find(u => u.name === profile.name);
+      const mine = me ? all.filter(g => g.memberIds.includes(me.id)) : all;
+      setGroups(mine);
+      setGroupMessages(prev => {
+        const next = { ...prev };
+        mine.forEach((g, i) => {
+          if (!next[g.id]) next[g.id] = i === 0 ? initialMessages : [];
+        });
+        return next;
+      });
+      setActiveGroupId(prev => (prev && mine.some(g => g.id === prev) ? prev : mine[0]?.id ?? null));
+    };
+    load();
+    return onGroupsChanged(load);
+  }, [profile.name]);
+
+  const activeGroup = useMemo(() => groups.find(g => g.id === activeGroupId) || null, [groups, activeGroupId]);
+  const messages = activeGroupId ? (groupMessages[activeGroupId] || []) : [];
+
+  // Members of the active group (excluding self)
+  const groupMembers = useMemo(() => {
+    if (!activeGroup) return [] as typeof teamMembers;
+    const byId = new Map(adminUsers.map(u => [u.id, u]));
+    return activeGroup.memberIds
+      .map(id => byId.get(id))
+      .filter(Boolean)
+      .map(u => {
+        const tm = teamMembers.find(m => m.name === u!.name);
+        return tm || {
+          name: u!.name,
+          role: roleProfiles[u!.role]?.label || u!.role,
+          status: u!.status === "active" ? "online" : "offline",
+        };
+      });
+  }, [activeGroup]);
+
+  const otherMembers = groupMembers.filter(m => m.name !== profile.name);
+  const onlineCount = groupMembers.filter(m => m.status === "online").length;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages.length]);
+  }, [messages.length, activeGroupId]);
 
   useEffect(() => {
     dmBottomRef.current?.scrollIntoView({ behavior: "smooth" });
