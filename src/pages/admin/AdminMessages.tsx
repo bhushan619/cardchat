@@ -1600,8 +1600,6 @@ export default function AdminMessages() {
                     ["Card face value", `${cardFaceValue}`],
                     ["Card number", cardNumber, cardNumber !== "—"],
                     ["Card code", cardCode, true],
-                    ["Provider", providerName],
-                    ["Buyer", buyerNickname],
                   ];
                   const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
