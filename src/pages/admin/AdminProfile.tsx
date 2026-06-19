@@ -156,6 +156,77 @@ export default function AdminProfile() {
           <Button onClick={handleSaveProfile} className="w-full">Save Profile</Button>
         </div>
 
+        {/* Change Password */}
+        <div className="bg-card border rounded-xl p-5 space-y-4 mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Password</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Change the password you use to sign in to the admin panel.
+              </p>
+            </div>
+          </div>
+
+          {!pwdMode ? (
+            <Button variant="outline" className="gap-1.5" onClick={() => setPwdMode(true)}>
+              <Lock className="w-3.5 h-3.5" /> Change Password
+            </Button>
+          ) : (
+            <div className="space-y-3 bg-muted/30 rounded-lg p-4">
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">Current Password</label>
+                <div className="relative">
+                  <Input
+                    type={showCurrentPwd ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={currentPwd}
+                    onChange={e => setCurrentPwd(e.target.value)}
+                    className="pr-9"
+                  />
+                  <button type="button" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" onClick={() => setShowCurrentPwd(!showCurrentPwd)}>
+                    {showCurrentPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">New Password</label>
+                <div className="relative">
+                  <Input
+                    type={showNewPwd ? "text" : "password"}
+                    placeholder="At least 8 characters"
+                    value={newPwd}
+                    onChange={e => setNewPwd(e.target.value)}
+                    className="pr-9"
+                  />
+                  <button type="button" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" onClick={() => setShowNewPwd(!showNewPwd)}>
+                    {showNewPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs font-medium">Confirm New Password</label>
+                <div className="relative">
+                  <Input
+                    type={showConfirmPwd ? "text" : "password"}
+                    placeholder="••••••••"
+                    value={confirmPwd}
+                    onChange={e => setConfirmPwd(e.target.value)}
+                    className="pr-9"
+                  />
+                  <button type="button" className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground" onClick={() => setShowConfirmPwd(!showConfirmPwd)}>
+                    {showConfirmPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+              <div className="flex gap-2 pt-1">
+                <Button variant="outline" className="flex-1" onClick={handleCancelPwd}>Cancel</Button>
+                <Button className="flex-1" onClick={handleChangePassword}>Update Password</Button>
+              </div>
+            </div>
+          )}
+        </div>
+
+
         {role === "super_admin" && (
           <>
             <Separator className="mb-6" />
