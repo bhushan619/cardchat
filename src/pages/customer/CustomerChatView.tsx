@@ -213,7 +213,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
             <div className="bg-accent/5 border border-accent/20 rounded-lg p-4 space-y-1 text-center">
               <p className="text-xs text-muted-foreground">Order ID</p>
-              <p className="text-sm font-heading font-bold">#ORD-20260318-001</p>
+              <p className="text-sm font-heading font-bold">#{selectedOrder.id}</p>
               <span className={`inline-block mt-1 px-2.5 py-0.5 rounded-full ${statusConfig.bg} ${statusConfig.color} text-xs font-medium`}>
                 {statusConfig.label}
               </span>
@@ -223,10 +223,10 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Card Details</p>
               <div className="bg-muted/50 rounded-xl p-3 space-y-2">
                 {[
-                  { label: "Card Type", value: "iTunes US" },
-                  { label: "Amount", value: "$200" },
-                  { label: "Card Rate", value: "₦680" },
-                  { label: "Payout", value: "₦136,000" },
+                  { label: "Card Type", value: selectedOrder.cardType },
+                  { label: "Amount", value: selectedOrder.amount },
+                  { label: "Card Rate", value: selectedOrder.rate },
+                  { label: "Payout", value: selectedOrder.payout },
                 ].map(item => (
                   <div key={item.label} className="flex items-center justify-between">
                     <p className="text-xs text-muted-foreground">{item.label}</p>
