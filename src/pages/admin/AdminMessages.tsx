@@ -1243,24 +1243,66 @@ export default function AdminMessages() {
               <DialogHeader>
                 <DialogTitle>Order Details</DialogTitle>
               </DialogHeader>
-              {detailOrder && (
+              {detailOrder && (() => {
+                // Derive richer fields from JSON-style payload (with sensible fallbacks for mock data)
+                const cardCurrency = detailOrder.cardCurrency || "USD";
+                const cardTypeName = detailOrder.cardType || "—";
+                const shoTypeName = `${cardTypeName}${cardCurrency ? ` / ${cardCurrency}` : ""}`;
+                const cardNumber = detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : "—";
+                const cardCode = detailOrder.id;
+                const orderCode = detailOrder.id;
+                const providerName = (detailOrder as any).providerName || (detailOrder as any).alias || "—";
+                const buyerNickname = (detailOrder as any).buyerNickname || (detailOrder as any).buyer || "—";
+                const cardFaceValue = detailOrder.amount;
+                const purchaseFaceValue = detailOrder.amount;
+                const purchaseRate = detailOrder.unitPrice || detailOrder.nairaRate || 0;
+                const sellCost = detailOrder.payout;
+                const settleCoin = (detailOrder as any).settleCoin || "USD";
+                const settleRate = (detailOrder as any).settleRate || 1;
+                const settleFaceValue = (detailOrder as any).settleFaceValue || cardFaceValue;
+                const settlePrice = (detailOrder as any).settlePrice || (settleFaceValue * settleRate);
+                const nairaRate = detailOrder.nairaRate;
+                const cardImageUrl = (detailOrder as any).cardImage as string | undefined;
+
+                const productRows: [string, React.ReactNode, boolean?][] = [
+                  ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
+                  ["Card type", shoTypeName],
+                  ["Card face value", `${cardFaceValue}`],
+                  ["Card number", cardNumber, cardNumber !== "—"],
+                  ["Card code", cardCode, true],
+                  ["Provider", providerName],
+                  ["Buyer", buyerNickname],
+                ];
+
+                const orderRows: [string, React.ReactNode, boolean?, string?][] = [
+                  ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
+                  ["Order id", orderCode, true],
+                  ["Order face value", `${purchaseFaceValue}`],
+                  ["Order unit price", `₦${Number(purchaseRate).toLocaleString()}`],
+                  ["Order amount", `₦${Number(sellCost).toLocaleString()}`],
+                  ["Naira rate", `₦${Number(nairaRate).toLocaleString()}`],
+                  ["Settlement coin", settleCoin],
+                  ["Settle face value", `${settleFaceValue}`],
+                  ["Settle rate", `${settleRate}`],
+                  ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
+                  ["Order Status", detailOrder.status, false, "status"],
+                  ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
+                  ["Arbitration status", "No arbitrated"],
+                  ["Dispute Amount", "—"],
+                ];
+
+                return (
                 <div className="grid grid-cols-2 gap-8 pt-2">
                   {/* Product Information */}
                   <div className="space-y-4">
                     <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
                     <div className="space-y-3">
-                      {[
-                        ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
-                        ["Card image number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers[0] : "—"],
-                        ["Card type", `${detailOrder.cardType}${detailOrder.cardCurrency ? ` / ${detailOrder.cardCurrency}` : ""}`],
-                        ["Order face value", `${detailOrder.amount}`],
-                        ["Card number", detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : "—"],
-                      ].map(([label, value]) => (
+                      {productRows.map(([label, value, copyable]) => (
                         <div key={label} className="flex gap-3 text-sm">
                           <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="font-medium break-all">{value}</span>
-                            {(label === "Card number" || label === "Card image number") && value !== "—" && (
+                            {copyable && (
                               <button onClick={() => handleCopy(String(value), `modal-${label}`)} className="text-muted-foreground hover:text-primary shrink-0">
                                 <Copy className="w-3.5 h-3.5" />
                               </button>
@@ -1269,13 +1311,17 @@ export default function AdminMessages() {
                           </div>
                         </div>
                       ))}
-                      {/* Card image placeholder */}
+                      {/* Card image */}
                       <div className="flex gap-3 text-sm">
                         <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card image</span>
                         <div className="flex gap-2">
-                          <div className="w-16 h-12 bg-muted rounded flex items-center justify-center">
-                            <CreditCard className="w-5 h-5 text-muted-foreground" />
-                          </div>
+                          {cardImageUrl ? (
+                            <img src={cardImageUrl} alt="Card" className="w-20 h-14 object-cover rounded border" />
+                          ) : (
+                            <div className="w-20 h-14 bg-muted rounded flex items-center justify-center">
+                              <CreditCard className="w-5 h-5 text-muted-foreground" />
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -1300,34 +1346,25 @@ export default function AdminMessages() {
                   <div className="space-y-4">
                     <h4 className="font-heading font-semibold text-sm text-center">Order Information</h4>
                     <div className="space-y-3">
-                      {[
-                        ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
-                        ["Order id", detailOrder.id],
-                        ["Order face value", `${detailOrder.amount}`],
-                        ["Order unit price", `${detailOrder.unitPrice || "—"}`],
-                        ["Order amount", `${detailOrder.payout.toLocaleString()}`],
-                        ["Settlement amount", detailOrder.bank ? `₦${detailOrder.payout.toLocaleString()}` : "—"],
-                        ["Order Status", detailOrder.status],
-                        ["Gift Card", currentOrderStatus === "success" ? "Good Card" : "Pending"],
-                        ["Arbitration status", "No arbitrated"],
-                        ["Dispute Amount", "—"],
-                      ].map(([label, value]) => (
+                      {orderRows.map(([label, value, copyable, kind]) => (
                         <div key={label} className="flex gap-3 text-sm">
                           <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className={`font-medium break-all ${
-                              label === "Order Status" && value === "success" ? "text-success" :
-                              label === "Order Status" && value === "order_cancelled" ? "text-destructive" :
+                              kind === "status" && value === "success" ? "text-success" :
+                              kind === "status" && value === "order_cancelled" ? "text-destructive" :
+                              kind === "status" && value === "in_trade" ? "text-accent" :
+                              kind === "status" ? "text-warning" :
                               ""
                             }`}>
                               {value}
                             </span>
-                            {label === "Order id" && (
-                              <button onClick={() => handleCopy(String(value), "modal-orderid")} className="text-muted-foreground hover:text-primary shrink-0">
+                            {copyable && (
+                              <button onClick={() => handleCopy(String(value), `modal-${label}`)} className="text-muted-foreground hover:text-primary shrink-0">
                                 <Copy className="w-3.5 h-3.5" />
                               </button>
                             )}
-                            {copyFeedback === "modal-orderid" && label === "Order id" && <span className="text-[9px] text-success">Copied!</span>}
+                            {copyFeedback === `modal-${label}` && <span className="text-[9px] text-success">Copied!</span>}
                           </div>
                         </div>
                       ))}
@@ -1361,7 +1398,8 @@ export default function AdminMessages() {
                     </div>
                   </div>
                 </div>
-              )}
+                );
+              })()}
               <div className="flex justify-end pt-4 border-t">
                 <Button onClick={() => setDetailOrderId(null)} className="px-6">Confirm</Button>
               </div>
