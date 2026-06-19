@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -26,9 +26,14 @@ export default function AdminLogin() {
     setLoading(true);
 
     setTimeout(() => {
-      const match = MOCK_CREDENTIALS.find(
-        (c) => c.email === email && c.password === password
-      );
+      const lowerEmail = email.trim().toLowerCase();
+      const stored = sessionStorage.getItem(`cc_password_${lowerEmail}`);
+      const knownByEmail = MOCK_CREDENTIALS.find((c) => c.email === lowerEmail);
+      // Accept either the original mock password OR a password set/reset by the user
+      const passwordMatches = stored
+        ? password === stored || (knownByEmail && password === knownByEmail.password)
+        : knownByEmail && password === knownByEmail.password;
+      const match = knownByEmail && passwordMatches ? knownByEmail : null;
       if (match) {
         sessionStorage.setItem("adminAuth", JSON.stringify({ email: match.email, role: match.role }));
         navigate("/admin");
@@ -71,7 +76,12 @@ export default function AdminLogin() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="password">Password</Label>
+                  <Link to="/admin/forgot-password" className="text-xs font-medium text-accent hover:underline">
+                    Forgot password?
+                  </Link>
+                </div>
                 <div className="relative">
                   <Input
                     id="password"
