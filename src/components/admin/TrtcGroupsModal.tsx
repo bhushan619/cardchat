@@ -198,7 +198,7 @@ export default function TrtcGroupsModal({ open, onOpenChange }: Props) {
                             <Button
                               variant="ghost"
                               size="sm"
-                              className="h-7 gap-1 text-destructive hover:text-destructive"
+                              className="h-7 gap-1 text-destructive hover:bg-destructive/10 hover:text-destructive"
                               onClick={() => removeMember(active.id, u.id)}
                             >
                               <UserMinus className="w-3.5 h-3.5" /> Remove
