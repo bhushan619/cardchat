@@ -654,6 +654,8 @@ export default function AdminUsers() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <TrtcGroupsModal open={groupsModalOpen} onOpenChange={setGroupsModalOpen} />
     </AdminLayout>
   );
 }
