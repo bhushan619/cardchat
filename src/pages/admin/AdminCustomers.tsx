@@ -44,12 +44,18 @@ const statusColors: Record<string, string> = {
 
 export default function AdminCustomers() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [channelFilter, setChannelFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
 
-  const filtered = customers.filter(c =>
-    c.alias.toLowerCase().includes(search.toLowerCase()) ||
-    c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = customers.filter(c => {
+    const matchesSearch =
+      c.alias.toLowerCase().includes(search.toLowerCase()) ||
+      c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
+    return matchesSearch && matchesStatus && matchesChannel;
+  });
 
   // Get transactions for selected customer (mock: show all wallet transactions)
   const customerTransactions = walletTransactions;
