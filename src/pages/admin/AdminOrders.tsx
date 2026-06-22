@@ -5,6 +5,7 @@ import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard } from "luci
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 const statusColors: Record<string, string> = {
   pending_sale: "bg-warning/10 text-warning",
