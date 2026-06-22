@@ -205,6 +205,9 @@ export default function AdminRewards() {
               Clear dates
             </button>
           )}
+          <Button size="sm" className="h-9 gap-1.5 text-xs bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
         </div>
 
         {/* Table */}
