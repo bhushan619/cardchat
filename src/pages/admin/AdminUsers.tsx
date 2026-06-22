@@ -250,11 +250,30 @@ export default function AdminUsers() {
           </div>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative max-w-sm flex-1">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="relative max-w-sm flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search users..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
+            <Input placeholder="Search by name or email..." className="pl-10" value={search} onChange={e => setSearch(e.target.value)} />
           </div>
+          <Select value={roleFilter} onValueChange={setRoleFilter}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Role" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All roles</SelectItem>
+              <SelectItem value="super_admin">Super Admin</SelectItem>
+              <SelectItem value="team_lead">Team Lead</SelectItem>
+              <SelectItem value="agent">Agent</SelectItem>
+              <SelectItem value="finance">Finance</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="active">Active</SelectItem>
+              <SelectItem value="offline">Offline</SelectItem>
+              <SelectItem value="suspended">Suspended</SelectItem>
+            </SelectContent>
+          </Select>
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
