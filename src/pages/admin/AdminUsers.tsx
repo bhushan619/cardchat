@@ -64,6 +64,8 @@ const PERMISSIONS: Record<string, string[]> = {
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>(initialUsers.map(u => ({ ...u, status: u.status as User["status"] })));
   const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [modalOpen, setModalOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
