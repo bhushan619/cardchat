@@ -159,6 +159,9 @@ export default function AdminWithdrawals() {
               {channels.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
