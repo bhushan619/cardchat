@@ -71,16 +71,23 @@ export default function AdminWithdrawals() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
+  const [bankFilter, setBankFilter] = useState<string>("all");
+  const [minAmount, setMinAmount] = useState<string>("");
+  const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Withdrawal | null>(null);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
+    const min = minAmount === "" ? -Infinity : Number(minAmount);
+    const max = maxAmount === "" ? Infinity : Number(maxAmount);
     return items.filter(w =>
       (statusFilter === "all" || w.status === statusFilter) &&
       (channelFilter === "all" || w.channel === channelFilter) &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q))
+      (bankFilter === "all" || w.bankName === bankFilter) &&
+      w.amount >= min && w.amount <= max &&
+      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
-  }, [items, search, statusFilter, channelFilter]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
