@@ -4,6 +4,7 @@ import { conversations, customerWallets, walletTransactions } from "@/data/mock"
 import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -43,12 +44,18 @@ const statusColors: Record<string, string> = {
 
 export default function AdminCustomers() {
   const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [channelFilter, setChannelFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
 
-  const filtered = customers.filter(c =>
-    c.alias.toLowerCase().includes(search.toLowerCase()) ||
-    c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()))
-  );
+  const filtered = customers.filter(c => {
+    const matchesSearch =
+      c.alias.toLowerCase().includes(search.toLowerCase()) ||
+      c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+    const matchesStatus = statusFilter === "all" || c.status === statusFilter;
+    const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
+    return matchesSearch && matchesStatus && matchesChannel;
+  });
 
   // Get transactions for selected customer (mock: show all wallet transactions)
   const customerTransactions = walletTransactions;
@@ -66,8 +73,8 @@ export default function AdminCustomers() {
           <Badge variant="secondary" className="text-xs">{customers.length} total</Badge>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative max-w-sm flex-1">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="relative max-w-sm flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search by alias or tag..."
@@ -76,6 +83,23 @@ export default function AdminCustomers() {
               onChange={e => setSearch(e.target.value)}
             />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="consulting">Consulting</SelectItem>
+              <SelectItem value="trading">Trading</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={channelFilter} onValueChange={setChannelFilter}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Channel" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All channels</SelectItem>
+              <SelectItem value="trtc">In-App (TRTC)</SelectItem>
+              <SelectItem value="whatsapp">WhatsApp</SelectItem>
+            </SelectContent>
+          </Select>
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
