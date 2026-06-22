@@ -135,11 +135,19 @@ export default function AdminOrders() {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [cardTypeFilter, setCardTypeFilter] = useState<string>("all");
 
-  const filtered = orders.filter(o =>
-    o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    o.customer.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const uniqueCardTypes = Array.from(new Set(orders.map(o => o.cardType)));
+
+  const filtered = orders.filter(o => {
+    const matchesSearch =
+      o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      o.customer.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesStatus = statusFilter === "all" || o.status === statusFilter;
+    const matchesType = cardTypeFilter === "all" || o.cardType === cardTypeFilter;
+    return matchesSearch && matchesStatus && matchesType;
+  });
 
   const handleExportCSV = () => {
     const headers = ["Alias", "Card Type", "Card Rate (₦)", "Naira Rate (₦)", "Amount", "Status", "Created"];
