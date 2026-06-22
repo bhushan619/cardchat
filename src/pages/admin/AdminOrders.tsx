@@ -175,11 +175,29 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative max-w-sm flex-1">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="relative max-w-sm flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Search by order ID, customer..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
+          <Select value={statusFilter} onValueChange={setStatusFilter}>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
+              <SelectItem value="pending_sale">Pending Sale</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="in_trade">In Trade</SelectItem>
+              <SelectItem value="success">Success</SelectItem>
+              <SelectItem value="order_cancelled">Cancelled</SelectItem>
+            </SelectContent>
+          </Select>
+          <Select value={cardTypeFilter} onValueChange={setCardTypeFilter}>
+            <SelectTrigger className="w-44"><SelectValue placeholder="Card type" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All card types</SelectItem>
+              {uniqueCardTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+            </SelectContent>
+          </Select>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
             <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From date & time" />
             <span>to</span>
