@@ -249,6 +249,9 @@ export default function AdminWallets() {
                 <X className="w-3 h-3 mr-1" /> Clear All
               </Button>
             )}
+            <Button size="sm" className="h-9 gap-1.5 text-sm bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+              <Search className="w-3.5 h-3.5" /> Search
+            </Button>
           </div>
           <span className="text-xs text-muted-foreground ml-auto">{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
         </div>

@@ -3,6 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
 import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
@@ -65,14 +66,19 @@ export default function AdminCustomers() {
           <Badge variant="secondary" className="text-xs">{customers.length} total</Badge>
         </div>
 
-        <div className="relative max-w-sm mb-4">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <Input
-            placeholder="Search by alias or tag..."
-            className="pl-10"
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-          />
+        <div className="flex items-center gap-3 mb-4">
+          <div className="relative max-w-sm flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Search by alias or tag..."
+              className="pl-10"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+            />
+          </div>
+          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">

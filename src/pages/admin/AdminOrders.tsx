@@ -176,6 +176,9 @@ export default function AdminOrders() {
             <span>to</span>
             <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To date & time" />
           </div>
+          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">

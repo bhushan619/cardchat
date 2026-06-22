@@ -103,6 +103,9 @@ export default function AdminCardRates() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Search currency..." className="pl-10" value={currencySearch} onChange={e => setCurrencySearch(e.target.value)} />
           </div>
+          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
         </div>
 
         {/* Format filter chips */}

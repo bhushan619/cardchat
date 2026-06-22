@@ -153,6 +153,9 @@ export default function AdminSensitiveWords() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input placeholder="Search words..." value={search} onChange={e => setSearch(e.target.value)} className="pl-10" />
           </div>
+          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Search className="w-3.5 h-3.5" /> Search
+          </Button>
           <div className="flex gap-1">
             {(["all", "profanity", "competitor", "pii"] as const).map(c => (
               <button
