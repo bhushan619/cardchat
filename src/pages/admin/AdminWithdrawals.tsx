@@ -142,30 +142,51 @@ export default function AdminWithdrawals() {
         </div>
 
         {/* Filters */}
-        <div className="flex items-center gap-3 mb-4">
-          <div className="relative flex-1 max-w-sm">
+        <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="relative flex-1 max-w-sm min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search alias, ID, bank, reference..."
+              placeholder="Search alias, ID, bank, account, ref..."
               className="pl-10"
               value={search}
               onChange={e => setSearch(e.target.value)}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               {statuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
             </SelectContent>
           </Select>
           <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Channel" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All channels</SelectItem>
               {channels.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Select value={bankFilter} onValueChange={setBankFilter}>
+            <SelectTrigger className="w-36"><SelectValue placeholder="Bank" /></SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All banks</SelectItem>
+              {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+            </SelectContent>
+          </Select>
+          <Input
+            type="number"
+            placeholder="Min ₦"
+            className="w-24"
+            value={minAmount}
+            onChange={e => setMinAmount(e.target.value)}
+          />
+          <Input
+            type="number"
+            placeholder="Max ₦"
+            className="w-24"
+            value={maxAmount}
+            onChange={e => setMaxAmount(e.target.value)}
+          />
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
