@@ -6,17 +6,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-} from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChannelBadge from "@/components/admin/ChannelBadge";
 
-const customers = conversations.map(c => {
-  const wallet = customerWallets.find(w => w.alias === c.alias);
+const customers = conversations.map((c) => {
+  const wallet = customerWallets.find((w) => w.alias === c.alias);
   return {
     id: c.id,
     alias: c.alias,
@@ -48,10 +44,10 @@ export default function AdminCustomers() {
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
 
-  const filtered = customers.filter(c => {
+  const filtered = customers.filter((c) => {
     const matchesSearch =
       c.alias.toLowerCase().includes(search.toLowerCase()) ||
-      c.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+      c.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
     return matchesSearch && matchesStatus && matchesChannel;
@@ -70,7 +66,9 @@ export default function AdminCustomers() {
             </h1>
             <p className="text-sm text-muted-foreground">View and search all customers</p>
           </div>
-          <Badge variant="secondary" className="text-xs">{customers.length} total</Badge>
+          <Badge variant="secondary" className="text-xs">
+            {customers.length} total
+          </Badge>
         </div>
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -80,20 +78,23 @@ export default function AdminCustomers() {
               placeholder="Search by alias or tag..."
               className="pl-10"
               value={search}
-              onChange={e => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="consulting">Consulting</SelectItem>
               <SelectItem value="trading">Trading</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
             </SelectContent>
           </Select>
           <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Channel" /></SelectTrigger>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Channel" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All channels</SelectItem>
               <SelectItem value="trtc">In-App (TRTC)</SelectItem>
@@ -123,7 +124,7 @@ export default function AdminCustomers() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(c => (
+              {filtered.map((c) => (
                 <TableRow key={c.id} className="hover:bg-muted/30">
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -134,7 +135,9 @@ export default function AdminCustomers() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}>
+                    <span
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}
+                    >
                       {c.status}
                     </span>
                   </TableCell>
@@ -148,15 +151,23 @@ export default function AdminCustomers() {
                   <TableCell className="text-right text-sm font-medium">{c.totalValue}</TableCell>
                   <TableCell className="text-right text-sm font-medium">
                     <span className="flex items-center justify-end gap-1">
-                      <Wallet className="w-3 h-3 text-accent" />
-                      ₦{c.walletBalance.toLocaleString()}
+                      <Wallet className="w-3 h-3 text-accent" />₦{c.walletBalance.toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
                     <div className="flex justify-center gap-1">
-                      {c.tags.length > 0 ? c.tags.map(t => (
-                        <span key={t} className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium">{t}</span>
-                      )) : <span className="text-[10px] text-muted-foreground">—</span>}
+                      {c.tags.length > 0 ? (
+                        c.tags.map((t) => (
+                          <span
+                            key={t}
+                            className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium"
+                          >
+                            {t}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">—</span>
+                      )}
                     </div>
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">{c.lastActive} ago</TableCell>
@@ -198,8 +209,12 @@ export default function AdminCustomers() {
           {selectedCustomer && (
             <Tabs defaultValue="details" className="mt-1">
               <TabsList className="w-full">
-                <TabsTrigger value="details" className="flex-1 text-xs">Details</TabsTrigger>
-                <TabsTrigger value="wallet" className="flex-1 text-xs">Wallet</TabsTrigger>
+                <TabsTrigger value="details" className="flex-1 text-xs">
+                  Details
+                </TabsTrigger>
+                <TabsTrigger value="wallet" className="flex-1 text-xs">
+                  Wallet
+                </TabsTrigger>
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
@@ -248,20 +263,32 @@ export default function AdminCustomers() {
                     <p className="text-[10px] text-muted-foreground">Credits</p>
                   </div>
                   <div className="bg-warning/10 rounded-lg p-3 text-center">
-                    <p className="text-sm font-bold text-warning">₦{selectedCustomer.totalWithdrawals.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-warning">
+                      ₦{selectedCustomer.totalWithdrawals.toLocaleString()}
+                    </p>
                     <p className="text-[10px] text-muted-foreground">Withdrawals</p>
                   </div>
                 </div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">Transactions</p>
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  Transactions
+                </p>
                 <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {customerTransactions.map(t => (
+                  {customerTransactions.map((t) => (
                     <div key={t.id} className="flex items-center gap-3 p-2 bg-muted/50 rounded-lg">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>
-                        {t.type === "credit" ? <ArrowDownLeft className="w-4 h-4 text-success" /> : <ArrowUpRight className="w-4 h-4 text-warning" />}
+                      <div
+                        className={`w-8 h-8 rounded-full flex items-center justify-center ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}
+                      >
+                        {t.type === "credit" ? (
+                          <ArrowDownLeft className="w-4 h-4 text-success" />
+                        ) : (
+                          <ArrowUpRight className="w-4 h-4 text-warning" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs font-medium truncate">{t.description}</p>
-                        <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {t.date} · {t.time}
+                        </p>
                       </div>
                       <p className={`text-xs font-bold ${t.type === "credit" ? "text-success" : "text-warning"}`}>
                         {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
