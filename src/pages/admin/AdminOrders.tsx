@@ -138,9 +138,9 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [cardTypeFilter, setCardTypeFilter] = useState<string>("all");
 
-  const uniqueCardTypes = Array.from(new Set(orders.map((o) => o.cardType)));
+  const uniqueCardTypes = Array.from(new Set(orders.map(o => o.cardType)));
 
-  const filtered = orders.filter((o) => {
+  const filtered = orders.filter(o => {
     const matchesSearch =
       o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.customer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -150,27 +150,9 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = [
-      "Alias",
-      "Card Type",
-      "Card Rate (CNY)",
-      "Card Rate (NGN)",
-      "Naira Rate (₦)",
-      "Amount",
-      "Status",
-      "Created",
-    ];
-    const rows = filtered.map((o) => [
-      o.customer,
-      o.cardType,
-      `¥${o.unitPrice}`,
-      `₦${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`,
-      `₦${o.nairaRate}`,
-      `$${o.amount}`,
-      o.status,
-      o.created,
-    ]);
-    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
+    const headers = ["Alias", "Card Type", "Card Rate (CNY)", "Card Rate (NGN)", "Naira Rate (₦)", "Amount", "Status", "Created"];
+    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `₦${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `₦${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -196,17 +178,10 @@ export default function AdminOrders() {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="relative max-w-sm flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by order ID, customer..."
-              className="pl-10"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <Input placeholder="Search by order ID, customer..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
+            <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="pending_sale">Pending Sale</SelectItem>
@@ -217,16 +192,10 @@ export default function AdminOrders() {
             </SelectContent>
           </Select>
           <Select value={cardTypeFilter} onValueChange={setCardTypeFilter}>
-            <SelectTrigger className="w-44">
-              <SelectValue placeholder="Card type" />
-            </SelectTrigger>
+            <SelectTrigger className="w-44"><SelectValue placeholder="Card type" /></SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All card types</SelectItem>
-              {uniqueCardTypes.map((t) => (
-                <SelectItem key={t} value={t}>
-                  {t}
-                </SelectItem>
-              ))}
+              {uniqueCardTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
             </SelectContent>
           </Select>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -255,7 +224,7 @@ export default function AdminOrders() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((o) => {
+              {filtered.map(o => {
                 const isExpanded = expandedId === o.id;
                 const details = mockOrderDetails[o.id];
                 return (
@@ -266,22 +235,15 @@ export default function AdminOrders() {
                       className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                     >
                       <td className="px-2 text-center">
-                        {isExpanded ? (
-                          <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" />
-                        ) : (
-                          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />
-                        )}
+                        {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium">{o.customer}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-right">
-                        ¥{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
-
+                       <td className="px-4 py-3 text-sm text-right">¥{o.unitPrice}</td>
+                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
@@ -371,9 +333,7 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Settlement amount</span>
-                                    <span className="font-medium">
-                                      {details.settlementCoin} {details.settlementAmount.toLocaleString()}
-                                    </span>
+                                    <span className="font-medium">{details.settlementCoin} {details.settlementAmount.toLocaleString()}</span>
                                   </div>
                                 </div>
                               </div>

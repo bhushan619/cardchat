@@ -1,15 +1,5 @@
 import { useState, useRef } from "react";
-import {
-  X,
-  Plus,
-  Trash2,
-  LogIn,
-  LogOut,
-  RefreshCw,
-  Image as ImageIcon,
-  ShoppingCart,
-  ChevronRight,
-} from "lucide-react";
+import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -340,10 +330,7 @@ export default function CardlightPanel({
               <>
                 <span className="text-[10px] text-success font-medium">● Connected</span>
                 <button
-                  onClick={() => {
-                    sessionStorage.removeItem("cardlight_logged_in");
-                    setIsLoggedIn(false);
-                  }}
+                  onClick={() => { sessionStorage.removeItem("cardlight_logged_in"); setIsLoggedIn(false); }}
                   className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1 px-1.5 py-0.5 rounded border border-border"
                   title="Logout from Cardlight"
                 >
@@ -361,10 +348,7 @@ export default function CardlightPanel({
         <div className="flex items-center justify-end gap-2 px-4 py-1.5 border-b bg-muted/30">
           <span className="text-[10px] text-success font-medium">● Connected</span>
           <button
-            onClick={() => {
-              sessionStorage.removeItem("cardlight_logged_in");
-              setIsLoggedIn(false);
-            }}
+            onClick={() => { sessionStorage.removeItem("cardlight_logged_in"); setIsLoggedIn(false); }}
             className="text-[10px] text-muted-foreground hover:text-destructive flex items-center gap-1 px-1.5 py-0.5 rounded border border-border"
             title="Logout from Cardlight"
           >
@@ -500,7 +484,7 @@ export default function CardlightPanel({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (NGN)</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (CNY)</label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
@@ -532,7 +516,7 @@ export default function CardlightPanel({
                         </p>
                       </div>
                       <div className="space-y-1 min-w-[100px]">
-                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate (CNY)</label>
+                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate (NGN)</label>
                         <div className="h-7 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
                           {Number(nairaPrice) > 0 && Number(cardRate) > 0
                             ? (Number(cardRate) / Number(nairaPrice)).toFixed(4)
@@ -578,19 +562,12 @@ export default function CardlightPanel({
                           />
                           <label
                             htmlFor={`card-images-${card.id}`}
-                            onDragOver={(e) => {
-                              e.preventDefault();
-                              e.currentTarget.classList.add("border-primary", "bg-muted/50");
-                            }}
-                            onDragLeave={(e) => {
-                              e.currentTarget.classList.remove("border-primary", "bg-muted/50");
-                            }}
+                            onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add("border-primary","bg-muted/50"); }}
+                            onDragLeave={(e) => { e.currentTarget.classList.remove("border-primary","bg-muted/50"); }}
                             onDrop={(e) => {
                               e.preventDefault();
-                              e.currentTarget.classList.remove("border-primary", "bg-muted/50");
-                              const files = Array.from(e.dataTransfer.files).filter((f) =>
-                                /image\/(jpeg|png|webp)/.test(f.type),
-                              );
+                              e.currentTarget.classList.remove("border-primary","bg-muted/50");
+                              const files = Array.from(e.dataTransfer.files).filter(f => /image\/(jpeg|png|webp)/.test(f.type));
                               const remaining = 10 - card.cardImages.length;
                               const newUrls = files.slice(0, remaining).map((f) => URL.createObjectURL(f));
                               if (newUrls.length) updateCard(card.id, { cardImages: [...card.cardImages, ...newUrls] });
@@ -705,8 +682,8 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
@@ -729,9 +706,7 @@ export default function CardlightPanel({
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
                           <td className="py-2 px-1 text-right">¥{o.purchaseRate.toLocaleString()}</td>
-                          <td className="py-2 px-1 text-right">
-                            ₦{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}
-                          </td>
+                          <td className="py-2 px-1 text-right">₦{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}</td>
                           <td className="py-2 px-1 text-right">
                             ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
                           </td>
