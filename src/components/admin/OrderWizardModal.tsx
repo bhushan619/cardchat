@@ -484,7 +484,7 @@ export default function CardlightPanel({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (CNY)</label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
