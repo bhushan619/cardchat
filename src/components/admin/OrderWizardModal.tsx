@@ -484,7 +484,7 @@ export default function CardlightPanel({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (CNY)</label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
@@ -516,7 +516,7 @@ export default function CardlightPanel({
                         </p>
                       </div>
                       <div className="space-y-1 min-w-[100px]">
-                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate</label>
+                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate (NGN)</label>
                         <div className="h-7 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
                           {Number(nairaPrice) > 0 && Number(cardRate) > 0
                             ? (Number(cardRate) / Number(nairaPrice)).toFixed(4)
@@ -682,7 +682,8 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
@@ -704,7 +705,8 @@ export default function CardlightPanel({
                             <div className="text-muted-foreground">{o.date}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
-                          <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">¥{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">₦{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}</td>
                           <td className="py-2 px-1 text-right">
                             ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
                           </td>

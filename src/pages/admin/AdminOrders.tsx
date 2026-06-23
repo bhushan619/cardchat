@@ -150,8 +150,8 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Card Rate (₦)", "Naira Rate (₦)", "Amount", "Status", "Created"];
-    const rows = filtered.map(o => [o.customer, o.cardType, `₦${o.unitPrice}`, `₦${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const headers = ["Alias", "Card Type", "Card Rate (CNY)", "Card Rate (NGN)", "Naira Rate (₦)", "Amount", "Status", "Created"];
+    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `₦${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `₦${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -215,7 +215,8 @@ export default function AdminOrders() {
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Code</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (CNY)</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (NGN)</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Naira Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
@@ -241,7 +242,8 @@ export default function AdminOrders() {
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
+                       <td className="px-4 py-3 text-sm text-right">¥{o.unitPrice}</td>
+                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
@@ -253,7 +255,7 @@ export default function AdminOrders() {
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={8} className="px-6 py-5 bg-muted/20">
+                        <td colSpan={9} className="px-6 py-5 bg-muted/20">
                           <div className="animate-slide-up space-y-5">
                             {/* Order Details Title */}
                             <h3 className="text-sm font-bold">Order Details</h3>
