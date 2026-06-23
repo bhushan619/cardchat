@@ -532,7 +532,7 @@ export default function CardlightPanel({
                         </p>
                       </div>
                       <div className="space-y-1 min-w-[100px]">
-                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate (NGN)</label>
+                        <label className="text-[10px] font-medium text-muted-foreground">Card Rate (CNY)</label>
                         <div className="h-7 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
                           {Number(nairaPrice) > 0 && Number(cardRate) > 0
                             ? (Number(cardRate) / Number(nairaPrice)).toFixed(4)
