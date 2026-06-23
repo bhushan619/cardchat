@@ -277,10 +277,11 @@ export default function AdminOrders() {
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
-                      <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
                       <td className="px-4 py-3 text-sm text-right">
                         ¥{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}
                       </td>
+                      <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
+
                       <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
