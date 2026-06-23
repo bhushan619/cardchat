@@ -418,7 +418,7 @@ export default function AdminUsers() {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Role</label>
-              <Select value={formRole} onValueChange={v => setFormRole(v as User["role"])}>
+              <Select value={formRole} onValueChange={v => setFormRole(v as User["role"])} disabled={!!editingUser}>
                 <SelectTrigger className="mt-1">
                   <SelectValue />
                 </SelectTrigger>
