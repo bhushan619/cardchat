@@ -705,7 +705,8 @@ export default function CardlightPanel({
                             <div className="text-muted-foreground">{o.date}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
-                          <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">¥{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right">₦{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}</td>
                           <td className="py-2 px-1 text-right">
                             ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
                           </td>
