@@ -16,6 +16,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import TrtcGroupsModal from "@/components/admin/TrtcGroupsModal";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 type User = {
   id: number;
@@ -62,6 +63,7 @@ const PERMISSIONS: Record<string, string[]> = {
 };
 
 export default function AdminUsers() {
+  const { role: currentAdminRole } = useAdminRole();
   const [users, setUsers] = useState<User[]>(initialUsers.map(u => ({ ...u, status: u.status as User["status"] })));
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
@@ -241,9 +243,11 @@ export default function AdminUsers() {
             <p className="text-sm text-muted-foreground">Manage roles and permissions</p>
           </div>
           <div className="flex items-center gap-2">
-            <Button size="sm" variant="outline" className="gap-2" onClick={() => setGroupsModalOpen(true)}>
-              <MessageCircle className="w-3.5 h-3.5" /> Manage TRTC Groups
-            </Button>
+            {currentAdminRole === "super_admin" && (
+              <Button size="sm" variant="outline" className="gap-2" onClick={() => setGroupsModalOpen(true)}>
+                <MessageCircle className="w-3.5 h-3.5" /> Manage TRTC Groups
+              </Button>
+            )}
             <Button size="sm" className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2" onClick={openCreate}>
               <Plus className="w-3.5 h-3.5" /> Add User
             </Button>
