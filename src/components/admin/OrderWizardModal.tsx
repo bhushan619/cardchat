@@ -682,7 +682,8 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Code</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
