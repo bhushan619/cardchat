@@ -63,6 +63,7 @@ const PERMISSIONS: Record<string, string[]> = {
 };
 
 export default function AdminUsers() {
+  const { role: currentAdminRole } = useAdminRole();
   const [users, setUsers] = useState<User[]>(initialUsers.map(u => ({ ...u, status: u.status as User["status"] })));
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState<string>("all");
