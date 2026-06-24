@@ -138,23 +138,52 @@ export default function AdminProfile() {
         </h1>
         <p className="text-sm text-muted-foreground mb-6">Manage your profile details and security settings</p>
 
-        {/* Avatar & Role */}
-        <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-accent/20 flex items-center justify-center text-accent text-2xl font-bold font-heading">
-            {profile.name[0]}
-          </div>
-          <div>
-            <p className="font-heading font-bold text-lg">{profile.name}</p>
-            <div className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <Shield className="w-3.5 h-3.5 text-accent" />
-              {profile.label}
-            </div>
-          </div>
-        </div>
-
         {/* Profile Details */}
         <div className="bg-card border rounded-xl p-5 space-y-4 mb-6">
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Profile Details</p>
+
+          {/* Avatar */}
+          <div className="flex items-center gap-4">
+            <div className="relative">
+              {avatar ? (
+                <img src={avatar} alt="Avatar preview" className="w-20 h-20 rounded-full object-cover border border-border" />
+              ) : (
+                <div className="w-20 h-20 rounded-full bg-accent/20 flex items-center justify-center text-accent text-2xl font-bold font-heading border border-border">
+                  {(name || "?").split(" ").map(n => n[0]).filter(Boolean).slice(0, 2).join("") || "?"}
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => avatarInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-accent text-accent-foreground flex items-center justify-center shadow-md hover:bg-accent/90"
+                aria-label="Upload avatar"
+              >
+                <Camera className="w-3.5 h-3.5" />
+              </button>
+            </div>
+            <div className="flex-1">
+              <p className="text-xs font-medium text-foreground">Profile photo</p>
+              <p className="text-[11px] text-muted-foreground mb-2">PNG or JPG, up to 2 MB</p>
+              <div className="flex gap-2">
+                <Button type="button" size="sm" variant="outline" className="h-8 gap-1.5" onClick={() => avatarInputRef.current?.click()}>
+                  <Upload className="w-3.5 h-3.5" /> Upload
+                </Button>
+                {avatar && (
+                  <Button type="button" size="sm" variant="ghost" className="h-8 gap-1.5 text-destructive hover:bg-destructive/10 hover:text-destructive" onClick={() => setAvatar("")}>
+                    <Trash2 className="w-3.5 h-3.5" /> Remove
+                  </Button>
+                )}
+              </div>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={e => { handleAvatarFile(e.target.files?.[0]); e.target.value = ""; }}
+              />
+            </div>
+          </div>
+
           <div className="space-y-1.5">
             <label className="text-xs font-medium flex items-center gap-1.5">
               <User className="w-3.5 h-3.5 text-muted-foreground" /> Full Name
@@ -173,8 +202,86 @@ export default function AdminProfile() {
             </label>
             <Input value={phone} onChange={e => setPhone(e.target.value)} placeholder="Phone number" />
           </div>
+          <div className="space-y-1.5">
+            <label className="text-xs font-medium flex items-center gap-1.5">
+              <Shield className="w-3.5 h-3.5 text-muted-foreground" /> Role
+            </label>
+            <Select value={role} disabled>
+              <SelectTrigger>
+                <SelectValue placeholder={profile.label} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value={role}>{profile.label}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Public Profile */}
+          <div className="pt-3 mt-3 border-t border-border">
+            <p className="text-xs font-semibold text-foreground mb-2">Public Profile (shown to customers)</p>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-medium text-muted-foreground">About / Bio</label>
+                <textarea
+                  value={bio}
+                  onChange={e => setBio(e.target.value)}
+                  rows={3}
+                  className="mt-1 w-full rounded-md border border-input bg-background px-3 py-2 text-sm resize-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  placeholder="Short bio shown on your public profile"
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Availability</label>
+                  <Select value={availability} onValueChange={v => setAvailability(v as "online" | "away" | "offline")}>
+                    <SelectTrigger className="mt-1">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="online">Online</SelectItem>
+                      <SelectItem value="away">Away</SelectItem>
+                      <SelectItem value="offline">Offline</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-muted-foreground">Rating (0–5)</label>
+                  <Input
+                    type="number"
+                    step="0.1"
+                    min="0"
+                    max="5"
+                    value={rating}
+                    onChange={e => setRating(e.target.value)}
+                    className="mt-1"
+                    disabled
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="text-xs font-medium text-muted-foreground">Specialties (comma-separated)</label>
+                <Input
+                  value={specialties}
+                  onChange={e => setSpecialties(e.target.value)}
+                  className="mt-1"
+                  placeholder="iTunes, Amazon, Steam, Google Play"
+                />
+                {specialties.trim() && (
+                  <div className="flex flex-wrap gap-1.5 mt-2">
+                    {specialties.split(",").map(s => s.trim()).filter(Boolean).map(tag => (
+                      <span key={tag} className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-medium">
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           <Button onClick={handleSaveProfile} className="w-full">Save Profile</Button>
         </div>
+
 
         {/* Change Password */}
         <div className="bg-card border rounded-xl p-5 space-y-4 mb-6">
