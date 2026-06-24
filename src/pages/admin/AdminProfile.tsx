@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { User, Mail, Phone, Shield, Lock, Eye, EyeOff, Check } from "lucide-react";
+import { User, Mail, Phone, Shield, Lock, Eye, EyeOff, Check, Camera, Upload, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
