@@ -23,6 +23,25 @@ export default function AdminProfile() {
   const [email, setEmail] = useState(profile.email);
   const [phone, setPhone] = useState(profile.phone);
 
+  // Public profile
+  const [avatar, setAvatar] = useState<string>("");
+  const [bio, setBio] = useState(`Hi, I'm ${profile.name}. I'm here to help you with your gift card trades.`);
+  const [availability, setAvailability] = useState<"online" | "away" | "offline">("online");
+  const [rating, setRating] = useState<string>("4.8");
+  const [specialties, setSpecialties] = useState<string>("iTunes, Amazon, Steam, Google Play");
+  const avatarInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleAvatarFile = (file: File | undefined) => {
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image must be 2 MB or smaller");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setAvatar(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
   // PIN management
   const [hasPin, setHasPin] = useState(() => !!localStorage.getItem(`adminPin_${role}`));
   const [pinMode, setPinMode] = useState<"idle" | "create" | "update">("idle");
