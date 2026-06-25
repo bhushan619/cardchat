@@ -137,6 +137,17 @@ function CopyableValue({ value }: { value: string }) {
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [shownCardNumbers, setShownCardNumbers] = useState<Set<string>>(new Set());
+
+  const toggleCardNumber = (id: string) =>
+    setShownCardNumbers((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const maskCard = (n: string) =>
+    n.length <= 4 ? "•".repeat(n.length) : `${"•".repeat(Math.max(0, n.length - 4))}${n.slice(-4)}`;
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [statusFilter, setStatusFilter] = useState<string>("all");
