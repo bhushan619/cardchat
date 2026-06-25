@@ -1512,7 +1512,10 @@ export default function AdminMessages() {
           <Dialog
             open={!!detailOrderId}
             onOpenChange={(open) => {
-              if (!open) setDetailOrderId(null);
+              if (!open) {
+                setDetailOrderId(null);
+                setShowCardNumber(false);
+              }
             }}
           >
             <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
