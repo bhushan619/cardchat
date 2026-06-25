@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { orders } from "@/data/mock";
-import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
@@ -21,6 +21,7 @@ interface OrderDetail {
   timeline: { event: string; time: string }[];
   creationTime: string;
   cardFaceValue: number;
+  cardNumber: string;
   cardCode: string;
   cardImage?: string;
   orderReceivingTime: string;
@@ -51,6 +52,7 @@ const mockOrderDetails: Record<string, OrderDetail> = {
     creationTime: "10:37 AM",
     cardFaceValue: 200,
     cardCode: "ORD-20260318-001",
+    cardNumber: "4539129876543210",
     orderReceivingTime: "10:37 AM",
     orderFaceValue: 200,
     orderUnitPrice: 680,
@@ -75,6 +77,7 @@ const mockOrderDetails: Record<string, OrderDetail> = {
     creationTime: "09:15 AM",
     cardFaceValue: 150,
     cardCode: "ORD-20260318-002",
+    cardNumber: "5412753498761234",
     orderReceivingTime: "09:15 AM",
     orderFaceValue: 150,
     orderUnitPrice: 620,
@@ -100,6 +103,7 @@ const mockOrderDetails: Record<string, OrderDetail> = {
     creationTime: "08:45 AM",
     cardFaceValue: 200,
     cardCode: "ORD-20260318-003",
+    cardNumber: "3782822463100051",
     orderReceivingTime: "08:45 AM",
     orderFaceValue: 200,
     orderUnitPrice: 600,
@@ -133,6 +137,17 @@ function CopyableValue({ value }: { value: string }) {
 export default function AdminOrders() {
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [shownCardNumbers, setShownCardNumbers] = useState<Set<string>>(new Set());
+
+  const toggleCardNumber = (id: string) =>
+    setShownCardNumbers((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+
+  const maskCard = (n: string) =>
+    n.length <= 4 ? "•".repeat(n.length) : `${"•".repeat(Math.max(0, n.length - 4))}${n.slice(-4)}`;
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -277,6 +292,25 @@ export default function AdminOrders() {
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Card face value</span>
                                     <span className="font-medium">{details.cardFaceValue}</span>
+                                  </div>
+                                  <div className="flex justify-between text-sm items-center">
+                                    <span className="text-muted-foreground">Card number</span>
+                                    <span className="inline-flex items-center gap-1.5 font-medium font-mono">
+                                      {shownCardNumbers.has(o.id) ? details.cardNumber : maskCard(details.cardNumber)}
+                                      <button
+                                        onClick={() => toggleCardNumber(o.id)}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                        aria-label={shownCardNumbers.has(o.id) ? "Hide card number" : "Show card number"}
+                                      >
+                                        {shownCardNumbers.has(o.id) ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                      </button>
+                                      <button
+                                        onClick={() => navigator.clipboard.writeText(details.cardNumber)}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                    </span>
                                   </div>
                                   <div className="flex justify-between text-sm items-center">
                                     <span className="text-muted-foreground">Card code</span>
