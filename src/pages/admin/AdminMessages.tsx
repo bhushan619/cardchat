@@ -1603,7 +1603,6 @@ export default function AdminMessages() {
                     ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
                     ["Card type", shoTypeName],
                     ["Card face value", `${cardFaceValue}`],
-                    ["Card code", cardCode, true],
                   ];
                   const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
@@ -1647,10 +1646,10 @@ export default function AdminMessages() {
                               </div>
                             </div>
                           ))}
-                          {/* Card number with masking + reveal toggle */}
+                          {/* Card code with masking + reveal toggle (unified with card number) */}
                           {cardNumber !== "—" && (
                             <div className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card number</span>
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card code</span>
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="font-medium font-mono break-all">
                                   {showCardNumber
@@ -1662,17 +1661,17 @@ export default function AdminMessages() {
                                 <button
                                   onClick={() => setShowCardNumber((v) => !v)}
                                   className="text-muted-foreground hover:text-primary shrink-0"
-                                  aria-label={showCardNumber ? "Hide card number" : "Show card number"}
+                                  aria-label={showCardNumber ? "Hide card code" : "Show card code"}
                                 >
                                   {showCardNumber ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
                                 <button
-                                  onClick={() => handleCopy(cardNumber, "modal-Card number")}
+                                  onClick={() => handleCopy(cardNumber, "modal-Card code")}
                                   className="text-muted-foreground hover:text-primary shrink-0"
                                 >
                                   <Copy className="w-3.5 h-3.5" />
                                 </button>
-                                {copyFeedback === "modal-Card number" && (
+                                {copyFeedback === "modal-Card code" && (
                                   <span className="text-[9px] text-success">Copied!</span>
                                 )}
                               </div>
