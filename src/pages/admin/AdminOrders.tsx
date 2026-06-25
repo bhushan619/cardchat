@@ -77,6 +77,7 @@ const mockOrderDetails: Record<string, OrderDetail> = {
     creationTime: "09:15 AM",
     cardFaceValue: 150,
     cardCode: "ORD-20260318-002",
+    cardNumber: "5412753498761234",
     orderReceivingTime: "09:15 AM",
     orderFaceValue: 150,
     orderUnitPrice: 620,
