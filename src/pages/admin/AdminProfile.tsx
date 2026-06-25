@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { hashPin, verifyPin } from "@/lib/securePin";
 
 const roleProfiles: Record<string, { name: string; label: string; email: string; phone: string; defaultPassword: string }> = {
   super_admin: { name: "Admin One", label: "Super Admin", email: "admin@cardchat.com", phone: "+234 801 234 5678", defaultPassword: "admin123" },
@@ -98,10 +99,11 @@ export default function AdminProfile() {
     toast.success("Profile updated successfully");
   };
 
-  const handleSavePin = () => {
+  const handleSavePin = async () => {
     if (pinMode === "update") {
-      const stored = localStorage.getItem(`adminPin_${role}`);
-      if (currentPin !== stored) {
+      const storedHash = localStorage.getItem(`adminPin_${role}`);
+      const ok = await verifyPin(currentPin, storedHash);
+      if (!ok) {
         toast.error("Current PIN is incorrect");
         return;
       }
@@ -114,7 +116,8 @@ export default function AdminProfile() {
       toast.error("PINs do not match");
       return;
     }
-    localStorage.setItem(`adminPin_${role}`, newPin);
+    const hashed = await hashPin(newPin);
+    localStorage.setItem(`adminPin_${role}`, hashed);
     setHasPin(true);
     setPinMode("idle");
     setCurrentPin("");

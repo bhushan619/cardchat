@@ -12,8 +12,11 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { toast } from "sonner";
+import { hashPin, verifyPin } from "@/lib/securePin";
+import { generateBase32Secret, buildOtpAuthUri, renderQrDataUrl } from "@/lib/totpDemo";
 
 const PIN_STORAGE_KEY = "cc_customer_txn_pin";
+const TOTP_SECRET_KEY = "cc_customer_totp_secret";
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -124,27 +127,44 @@ export default function CustomerMe() {
   const [twoFactorStep, setTwoFactorStep] = useState<"setup" | "verify" | "success">("setup");
   const [twoFactorCode, setTwoFactorCode] = useState("");
   const [twoFactorError, setTwoFactorError] = useState("");
-  const twoFactorSecret = "JBSWY3DPEHPK3PXP";
+  const [twoFactorSecret, setTwoFactorSecret] = useState<string>("");
+  const [twoFactorQrUrl, setTwoFactorQrUrl] = useState<string>("");
 
   const openPinDialog = () => { resetPinForm(); setPinShow(false); setPinDialogOpen(true); };
 
-  const handleSavePinDialog = () => {
-    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+  const handleSavePinDialog = async () => {
+    if (txnPin && !(await verifyPin(pinCurrent, txnPin))) { toast.error("Current PIN is incorrect"); return; }
     if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
     if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
     const wasSet = !!txnPin;
-    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
-    setTxnPin(pinNew);
+    const hashed = await hashPin(pinNew);
+    sessionStorage.setItem(PIN_STORAGE_KEY, hashed);
+    setTxnPin(hashed);
     resetPinForm();
     setPinDialogOpen(false);
     toast.success(wasSet ? "Transaction PIN updated" : "Transaction PIN created");
   };
 
-  const openTwoFactorDialog = () => {
+  const openTwoFactorDialog = async () => {
     if (twoFactorEnabled) {
       setTwoFactorEnabled(false);
       toast.success("Two-Factor Authentication disabled");
       return;
+    }
+    // Generate a fresh per-user secret and render the QR locally so the
+    // secret never leaves the browser.
+    let secret = sessionStorage.getItem(TOTP_SECRET_KEY);
+    if (!secret) {
+      secret = generateBase32Secret(20);
+      sessionStorage.setItem(TOTP_SECRET_KEY, secret);
+    }
+    setTwoFactorSecret(secret);
+    const uri = buildOtpAuthUri({ issuer: "CardChat", account: savedEmail, secret });
+    try {
+      const url = await renderQrDataUrl(uri);
+      setTwoFactorQrUrl(url);
+    } catch {
+      setTwoFactorQrUrl("");
     }
     setTwoFactorStep("setup");
     setTwoFactorCode("");
@@ -173,12 +193,13 @@ export default function CustomerMe() {
 
   const resetPinForm = () => { setPinCurrent(""); setPinNew(""); setPinConfirm(""); };
 
-  const handleSavePin = () => {
-    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+  const handleSavePin = async () => {
+    if (txnPin && !(await verifyPin(pinCurrent, txnPin))) { toast.error("Current PIN is incorrect"); return; }
     if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
     if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
-    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
-    setTxnPin(pinNew);
+    const hashed = await hashPin(pinNew);
+    sessionStorage.setItem(PIN_STORAGE_KEY, hashed);
+    setTxnPin(hashed);
     resetPinForm();
     toast.success(txnPin ? "Transaction PIN updated" : "Transaction PIN created");
   };
@@ -193,8 +214,8 @@ export default function CustomerMe() {
     setWithdrawPinOpen(true);
   };
 
-  const handleVerifyWithdrawPin = () => {
-    if (withdrawPinInput !== txnPin) { setWithdrawPinError("Incorrect PIN"); return; }
+  const handleVerifyWithdrawPin = async () => {
+    if (!(await verifyPin(withdrawPinInput, txnPin))) { setWithdrawPinError("Incorrect PIN"); return; }
     setWithdrawPinOpen(false);
     handleWithdraw();
   };
@@ -1110,11 +1131,15 @@ export default function CustomerMe() {
                   </DialogHeader>
                   <div className="flex flex-col items-center gap-3 py-2">
                     <div className="w-40 h-40 rounded-lg bg-white p-2 border flex items-center justify-center">
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`otpauth://totp/CardChat:${savedEmail}?secret=${twoFactorSecret}&issuer=CardChat`)}`}
-                        alt="2FA QR code"
-                        className="w-full h-full object-contain"
-                      />
+                      {twoFactorQrUrl ? (
+                        <img
+                          src={twoFactorQrUrl}
+                          alt="2FA QR code"
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">Generating…</span>
+                      )}
                     </div>
                     <div className="w-full">
                       <label className="text-[11px] text-muted-foreground">Or enter this key manually</label>
