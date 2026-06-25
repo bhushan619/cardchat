@@ -1399,15 +1399,15 @@ export default function AdminMessages() {
                                     </Button>
                                   </div>
                                   <div className="space-y-1.5">
-                                    {[
+                                    {([
                                       ["Order ID", o.id],
                                       ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                       ["Amount", `$${o.amount}`],
-                                      ["Points price", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
-                                      ["Release", `₦${o.payout.toLocaleString()}`],
+                                      ["Points price", <span key="pp" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{(o.unitPrice || o.nairaRate).toLocaleString()}</span>],
+                                      ["Release", <span key="rel" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{o.payout.toLocaleString()}</span>],
                                       ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
                                       ["Time", o.timestamp],
-                                    ].map(([k, v]) => (
+                                    ] as Array<[string, React.ReactNode]>).map(([k, v]) => (
                                       <div key={k} className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">{k}</span>
                                         <span className="font-medium">{v}</span>
