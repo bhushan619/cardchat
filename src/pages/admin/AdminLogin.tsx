@@ -114,6 +114,15 @@ export default function AdminLogin() {
                 {loading ? "Signing in…" : "Sign In"}
               </Button>
             </form>
+
+            <div className="mt-6 rounded-md border border-border/60 bg-muted/40 p-3 space-y-2">
+              <p className="text-xs font-medium text-foreground">Demo credentials</p>
+              <div className="space-y-1 text-xs text-muted-foreground font-mono">
+                <div>Super Admin · admin@cardchat.com / admin123</div>
+                <div>Team Lead · lead@cardchat.com / lead123</div>
+                <div>Agent · agent@cardchat.com / agent123</div>
+              </div>
+            </div>
           </CardContent>
         </Card>
 
