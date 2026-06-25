@@ -1598,7 +1598,6 @@ export default function AdminMessages() {
                     ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
                     ["Card type", shoTypeName],
                     ["Card face value", `${cardFaceValue}`],
-                    ["Card number", cardNumber, cardNumber !== "—"],
                     ["Card code", cardCode, true],
                   ];
                   const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
