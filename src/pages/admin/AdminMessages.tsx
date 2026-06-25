@@ -209,7 +209,7 @@ export default function AdminMessages() {
       setOcrText(code);
       setOcrLoading(false);
       navigator.clipboard.writeText(code).catch(() => {});
-      toast.success("Card code extracted & copied");
+      toast.success("Card number extracted & copied");
     }, 1200);
   };
 
@@ -1646,10 +1646,10 @@ export default function AdminMessages() {
                               </div>
                             </div>
                           ))}
-                          {/* Card code with masking + reveal toggle (unified with card number) */}
+                          {/* Card number with masking + reveal toggle (unified with card number) */}
                           {cardNumber !== "—" && (
                             <div className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card code</span>
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card number</span>
                               <div className="flex items-center gap-1.5 min-w-0">
                                 <span className="font-medium font-mono break-all">
                                   {showCardNumber
@@ -1666,12 +1666,12 @@ export default function AdminMessages() {
                                   {showCardNumber ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                                 </button>
                                 <button
-                                  onClick={() => handleCopy(cardNumber, "modal-Card code")}
+                                  onClick={() => handleCopy(cardNumber, "modal-Card number")}
                                   className="text-muted-foreground hover:text-primary shrink-0"
                                 >
                                   <Copy className="w-3.5 h-3.5" />
                                 </button>
-                                {copyFeedback === "modal-Card code" && (
+                                {copyFeedback === "modal-Card number" && (
                                   <span className="text-[9px] text-success">Copied!</span>
                                 )}
                               </div>

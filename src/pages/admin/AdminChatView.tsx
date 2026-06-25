@@ -133,7 +133,7 @@ export default function AdminChatView() {
   const copyOcr = () => {
     if (!ocrText) return;
     navigator.clipboard.writeText(ocrText);
-    toast({ title: "Copied", description: "Card code copied to clipboard" });
+    toast({ title: "Copied", description: "Card number copied to clipboard" });
   };
 
   const handleOrderComplete = (order: CompletedOrder) => {
