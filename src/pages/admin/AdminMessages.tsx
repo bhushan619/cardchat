@@ -69,6 +69,7 @@ import {
   toCustomerStatus,
   customerStatusLabels,
 } from "@/lib/orderStateMachine";
+import { verifyPin } from "@/lib/securePin";
 
 const columns = [
   {
@@ -2253,9 +2254,10 @@ export default function AdminMessages() {
                 <Button
                   className="flex-1"
                   disabled={fundPin.length !== 6}
-                  onClick={() => {
-                    const storedPin = localStorage.getItem(`adminPin_${role}`);
-                    if (fundPin !== storedPin) {
+                  onClick={async () => {
+                    const storedHash = localStorage.getItem(`adminPin_${role}`);
+                    const ok = await verifyPin(fundPin, storedHash);
+                    if (!ok) {
                       toast.error("Incorrect PIN");
                       setFundPin("");
                       return;
