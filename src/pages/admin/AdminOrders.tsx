@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { orders } from "@/data/mock";
-import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
