@@ -294,6 +294,25 @@ export default function AdminOrders() {
                                     <span className="font-medium">{details.cardFaceValue}</span>
                                   </div>
                                   <div className="flex justify-between text-sm items-center">
+                                    <span className="text-muted-foreground">Card number</span>
+                                    <span className="inline-flex items-center gap-1.5 font-medium font-mono">
+                                      {shownCardNumbers.has(o.id) ? details.cardNumber : maskCard(details.cardNumber)}
+                                      <button
+                                        onClick={() => toggleCardNumber(o.id)}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                        aria-label={shownCardNumbers.has(o.id) ? "Hide card number" : "Show card number"}
+                                      >
+                                        {shownCardNumbers.has(o.id) ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                      </button>
+                                      <button
+                                        onClick={() => navigator.clipboard.writeText(details.cardNumber)}
+                                        className="text-muted-foreground hover:text-primary transition-colors"
+                                      >
+                                        <Copy className="w-3 h-3" />
+                                      </button>
+                                    </span>
+                                  </div>
+                                  <div className="flex justify-between text-sm items-center">
                                     <span className="text-muted-foreground">Card code</span>
                                     <CopyableValue value={details.cardCode} />
                                   </div>
