@@ -229,7 +229,7 @@ export default function AdminOrders() {
               <tr className="border-b bg-muted/50">
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Code</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (NGN)</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (CNY)</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Naira Rate</th>
@@ -294,7 +294,7 @@ export default function AdminOrders() {
                                     <span className="font-medium">{details.cardFaceValue}</span>
                                   </div>
                                   <div className="flex justify-between text-sm items-center">
-                                    <span className="text-muted-foreground">Card code</span>
+                                    <span className="text-muted-foreground">Card number</span>
                                     <span className="inline-flex items-center gap-1.5 font-medium font-mono">
                                       {shownCardNumbers.has(o.id) ? details.cardNumber : maskCard(details.cardNumber)}
                                       <button
