@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
+import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -642,13 +642,13 @@ export default function CardlightPanel({
                     {nairaPrice && (
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-muted-foreground">Points rate</span>
-                        <span className="font-semibold">₦{Number(nairaPrice).toLocaleString()}</span>
+                        <span className="font-semibold inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{Number(nairaPrice).toLocaleString()}</span>
                       </div>
                     )}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">Total Release</span>
-                      <span className="font-bold text-success">
-                        ₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      <span className="font-bold text-success inline-flex items-center gap-0.5">
+                        <Coins className="w-3 h-3" />{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
@@ -705,10 +705,10 @@ export default function CardlightPanel({
                             <div className="text-muted-foreground">{o.date}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
-                          <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.purchaseRate.toLocaleString()}</span></td>
                           <td className="py-2 px-1 text-right">¥{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}</td>
                           <td className="py-2 px-1 text-right">
-                            ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
+                            <span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}</span>
                           </td>
                           <td className="py-2 px-1">
                             <span
