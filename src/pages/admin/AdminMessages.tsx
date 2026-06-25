@@ -1598,7 +1598,6 @@ export default function AdminMessages() {
                     ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
                     ["Card type", shoTypeName],
                     ["Card face value", `${cardFaceValue}`],
-                    ["Card number", cardNumber, cardNumber !== "—"],
                     ["Card code", cardCode, true],
                   ];
                   const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
@@ -1618,7 +1617,8 @@ export default function AdminMessages() {
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
                   return (
-                    <div className="grid grid-cols-2 gap-8 pt-2">
+                    <div className="space-y-5 pt-2">
+                      <div className="grid grid-cols-2 gap-8">
                       {/* Product Information */}
                       <div className="space-y-4">
                         <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
@@ -1664,26 +1664,6 @@ export default function AdminMessages() {
                                 </div>
                               )}
                             </div>
-                          </div>
-                        </div>
-
-                        {/* Buyer Details */}
-                        <div className="pt-3 border-t">
-                          <h4 className="font-heading font-semibold text-sm mb-3">Buyer Details</h4>
-                          <div className="space-y-3">
-                            {[
-                              ["Buyer Nickname", buyerNickname],
-                              ["Card Status", cardStatus],
-                              ["Checked", checked],
-                              ["Create Time", createTime],
-                            ]
-                              .filter(([, v]) => v !== "—" && v !== "" && v != null)
-                              .map(([label, value]) => (
-                                <div key={label} className="flex gap-3 text-sm">
-                                  <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
-                                  <span className="font-medium break-all">{value}</span>
-                                </div>
-                              ))}
                           </div>
                         </div>
                       </div>
@@ -1770,6 +1750,27 @@ export default function AdminMessages() {
                                 </div>
                               );
                             })()}
+                        </div>
+                      </div>
+                      </div>
+
+                      {/* Buyer Details — full width below the grid */}
+                      <div className="pt-4 border-t">
+                        <h4 className="font-heading font-semibold text-sm mb-3">Buyer Details</h4>
+                        <div className="grid grid-cols-2 gap-x-8 gap-y-2.5 max-w-2xl">
+                          {[
+                            ["Buyer Nickname", buyerNickname],
+                            ["Card Status", cardStatus],
+                            ["Checked", checked],
+                            ["Create Time", createTime],
+                          ]
+                            .filter(([, v]) => v !== "—" && v !== "" && v != null)
+                            .map(([label, value]) => (
+                              <div key={label} className="flex justify-between text-sm">
+                                <span className="text-muted-foreground">{label}</span>
+                                <span className="font-medium break-all">{value}</span>
+                              </div>
+                            ))}
                         </div>
                       </div>
                     </div>
