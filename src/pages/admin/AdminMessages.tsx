@@ -43,6 +43,7 @@ import {
   ZoomOut,
   ScanText,
   Loader2,
+  Coins,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -81,7 +82,7 @@ const columns = [
   },
   {
     id: "trading",
-    label: "Trading",
+    label: "Processing",
     color: "text-white",
     bg: "bg-gradient-to-r from-emerald-500 to-teal-400",
     activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500",
@@ -282,7 +283,7 @@ export default function AdminMessages() {
       // When success: auto-credit wallet with specific amount
       if (newStatus === "success" && payoutAmount) {
         // Agent sees detailed credit message
-        addSystemMessage(`📌 💰 Funds credited to customer's wallet — ₦${payoutAmount.toLocaleString()}`);
+        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
       }
     }
   };
@@ -427,7 +428,7 @@ export default function AdminMessages() {
     setTransferCompletedOrders((prev) => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
-    addSystemMessage(`💰 ₦${payout.toLocaleString()} credited to customer's wallet`);
+    addSystemMessage(`💰 ${payout.toLocaleString()} points released to customer's account`);
   };
 
   const getSenderColor = (sender: string, senderName: string) => {
@@ -911,29 +912,29 @@ export default function AdminMessages() {
                     <TooltipProvider>
                       <div className="flex flex-col gap-0.5 leading-tight">
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TTV</span>
-                          <span className="text-[10px] font-bold text-foreground">₦4,850,000</span>
+                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TP</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />4,850,000</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                              <p className="font-semibold">Total Transaction Volume</p>
-                              <p className="text-muted-foreground">Lifetime transaction total for this customer</p>
+                              <p className="font-semibold">Total Points</p>
+                              <p className="text-muted-foreground">Lifetime points total for this customer</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TMTV</span>
-                          <span className="text-[10px] font-bold text-foreground">₦1,250,000</span>
+                          <span className="text-[10px] font-semibold text-muted-foreground w-9">MTP</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />1,250,000</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                              <p className="font-semibold">Total Monthly Transaction Volume</p>
+                              <p className="font-semibold">Monthly Total Points</p>
                               <p className="text-muted-foreground">
-                                Transaction total for this customer in the current month
+                                Points total for this customer in the current month
                               </p>
                             </TooltipContent>
                           </Tooltip>
