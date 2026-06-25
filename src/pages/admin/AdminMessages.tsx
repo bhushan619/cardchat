@@ -1762,13 +1762,13 @@ export default function AdminMessages() {
                                       ],
                                       [
                                         "Points price",
-                                        `₦${neg.oldRate.toLocaleString()}`,
-                                        `₦${neg.newRate.toLocaleString()}`,
+                                        `${neg.oldRate.toLocaleString()}`,
+                                        `${neg.newRate.toLocaleString()}`,
                                       ],
                                       [
                                         "Release",
-                                        `₦${neg.oldAmount.toLocaleString()}`,
-                                        `₦${neg.newAmount.toLocaleString()}`,
+                                        `${neg.oldAmount.toLocaleString()}`,
+                                        `${neg.newAmount.toLocaleString()}`,
                                       ],
                                     ].map(([label, oldVal, newVal]) => (
                                       <div key={label} className="flex gap-3 text-sm">
