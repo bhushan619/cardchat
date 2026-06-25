@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight } from "lucide-react";
+import { X, Plus, Trash2, LogIn, LogOut, RefreshCw, Image as ImageIcon, ShoppingCart, ChevronRight, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -475,16 +475,16 @@ export default function CardlightPanel({
                 </div>
               </div>
 
-              {/* Row 2: Naira Price + Card Rate */}
+              {/* Row 2: Points rate + Card Rate */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Points rate</label>
                   <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
                     {Number(nairaPrice).toLocaleString()}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (NGN)</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Points price</label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
@@ -641,14 +641,14 @@ export default function CardlightPanel({
                     </div>
                     {nairaPrice && (
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-muted-foreground">Naira Price</span>
-                        <span className="font-semibold">₦{Number(nairaPrice).toLocaleString()}</span>
+                        <span className="text-muted-foreground">Points rate</span>
+                        <span className="font-semibold inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{Number(nairaPrice).toLocaleString()}</span>
                       </div>
                     )}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground font-medium">Total Payout</span>
-                      <span className="font-bold text-success">
-                        ₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      <span className="text-muted-foreground font-medium">Total Release</span>
+                      <span className="font-bold text-success inline-flex items-center gap-0.5">
+                        <Coins className="w-3 h-3" />{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </span>
                     </div>
                   </div>
@@ -682,9 +682,9 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Number</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Points price</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Release</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
@@ -705,10 +705,10 @@ export default function CardlightPanel({
                             <div className="text-muted-foreground">{o.date}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
-                          <td className="py-2 px-1 text-right">₦{o.purchaseRate.toLocaleString()}</td>
+                          <td className="py-2 px-1 text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.purchaseRate.toLocaleString()}</span></td>
                           <td className="py-2 px-1 text-right">¥{systemNairaRate ? (o.purchaseRate / systemNairaRate).toFixed(4) : "—"}</td>
                           <td className="py-2 px-1 text-right">
-                            ₦{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}
+                            <span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{((o.totalFaceValue || 0) * o.purchaseRate).toLocaleString()}</span>
                           </td>
                           <td className="py-2 px-1">
                             <span

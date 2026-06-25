@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate, useParams } from "react-router-dom";
-import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Smile, FileText as FileTextIcon, Paperclip, ZoomIn, ZoomOut, ScanText, Copy, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Smile, FileText as FileTextIcon, Paperclip, ZoomIn, ZoomOut, ScanText, Copy, Loader2, Coins } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ const STATUS_STYLES: Record<string, { label: string; color: string; bg: string; 
   completed:  { label: "Completed",  color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
   failed:     { label: "Failed",     color: "text-destructive", bg: "bg-destructive/10", icon: XCircle },
   settled:    { label: "Settled",    color: "text-success", bg: "bg-success/10", icon: CheckCircle2 },
-  trading:    { label: "Trading",    color: "text-primary", bg: "bg-primary/10", icon: Clock },
+  trading:    { label: "Processing", color: "text-primary", bg: "bg-primary/10", icon: Clock },
   pending_payment: { label: "Pending", color: "text-warning", bg: "bg-warning/10", icon: Clock },
 };
 
@@ -553,15 +553,15 @@ export default function AdminChatView() {
                 )}
               </div>
               <div className="space-y-2">
-                {[
+                {([
                   ["Order ID", selectedOrder.id],
                   ["Card", `${selectedOrder.cardType}`],
                   ["Amount", `$${selectedOrder.amount}`],
-                  ["Card Rate", `₦${(selectedOrder as any).unitPrice?.toLocaleString?.() || selectedOrder.nairaRate.toLocaleString()}`],
-                  ["Payout", `₦${selectedOrder.payout.toLocaleString()}`],
+                  ["Points price", <span key="pp" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{((selectedOrder as any).unitPrice ?? selectedOrder.nairaRate).toLocaleString()}</span>],
+                  ["Release", <span key="rel" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selectedOrder.payout.toLocaleString()}</span>],
                   ...(selectedOrder.cardNumbers && selectedOrder.cardNumbers.length > 0 ? [["Card No.", selectedOrder.cardNumbers.join(", ")]] : []),
                   ["Time", selectedOrder.timestamp],
-                ].map(([k, v]) => (
+                ] as Array<[string, React.ReactNode]>).map(([k, v]) => (
                   <div key={k} className="flex justify-between text-xs">
                     <span className="text-muted-foreground">{k}</span>
                     <span className="font-medium">{v}</span>

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
-import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -36,6 +36,12 @@ const statusColors: Record<string, string> = {
   consulting: "bg-amber-500/10 text-amber-600",
   trading: "bg-emerald-500/10 text-emerald-600",
   pending: "bg-blue-500/10 text-blue-600",
+};
+
+const statusLabels: Record<string, string> = {
+  consulting: "Consulting",
+  trading: "Processing",
+  pending: "Pending",
 };
 
 export default function AdminCustomers() {
@@ -88,7 +94,7 @@ export default function AdminCustomers() {
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="consulting">Consulting</SelectItem>
-              <SelectItem value="trading">Trading</SelectItem>
+              <SelectItem value="trading">Processing</SelectItem>
             </SelectContent>
           </Select>
           <Select value={channelFilter} onValueChange={setChannelFilter}>
@@ -115,8 +121,8 @@ export default function AdminCustomers() {
                 <TableHead className="text-xs font-semibold text-center">Channel</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Total Value</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Wallet</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Total points</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Points account</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Tags</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Last Active</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Joined</TableHead>
@@ -136,9 +142,9 @@ export default function AdminCustomers() {
                   </TableCell>
                   <TableCell>
                     <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}
+                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}
                     >
-                      {c.status}
+                      {statusLabels[c.status] || c.status}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
@@ -148,10 +154,12 @@ export default function AdminCustomers() {
                     <span className="text-sm font-medium">{c.goodRate}%</span>
                   </TableCell>
                   <TableCell className="text-center text-sm">{c.totalOrders}</TableCell>
-                  <TableCell className="text-right text-sm font-medium">{c.totalValue}</TableCell>
+                  <TableCell className="text-right text-sm font-medium">
+                    <span className="inline-flex items-center justify-end gap-0.5"><Coins className="w-3 h-3 text-accent" />{(parseInt(String(c.totalValue).replace(/[^\d]/g, ""), 10) || 0).toLocaleString()}</span>
+                  </TableCell>
                   <TableCell className="text-right text-sm font-medium">
                     <span className="flex items-center justify-end gap-1">
-                      <Wallet className="w-3 h-3 text-accent" />₦{c.walletBalance.toLocaleString()}
+                      <Coins className="w-3 h-3 text-accent" />{c.walletBalance.toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
@@ -213,7 +221,7 @@ export default function AdminCustomers() {
                   Details
                 </TabsTrigger>
                 <TabsTrigger value="wallet" className="flex-1 text-xs">
-                  Wallet
+                  Points account
                 </TabsTrigger>
               </TabsList>
 
@@ -236,10 +244,10 @@ export default function AdminCustomers() {
                   </div>
                 )}
                 {[
-                  ["Status", selectedCustomer.status],
+                  ["Status", statusLabels[selectedCustomer.status] || selectedCustomer.status],
                   ["Good Rate", `${selectedCustomer.goodRate}%`],
                   ["Total Orders", `${selectedCustomer.totalOrders}`],
-                  ["Total Value", selectedCustomer.totalValue],
+                  ["Total points", String(selectedCustomer.totalValue).replace(/₦/g, "")],
                   ["Last Active", `${selectedCustomer.lastActive} ago`],
                   ["Joined", selectedCustomer.joinedDate],
                   ["Tags", selectedCustomer.tags.join(", ") || "None"],
@@ -255,16 +263,16 @@ export default function AdminCustomers() {
               <TabsContent value="wallet" className="py-2">
                 <div className="grid grid-cols-3 gap-3 mb-4">
                   <div className="bg-muted rounded-lg p-3 text-center">
-                    <p className="text-sm font-bold">₦{selectedCustomer.walletBalance.toLocaleString()}</p>
+                    <p className="text-sm font-bold inline-flex items-center gap-0.5 justify-center"><Coins className="w-3 h-3" />{selectedCustomer.walletBalance.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground">Balance</p>
                   </div>
                   <div className="bg-success/10 rounded-lg p-3 text-center">
-                    <p className="text-sm font-bold text-success">₦{selectedCustomer.totalCredits.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-success inline-flex items-center gap-0.5 justify-center"><Coins className="w-3 h-3" />{selectedCustomer.totalCredits.toLocaleString()}</p>
                     <p className="text-[10px] text-muted-foreground">Credits</p>
                   </div>
                   <div className="bg-warning/10 rounded-lg p-3 text-center">
-                    <p className="text-sm font-bold text-warning">
-                      ₦{selectedCustomer.totalWithdrawals.toLocaleString()}
+                    <p className="text-sm font-bold text-warning inline-flex items-center gap-0.5 justify-center">
+                      <Coins className="w-3 h-3" />{selectedCustomer.totalWithdrawals.toLocaleString()}
                     </p>
                     <p className="text-[10px] text-muted-foreground">Withdrawals</p>
                   </div>
@@ -290,8 +298,8 @@ export default function AdminCustomers() {
                           {t.date} · {t.time}
                         </p>
                       </div>
-                      <p className={`text-xs font-bold ${t.type === "credit" ? "text-success" : "text-warning"}`}>
-                        {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
+                      <p className={`text-xs font-bold inline-flex items-center gap-0.5 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
+                        {t.type === "credit" ? "+" : "-"}<Coins className="w-3 h-3" />{t.amount.toLocaleString()}
                       </p>
                     </div>
                   ))}

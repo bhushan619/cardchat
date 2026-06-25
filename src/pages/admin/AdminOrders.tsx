@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { orders } from "@/data/mock";
-import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff } from "lucide-react";
+import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
@@ -165,7 +165,7 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Card Rate (NGN)", "Card Rate (CNY)", "Naira Rate (₦)", "Amount", "Status", "Created"];
+    const headers = ["Alias", "Card Type", "Points price", "Card Rate (CNY)", "Points rate", "Amount", "Status", "Created"];
     const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `₦${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `₦${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -230,9 +230,9 @@ export default function AdminOrders() {
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (NGN)</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (CNY)</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Naira Rate</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Created</th>
@@ -257,9 +257,9 @@ export default function AdminOrders() {
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
-                       <td className="px-4 py-3 text-sm text-right">₦{o.unitPrice}</td>
+                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
                        <td className="px-4 py-3 text-sm text-right">¥{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
-                      <td className="px-4 py-3 text-sm text-right">₦{o.nairaRate}</td>
+                      <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
@@ -339,15 +339,15 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order unit price</span>
-                                    <span className="font-medium">₦{details.orderUnitPrice.toLocaleString()}</span>
+                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.orderUnitPrice.toLocaleString()}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order amount</span>
-                                    <span className="font-medium">₦{details.orderAmount.toLocaleString()}</span>
+                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.orderAmount.toLocaleString()}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Naira rate</span>
-                                    <span className="font-medium">₦{details.nairaRate}</span>
+                                    <span className="text-muted-foreground">Points rate</span>
+                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.nairaRate}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Settlement coin</span>

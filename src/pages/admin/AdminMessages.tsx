@@ -43,6 +43,7 @@ import {
   ZoomOut,
   ScanText,
   Loader2,
+  Coins,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -81,7 +82,7 @@ const columns = [
   },
   {
     id: "trading",
-    label: "Trading",
+    label: "Processing",
     color: "text-white",
     bg: "bg-gradient-to-r from-emerald-500 to-teal-400",
     activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500",
@@ -282,7 +283,7 @@ export default function AdminMessages() {
       // When success: auto-credit wallet with specific amount
       if (newStatus === "success" && payoutAmount) {
         // Agent sees detailed credit message
-        addSystemMessage(`📌 💰 Funds credited to customer's wallet — ₦${payoutAmount.toLocaleString()}`);
+        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
       }
     }
   };
@@ -427,7 +428,7 @@ export default function AdminMessages() {
     setTransferCompletedOrders((prev) => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
-    addSystemMessage(`💰 ₦${payout.toLocaleString()} credited to customer's wallet`);
+    addSystemMessage(`💰 ${payout.toLocaleString()} points released to customer's account`);
   };
 
   const getSenderColor = (sender: string, senderName: string) => {
@@ -716,7 +717,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Card Rate</span>
+                      <span className="text-muted-foreground">Points price</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           ₦{neg.oldRate.toLocaleString()}
@@ -725,7 +726,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
-                      <span className="text-muted-foreground font-medium">Total Payout</span>
+                      <span className="text-muted-foreground font-medium">Total Release</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           ₦{neg.oldAmount.toLocaleString()}
@@ -740,7 +741,7 @@ export default function AdminMessages() {
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Card Rate", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
+                    ["Points price", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -748,7 +749,7 @@ export default function AdminMessages() {
                     </div>
                   ))}
                   <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
-                    <span className="text-muted-foreground font-medium">Total Payout</span>
+                    <span className="text-muted-foreground font-medium">Total Release</span>
                     <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
                   </div>
                 </>
@@ -911,29 +912,29 @@ export default function AdminMessages() {
                     <TooltipProvider>
                       <div className="flex flex-col gap-0.5 leading-tight">
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TTV</span>
-                          <span className="text-[10px] font-bold text-foreground">₦4,850,000</span>
+                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TP</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />4,850,000</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                              <p className="font-semibold">Total Transaction Volume</p>
-                              <p className="text-muted-foreground">Lifetime transaction total for this customer</p>
+                              <p className="font-semibold">Total Points</p>
+                              <p className="text-muted-foreground">Lifetime points total for this customer</p>
                             </TooltipContent>
                           </Tooltip>
                         </div>
                         <div className="flex items-center gap-1">
-                          <span className="text-[10px] font-semibold text-muted-foreground w-9">TMTV</span>
-                          <span className="text-[10px] font-bold text-foreground">₦1,250,000</span>
+                          <span className="text-[10px] font-semibold text-muted-foreground w-9">MTP</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />1,250,000</span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
                             </TooltipTrigger>
                             <TooltipContent side="bottom" className="text-xs max-w-[180px]">
-                              <p className="font-semibold">Total Monthly Transaction Volume</p>
+                              <p className="font-semibold">Monthly Total Points</p>
                               <p className="text-muted-foreground">
-                                Transaction total for this customer in the current month
+                                Points total for this customer in the current month
                               </p>
                             </TooltipContent>
                           </Tooltip>
@@ -1398,15 +1399,15 @@ export default function AdminMessages() {
                                     </Button>
                                   </div>
                                   <div className="space-y-1.5">
-                                    {[
+                                    {([
                                       ["Order ID", o.id],
                                       ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                       ["Amount", `$${o.amount}`],
-                                      ["Card Rate", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
-                                      ["Payout", `₦${o.payout.toLocaleString()}`],
+                                      ["Points price", <span key="pp" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{(o.unitPrice || o.nairaRate).toLocaleString()}</span>],
+                                      ["Release", <span key="rel" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{o.payout.toLocaleString()}</span>],
                                       ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
                                       ["Time", o.timestamp],
-                                    ].map(([k, v]) => (
+                                    ] as Array<[string, React.ReactNode]>).map(([k, v]) => (
                                       <div key={k} className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">{k}</span>
                                         <span className="font-medium">{v}</span>
@@ -1760,14 +1761,14 @@ export default function AdminMessages() {
                                         `${currSym}${neg.newDenom.toLocaleString()}`,
                                       ],
                                       [
-                                        "Card Rate",
-                                        `₦${neg.oldRate.toLocaleString()}`,
-                                        `₦${neg.newRate.toLocaleString()}`,
+                                        "Points price",
+                                        `${neg.oldRate.toLocaleString()}`,
+                                        `${neg.newRate.toLocaleString()}`,
                                       ],
                                       [
-                                        "Payout",
-                                        `₦${neg.oldAmount.toLocaleString()}`,
-                                        `₦${neg.newAmount.toLocaleString()}`,
+                                        "Release",
+                                        `${neg.oldAmount.toLocaleString()}`,
+                                        `${neg.newAmount.toLocaleString()}`,
                                       ],
                                     ].map(([label, oldVal, newVal]) => (
                                       <div key={label} className="flex gap-3 text-sm">
@@ -1881,11 +1882,11 @@ export default function AdminMessages() {
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Card Rate</span>
+                  <span className="text-muted-foreground">Points price</span>
                   <span className="font-medium">₦{oldRate.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Naira Rate</span>
+                  <span className="text-muted-foreground">Points rate</span>
                   <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -1923,7 +1924,7 @@ export default function AdminMessages() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium">Actual Card Rate (₦)</label>
+                  <label className="text-xs font-medium">Actual Points price</label>
                   <Input
                     type="number"
                     placeholder="e.g. 1400"
@@ -1940,7 +1941,7 @@ export default function AdminMessages() {
                       </span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Naira Rate</span>
+                      <span className="text-muted-foreground">Points rate</span>
                       <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
