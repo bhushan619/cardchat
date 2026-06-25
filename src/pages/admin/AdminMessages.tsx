@@ -1529,12 +1529,12 @@ export default function AdminMessages() {
                   const cardCurrency = detailOrder.cardCurrency || "USD";
                   const cardTypeName = detailOrder.cardType || "—";
                   const shoTypeName = `${cardTypeName}${cardCurrency ? ` / ${cardCurrency}` : ""}`;
-                  const cardNumber = detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : "—";
-                  const cardCode = detailOrder.id;
-                  const orderCode = detailOrder.id;
-                  // Deterministic mock fallbacks derived from order id so each order shows realistic buyer data
+                  // Deterministic mock fallbacks derived from order id so each order shows realistic data
                   const seed = detailOrder.id || "0";
                   const seedNum = Array.from(seed).reduce((a, c) => a + c.charCodeAt(0), 0);
+                  const fallbackCardNumber = String(4000000000000000 + (seedNum * 7919) % 999999999999).slice(0, 16);
+                  const cardNumber = detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : fallbackCardNumber;
+                  const orderCode = detailOrder.id;
                   const mockNicknames = ["肖捺", "王伟", "李娜", "Chen Yu", "Zhang Min", "Liu Yang"];
                   const mockAliases = ["M09L81", "K23P47", "T81X02", "Q44R19", "B67N38", "Z12V90"];
                   const providerName =
