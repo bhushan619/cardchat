@@ -193,12 +193,13 @@ export default function CustomerMe() {
 
   const resetPinForm = () => { setPinCurrent(""); setPinNew(""); setPinConfirm(""); };
 
-  const handleSavePin = () => {
-    if (txnPin && pinCurrent !== txnPin) { toast.error("Current PIN is incorrect"); return; }
+  const handleSavePin = async () => {
+    if (txnPin && !(await verifyPin(pinCurrent, txnPin))) { toast.error("Current PIN is incorrect"); return; }
     if (!/^\d{6}$/.test(pinNew)) { toast.error("PIN must be exactly 6 digits"); return; }
     if (pinNew !== pinConfirm) { toast.error("PINs do not match"); return; }
-    sessionStorage.setItem(PIN_STORAGE_KEY, pinNew);
-    setTxnPin(pinNew);
+    const hashed = await hashPin(pinNew);
+    sessionStorage.setItem(PIN_STORAGE_KEY, hashed);
+    setTxnPin(hashed);
     resetPinForm();
     toast.success(txnPin ? "Transaction PIN updated" : "Transaction PIN created");
   };
@@ -213,8 +214,8 @@ export default function CustomerMe() {
     setWithdrawPinOpen(true);
   };
 
-  const handleVerifyWithdrawPin = () => {
-    if (withdrawPinInput !== txnPin) { setWithdrawPinError("Incorrect PIN"); return; }
+  const handleVerifyWithdrawPin = async () => {
+    if (!(await verifyPin(withdrawPinInput, txnPin))) { setWithdrawPinError("Incorrect PIN"); return; }
     setWithdrawPinOpen(false);
     handleWithdraw();
   };
