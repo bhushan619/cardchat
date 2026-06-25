@@ -134,6 +134,7 @@ export default function AdminMessages() {
   const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
