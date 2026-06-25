@@ -21,6 +21,7 @@ interface OrderDetail {
   timeline: { event: string; time: string }[];
   creationTime: string;
   cardFaceValue: number;
+  cardNumber: string;
   cardCode: string;
   cardImage?: string;
   orderReceivingTime: string;
