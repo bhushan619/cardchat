@@ -134,6 +134,7 @@ export default function AdminMessages() {
   const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
+  const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
   const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
@@ -1511,7 +1512,10 @@ export default function AdminMessages() {
           <Dialog
             open={!!detailOrderId}
             onOpenChange={(open) => {
-              if (!open) setDetailOrderId(null);
+              if (!open) {
+                setDetailOrderId(null);
+                setShowCardNumber(false);
+              }
             }}
           >
             <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
@@ -1642,6 +1646,37 @@ export default function AdminMessages() {
                               </div>
                             </div>
                           ))}
+                          {/* Card number with masking + reveal toggle */}
+                          {cardNumber !== "—" && (
+                            <div className="flex gap-3 text-sm">
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card number</span>
+                              <div className="flex items-center gap-1.5 min-w-0">
+                                <span className="font-medium font-mono break-all">
+                                  {showCardNumber
+                                    ? cardNumber
+                                    : cardNumber.length <= 4
+                                      ? "•".repeat(cardNumber.length)
+                                      : `${"•".repeat(Math.max(0, cardNumber.length - 4))}${cardNumber.slice(-4)}`}
+                                </span>
+                                <button
+                                  onClick={() => setShowCardNumber((v) => !v)}
+                                  className="text-muted-foreground hover:text-primary shrink-0"
+                                  aria-label={showCardNumber ? "Hide card number" : "Show card number"}
+                                >
+                                  {showCardNumber ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                                </button>
+                                <button
+                                  onClick={() => handleCopy(cardNumber, "modal-Card number")}
+                                  className="text-muted-foreground hover:text-primary shrink-0"
+                                >
+                                  <Copy className="w-3.5 h-3.5" />
+                                </button>
+                                {copyFeedback === "modal-Card number" && (
+                                  <span className="text-[9px] text-success">Copied!</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
                           {/* Card images (may be multiple) */}
                           <div className="flex gap-3 text-sm">
                             <span className="text-muted-foreground w-[130px] shrink-0 text-right pt-1">
