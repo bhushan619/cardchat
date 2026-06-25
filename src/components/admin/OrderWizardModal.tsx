@@ -646,7 +646,7 @@ export default function CardlightPanel({
                       </div>
                     )}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground font-medium">Total Payout</span>
+                      <span className="text-muted-foreground font-medium">Total Release</span>
                       <span className="font-bold text-success">
                         ₦{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
                       </span>
@@ -684,7 +684,7 @@ export default function CardlightPanel({
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Payout</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Release</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>

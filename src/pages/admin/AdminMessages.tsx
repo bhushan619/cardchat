@@ -717,7 +717,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Card Rate</span>
+                      <span className="text-muted-foreground">Points price</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           ₦{neg.oldRate.toLocaleString()}
@@ -726,7 +726,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
-                      <span className="text-muted-foreground font-medium">Total Payout</span>
+                      <span className="text-muted-foreground font-medium">Total Release</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           ₦{neg.oldAmount.toLocaleString()}
@@ -741,7 +741,7 @@ export default function AdminMessages() {
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Card Rate", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
+                    ["Points price", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -749,7 +749,7 @@ export default function AdminMessages() {
                     </div>
                   ))}
                   <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
-                    <span className="text-muted-foreground font-medium">Total Payout</span>
+                    <span className="text-muted-foreground font-medium">Total Release</span>
                     <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
                   </div>
                 </>
@@ -1403,8 +1403,8 @@ export default function AdminMessages() {
                                       ["Order ID", o.id],
                                       ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
                                       ["Amount", `$${o.amount}`],
-                                      ["Card Rate", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
-                                      ["Payout", `₦${o.payout.toLocaleString()}`],
+                                      ["Points price", `₦${(o.unitPrice || o.nairaRate).toLocaleString()}`],
+                                      ["Release", `₦${o.payout.toLocaleString()}`],
                                       ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
                                       ["Time", o.timestamp],
                                     ].map(([k, v]) => (
@@ -1761,12 +1761,12 @@ export default function AdminMessages() {
                                         `${currSym}${neg.newDenom.toLocaleString()}`,
                                       ],
                                       [
-                                        "Card Rate",
+                                        "Points price",
                                         `₦${neg.oldRate.toLocaleString()}`,
                                         `₦${neg.newRate.toLocaleString()}`,
                                       ],
                                       [
-                                        "Payout",
+                                        "Release",
                                         `₦${neg.oldAmount.toLocaleString()}`,
                                         `₦${neg.newAmount.toLocaleString()}`,
                                       ],
@@ -1882,11 +1882,11 @@ export default function AdminMessages() {
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Card Rate</span>
+                  <span className="text-muted-foreground">Points price</span>
                   <span className="font-medium">₦{oldRate.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
-                  <span className="text-muted-foreground">Naira Rate</span>
+                  <span className="text-muted-foreground">Points rate</span>
                   <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -1941,7 +1941,7 @@ export default function AdminMessages() {
                       </span>
                     </div>
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Naira Rate</span>
+                      <span className="text-muted-foreground">Points rate</span>
                       <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
