@@ -1924,7 +1924,7 @@ export default function AdminMessages() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium">Actual Card Rate (₦)</label>
+                  <label className="text-xs font-medium">Actual Points price</label>
                   <Input
                     type="number"
                     placeholder="e.g. 1400"

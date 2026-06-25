@@ -165,7 +165,7 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Card Rate (NGN)", "Card Rate (CNY)", "Naira Rate (₦)", "Amount", "Status", "Created"];
+    const headers = ["Alias", "Card Type", "Points price", "Card Rate (CNY)", "Points rate", "Amount", "Status", "Created"];
     const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `₦${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `₦${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -230,7 +230,7 @@ export default function AdminOrders() {
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (NGN)</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (CNY)</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>

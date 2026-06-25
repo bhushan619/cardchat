@@ -475,16 +475,16 @@ export default function CardlightPanel({
                 </div>
               </div>
 
-              {/* Row 2: Naira Price + Card Rate */}
+              {/* Row 2: Points rate + Card Rate */}
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Naira Price</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Points rate</label>
                   <div className="h-8 flex items-center rounded-md border border-input bg-muted/50 px-3 text-xs font-medium text-foreground">
                     {Number(nairaPrice).toLocaleString()}
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Card Rate (NGN)</label>
+                  <label className="text-[11px] font-medium text-muted-foreground">Points price</label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
@@ -641,7 +641,7 @@ export default function CardlightPanel({
                     </div>
                     {nairaPrice && (
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-muted-foreground">Naira Price</span>
+                        <span className="text-muted-foreground">Points rate</span>
                         <span className="font-semibold">₦{Number(nairaPrice).toLocaleString()}</span>
                       </div>
                     )}
@@ -682,7 +682,7 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Number</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (NGN)</th>
+                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Points price</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Release</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
