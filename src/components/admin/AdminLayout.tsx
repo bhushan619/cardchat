@@ -4,7 +4,7 @@ import {
   LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
   TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
   BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
-  Sun, Moon, Wallet, Gift, ArrowDownToLine
+  Sun, Moon, Wallet, Gift, ArrowDownToLine, Coins
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -19,7 +19,7 @@ const navItems = [
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
   { id: "withdrawals", label: "Withdrawals", icon: ArrowDownToLine, path: "/admin/withdrawals", roles: ["super_admin", "team_lead", "finance"] },
-  { id: "naira-rate", label: "Naira Rate", icon: DollarSign, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
+  { id: "naira-rate", label: "Points Rate", icon: Coins, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
   { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
@@ -28,8 +28,8 @@ const navItems = [
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   { id: "ranking", label: "Volume Ranking", icon: TrendingUp, path: "/admin/ranking", roles: ["super_admin", "team_lead", "agent"] },
   { id: "rewards", label: "Rewards", icon: Gift, path: "/admin/rewards", roles: ["super_admin", "team_lead", "agent"] },
-  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide", roles: ["super_admin", "team_lead", "agent"] },
-  { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead", "agent"] },
+  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide", roles: ["super_admin", "team_lead"] },
+  { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead"] },
 ];
 
 export default function AdminLayout({ children }: { children: ReactNode }) {
@@ -173,19 +173,22 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
             />
           </div>
           <div className="flex items-center gap-4">
-            {/* Current Naira Rate & Price Control - visible to agents */}
+            {/* Current Points Rate & Price Control */}
             {(role === "agent" || role === "super_admin" || role === "team_lead") && (
               <div className="flex items-center gap-3 border-r pr-4 mr-1">
                 <div className="flex items-center gap-1.5">
-                  <DollarSign className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] text-muted-foreground">Naira Rate</span>
-                  <span className="text-xs font-bold text-foreground">₦{systemNairaRate.toLocaleString()}</span>
+                  <Coins className="w-3.5 h-3.5 text-accent" />
+                  <span className="text-[10px] text-muted-foreground">Points Rate</span>
+                  <span className="text-xs font-bold text-foreground">{systemNairaRate.toLocaleString()}</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <TrendingUp className="w-3.5 h-3.5 text-accent" />
-                  <span className="text-[10px] text-muted-foreground">Price Control</span>
-                  <span className="text-xs font-bold text-foreground">{systemPriceControl.toFixed(2)}%</span>
-                </div>
+                {/* Price Control hidden for Agent role */}
+                {role !== "agent" && (
+                  <div className="flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-[10px] text-muted-foreground">Price Control</span>
+                    <span className="text-xs font-bold text-foreground">{systemPriceControl.toFixed(2)}%</span>
+                  </div>
+                )}
               </div>
             )}
             <button
@@ -280,7 +283,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                           >
                             <span className="status-badge bg-warning/10 text-warning text-[10px]">Rate</span>
                             <span className="text-sm font-medium">{r.cardType}</span>
-                            <span className="text-xs text-muted-foreground ml-auto">{r.cardFormat} · ₦{r.buyRate}</span>
+                            <span className="text-xs text-muted-foreground ml-auto inline-flex items-center gap-1">{r.cardFormat} · <Coins className="w-3 h-3" />{r.sellRate}</span>
                           </button>
                         ))}
                       </div>
