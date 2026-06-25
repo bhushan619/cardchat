@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { cardRates, systemNairaRate, systemPriceControl } from "@/data/mock";
-import { Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send } from "lucide-react";
+import { Search, RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-type SortKey = "cardType" | "currency" | "buyRate" | "sellRate";
+type SortKey = "cardType" | "currency" | "sellRate";
 type SortDir = "asc" | "desc";
 
 const popularCards = ["iTunes US", "Steam US", "Razer Gold"];
@@ -143,11 +143,8 @@ export default function AdminCardRates() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("currency")}>
                   <span className="flex items-center gap-1">Currency <SortIcon col="currency" /></span>
                 </th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("buyRate")}>
-                  <span className="flex items-center gap-1 justify-end">Buy Rate (₦) <SortIcon col="buyRate" /></span>
-                </th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("sellRate")}>
-                  <span className="flex items-center gap-1 justify-end">Sell Rate (₦) <SortIcon col="sellRate" /></span>
+                  <span className="flex items-center gap-1 justify-end">Points price <SortIcon col="sellRate" /></span>
                 </th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Last Updated</th>
               </tr>
@@ -162,8 +159,9 @@ export default function AdminCardRates() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{r.currency}</td>
-                  <td className="px-4 py-3 text-sm text-right font-semibold text-accent rate-value">₦{r.buyRate}</td>
-                  <td className="px-4 py-3 text-sm text-right font-semibold rate-value">₦{r.sellRate}</td>
+                  <td className="px-4 py-3 text-sm text-right font-semibold rate-value">
+                    <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.sellRate}</span>
+                  </td>
                   <td className="px-4 py-3 text-xs text-right text-muted-foreground">{r.lastUpdated}</td>
                 </tr>
               ))}
@@ -189,8 +187,9 @@ export default function AdminCardRates() {
               <div key={r.id} className="flex items-center justify-between text-sm">
                 <span className="font-medium">{r.cardType} <span className="text-muted-foreground text-xs">({r.cardFormat})</span></span>
                 <div className="flex items-center gap-3">
-                  <span className="text-xs text-muted-foreground">Buy: <strong className="text-accent">₦{r.buyRate}</strong></span>
-                  <span className="text-xs text-muted-foreground">Sell: <strong>₦{r.sellRate}</strong></span>
+                  <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                    Points price: <strong className="text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{r.sellRate}</strong>
+                  </span>
                 </div>
               </div>
             ))}
