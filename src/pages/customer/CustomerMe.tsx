@@ -1131,11 +1131,15 @@ export default function CustomerMe() {
                   </DialogHeader>
                   <div className="flex flex-col items-center gap-3 py-2">
                     <div className="w-40 h-40 rounded-lg bg-white p-2 border flex items-center justify-center">
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(`otpauth://totp/CardChat:${savedEmail}?secret=${twoFactorSecret}&issuer=CardChat`)}`}
-                        alt="2FA QR code"
-                        className="w-full h-full object-contain"
-                      />
+                      {twoFactorQrUrl ? (
+                        <img
+                          src={twoFactorQrUrl}
+                          alt="2FA QR code"
+                          className="w-full h-full object-contain"
+                        />
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">Generating…</span>
+                      )}
                     </div>
                     <div className="w-full">
                       <label className="text-[11px] text-muted-foreground">Or enter this key manually</label>
