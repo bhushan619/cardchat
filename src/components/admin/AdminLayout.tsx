@@ -42,7 +42,21 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const auth = sessionStorage.getItem("adminAuth");
-    if (!auth) {
+    let valid = false;
+    if (auth) {
+      try {
+        const parsed = JSON.parse(auth);
+        valid =
+          parsed &&
+          typeof parsed === "object" &&
+          typeof parsed.email === "string" &&
+          ["super_admin", "team_lead", "agent", "finance"].includes(parsed.role);
+      } catch {
+        valid = false;
+      }
+    }
+    if (!valid) {
+      sessionStorage.removeItem("adminAuth");
       navigate("/admin/login", { replace: true });
     }
   }, [navigate]);

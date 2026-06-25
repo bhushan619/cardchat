@@ -6,11 +6,14 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Eye, EyeOff, AlertCircle } from "lucide-react";
 
-const MOCK_CREDENTIALS = [
-  { email: "admin@cardchat.com", password: "admin123", role: "super_admin" },
-  { email: "lead@cardchat.com", password: "lead123", role: "team_lead" },
-  { email: "agent@cardchat.com", password: "agent123", role: "agent" },
-];
+// Prototype-only credential map. In a production build this MUST be replaced
+// with a server-validated auth call (e.g. Lovable Cloud / Supabase Auth).
+// Credentials are no longer rendered in the UI and the array is not exported.
+const PROTOTYPE_ACCOUNTS: Record<string, { password: string; role: string }> = {
+  "admin@cardchat.com": { password: "admin123", role: "super_admin" },
+  "lead@cardchat.com": { password: "lead123", role: "team_lead" },
+  "agent@cardchat.com": { password: "agent123", role: "agent" },
+};
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -28,17 +31,15 @@ export default function AdminLogin() {
     setTimeout(() => {
       const lowerEmail = email.trim().toLowerCase();
       const stored = sessionStorage.getItem(`cc_password_${lowerEmail}`);
-      const knownByEmail = MOCK_CREDENTIALS.find((c) => c.email === lowerEmail);
-      // Accept either the original mock password OR a password set/reset by the user
+      const known = PROTOTYPE_ACCOUNTS[lowerEmail];
       const passwordMatches = stored
-        ? password === stored || (knownByEmail && password === knownByEmail.password)
-        : knownByEmail && password === knownByEmail.password;
-      const match = knownByEmail && passwordMatches ? knownByEmail : null;
-      if (match) {
-        sessionStorage.setItem("adminAuth", JSON.stringify({ email: match.email, role: match.role }));
+        ? password === stored || (known && password === known.password)
+        : known && password === known.password;
+      if (known && passwordMatches) {
+        sessionStorage.setItem("adminAuth", JSON.stringify({ email: lowerEmail, role: known.role }));
         navigate("/admin");
       } else {
-        setError("Invalid email or password. Try the demo credentials below.");
+        setError("Invalid email or password.");
       }
       setLoading(false);
     }, 600);
@@ -69,7 +70,7 @@ export default function AdminLogin() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@cardchat.com"
+                  placeholder="you@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -116,32 +117,8 @@ export default function AdminLogin() {
           </CardContent>
         </Card>
 
-        {/* Demo credentials */}
-        <Card className="border-dashed border-border/50 bg-muted/30">
-          <CardContent className="pt-4 pb-4">
-            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Demo Credentials</p>
-            <div className="space-y-2">
-              {MOCK_CREDENTIALS.map((c) => (
-                <button
-                  key={c.email}
-                  onClick={() => { setEmail(c.email); setPassword(c.password); setError(""); }}
-                  className="w-full flex items-center justify-between text-left p-2 rounded-md hover:bg-muted transition-colors text-sm"
-                >
-                  <div>
-                    <span className="font-medium text-foreground">{c.email}</span>
-                    <span className="text-muted-foreground ml-2">/ {c.password}</span>
-                  </div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-accent/10 text-accent font-medium capitalize">
-                    {c.role.replace("_", " ")}
-                  </span>
-                </button>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-
         <p className="text-center text-xs text-muted-foreground">
-          Prototype only · No real authentication
+          Prototype only · Enable Lovable Cloud for real authentication
         </p>
       </div>
     </div>
