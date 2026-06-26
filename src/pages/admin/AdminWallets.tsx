@@ -1,6 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Wallet, Plus, ArrowDownLeft, ArrowUpRight, Download, Search, X, Building2, RefreshCw } from "lucide-react";
+import { Wallet, Plus, ArrowDownLeft, ArrowUpRight, Download, Search, X, Building2, RefreshCw, Coins } from "lucide-react";
+import PointsAmount from "@/components/admin/PointsAmount";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -106,7 +107,7 @@ export default function AdminWallets() {
       remark: depositRemark || "Manual deposit",
     };
     setRecords(prev => [record, ...prev]);
-    toast.success(`₦${amount.toLocaleString()} added to platform wallet`);
+    toast.success(`${amount.toLocaleString()} points added to platform wallet`);
     setDepositAmount("");
     setDepositDescription("");
     setDepositRemark("");
@@ -114,7 +115,7 @@ export default function AdminWallets() {
   };
 
   const handleExport = () => {
-    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Naira Rate", "Amount (₦)", "Date", "Time", "Remark"];
+    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Points Rate", "Amount (Points)", "Date", "Time", "Remark"];
     const rows = filtered.map(r => [
       r.transferId,
       r.orderId,
@@ -165,15 +166,15 @@ export default function AdminWallets() {
 
         <div className="grid grid-cols-5 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-accent">₦{platformBalance.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1"><Coins className="w-5 h-5" />{platformBalance.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Platform Balance</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-success">₦{totalDeposits.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-success inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDeposits.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Deposits</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-warning">₦{totalDisbursements.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-warning inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDisbursements.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
           {[
@@ -199,7 +200,7 @@ export default function AdminWallets() {
                   <RefreshCw className="w-3 h-3" />
                 </button>
               </div>
-              <p className="text-xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
+              <p className="text-xl font-heading font-bold text-accent inline-flex items-center gap-1"><Coins className="w-4 h-4" />{p.balance.toLocaleString()}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
               </p>
@@ -265,7 +266,7 @@ export default function AdminWallets() {
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold">Type</TableHead>
                 <TableHead className="text-xs font-semibold">Description</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Naira Rate</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Points Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Date</TableHead>
                 <TableHead className="text-xs font-semibold">Remark</TableHead>
@@ -301,9 +302,9 @@ export default function AdminWallets() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{r.description}</TableCell>
-                  <TableCell className="text-right text-xs font-medium">₦{r.nairaRate.toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-xs font-medium"><PointsAmount value={r.nairaRate} className="justify-end" /></TableCell>
                   <TableCell className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
-                    {r.type === "deposit" ? "+" : "-"}₦{r.amount.toLocaleString()}
+                    <PointsAmount value={r.amount} className="justify-end" prefix={r.type === "deposit" ? "+" : "-"} />
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
@@ -332,7 +333,7 @@ export default function AdminWallets() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium">Amount (₦)</label>
+              <label className="text-xs font-medium flex items-center gap-1">Amount (<Coins className="w-3 h-3" /> Points)</label>
               <Input
                 placeholder="Enter amount..."
                 value={depositAmount}
