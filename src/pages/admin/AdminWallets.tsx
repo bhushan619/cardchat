@@ -200,7 +200,7 @@ export default function AdminWallets() {
                   <RefreshCw className="w-3 h-3" />
                 </button>
               </div>
-              <p className="text-xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
+              <p className="text-xl font-heading font-bold text-accent inline-flex items-center gap-1"><Coins className="w-4 h-4" />{p.balance.toLocaleString()}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
               </p>
