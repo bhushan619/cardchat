@@ -48,7 +48,7 @@ export default function AdminNairaRate() {
     setBroadcasting("broadcasting");
     toast({
       title: "Rate Updated",
-      description: `Rate updated to ₦${rateNum.toLocaleString()} — broadcasting to all sessions...`,
+      description: `Rate updated to ${rateNum.toLocaleString()} points — broadcasting to all sessions...`,
     });
     setTimeout(() => {
       setBroadcasting("done");
