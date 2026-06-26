@@ -136,9 +136,9 @@ export default function AdminWithdrawals() {
         {/* Summary widgets */}
         <div className="grid grid-cols-4 gap-3 mb-5">
           <SummaryCard label="Total Requests" value={totals.count.toString()} hint="In current view" />
-          <SummaryCard label="Total Volume" value={`₦${totals.all.toLocaleString()}`} hint="All filtered" />
-          <SummaryCard label="Pending" value={`₦${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
-          <SummaryCard label="Successful" value={`₦${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
+          <SummaryCard label="Total Volume" value={`Pts ${totals.all.toLocaleString()}`} hint="All filtered" />
+          <SummaryCard label="Pending" value={`Pts ${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
+          <SummaryCard label="Successful" value={`Pts ${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
         </div>
 
         {/* Filters */}
@@ -175,14 +175,14 @@ export default function AdminWithdrawals() {
           </Select>
           <Input
             type="number"
-            placeholder="Min ₦"
+            placeholder="Min pts"
             className="w-24"
             value={minAmount}
             onChange={e => setMinAmount(e.target.value)}
           />
           <Input
             type="number"
-            placeholder="Max ₦"
+            placeholder="Max pts"
             className="w-24"
             value={maxAmount}
             onChange={e => setMaxAmount(e.target.value)}
@@ -221,7 +221,7 @@ export default function AdminWithdrawals() {
                         <span className="text-sm font-medium">{w.alias}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right text-sm font-semibold">₦{w.amount.toLocaleString()}</TableCell>
+                    <TableCell className="text-right text-sm font-semibold">Pts {w.amount.toLocaleString()}</TableCell>
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
                       <p className="text-muted-foreground">{w.accountNumber}</p>
@@ -265,7 +265,7 @@ export default function AdminWithdrawals() {
             <div className="space-y-3 text-sm">
               {[
                 ["Customer", selected.alias],
-                ["Amount", `₦${selected.amount.toLocaleString()}`],
+                ["Amount", `Pts ${selected.amount.toLocaleString()}`],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],

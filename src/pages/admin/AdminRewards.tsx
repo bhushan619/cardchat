@@ -161,15 +161,15 @@ export default function AdminRewards() {
         {/* Summary Cards */}
         <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-accent">₦{totalRewards.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-accent">Pts {totalRewards.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Rewards</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-success">₦{totalRanking.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-success">Pts {totalRanking.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Ranking Rewards</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-warning">₦{totalReferral.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-warning">Pts {totalReferral.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Referral Rewards</p>
           </div>
         </div>
@@ -241,7 +241,7 @@ export default function AdminRewards() {
                   <TableCell className="text-right text-sm font-bold text-success">
                     <span className="flex items-center justify-end gap-1">
                       <ArrowDownLeft className="w-3 h-3" />
-                      ₦{r.amount.toLocaleString()}
+                      Pts {r.amount.toLocaleString()}
                     </span>
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
@@ -352,7 +352,7 @@ export default function AdminRewards() {
                 <div className="text-xs">
                   <p className="font-semibold text-success">All Orders Settled</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling ₦{rankingList.reduce((s, u) => s + u.reward, 0).toLocaleString()}.
+                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling Pts {rankingList.reduce((s, u) => s + u.reward, 0).toLocaleString()}.
                   </p>
                 </div>
               </div>

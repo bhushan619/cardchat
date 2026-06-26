@@ -51,7 +51,7 @@ const initialMessages: TeamMessage[] = [
   { id: "1", sender: "Admin One", role: "Super Admin", text: "Team, please flag any orders with mismatched card values today.", time: "9:00 AM" },
   { id: "2", sender: "Sarah Lead", role: "Team Lead", text: "Noted. I'll brief the agents.", time: "9:02 AM" },
   { id: "3", sender: "Mike Agent", role: "Agent", text: "Got it 👍", time: "9:05 AM" },
-  { id: "4", sender: "Femi Finance", role: "Finance", text: "Order #ORD-20260318-003 has a payout mismatch. Card value shows $200 but rate calc gives ₦180,000 instead of ₦215,200. Please review.", time: "10:15 AM" },
+  { id: "4", sender: "Femi Finance", role: "Finance", text: "Order #ORD-20260318-003 has a payout mismatch. Card value shows $200 but rate calc gives Pts 180,000 instead of Pts 215,200. Please review.", time: "10:15 AM" },
   { id: "5", sender: "Sarah Lead", role: "Team Lead", text: "Looking into it now. The rate may have been updated mid-transaction.", time: "10:18 AM" },
   { id: "6", sender: "Admin One", role: "Super Admin", text: "Confirmed — rate was changed at 10:14 AM. We'll honor the original rate for this order.", time: "10:22 AM" },
 ];

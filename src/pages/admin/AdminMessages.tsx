@@ -593,7 +593,7 @@ export default function AdminMessages() {
                     setConfirmAction({
                       type: "good_card",
                       title: "Confirm Successful Trade",
-                      desc: `This will mark the order as successful and credit ₦${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                      desc: `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                       onConfirm: () => {
                         handleStatusTransition(selectedId, "success", statusOrder?.payout);
                         setConfirmAction(null);
@@ -720,18 +720,18 @@ export default function AdminMessages() {
                       <span className="text-muted-foreground">Points price</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
-                          ₦{neg.oldRate.toLocaleString()}
+                          Pts {neg.oldRate.toLocaleString()}
                         </span>
-                        <span className="font-medium text-warning">₦{neg.newRate.toLocaleString()}</span>
+                        <span className="font-medium text-warning">Pts {neg.newRate.toLocaleString()}</span>
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                       <span className="text-muted-foreground font-medium">Total Release</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
-                          ₦{neg.oldAmount.toLocaleString()}
+                          Pts {neg.oldAmount.toLocaleString()}
                         </span>
-                        <span className="font-bold text-warning">₦{neg.newAmount.toLocaleString()}</span>
+                        <span className="font-bold text-warning">Pts {neg.newAmount.toLocaleString()}</span>
                       </div>
                     </div>
                   </>
@@ -741,7 +741,7 @@ export default function AdminMessages() {
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Points price", `₦${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
+                    ["Points price", `Pts ${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
@@ -750,7 +750,7 @@ export default function AdminMessages() {
                   ))}
                   <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                     <span className="text-muted-foreground font-medium">Total Release</span>
-                    <span className="font-bold text-primary">₦{statusOrder.payout.toLocaleString()}</span>
+                    <span className="font-bold text-primary">Pts {statusOrder.payout.toLocaleString()}</span>
                   </div>
                 </>
               );
@@ -1421,7 +1421,7 @@ export default function AdminMessages() {
                                       <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
                                       <p className="text-xs font-medium text-success">Wallet Credited</p>
                                       <p className="text-[10px] text-muted-foreground">
-                                        ₦{o.payout.toLocaleString()} added to customer's wallet
+                                        Pts {o.payout.toLocaleString()} added to customer's wallet
                                       </p>
                                     </div>
                                   )}
@@ -1611,9 +1611,9 @@ export default function AdminMessages() {
                     ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
                     ["Order id", orderCode, true],
                     ["Order face value", `${purchaseFaceValue}`],
-                    ["Order unit price", `₦${Number(purchaseRate).toLocaleString()}`],
-                    ["Order amount", `₦${Number(sellCost).toLocaleString()}`],
-                    ["Naira rate", `₦${Number(nairaRate).toLocaleString()}`],
+                    ["Order unit price", `Pts ${Number(purchaseRate).toLocaleString()}`],
+                    ["Order amount", `Pts ${Number(sellCost).toLocaleString()}`],
+                    ["Points rate", `Pts ${Number(nairaRate).toLocaleString()}`],
                     ["Settlement coin", settleCoin],
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
@@ -1883,11 +1883,11 @@ export default function AdminMessages() {
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Points price</span>
-                  <span className="font-medium">₦{oldRate.toLocaleString()}</span>
+                  <span className="font-medium">Pts {oldRate.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Points rate</span>
-                  <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
+                  <span className="font-medium">Pts {(negOrder?.nairaRate || 289).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Settlement Coin</span>
@@ -1909,7 +1909,7 @@ export default function AdminMessages() {
                 </div>
                 <div className="flex justify-between text-xs border-t border-border pt-1.5">
                   <span className="text-muted-foreground font-medium">Original Payout</span>
-                  <span className="font-bold">₦{oldPayout.toLocaleString()}</span>
+                  <span className="font-bold">Pts {oldPayout.toLocaleString()}</span>
                 </div>
               </div>
 
@@ -1937,20 +1937,20 @@ export default function AdminMessages() {
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Original Payout</span>
                       <span className="font-medium line-through text-muted-foreground">
-                        ₦{oldPayout.toLocaleString()}
+                        Pts {oldPayout.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs">
                       <span className="text-muted-foreground">Points rate</span>
-                      <span className="font-medium">₦{(negOrder?.nairaRate || 289).toLocaleString()}</span>
+                      <span className="font-medium">Pts {(negOrder?.nairaRate || 289).toLocaleString()}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                       <span className="text-foreground font-medium">New Payout</span>
-                      <span className="font-bold text-primary">₦{newPayout.toLocaleString()}</span>
+                      <span className="font-bold text-primary">Pts {newPayout.toLocaleString()}</span>
                     </div>
                     {newPayout < oldPayout && (
                       <p className="text-[10px] text-warning text-center">
-                        Difference: -₦{(oldPayout - newPayout).toLocaleString()}
+                        Difference: -Pts {(oldPayout - newPayout).toLocaleString()}
                       </p>
                     )}
                   </div>
@@ -1979,7 +1979,7 @@ export default function AdminMessages() {
                       }));
                       // Transition directly to success
                       handleStatusTransition(selectedId, "success", payout);
-                      addSystemMessage(`✅ Negotiation confirmed. Payout ₦${payout.toLocaleString()}.`);
+                      addSystemMessage(`✅ Negotiation confirmed. Payout Pts ${payout.toLocaleString()}.`);
                     }
                     setNegotiateOpen(false);
                   }}
@@ -2029,15 +2029,15 @@ export default function AdminMessages() {
                     <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
                       Current Wallet Balance
                     </p>
-                    <p className="font-heading text-xl font-bold text-accent">₦{cw.balance.toLocaleString()}</p>
+                    <p className="font-heading text-xl font-bold text-accent">Pts {cw.balance.toLocaleString()}</p>
                     <div className="flex gap-4 text-[10px] text-muted-foreground">
                       <span>
                         Total Credits:{" "}
-                        <span className="text-success font-medium">₦{cw.totalCredits.toLocaleString()}</span>
+                        <span className="text-success font-medium">Pts {cw.totalCredits.toLocaleString()}</span>
                       </span>
                       <span>
                         Withdrawals:{" "}
-                        <span className="text-destructive font-medium">₦{cw.totalWithdrawals.toLocaleString()}</span>
+                        <span className="text-destructive font-medium">Pts {cw.totalWithdrawals.toLocaleString()}</span>
                       </span>
                     </div>
                   </div>
@@ -2063,7 +2063,7 @@ export default function AdminMessages() {
                     </Button>
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-xs font-medium">Amount (₦)</label>
+                    <label className="text-xs font-medium">Amount (Pts )</label>
                     <Input
                       type="number"
                       placeholder="Enter amount..."
@@ -2116,7 +2116,7 @@ export default function AdminMessages() {
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Rate</span>
-                              <span className="font-medium">₦{relOrder.nairaRate}</span>
+                              <span className="font-medium">Pts {relOrder.nairaRate}</span>
                             </div>
                             <div className="flex justify-between">
                               <span className="text-muted-foreground">Status</span>
@@ -2149,7 +2149,7 @@ export default function AdminMessages() {
                           <span
                             className={`font-medium shrink-0 ml-2 ${tx.type === "credit" ? "text-success" : "text-destructive"}`}
                           >
-                            {tx.type === "credit" ? "+" : "-"}₦{tx.amount.toLocaleString()}
+                            {tx.type === "credit" ? "+" : "-"}Pts {tx.amount.toLocaleString()}
                           </span>
                         </div>
                       ))}
@@ -2175,7 +2175,7 @@ export default function AdminMessages() {
                           <span
                             className={`font-medium ${a.type === "addition" ? "text-success" : "text-destructive"}`}
                           >
-                            {a.type === "addition" ? "+" : "-"}₦{a.amount.toLocaleString()}
+                            {a.type === "addition" ? "+" : "-"}Pts {a.amount.toLocaleString()}
                           </span>
                         </div>
                       ))}
@@ -2276,7 +2276,7 @@ export default function AdminMessages() {
                     };
                     setFundAdjustments((prev) => [adjustment, ...prev]);
                     addSystemMessage(
-                      `💰 Fund ${fundAdjustType}: ${fundAdjustType === "addition" ? "+" : "-"}₦${amount.toLocaleString()} — ${fundAdjustReason} (by ${adjustment.performedBy})`,
+                      `💰 Fund ${fundAdjustType}: ${fundAdjustType === "addition" ? "+" : "-"}Pts ${amount.toLocaleString()} — ${fundAdjustReason} (by ${adjustment.performedBy})`,
                     );
                     setFundAdjustOpen(false);
                     setFundAdjustAmount("");

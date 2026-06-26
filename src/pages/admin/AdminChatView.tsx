@@ -258,7 +258,7 @@ export default function AdminChatView() {
       id: Date.now(),
       sender: "system",
       senderName: "System",
-      text: `💸 Transfer executed — ₦${billingTotal.toLocaleString()} sent to customer's verified accounts`,
+      text: `💸 Transfer executed — Pts ${billingTotal.toLocaleString()} sent to customer's verified accounts`,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       isOrder: true,
     };
@@ -294,7 +294,7 @@ export default function AdminChatView() {
                 <p className="text-[10px] text-muted-foreground">
                   {isGroupChat
                     ? `You, ${groupMembers.map(m => m.name).join(", ")}, A7X3KP`
-                    : "85% rate · ₦450,000 total · VIP, Repeat"
+                    : "85% rate · Pts 450,000 total · VIP, Repeat"
                   }
                 </p>
               </div>
@@ -591,13 +591,13 @@ export default function AdminChatView() {
                           <p className="font-medium">{d.bankName} · {d.accountNumber}</p>
                           <p className="text-[10px] text-muted-foreground">{d.holderName}</p>
                         </div>
-                        <span className="font-semibold text-success">₦{d.amount.toLocaleString()}</span>
+                        <span className="font-semibold text-success">Pts {d.amount.toLocaleString()}</span>
                       </div>
                     ))}
                   </div>
                   <div className="flex justify-between text-xs border-t border-success/20 pt-2">
                     <span className="text-muted-foreground">Total Sent</span>
-                    <span className="font-bold text-success">₦{billingTotal.toLocaleString()}</span>
+                    <span className="font-bold text-success">Pts {billingTotal.toLocaleString()}</span>
                   </div>
                 </div>
               )}
@@ -620,16 +620,16 @@ export default function AdminChatView() {
               <div className="bg-muted rounded-lg p-3 space-y-1">
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Total Billing</span>
-                  <span className="font-semibold">₦{billingTotal.toLocaleString()}</span>
+                  <span className="font-semibold">Pts {billingTotal.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Entered</span>
-                  <span className="font-medium">₦{totalPaymentEntered.toLocaleString()}</span>
+                  <span className="font-medium">Pts {totalPaymentEntered.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs border-t pt-1">
                   <span className="text-muted-foreground">Remaining</span>
                   <span className={`font-semibold ${remainingBalance === 0 ? "text-success" : remainingBalance < 0 ? "text-destructive" : "text-warning"}`}>
-                    ₦{remainingBalance.toLocaleString()}
+                    Pts {remainingBalance.toLocaleString()}
                   </span>
                 </div>
               </div>
@@ -645,7 +645,7 @@ export default function AdminChatView() {
                     </div>
                   </div>
                   <Input
-                    placeholder="₦ Amount"
+                    placeholder="Pts  Amount"
                     className="h-8 text-xs"
                     value={paymentAmounts[a.id] || ""}
                     onChange={e => setPaymentAmounts(prev => ({ ...prev, [a.id]: e.target.value }))}
@@ -710,7 +710,7 @@ export default function AdminChatView() {
               )}
 
               <div className="flex justify-between"><span className="text-muted-foreground">Good Rate</span><span className="font-medium">85%</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Monthly Value</span><span className="font-medium">₦450,000</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Monthly Value</span><span className="font-medium">Pts 450,000</span></div>
               <div className="flex justify-between"><span className="text-muted-foreground">Tags</span><span className="font-medium">VIP, Repeat</span></div>
             </div>
           </div>
