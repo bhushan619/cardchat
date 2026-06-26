@@ -31,7 +31,7 @@ export default function AdminNairaRate() {
     if (isNaN(rateNum) || rateNum < 99 || rateNum > 299) {
       toast({
         title: "Invalid Rate",
-        description: "Naira rate must be between 99 and 299.",
+        description: "Points rate must be between 99 and 299.",
         variant: "destructive",
       });
       return;
