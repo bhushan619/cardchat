@@ -266,7 +266,7 @@ export default function AdminWallets() {
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold">Type</TableHead>
                 <TableHead className="text-xs font-semibold">Description</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Naira Rate</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Points Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Date</TableHead>
                 <TableHead className="text-xs font-semibold">Remark</TableHead>
