@@ -115,7 +115,7 @@ export default function AdminWallets() {
   };
 
   const handleExport = () => {
-    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Naira Rate", "Amount (₦)", "Date", "Time", "Remark"];
+    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Points Rate", "Amount (Points)", "Date", "Time", "Remark"];
     const rows = filtered.map(r => [
       r.transferId,
       r.orderId,
