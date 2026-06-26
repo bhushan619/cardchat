@@ -107,7 +107,7 @@ export default function AdminWallets() {
       remark: depositRemark || "Manual deposit",
     };
     setRecords(prev => [record, ...prev]);
-    toast.success(`₦${amount.toLocaleString()} added to platform wallet`);
+    toast.success(`${amount.toLocaleString()} points added to platform wallet`);
     setDepositAmount("");
     setDepositDescription("");
     setDepositRemark("");
