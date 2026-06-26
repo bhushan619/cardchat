@@ -110,7 +110,7 @@ export default function AdminNairaRate() {
             <div className="border-t pt-4 space-y-3 animate-slide-up">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per CNY)</label>
+                  <label className="text-xs font-medium text-muted-foreground">New Rate (Points per CNY)</label>
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
                 </div>
                 <div>
@@ -125,7 +125,7 @@ export default function AdminNairaRate() {
               </div>
               <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 space-y-1">
                 <p className="text-xs text-warning-foreground">⚠ These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values.</p>
-                <p className="text-[10px] text-muted-foreground">Naira rate: <strong>99–299</strong> · Price control: <strong>1.00%–100.00%</strong></p>
+                <p className="text-[10px] text-muted-foreground">Points rate: <strong>99–299</strong> · Price control: <strong>1.00%–100.00%</strong></p>
               </div>
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
