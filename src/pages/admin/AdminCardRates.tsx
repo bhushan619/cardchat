@@ -27,7 +27,7 @@ export default function AdminCardRates() {
   const canPush = role === "super_admin" || role === "team_lead";
 
   // Apply rate formulas:
-  // Sell Rate = Current Naira Rate * card's buyRate (from API)
+  // Sell Rate = Current Points Rate * card's buyRate (from API)
   // Buy Rate = Sell Rate * Current Price Control
   const ratesWithFormula = cardRates.map(r => {
     const sellRate = r.sellRate; // Already in Naira from API
