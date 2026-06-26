@@ -166,15 +166,15 @@ export default function AdminWallets() {
 
         <div className="grid grid-cols-5 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-accent">₦{platformBalance.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1"><Coins className="w-5 h-5" />{platformBalance.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Platform Balance</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-success">₦{totalDeposits.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-success inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDeposits.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Deposits</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-warning">₦{totalDisbursements.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-warning inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDisbursements.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
           {[
