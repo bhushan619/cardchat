@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl } from "@/data/mock";
-import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
+import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
