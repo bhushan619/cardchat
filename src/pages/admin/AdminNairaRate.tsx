@@ -67,7 +67,7 @@ export default function AdminNairaRate() {
   return (
     <AdminLayout>
       <div className="p-6 max-w-3xl">
-        <h1 className="font-heading text-xl font-bold mb-1">Naira Rate Configuration</h1>
+        <h1 className="font-heading text-xl font-bold mb-1">Points Rate Configuration</h1>
         <p className="text-sm text-muted-foreground mb-6">System-wide rate · Locked into orders at creation</p>
 
         {/* Current Rate & Denomination Card */}
@@ -75,12 +75,12 @@ export default function AdminNairaRate() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-accent" />
+                <Coins className="w-6 h-6 text-accent" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Active System Rate</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / CNY</span></p>
+                  <p className="text-3xl font-heading font-bold inline-flex items-center gap-1"><Coins className="w-6 h-6 text-accent" />{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / CNY</span></p>
                   {broadcasting === "broadcasting" && (
                     <span className="status-badge bg-warning/10 text-warning gap-1 animate-pulse">
                       <Loader2 className="w-3 h-3 animate-spin" /> Broadcasting...
