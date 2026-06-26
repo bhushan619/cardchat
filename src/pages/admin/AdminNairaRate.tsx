@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl } from "@/data/mock";
-import { DollarSign, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
+import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -31,7 +31,7 @@ export default function AdminNairaRate() {
     if (isNaN(rateNum) || rateNum < 99 || rateNum > 299) {
       toast({
         title: "Invalid Rate",
-        description: "Naira rate must be between 99 and 299.",
+        description: "Points rate must be between 99 and 299.",
         variant: "destructive",
       });
       return;
@@ -48,7 +48,7 @@ export default function AdminNairaRate() {
     setBroadcasting("broadcasting");
     toast({
       title: "Rate Updated",
-      description: `Rate updated to ₦${rateNum.toLocaleString()} — broadcasting to all sessions...`,
+      description: `Rate updated to ${rateNum.toLocaleString()} points — broadcasting to all sessions...`,
     });
     setTimeout(() => {
       setBroadcasting("done");
@@ -67,7 +67,7 @@ export default function AdminNairaRate() {
   return (
     <AdminLayout>
       <div className="p-6 max-w-3xl">
-        <h1 className="font-heading text-xl font-bold mb-1">Naira Rate Configuration</h1>
+        <h1 className="font-heading text-xl font-bold mb-1">Points Rate Configuration</h1>
         <p className="text-sm text-muted-foreground mb-6">System-wide rate · Locked into orders at creation</p>
 
         {/* Current Rate & Denomination Card */}
@@ -75,12 +75,12 @@ export default function AdminNairaRate() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
               <div className="w-12 h-12 rounded-xl bg-accent/10 flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-accent" />
+                <Coins className="w-6 h-6 text-accent" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Active System Rate</p>
                 <div className="flex items-center gap-2">
-                  <p className="text-3xl font-heading font-bold">₦{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / CNY</span></p>
+                  <p className="text-3xl font-heading font-bold inline-flex items-center gap-1"><Coins className="w-6 h-6 text-accent" />{systemNairaRate.toLocaleString()}<span className="text-base font-normal text-muted-foreground"> / CNY</span></p>
                   {broadcasting === "broadcasting" && (
                     <span className="status-badge bg-warning/10 text-warning gap-1 animate-pulse">
                       <Loader2 className="w-3 h-3 animate-spin" /> Broadcasting...
@@ -110,7 +110,7 @@ export default function AdminNairaRate() {
             <div className="border-t pt-4 space-y-3 animate-slide-up">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Rate (NGN per CNY)</label>
+                  <label className="text-xs font-medium text-muted-foreground">New Rate (Points per CNY)</label>
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
                 </div>
                 <div>
@@ -125,7 +125,7 @@ export default function AdminNairaRate() {
               </div>
               <div className="bg-warning/10 border border-warning/30 rounded-lg p-3 space-y-1">
                 <p className="text-xs text-warning-foreground">⚠ These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values.</p>
-                <p className="text-[10px] text-muted-foreground">Naira rate: <strong>99–299</strong> · Price control: <strong>1.00%–100.00%</strong></p>
+                <p className="text-[10px] text-muted-foreground">Points rate: <strong>99–299</strong> · Price control: <strong>1.00%–100.00%</strong></p>
               </div>
               <Button
                 className="bg-accent text-accent-foreground hover:bg-accent/90 gap-2"
@@ -166,8 +166,8 @@ export default function AdminNairaRate() {
                 {nairaRateHistory.map((h, i) => (
                   <tr key={i} className="border-b last:border-0">
                     <td className="px-4 py-3 text-xs">{h.timestamp}</td>
-                    <td className="px-4 py-3 text-xs text-right text-muted-foreground">₦{h.oldRate.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs text-right font-medium">₦{h.newRate.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-right text-muted-foreground"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.oldRate.toLocaleString()}</span></td>
+                    <td className="px-4 py-3 text-xs text-right font-medium"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.newRate.toLocaleString()}</span></td>
                     <td className="px-4 py-3 text-xs">{h.changedBy}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{h.reason}</td>
                   </tr>
