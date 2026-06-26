@@ -302,9 +302,9 @@ export default function AdminWallets() {
                     </div>
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{r.description}</TableCell>
-                  <TableCell className="text-right text-xs font-medium">₦{r.nairaRate.toLocaleString()}</TableCell>
+                  <TableCell className="text-right text-xs font-medium"><PointsAmount value={r.nairaRate} className="justify-end" /></TableCell>
                   <TableCell className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
-                    {r.type === "deposit" ? "+" : "-"}₦{r.amount.toLocaleString()}
+                    <PointsAmount value={r.amount} className="justify-end" prefix={r.type === "deposit" ? "+" : "-"} />
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
