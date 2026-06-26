@@ -42,14 +42,14 @@ const roleLabels: Record<string, { label: string; color: string }> = {
 const PERMISSIONS: Record<string, string[]> = {
   super_admin: [
     "View All Chats", "Manage Customers", "Manage Card Rates", "Process Orders",
-    "Platform Wallet", "Set Naira Rate", "Manage Users", "Team Dashboard",
+    "Platform Wallet", "Set Points Rate", "Manage Users", "Team Dashboard",
     "IP & Country Restrictions", "Sensitive Words", "API Config", "SMS Broadcast",
     "Volume Ranking", "Rewards", "Customer Guide", "Admin Guide", "Team Chat",
     "Manage Transaction PINs",
   ],
   team_lead: [
     "View Team Chats", "Manage Customers", "Manage Card Rates", "Process Orders",
-    "Set Naira Rate", "Team Dashboard", "Volume Ranking", "Rewards",
+    "Set Points Rate", "Team Dashboard", "Volume Ranking", "Rewards",
     "Customer Guide", "Admin Guide", "Team Chat",
   ],
   agent: [
@@ -57,7 +57,7 @@ const PERMISSIONS: Record<string, string[]> = {
     "Volume Ranking", "Rewards", "Customer Guide", "Admin Guide", "Team Chat",
   ],
   finance: [
-    "View Orders (Read-only)", "Platform Wallet", "Set Naira Rate",
+    "View Orders (Read-only)", "Platform Wallet", "Set Points Rate",
     "Team Chat",
   ],
 };

@@ -10,7 +10,7 @@ const adminScreens = [
   { name: "Card Rates", path: "/admin/card-rates", description: "Gift card rate configuration" },
   { name: "Orders", path: "/admin/orders", description: "Order management & tracking" },
   { name: "Platform Wallet", path: "/admin/wallets", description: "Wallet balances & transactions" },
-  { name: "Naira Rate", path: "/admin/naira-rate", description: "System-wide naira rate config" },
+  { name: "Points Rate", path: "/admin/naira-rate", description: "System-wide points rate config" },
   { name: "User Management", path: "/admin/users", description: "Admin user accounts & roles" },
   { name: "Team Dashboard", path: "/admin/team", description: "Agent performance & metrics" },
   { name: "Volume Ranking", path: "/admin/ranking", description: "Customer trade volume leaderboard" },

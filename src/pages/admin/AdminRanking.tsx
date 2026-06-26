@@ -51,7 +51,7 @@ export default function AdminRanking() {
   }, [search]);
 
   const handleExport = () => {
-    const headers = ["Rank", "Alias", "Volume", "Reward (₦)"];
+    const headers = ["Rank", "Alias", "Volume", "Reward (Pts )"];
     const rows = filteredList.map((u) => [u.rank, u.alias, u.volume, u.reward]);
     const csv = [headers.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -116,7 +116,7 @@ export default function AdminRanking() {
               {rankingTiers.map((t) => (
                 <div key={t.threshold} className="flex items-center justify-between text-sm py-1.5 px-3 rounded-lg bg-muted/50">
                   <span className="text-muted-foreground">≥ {t.threshold.toLocaleString()}</span>
-                  <span className="font-semibold text-accent">₦{t.reward.toLocaleString()}</span>
+                  <span className="font-semibold text-accent">Pts {t.reward.toLocaleString()}</span>
                 </div>
               ))}
             </div>
@@ -161,7 +161,7 @@ export default function AdminRanking() {
                       </td>
                       <td className="py-2.5 font-mono text-xs">{u.alias}</td>
                       <td className="py-2.5 text-right">{u.volume.toLocaleString()}</td>
-                      <td className="py-2.5 text-right pr-3 font-semibold text-accent">₦{u.reward}</td>
+                      <td className="py-2.5 text-right pr-3 font-semibold text-accent">Pts {u.reward}</td>
                     </tr>
                   ))}
                 </tbody>
