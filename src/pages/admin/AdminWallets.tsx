@@ -333,7 +333,7 @@ export default function AdminWallets() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium">Amount (₦)</label>
+              <label className="text-xs font-medium flex items-center gap-1">Amount (<Coins className="w-3 h-3" /> Points)</label>
               <Input
                 placeholder="Enter amount..."
                 value={depositAmount}
