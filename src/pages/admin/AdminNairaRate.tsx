@@ -166,8 +166,8 @@ export default function AdminNairaRate() {
                 {nairaRateHistory.map((h, i) => (
                   <tr key={i} className="border-b last:border-0">
                     <td className="px-4 py-3 text-xs">{h.timestamp}</td>
-                    <td className="px-4 py-3 text-xs text-right text-muted-foreground">₦{h.oldRate.toLocaleString()}</td>
-                    <td className="px-4 py-3 text-xs text-right font-medium">₦{h.newRate.toLocaleString()}</td>
+                    <td className="px-4 py-3 text-xs text-right text-muted-foreground"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.oldRate.toLocaleString()}</span></td>
+                    <td className="px-4 py-3 text-xs text-right font-medium"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.newRate.toLocaleString()}</span></td>
                     <td className="px-4 py-3 text-xs">{h.changedBy}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{h.reason}</td>
                   </tr>
