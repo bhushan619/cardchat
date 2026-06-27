@@ -1607,19 +1607,23 @@ export default function AdminMessages() {
                   ];
                   const productRows = productRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
 
+                  const unitPriceCalc = nairaRate ? Number(purchaseRate) / Number(nairaRate) : Number(purchaseRate);
+                  const orderAmountCalc = Number(purchaseFaceValue) * unitPriceCalc;
+                  const settlementAmountCalc = Number(settleRate) * Number(settleFaceValue);
                   const orderRowsAll: [string, React.ReactNode, boolean?, string?][] = [
                     ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
                     ["Order id", orderCode, true],
                     ["Order face value", `${purchaseFaceValue}`],
-                    ["Order unit price", `Pts ${Number(purchaseRate).toLocaleString()}`],
-                    ["Order amount", `Pts ${Number(sellCost).toLocaleString()}`],
-                    ["Points rate", `Pts ${Number(nairaRate).toLocaleString()}`],
+                    ["Order unit price", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
+                    ["Order amount", orderAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })],
+                    ["Points rate", <span className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{Number(nairaRate).toLocaleString()}</span>],
                     ["Settlement coin", settleCoin],
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
-                    ["Settlement amount", `${settleCoin} ${Number(settlePrice).toLocaleString()}`],
+                    ["Settlement amount", `₦${settlementAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })}`],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
+
 
                   return (
                     <div className="space-y-5 pt-2">
