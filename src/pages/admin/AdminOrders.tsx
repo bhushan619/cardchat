@@ -165,8 +165,8 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Points price", "Card Rate (CNY)", "Points rate", "Amount", "Status", "Created"];
-    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `Pts ${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const headers = ["Alias", "Card Type", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
+    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -231,7 +231,7 @@ export default function AdminOrders() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate (CNY)</th>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Amount</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
@@ -258,7 +258,7 @@ export default function AdminOrders() {
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
                        <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
-                       <td className="px-4 py-3 text-sm text-right">¥{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
+                       <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
@@ -339,11 +339,11 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order unit price</span>
-                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.orderUnitPrice.toLocaleString()}</span>
+                                    <span className="font-medium">¥{(o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order amount</span>
-                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.orderAmount.toLocaleString()}</span>
+                                    <span className="font-medium">{(details.orderFaceValue * (o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice)).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Points rate</span>
@@ -363,7 +363,7 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Settlement amount</span>
-                                    <span className="font-medium">{details.settlementCoin} {details.settlementAmount.toLocaleString()}</span>
+                                    <span className="font-medium">{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                   </div>
                                 </div>
                               </div>
