@@ -339,12 +339,13 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order unit price</span>
-                                    <span className="font-medium">¥{(o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                                    <span className="font-medium">{(o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order amount</span>
                                     <span className="font-medium">{(details.orderFaceValue * (o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice)).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                   </div>
+
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Points rate</span>
                                     <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.nairaRate}</span>
