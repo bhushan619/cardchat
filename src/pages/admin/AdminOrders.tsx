@@ -258,7 +258,7 @@ export default function AdminOrders() {
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
                        <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
-                       <td className="px-4 py-3 text-sm text-right">¥{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
+                       <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-center">
