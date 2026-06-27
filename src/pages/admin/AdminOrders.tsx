@@ -364,8 +364,9 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Settlement amount</span>
-                                    <span className="font-medium">{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                    <span className="font-medium">₦{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                   </div>
+
                                 </div>
                               </div>
                             </div>
