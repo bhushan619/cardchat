@@ -122,6 +122,19 @@ export default function AdminCustomers() {
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={lineFilter} onValueChange={setLineFilter}>
+            <SelectTrigger className="w-52">
+              <SelectValue placeholder="WhatsApp line" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All WhatsApp lines</SelectItem>
+              {waNumbers.map((n) => (
+                <SelectItem key={n.id} value={n.id}>
+                  {n.label} · {n.phone}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
