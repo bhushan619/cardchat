@@ -922,7 +922,7 @@ export default function AdminMessages() {
                         const line = pickBusinessNumberFor(selectedConvo.id);
                         return (
                           <p className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                            WhatsApp Business · {line.label} · <span className="font-mono">{line.phone}</span>
+                            {line.label}
                           </p>
                         );
                       })()}
