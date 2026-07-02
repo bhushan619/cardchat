@@ -58,15 +58,20 @@ export default function AdminCustomers() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
+  const [lineFilter, setLineFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
+  const waNumbers = listWaNumbers();
 
   const filtered = customers.filter((c) => {
     const matchesSearch =
       c.alias.toLowerCase().includes(search.toLowerCase()) ||
-      c.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
+      c.tags.some((t) => t.toLowerCase().includes(search.toLowerCase())) ||
+      (c.inboundLinePhone?.toLowerCase().includes(search.toLowerCase()) ?? false) ||
+      (c.inboundLineLabel?.toLowerCase().includes(search.toLowerCase()) ?? false);
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
-    return matchesSearch && matchesStatus && matchesChannel;
+    const matchesLine = lineFilter === "all" || c.inboundLineId === lineFilter;
+    return matchesSearch && matchesStatus && matchesChannel && matchesLine;
   });
 
   // Get transactions for selected customer (mock: show all wallet transactions)
