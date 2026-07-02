@@ -60,6 +60,7 @@ import CardlightPanel, {
   type CardlightResult,
 } from "@/components/admin/OrderWizardModal";
 import ChannelBadge from "@/components/admin/ChannelBadge";
+import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
 import {
@@ -854,6 +855,17 @@ export default function AdminMessages() {
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {c.channel === "whatsapp" && (() => {
+                          const line = pickBusinessNumberFor(c.id);
+                          return (
+                            <p
+                              className="text-[9px] text-emerald-600 dark:text-emerald-400 truncate mt-0.5"
+                              title={`Received on ${line.label} · ${line.phone}`}
+                            >
+                              via {line.label} · {line.phone}
+                            </p>
+                          );
+                        })()}
                       </div>
                       {c.unread > 0 && (
                         <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
@@ -906,6 +918,14 @@ export default function AdminMessages() {
                           ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
                           : `${selectedConvo.goodRate}% rate · ${selectedConvo.totalValue} total`}
                       </p>
+                      {selectedConvo.channel === "whatsapp" && !isGroupChat && (() => {
+                        const line = pickBusinessNumberFor(selectedConvo.id);
+                        return (
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400">
+                            WhatsApp Business · {line.label} · <span className="font-mono">{line.phone}</span>
+                          </p>
+                        );
+                      })()}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">

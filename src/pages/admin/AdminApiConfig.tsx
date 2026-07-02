@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import WhatsAppBusinessNumbersCard from "@/components/admin/WhatsAppBusinessNumbersCard";
 
 export default function AdminApiConfig() {
   const [showSecret, setShowSecret] = useState(false);
@@ -49,6 +50,9 @@ export default function AdminApiConfig() {
         </div>
 
         <div className="space-y-6">
+          {/* WhatsApp Business multi-number management */}
+          <WhatsAppBusinessNumbersCard />
+
           {/* Withdrawal Kill Switch */}
           <div className={`border rounded-xl p-5 space-y-4 ${withdrawalsDisabled ? "bg-destructive/5 border-destructive/40" : "bg-card"}`}>
             <div className="flex items-start justify-between gap-4">

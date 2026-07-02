@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
-import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins } from "lucide-react";
+import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins, Phone } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -10,9 +10,11 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChannelBadge from "@/components/admin/ChannelBadge";
+import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
+  const inboundLine = c.channel === "whatsapp" ? pickBusinessNumberFor(c.id) : null;
   return {
     id: c.id,
     alias: c.alias,
@@ -29,8 +31,16 @@ const customers = conversations.map((c) => {
     totalWithdrawals: wallet?.totalWithdrawals ?? 0,
     channel: c.channel,
     whatsappNumber: c.whatsappNumber,
+    inboundLineId: inboundLine?.id ?? null,
+    inboundLineLabel: inboundLine?.label ?? null,
+    inboundLinePhone: inboundLine?.phone ?? null,
   };
 });
+
+const lineSwatch: Record<string, string> = {
+  emerald: "bg-emerald-500", sky: "bg-sky-500", violet: "bg-violet-500",
+  amber: "bg-amber-500", rose: "bg-rose-500", cyan: "bg-cyan-500",
+};
 
 const statusColors: Record<string, string> = {
   consulting: "bg-amber-500/10 text-amber-600",
@@ -48,15 +58,20 @@ export default function AdminCustomers() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
+  const [lineFilter, setLineFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
+  const waNumbers = listWaNumbers();
 
   const filtered = customers.filter((c) => {
     const matchesSearch =
       c.alias.toLowerCase().includes(search.toLowerCase()) ||
-      c.tags.some((t) => t.toLowerCase().includes(search.toLowerCase()));
+      c.tags.some((t) => t.toLowerCase().includes(search.toLowerCase())) ||
+      (c.inboundLinePhone?.toLowerCase().includes(search.toLowerCase()) ?? false) ||
+      (c.inboundLineLabel?.toLowerCase().includes(search.toLowerCase()) ?? false);
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
-    return matchesSearch && matchesStatus && matchesChannel;
+    const matchesLine = lineFilter === "all" || c.inboundLineId === lineFilter;
+    return matchesSearch && matchesStatus && matchesChannel && matchesLine;
   });
 
   // Get transactions for selected customer (mock: show all wallet transactions)
@@ -107,6 +122,19 @@ export default function AdminCustomers() {
               <SelectItem value="whatsapp">WhatsApp</SelectItem>
             </SelectContent>
           </Select>
+          <Select value={lineFilter} onValueChange={setLineFilter}>
+            <SelectTrigger className="w-52">
+              <SelectValue placeholder="WhatsApp line" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All WhatsApp lines</SelectItem>
+              {waNumbers.map((n) => (
+                <SelectItem key={n.id} value={n.id}>
+                  {n.label} · {n.phone}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
@@ -148,7 +176,18 @@ export default function AdminCustomers() {
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <ChannelBadge channel={c.channel} size="sm" />
+                    <div className="flex flex-col items-center gap-1">
+                      <ChannelBadge channel={c.channel} size="sm" />
+                      {c.channel === "whatsapp" && c.inboundLineLabel && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"
+                          title={`Received on ${c.inboundLineLabel} · ${c.inboundLinePhone}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${lineSwatch[waNumbers.find((n) => n.id === c.inboundLineId)?.color || "emerald"]}`} />
+                          <span className="font-medium">{c.inboundLineLabel}</span>
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-center">
                     <span className="text-sm font-medium">{c.goodRate}%</span>
@@ -241,6 +280,16 @@ export default function AdminCustomers() {
                     >
                       {selectedCustomer.whatsappNumber}
                     </a>
+                  </div>
+                )}
+                {selectedCustomer.channel === "whatsapp" && selectedCustomer.inboundLineLabel && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Business line</span>
+                    <span className="inline-flex items-center gap-1.5 font-medium">
+                      <span className={`w-2 h-2 rounded-full ${lineSwatch[waNumbers.find((n) => n.id === selectedCustomer.inboundLineId)?.color || "emerald"]}`} />
+                      {selectedCustomer.inboundLineLabel}
+                      <span className="text-muted-foreground font-mono text-xs">{selectedCustomer.inboundLinePhone}</span>
+                    </span>
                   </div>
                 )}
                 {[
