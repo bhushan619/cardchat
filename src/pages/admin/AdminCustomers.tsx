@@ -14,6 +14,7 @@ import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
+  const inboundLine = c.channel === "whatsapp" ? pickBusinessNumberFor(c.id) : null;
   return {
     id: c.id,
     alias: c.alias,
@@ -30,8 +31,16 @@ const customers = conversations.map((c) => {
     totalWithdrawals: wallet?.totalWithdrawals ?? 0,
     channel: c.channel,
     whatsappNumber: c.whatsappNumber,
+    inboundLineId: inboundLine?.id ?? null,
+    inboundLineLabel: inboundLine?.label ?? null,
+    inboundLinePhone: inboundLine?.phone ?? null,
   };
 });
+
+const lineSwatch: Record<string, string> = {
+  emerald: "bg-emerald-500", sky: "bg-sky-500", violet: "bg-violet-500",
+  amber: "bg-amber-500", rose: "bg-rose-500", cyan: "bg-cyan-500",
+};
 
 const statusColors: Record<string, string> = {
   consulting: "bg-amber-500/10 text-amber-600",
