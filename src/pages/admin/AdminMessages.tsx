@@ -918,6 +918,14 @@ export default function AdminMessages() {
                           ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
                           : `${selectedConvo.goodRate}% rate · ${selectedConvo.totalValue} total`}
                       </p>
+                      {selectedConvo.channel === "whatsapp" && !isGroupChat && (() => {
+                        const line = pickBusinessNumberFor(selectedConvo.id);
+                        return (
+                          <p className="text-[10px] text-emerald-600 dark:text-emerald-400">
+                            WhatsApp Business · {line.label} · <span className="font-mono">{line.phone}</span>
+                          </p>
+                        );
+                      })()}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
