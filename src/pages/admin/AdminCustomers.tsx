@@ -282,6 +282,16 @@ export default function AdminCustomers() {
                     </a>
                   </div>
                 )}
+                {selectedCustomer.channel === "whatsapp" && selectedCustomer.inboundLineLabel && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Business line</span>
+                    <span className="inline-flex items-center gap-1.5 font-medium">
+                      <span className={`w-2 h-2 rounded-full ${lineSwatch[waNumbers.find((n) => n.id === selectedCustomer.inboundLineId)?.color || "emerald"]}`} />
+                      {selectedCustomer.inboundLineLabel}
+                      <span className="text-muted-foreground font-mono text-xs">{selectedCustomer.inboundLinePhone}</span>
+                    </span>
+                  </div>
+                )}
                 {[
                   ["Status", statusLabels[selectedCustomer.status] || selectedCustomer.status],
                   ["Good Rate", `${selectedCustomer.goodRate}%`],
