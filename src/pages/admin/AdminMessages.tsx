@@ -1077,9 +1077,6 @@ export default function AdminMessages() {
                         </div>
                       </PopoverContent>
                     </Popover>
-                    <button>
-                      <MoreVertical className="w-4 h-4 text-muted-foreground" />
-                    </button>
                   </div>
                 </header>
 
