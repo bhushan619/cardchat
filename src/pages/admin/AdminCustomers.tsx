@@ -176,7 +176,18 @@ export default function AdminCustomers() {
                     </span>
                   </TableCell>
                   <TableCell className="text-center">
-                    <ChannelBadge channel={c.channel} size="sm" />
+                    <div className="flex flex-col items-center gap-1">
+                      <ChannelBadge channel={c.channel} size="sm" />
+                      {c.channel === "whatsapp" && c.inboundLineLabel && (
+                        <span
+                          className="inline-flex items-center gap-1 text-[10px] text-muted-foreground"
+                          title={`Received on ${c.inboundLineLabel} · ${c.inboundLinePhone}`}
+                        >
+                          <span className={`w-1.5 h-1.5 rounded-full ${lineSwatch[waNumbers.find((n) => n.id === c.inboundLineId)?.color || "emerald"]}`} />
+                          <span className="font-medium">{c.inboundLineLabel}</span>
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell className="text-center">
                     <span className="text-sm font-medium">{c.goodRate}%</span>
