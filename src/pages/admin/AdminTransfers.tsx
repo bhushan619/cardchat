@@ -13,7 +13,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet } from "lucide-react";
+import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Status = "pending" | "successful" | "failed" | "processing";
