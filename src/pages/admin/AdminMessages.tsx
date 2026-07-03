@@ -1249,7 +1249,7 @@ export default function AdminMessages() {
                           </div>
                         );
                       })()}
-                    </>
+                    </React.Fragment>
                     );
                   })}
                 </div>
