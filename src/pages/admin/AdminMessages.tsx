@@ -2797,7 +2797,7 @@ export default function AdminMessages() {
           <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
             <div className="text-[11px] text-muted-foreground">
               {transferAmount && transferRate && Number(transferRate) > 0 ? (
-                <>Sending <span className="font-semibold text-foreground">₦{Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
+                <>Sending <span className="font-semibold text-foreground">Pts {Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
               ) : (
                 <>Fill in required fields to enable transfer</>
               )}
