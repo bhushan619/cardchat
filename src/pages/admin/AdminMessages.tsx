@@ -1217,6 +1217,38 @@ export default function AdminMessages() {
                           <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                         </div>
                       </div>
+                      {/* Detected bank details chip */}
+                      {(() => {
+                        if (msg.image || msg.sender !== "customer") return null;
+                        if (selectedConvo?.channel !== "whatsapp") return null;
+                        const det = detectBankDetails(msg.text);
+                        if (!det) return null;
+                        return (
+                          <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                resetTransferForm();
+                                setTransferBank(det.bank);
+                                setTransferAccount(det.account);
+                                if (det.recipient) {
+                                  setTransferRecipient(det.recipient);
+                                  setTransferVerified(true);
+                                }
+                                setTransferOpen(true);
+                                toast.success("Bank details prefilled");
+                              }}
+                              className="mt-1 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/5 hover:bg-accent/10 text-accent px-3 py-1 text-[11px] font-medium transition-colors"
+                            >
+                              <ArrowRightLeft className="w-3 h-3" />
+                              <span className="font-semibold">{det.bank}</span>
+                              <span className="font-mono opacity-80">· {det.account}</span>
+                              <span className="opacity-70">→ Use in Transfer</span>
+                            </button>
+                          </div>
+                        );
+                      })()}
+                    </>
                     );
                   })}
                 </div>
