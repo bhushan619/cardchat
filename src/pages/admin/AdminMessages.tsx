@@ -1285,14 +1285,17 @@ export default function AdminMessages() {
                             <Wallet className="w-3.5 h-3.5" /> Fund +/-
                           </Button>
                         )}
-                        {!currentOrderStatus && (
+                        {selectedConvo?.channel === "whatsapp" && (
                           <Button
                             size="sm"
                             variant="outline"
-                            onClick={handleCreateOrderFromChat}
+                            onClick={() => {
+                              resetTransferForm();
+                              setTransferOpen(true);
+                            }}
                             className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
                           >
-                            <FileTextIcon className="w-3.5 h-3.5" /> Create Order
+                            <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
                           </Button>
                         )}
                         <button
