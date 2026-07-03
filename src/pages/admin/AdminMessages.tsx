@@ -2424,88 +2424,123 @@ export default function AdminMessages() {
           if (!open) resetTransferForm();
         }}
       >
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
-          <DialogHeader className="px-6 pt-6">
+        <DialogContent
+          className="max-w-none w-[95vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
+          style={{ resize: "both" as const, minWidth: 720, minHeight: 560 }}
+        >
+          <DialogHeader className="px-6 py-4 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2 font-heading">
-              <ArrowRightLeft className="w-5 h-5 text-accent" /> Process Transfer
+              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
+                <ArrowRightLeft className="w-4 h-4 text-accent" />
+              </div>
+              <span>Process Transfer</span>
+              {selectedConvo && (
+                <span className="ml-2 text-xs font-normal text-muted-foreground">
+                  · Sending to <span className="font-semibold text-foreground">{selectedConvo.alias}</span> via WhatsApp
+                </span>
+              )}
             </DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-[220px_1fr_380px] gap-0 max-h-[calc(90vh-4rem)]">
-            {/* Previous transfers */}
-            <div className="border-r bg-muted/20 overflow-y-auto px-3 py-3">
-              <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2 px-1">
-                Previous Transfers
-              </div>
-              {(() => {
-                const key = `cc.transfers.${selectedConvo?.id || ""}`;
-                const history: Array<{ bank: string; account: string; recipient: string; method: string; amount: number; at: number }> =
-                  selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
-                if (history.length === 0) {
-                  return (
-                    <div className="text-xs text-muted-foreground px-1 py-4 text-center">
-                      No previous transfers
-                    </div>
-                  );
-                }
-                // dedupe by bank+account
-                const seen = new Set<string>();
-                const unique = history.filter((h) => {
-                  const k = `${h.bank}|${h.account}`;
-                  if (seen.has(k)) return false;
-                  seen.add(k);
-                  return true;
-                });
-                return (
+
+          <div className="grid grid-cols-[minmax(0,1fr)_360px] flex-1 min-h-0">
+            {/* ============== FORM ============== */}
+            <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
+              {/* Recipient card */}
+              <section className="rounded-xl border bg-card">
+                <header className="px-4 py-2.5 border-b flex items-center justify-between">
+                  <h3 className="text-sm font-semibold">Recipient</h3>
+                  {transferVerified && (
+                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
+                      <CheckCheck className="w-3.5 h-3.5" /> Account verified
+                    </span>
+                  )}
+                </header>
+                <div className="p-4 grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    {unique.map((h, i) => (
-                      <button
-                        key={i}
-                        type="button"
-                        onClick={() => {
-                          setTransferBank(h.bank);
-                          setTransferAccount(h.account);
-                          setTransferRecipient(h.recipient);
-                          setTransferVerified(true);
-                          setTransferMethod(h.method);
-                          toast.success("Bank details loaded");
+                    <Label className="text-xs">Transfer Method</Label>
+                    <Select value={transferMethod} onValueChange={setTransferMethod}>
+                      <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        {transferMethods.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs">
+                      <span className="text-destructive">*</span> Bank Name
+                    </Label>
+                    <Select
+                      value={transferBank}
+                      onValueChange={(v) => {
+                        setTransferBank(v);
+                        setTransferVerified(false);
+                        setTransferRecipient("");
+                      }}
+                    >
+                      <SelectTrigger className="h-10"><SelectValue placeholder="Please select bank" /></SelectTrigger>
+                      <SelectContent>
+                        {nigerianBanks.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-1.5 col-span-2">
+                    <Label className="text-xs">
+                      <span className="text-destructive">*</span> Bank Account Number
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        className="h-10 font-mono"
+                        placeholder="Enter 10-digit account number"
+                        value={transferAccount}
+                        onChange={(e) => {
+                          setTransferAccount(e.target.value.replace(/\D/g, "").slice(0, 10));
+                          setTransferVerified(false);
+                          setTransferRecipient("");
                         }}
-                        className="w-full text-left rounded-md border bg-background hover:border-accent hover:bg-accent/5 transition-colors px-2.5 py-2"
+                        inputMode="numeric"
+                      />
+                      <Button
+                        variant="outline"
+                        className="h-10 shrink-0 min-w-[92px]"
+                        disabled={!transferBank || transferAccount.length < 10 || transferVerifying}
+                        onClick={() => {
+                          setTransferVerifying(true);
+                          setTimeout(() => {
+                            const mockName = (selectedConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
+                            setTransferRecipient(mockName);
+                            setTransferVerified(true);
+                            setTransferVerifying(false);
+                            toast.success("Account verified");
+                          }, 900);
+                        }}
                       >
-                        <div className="text-xs font-semibold truncate">{h.recipient}</div>
-                        <div className="text-[11px] text-muted-foreground truncate">{h.bank}</div>
-                        <div className="text-[11px] font-mono text-muted-foreground">{h.account}</div>
-                      </button>
-                    ))}
+                        {transferVerifying ? <Loader2 className="w-4 h-4 animate-spin" /> : "Verify"}
+                      </Button>
+                    </div>
                   </div>
-                );
-              })()}
-            </div>
 
-            {/* Form */}
-            <div className="overflow-y-auto px-6 py-4">
-              <div className="space-y-4">
-                {selectedConvo && (
-                  <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
-                    Sending to <span className="font-semibold text-foreground">{selectedConvo.alias}</span>
-                    {" "}via WhatsApp
+                  <div className="space-y-1.5 col-span-2">
+                    <Label className="text-xs">
+                      <span className="text-destructive">*</span> Recipient Name
+                    </Label>
+                    <div className="relative">
+                      <Input
+                        className="h-10 pr-9 font-medium"
+                        placeholder="Verify bank account to fetch recipient name"
+                        value={transferRecipient}
+                        readOnly
+                      />
+                      {transferVerified && (
+                        <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
+                      )}
+                    </div>
                   </div>
-                )}
 
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Transfer Method</Label>
-                  <Select value={transferMethod} onValueChange={setTransferMethod}>
-                    <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      {transferMethods.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1.5">
                     <Label className="text-xs">Nickname / Group Name</Label>
                     <Input
-                      className="h-9"
+                      className="h-10"
                       placeholder="Enter nickname/group"
                       defaultValue={selectedConvo?.alias || ""}
                     />
@@ -2513,161 +2548,96 @@ export default function AdminMessages() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Customer ID</Label>
                     <Input
-                      className="h-9"
+                      className="h-10 font-mono text-sm"
                       placeholder="Customer ID"
                       defaultValue={selectedConvo?.id || ""}
                     />
                   </div>
                 </div>
+              </section>
 
-                <div className="space-y-1.5">
-                  <Label className="text-xs"><span className="text-destructive">*</span> Bank Name</Label>
-                  <Select value={transferBank} onValueChange={(v) => { setTransferBank(v); setTransferVerified(false); setTransferRecipient(""); }}>
-                    <SelectTrigger className="h-9"><SelectValue placeholder="Please select" /></SelectTrigger>
-                    <SelectContent>
-                      {nigerianBanks.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs"><span className="text-destructive">*</span> Bank Account Number</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      className="h-9"
-                      placeholder="Enter bank account number"
-                      value={transferAccount}
-                      onChange={(e) => {
-                        setTransferAccount(e.target.value.replace(/\D/g, "").slice(0, 10));
-                        setTransferVerified(false);
-                        setTransferRecipient("");
-                      }}
-                      inputMode="numeric"
-                    />
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="h-9"
-                      disabled={!transferBank || transferAccount.length < 10 || transferVerifying}
-                      onClick={() => {
-                        setTransferVerifying(true);
-                        setTimeout(() => {
-                          const mockName = (selectedConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
-                          setTransferRecipient(mockName);
-                          setTransferVerified(true);
-                          setTransferVerifying(false);
-                          toast.success("Account verified");
-                        }, 900);
-                      }}
-                    >
-                      {transferVerifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Verify"}
-                    </Button>
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <Label className="text-xs"><span className="text-destructive">*</span> Recipient Name</Label>
-                  <div className="relative">
-                    <Input
-                      className="h-9 pr-8"
-                      placeholder="Verify bank account to fetch recipient name"
-                      value={transferRecipient}
-                      readOnly
-                    />
-                    {transferVerified && (
-                      <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-2 top-1/2 -translate-y-1/2" />
-                    )}
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-3">
+              {/* Amount card */}
+              <section className="rounded-xl border bg-card">
+                <header className="px-4 py-2.5 border-b">
+                  <h3 className="text-sm font-semibold">Amount</h3>
+                </header>
+                <div className="p-4 grid grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <Label className="text-xs"><span className="text-destructive">*</span> Transfer Amount</Label>
+                    <Label className="text-xs">
+                      <span className="text-destructive">*</span> Transfer Amount
+                    </Label>
                     <div className="relative">
                       <Input
-                        className="h-9 pr-14"
-                        placeholder="Max 2,000,000"
+                        className="h-11 pr-16 text-base font-semibold"
+                        placeholder="0.00"
                         value={transferAmount}
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
                         inputMode="decimal"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground border rounded px-1.5 py-0.5">NGN</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">NGN</span>
                     </div>
+                    <p className="text-[10px] text-muted-foreground">Max ₦2,000,000 per transaction</p>
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-xs"><span className="text-destructive">*</span> Naira Rate</Label>
+                    <Label className="text-xs">
+                      <span className="text-destructive">*</span> Naira Rate
+                    </Label>
                     <Input
-                      className="h-9"
+                      className="h-11 text-base font-semibold"
                       placeholder="Enter rate"
                       value={transferRate}
                       onChange={(e) => setTransferRate(e.target.value.replace(/[^\d.]/g, ""))}
                       inputMode="decimal"
                     />
+                    {transferAmount && transferRate && Number(transferRate) > 0 && (
+                      <p className="text-[10px] text-muted-foreground">
+                        ≈ ${(Number(transferAmount) / Number(transferRate)).toFixed(2)} USD equivalent
+                      </p>
+                    )}
                   </div>
                 </div>
+              </section>
 
-                <div className="space-y-1.5">
-                  <Label className="text-xs">Transfer Notes</Label>
+              {/* Notes */}
+              <section className="rounded-xl border bg-card">
+                <header className="px-4 py-2.5 border-b">
+                  <h3 className="text-sm font-semibold">Notes <span className="font-normal text-muted-foreground">(optional)</span></h3>
+                </header>
+                <div className="p-4">
                   <Textarea
-                    placeholder="Optional note"
+                    placeholder="Add a note for internal reference…"
                     value={transferNote}
                     onChange={(e) => setTransferNote(e.target.value)}
-                    rows={3}
+                    rows={2}
+                    className="resize-none"
                   />
                 </div>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-4">
-                <Button variant="outline" onClick={() => setTransferOpen(false)}>Cancel</Button>
-                <Button
-                  disabled={!transferBank || !transferVerified || !transferAmount || !transferRate}
-                  onClick={() => {
-                    const amt = Number(transferAmount || 0);
-                    if (selectedConvo) {
-                      const key = `cc.transfers.${selectedConvo.id}`;
-                      const prev = JSON.parse(sessionStorage.getItem(key) || "[]");
-                      prev.unshift({
-                        bank: transferBank,
-                        account: transferAccount,
-                        recipient: transferRecipient,
-                        method: transferMethod,
-                        amount: amt,
-                        at: Date.now(),
-                      });
-                      sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
-                    }
-                    addSystemMessage(
-                      `💸 Transfer sent via ${transferMethod}: ₦${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
-                    );
-                    toast.success("Transfer initiated");
-                    setTransferOpen(false);
-                    resetTransferForm();
-                  }}
-                >
-                  Transfer Now
-                </Button>
-              </div>
+              </section>
             </div>
 
-            {/* Transaction records */}
-            <div className="border-l bg-muted/10 overflow-y-auto">
-              <div className="px-4 py-3 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
-                <div className="text-sm font-semibold">Transfer Records</div>
-                <div className="text-[11px] text-muted-foreground mt-0.5">
-                  Recent transactions for {selectedConvo?.alias || "customer"}
-                </div>
-              </div>
+            {/* ============== RIGHT PANEL: Beneficiaries + Records ============== */}
+            <div className="overflow-y-auto bg-muted/10">
               {(() => {
                 const key = `cc.transfers.${selectedConvo?.id || ""}`;
                 const saved: Array<{ bank: string; account: string; recipient: string; method: string; amount: number; at: number }> =
                   selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
+
+                // Saved beneficiaries — dedupe by bank+account
+                const seen = new Set<string>();
+                const beneficiaries = saved.filter((h) => {
+                  const k = `${h.bank}|${h.account}`;
+                  if (seen.has(k)) return false;
+                  seen.add(k);
+                  return true;
+                });
+
                 const mock = selectedConvo ? [
                   { method: "PalmPay3", at: new Date("2026-06-30T03:08:00").getTime(), orderNo: "X1782763735728586", refNo: "41260629200855993684", bank: "Opay", account: "9044585925", recipient: "TSEYI OLOLO", amount: 1641500, nickname: "/", status: "Success" as const },
                   { method: "PalmPay2", at: new Date("2026-06-16T04:27:00").getTime(), orderNo: "X1781558859434543", refNo: "41260615212739917821", bank: "MONIEPOINT MICROFINANCE BANK", account: "7025207542", recipient: "OBORO SAMUEL ANOINTED", amount: 330900, nickname: "Sammy", status: "Success" as const },
                   { method: "PalmPay3", at: new Date("2026-06-03T23:21:00").getTime(), orderNo: "X1782050366673779", refNo: "41260603162107663455", bank: "Opay", account: "8168956827", recipient: "OGAGA PERKINS ESIENNA", amount: 5000, nickname: "Buying All countries Gift cards & Mailing items to all countries", status: "Success" as const },
                 ] : [];
                 const rows = [
-                  ...saved.map((s, i) => ({
+                  ...saved.map((s) => ({
                     method: s.method,
                     at: s.at,
                     orderNo: `X${String(s.at).slice(-16)}`,
@@ -2681,49 +2651,131 @@ export default function AdminMessages() {
                   })),
                   ...mock,
                 ];
-                if (rows.length === 0) {
-                  return (
-                    <div className="text-xs text-muted-foreground text-center py-10">
-                      No transfer records
-                    </div>
-                  );
-                }
                 const fmtDate = (t: number) => {
                   const d = new Date(t);
                   const p = (n: number) => String(n).padStart(2, "0");
                   return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
                 };
+
                 return (
-                  <div className="divide-y">
-                    {rows.map((r, i) => (
-                      <div key={i} className="px-4 py-3 hover:bg-muted/30 transition-colors">
-                        <div className="flex items-start justify-between gap-2">
-                          <div className="min-w-0 flex-1">
-                            <div className="text-xs font-semibold">{r.method}</div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">{fmtDate(r.at)}</div>
-                            <div className="text-[10px] font-mono text-muted-foreground truncate">{r.orderNo}</div>
-                            <div className="text-[10px] font-mono text-muted-foreground truncate">{r.refNo}</div>
-                          </div>
-                          <div className="text-right shrink-0">
-                            <div className="text-xs font-semibold text-emerald-600">Success</div>
-                            <div className="text-xs font-semibold mt-1">₦ {r.amount.toLocaleString()}</div>
-                          </div>
+                  <>
+                    {/* Saved beneficiaries */}
+                    {beneficiaries.length > 0 && (
+                      <div className="px-4 py-3 border-b bg-background">
+                        <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2">
+                          Saved Beneficiaries
                         </div>
-                        <div className="mt-2 pt-2 border-t border-dashed">
-                          <div className="text-[10px] uppercase text-muted-foreground">{r.bank}</div>
-                          <div className="text-xs font-mono font-semibold">{r.account}</div>
-                          <div className="text-[11px] text-muted-foreground">{r.recipient}</div>
-                          {r.nickname && r.nickname !== "/" && (
-                            <div className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
-                              <span className="uppercase">Nickname:</span> {r.nickname}
-                            </div>
-                          )}
+                        <div className="flex flex-wrap gap-1.5">
+                          {beneficiaries.map((h, i) => (
+                            <button
+                              key={i}
+                              type="button"
+                              onClick={() => {
+                                setTransferBank(h.bank);
+                                setTransferAccount(h.account);
+                                setTransferRecipient(h.recipient);
+                                setTransferVerified(true);
+                                setTransferMethod(h.method);
+                                toast.success("Beneficiary loaded");
+                              }}
+                              className="group text-left rounded-md border bg-background hover:border-accent hover:bg-accent/5 transition-colors px-2.5 py-1.5 max-w-[220px]"
+                              title={`${h.recipient} · ${h.bank} · ${h.account}`}
+                            >
+                              <div className="text-[11px] font-semibold truncate">{h.recipient}</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">
+                                {h.bank} · {h.account}
+                              </div>
+                            </button>
+                          ))}
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    )}
+
+                    {/* Transfer records */}
+                    <div className="px-4 py-3 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
+                      <div className="text-sm font-semibold">Transfer Records</div>
+                      <div className="text-[11px] text-muted-foreground mt-0.5">
+                        Recent transactions {selectedConvo && `· ${selectedConvo.alias}`}
+                      </div>
+                    </div>
+                    {rows.length === 0 ? (
+                      <div className="text-xs text-muted-foreground text-center py-10">
+                        No transfer records
+                      </div>
+                    ) : (
+                      <div className="divide-y">
+                        {rows.map((r, i) => (
+                          <div key={i} className="px-4 py-3 hover:bg-muted/30 transition-colors">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0 flex-1">
+                                <div className="text-xs font-semibold">{r.method}</div>
+                                <div className="text-[10px] text-muted-foreground mt-0.5">{fmtDate(r.at)}</div>
+                                <div className="text-[10px] font-mono text-muted-foreground truncate">{r.orderNo}</div>
+                                <div className="text-[10px] font-mono text-muted-foreground truncate">{r.refNo}</div>
+                              </div>
+                              <div className="text-right shrink-0">
+                                <div className="text-[10px] font-semibold text-emerald-600 uppercase">Success</div>
+                                <div className="text-xs font-semibold mt-1">₦{r.amount.toLocaleString()}</div>
+                              </div>
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-dashed">
+                              <div className="text-[10px] uppercase text-muted-foreground">{r.bank}</div>
+                              <div className="text-xs font-mono font-semibold">{r.account}</div>
+                              <div className="text-[11px] text-muted-foreground">{r.recipient}</div>
+                              {r.nickname && r.nickname !== "/" && (
+                                <div className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+                                  <span className="uppercase">Nickname:</span> {r.nickname}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 );
               })()}
+            </div>
+          </div>
+
+          {/* Sticky footer */}
+          <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
+            <div className="text-[11px] text-muted-foreground">
+              {transferAmount && transferRate && Number(transferRate) > 0 ? (
+                <>Sending <span className="font-semibold text-foreground">₦{Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
+              ) : (
+                <>Fill in required fields to enable transfer</>
+              )}
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setTransferOpen(false)}>Cancel</Button>
+              <Button
+                disabled={!transferBank || !transferVerified || !transferAmount || !transferRate}
+                onClick={() => {
+                  const amt = Number(transferAmount || 0);
+                  if (selectedConvo) {
+                    const key = `cc.transfers.${selectedConvo.id}`;
+                    const prev = JSON.parse(sessionStorage.getItem(key) || "[]");
+                    prev.unshift({
+                      bank: transferBank,
+                      account: transferAccount,
+                      recipient: transferRecipient,
+                      method: transferMethod,
+                      amount: amt,
+                      at: Date.now(),
+                    });
+                    sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
+                  }
+                  addSystemMessage(
+                    `💸 Transfer sent via ${transferMethod}: ₦${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
+                  );
+                  toast.success("Transfer initiated");
+                  setTransferOpen(false);
+                  resetTransferForm();
+                }}
+              >
+                Transfer Now
+              </Button>
             </div>
           </div>
         </DialogContent>
