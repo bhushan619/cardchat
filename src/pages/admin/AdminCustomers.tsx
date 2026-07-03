@@ -342,7 +342,9 @@ export default function AdminCustomers() {
                         )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium truncate">{t.description}</p>
+                        <p className="text-xs font-medium truncate">
+                          {selectedCustomer.channel === "whatsapp" ? t.description.replace(/Withdrawal/gi, "Transfer") : t.description}
+                        </p>
                         <p className="text-[10px] text-muted-foreground">
                           {t.date} · {t.time}
                         </p>
