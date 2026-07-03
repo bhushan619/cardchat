@@ -2536,23 +2536,6 @@ export default function AdminMessages() {
                       )}
                     </div>
                   </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Nickname / Group Name</Label>
-                    <Input
-                      className="h-10"
-                      placeholder="Enter nickname/group"
-                      defaultValue={selectedConvo?.alias || ""}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Customer ID</Label>
-                    <Input
-                      className="h-10 font-mono text-sm"
-                      placeholder="Customer ID"
-                      defaultValue={selectedConvo?.id || ""}
-                    />
-                  </div>
                 </div>
               </section>
 
