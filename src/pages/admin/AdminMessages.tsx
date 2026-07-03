@@ -44,6 +44,8 @@ import {
   ScanText,
   Loader2,
   Coins,
+  ArrowRightLeft,
+  CheckCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
