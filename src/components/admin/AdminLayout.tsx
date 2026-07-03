@@ -19,6 +19,7 @@ const navItems = [
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
   { id: "withdrawals", label: "Withdrawals", icon: ArrowDownToLine, path: "/admin/withdrawals", roles: ["super_admin", "team_lead", "finance"] },
+  { id: "transfers", label: "Transfers", icon: Send, path: "/admin/transfers", roles: ["super_admin", "team_lead", "finance"] },
   { id: "naira-rate", label: "Points Rate", icon: Coins, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
