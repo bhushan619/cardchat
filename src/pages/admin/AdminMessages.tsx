@@ -1183,7 +1183,7 @@ export default function AdminMessages() {
                     }
                     const isCustomer = msg.sender === "customer";
                     return (
-                      <React.Fragment key={msg.id}>
+                      <Fragment key={msg.id}>
                       <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
                         <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
                           <p
@@ -1249,7 +1249,7 @@ export default function AdminMessages() {
                           </div>
                         );
                       })()}
-                    </React.Fragment>
+                    </Fragment>
                     );
                   })}
                 </div>
