@@ -2424,13 +2424,13 @@ export default function AdminMessages() {
           if (!open) resetTransferForm();
         }}
       >
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden p-0">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-hidden p-0">
           <DialogHeader className="px-6 pt-6">
             <DialogTitle className="flex items-center gap-2 font-heading">
               <ArrowRightLeft className="w-5 h-5 text-accent" /> Process Transfer
             </DialogTitle>
           </DialogHeader>
-          <div className="grid grid-cols-[240px_1fr] gap-0 max-h-[calc(90vh-4rem)]">
+          <div className="grid grid-cols-[220px_1fr_380px] gap-0 max-h-[calc(90vh-4rem)]">
             {/* Previous transfers */}
             <div className="border-r bg-muted/20 overflow-y-auto px-3 py-3">
               <div className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground mb-2 px-1">
