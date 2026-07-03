@@ -2709,11 +2709,6 @@ export default function AdminMessages() {
                               <div className="text-[10px] uppercase text-muted-foreground truncate">{r.bank}</div>
                               <div className="text-xs font-mono font-semibold truncate">{r.account}</div>
                               <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
-                              {r.nickname && r.nickname !== "/" && (
-                                <div className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
-                                  <span className="uppercase">Nickname:</span> {r.nickname}
-                                </div>
-                              )}
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
                               ₦{r.amount.toLocaleString()}
