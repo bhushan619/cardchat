@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   conversations as rawConversations,
@@ -411,6 +411,40 @@ export default function AdminMessages() {
     "Stanbic IBTC Bank", "Standard Chartered", "Sterling Bank", "Union Bank",
     "United Bank for Africa (UBA)", "Unity Bank", "Wema Bank", "Zenith Bank",
   ];
+
+  // Detect bank account details in a message. Returns null when nothing matches.
+  const bankAliases: Record<string, string> = {
+    gtb: "Guaranty Trust Bank (GTBank)", gtbank: "Guaranty Trust Bank (GTBank)",
+    uba: "United Bank for Africa (UBA)",
+    fcmb: "First City Monument Bank (FCMB)",
+    firstbank: "First Bank of Nigeria", "first bank": "First Bank of Nigeria",
+    opay: "OPay", palmpay: "PalmPay", kuda: "Kuda Bank",
+    moniepoint: "OPay", // treat as generic; adjust as needed
+    ecobank: "Ecobank", zenith: "Zenith Bank", access: "Access Bank",
+    fidelity: "Fidelity Bank", sterling: "Sterling Bank", wema: "Wema Bank",
+    union: "Union Bank", polaris: "Polaris Bank", stanbic: "Stanbic IBTC Bank",
+    heritage: "Heritage Bank", keystone: "Keystone Bank", providus: "Providus Bank",
+    unity: "Unity Bank", citibank: "Citibank",
+  };
+  const detectBankDetails = (text: string): { bank: string; account: string; recipient?: string } | null => {
+    if (!text) return null;
+    const accountMatch = text.match(/\b\d{10}\b/);
+    if (!accountMatch) return null;
+    const account = accountMatch[0];
+    const lower = text.toLowerCase();
+    // Try full bank names first, then aliases
+    let bank = nigerianBanks.find((b) => lower.includes(b.toLowerCase()));
+    if (!bank) {
+      const aliasKey = Object.keys(bankAliases).find((k) => new RegExp(`\\b${k}\\b`, "i").test(text));
+      if (aliasKey) bank = bankAliases[aliasKey];
+    }
+    if (!bank) return null;
+    // Look for a capitalized name (2-4 words) that isn't the bank
+    const nameMatch = text.match(/\b([A-Z][A-Za-z'-]+(?:\s+[A-Z][A-Za-z'-]+){1,3})\b/);
+    const recipient = nameMatch && !bank.includes(nameMatch[1]) ? nameMatch[1] : undefined;
+    return { bank, account, recipient };
+  };
+
 
   const resetTransferForm = () => {
     setTransferMethod("PalmPay2");
@@ -1149,7 +1183,8 @@ export default function AdminMessages() {
                     }
                     const isCustomer = msg.sender === "customer";
                     return (
-                      <div key={msg.id} className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                      <Fragment key={msg.id}>
+                      <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
                         <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
                           <p
                             className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
@@ -1183,6 +1218,38 @@ export default function AdminMessages() {
                           <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                         </div>
                       </div>
+                      {/* Detected bank details chip */}
+                      {(() => {
+                        if (msg.image || msg.sender !== "customer") return null;
+                        if (selectedConvo?.channel !== "whatsapp") return null;
+                        const det = detectBankDetails(msg.text);
+                        if (!det) return null;
+                        return (
+                          <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                resetTransferForm();
+                                setTransferBank(det.bank);
+                                setTransferAccount(det.account);
+                                if (det.recipient) {
+                                  setTransferRecipient(det.recipient);
+                                  setTransferVerified(true);
+                                }
+                                setTransferOpen(true);
+                                toast.success("Bank details prefilled");
+                              }}
+                              className="mt-1 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/5 hover:bg-accent/10 text-accent px-3 py-1 text-[11px] font-medium transition-colors"
+                            >
+                              <ArrowRightLeft className="w-3 h-3" />
+                              <span className="font-semibold">{det.bank}</span>
+                              <span className="font-mono opacity-80">· {det.account}</span>
+                              <span className="opacity-70">→ Use in Transfer</span>
+                            </button>
+                          </div>
+                        );
+                      })()}
+                    </Fragment>
                     );
                   })}
                 </div>
