@@ -197,7 +197,7 @@ export default function AdminTransfers() {
                         <span className="text-sm font-medium">{w.alias}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right text-sm font-semibold">Pts {w.amount.toLocaleString()}</TableCell>
+                    <TableCell className="text-right text-sm font-semibold"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{w.amount.toLocaleString()}</span></TableCell>
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
                       <p className="text-muted-foreground">{w.accountNumber}</p>
