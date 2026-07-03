@@ -2624,13 +2624,13 @@ export default function AdminMessages() {
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
                         inputMode="decimal"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">NGN</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">PTS</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">Max ₦2,000,000 per transaction</p>
+                    <p className="text-[10px] text-muted-foreground">Max Pts 2,000,000 per transaction</p>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">
-                      <span className="text-destructive">*</span> Naira Rate
+                      <span className="text-destructive">*</span> Points Rate
                     </Label>
                     <Input
                       className="h-11 text-base font-semibold"
