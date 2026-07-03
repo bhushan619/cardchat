@@ -125,9 +125,9 @@ export default function AdminTransfers() {
 
         <div className="grid grid-cols-4 gap-3 mb-5">
           <SummaryCard label="Total Transfers" value={totals.count.toString()} hint="In current view" />
-          <SummaryCard label="Total Volume" value={`Pts ${totals.all.toLocaleString()}`} hint="All filtered" />
-          <SummaryCard label="Pending" value={`Pts ${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
-          <SummaryCard label="Successful" value={`Pts ${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
+          <SummaryCard label="Total Volume" value={totals.all} hint="All filtered" points />
+          <SummaryCard label="Pending" value={totals.pending} hint="Awaiting action" tone="warning" points />
+          <SummaryCard label="Successful" value={totals.successful} hint="Disbursed" tone="success" points />
         </div>
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
