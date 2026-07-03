@@ -2648,6 +2648,83 @@ export default function AdminMessages() {
                 </Button>
               </div>
             </div>
+
+            {/* Transaction records */}
+            <div className="border-l bg-muted/10 overflow-y-auto">
+              <div className="px-4 py-3 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
+                <div className="text-sm font-semibold">Transfer Records</div>
+                <div className="text-[11px] text-muted-foreground mt-0.5">
+                  Recent transactions for {selectedConvo?.alias || "customer"}
+                </div>
+              </div>
+              {(() => {
+                const key = `cc.transfers.${selectedConvo?.id || ""}`;
+                const saved: Array<{ bank: string; account: string; recipient: string; method: string; amount: number; at: number }> =
+                  selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
+                const mock = selectedConvo ? [
+                  { method: "PalmPay3", at: new Date("2026-06-30T03:08:00").getTime(), orderNo: "X1782763735728586", refNo: "41260629200855993684", bank: "Opay", account: "9044585925", recipient: "TSEYI OLOLO", amount: 1641500, nickname: "/", status: "Success" as const },
+                  { method: "PalmPay2", at: new Date("2026-06-16T04:27:00").getTime(), orderNo: "X1781558859434543", refNo: "41260615212739917821", bank: "MONIEPOINT MICROFINANCE BANK", account: "7025207542", recipient: "OBORO SAMUEL ANOINTED", amount: 330900, nickname: "Sammy", status: "Success" as const },
+                  { method: "PalmPay3", at: new Date("2026-06-03T23:21:00").getTime(), orderNo: "X1782050366673779", refNo: "41260603162107663455", bank: "Opay", account: "8168956827", recipient: "OGAGA PERKINS ESIENNA", amount: 5000, nickname: "Buying All countries Gift cards & Mailing items to all countries", status: "Success" as const },
+                ] : [];
+                const rows = [
+                  ...saved.map((s, i) => ({
+                    method: s.method,
+                    at: s.at,
+                    orderNo: `X${String(s.at).slice(-16)}`,
+                    refNo: `41${String(s.at).slice(-18)}`,
+                    bank: s.bank,
+                    account: s.account,
+                    recipient: s.recipient,
+                    amount: s.amount,
+                    nickname: selectedConvo?.alias || "/",
+                    status: "Success" as const,
+                  })),
+                  ...mock,
+                ];
+                if (rows.length === 0) {
+                  return (
+                    <div className="text-xs text-muted-foreground text-center py-10">
+                      No transfer records
+                    </div>
+                  );
+                }
+                const fmtDate = (t: number) => {
+                  const d = new Date(t);
+                  const p = (n: number) => String(n).padStart(2, "0");
+                  return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
+                };
+                return (
+                  <div className="divide-y">
+                    {rows.map((r, i) => (
+                      <div key={i} className="px-4 py-3 hover:bg-muted/30 transition-colors">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0 flex-1">
+                            <div className="text-xs font-semibold">{r.method}</div>
+                            <div className="text-[10px] text-muted-foreground mt-0.5">{fmtDate(r.at)}</div>
+                            <div className="text-[10px] font-mono text-muted-foreground truncate">{r.orderNo}</div>
+                            <div className="text-[10px] font-mono text-muted-foreground truncate">{r.refNo}</div>
+                          </div>
+                          <div className="text-right shrink-0">
+                            <div className="text-xs font-semibold text-emerald-600">Success</div>
+                            <div className="text-xs font-semibold mt-1">₦ {r.amount.toLocaleString()}</div>
+                          </div>
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-dashed">
+                          <div className="text-[10px] uppercase text-muted-foreground">{r.bank}</div>
+                          <div className="text-xs font-mono font-semibold">{r.account}</div>
+                          <div className="text-[11px] text-muted-foreground">{r.recipient}</div>
+                          {r.nickname && r.nickname !== "/" && (
+                            <div className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+                              <span className="uppercase">Nickname:</span> {r.nickname}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })()}
+            </div>
           </div>
         </DialogContent>
       </Dialog>
