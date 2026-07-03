@@ -2822,7 +2822,7 @@ export default function AdminMessages() {
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
                   }
                   addSystemMessage(
-                    `💸 Transfer sent via ${transferMethod}: ₦${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
+                    `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
                   );
                   toast.success("Transfer initiated");
                   setTransferOpen(false);
