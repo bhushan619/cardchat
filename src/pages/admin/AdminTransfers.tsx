@@ -250,7 +250,7 @@ export default function AdminTransfers() {
                 ["Requested", selected.requestedAt],
                 ["Status", statusConfig[selected.status].label],
               ].map(([k, v]) => (
-                <div key={k} className="flex justify-between">
+                <div key={k as string} className="flex justify-between">
                   <span className="text-muted-foreground">{k}</span>
                   <span className="font-medium">{v}</span>
                 </div>
