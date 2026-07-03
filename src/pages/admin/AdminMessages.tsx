@@ -2415,6 +2415,174 @@ export default function AdminMessages() {
           </div>
         </div>
       )}
+
+      {/* Transfer Modal (WhatsApp payment) */}
+      <Dialog
+        open={transferOpen}
+        onOpenChange={(open) => {
+          setTransferOpen(open);
+          if (!open) resetTransferForm();
+        }}
+      >
+        <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 font-heading">
+              <ArrowRightLeft className="w-5 h-5 text-accent" /> Process Transfer
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            {selectedConvo && (
+              <div className="rounded-md border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
+                Sending to <span className="font-semibold text-foreground">{selectedConvo.alias}</span>
+                {" "}via WhatsApp
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">Transfer Method</Label>
+              <Select value={transferMethod} onValueChange={setTransferMethod}>
+                <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {transferMethods.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs">Nickname / Group Name</Label>
+                <Input
+                  className="h-9"
+                  placeholder="Enter nickname/group"
+                  defaultValue={selectedConvo?.alias || ""}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs">Customer ID</Label>
+                <Input
+                  className="h-9"
+                  placeholder="Customer ID"
+                  defaultValue={selectedConvo?.id || ""}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs"><span className="text-destructive">*</span> Bank Name</Label>
+              <Select value={transferBank} onValueChange={(v) => { setTransferBank(v); setTransferVerified(false); setTransferRecipient(""); }}>
+                <SelectTrigger className="h-9"><SelectValue placeholder="Please select" /></SelectTrigger>
+                <SelectContent>
+                  {nigerianBanks.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs"><span className="text-destructive">*</span> Bank Account Number</Label>
+              <div className="flex gap-2">
+                <Input
+                  className="h-9"
+                  placeholder="Enter bank account number"
+                  value={transferAccount}
+                  onChange={(e) => {
+                    setTransferAccount(e.target.value.replace(/\D/g, "").slice(0, 10));
+                    setTransferVerified(false);
+                    setTransferRecipient("");
+                  }}
+                  inputMode="numeric"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-9"
+                  disabled={!transferBank || transferAccount.length < 10 || transferVerifying}
+                  onClick={() => {
+                    setTransferVerifying(true);
+                    setTimeout(() => {
+                      const mockName = (selectedConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
+                      setTransferRecipient(mockName);
+                      setTransferVerified(true);
+                      setTransferVerifying(false);
+                      toast.success("Account verified");
+                    }, 900);
+                  }}
+                >
+                  {transferVerifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : "Verify"}
+                </Button>
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs"><span className="text-destructive">*</span> Recipient Name</Label>
+              <div className="relative">
+                <Input
+                  className="h-9 pr-8"
+                  placeholder="Verify bank account to fetch recipient name"
+                  value={transferRecipient}
+                  readOnly
+                />
+                {transferVerified && (
+                  <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-2 top-1/2 -translate-y-1/2" />
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs"><span className="text-destructive">*</span> Transfer Amount</Label>
+                <div className="relative">
+                  <Input
+                    className="h-9 pr-14"
+                    placeholder="Max 2,000,000"
+                    value={transferAmount}
+                    onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
+                    inputMode="decimal"
+                  />
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] text-muted-foreground border rounded px-1.5 py-0.5">NGN</span>
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs"><span className="text-destructive">*</span> Naira Rate</Label>
+                <Input
+                  className="h-9"
+                  placeholder="Enter rate"
+                  value={transferRate}
+                  onChange={(e) => setTransferRate(e.target.value.replace(/[^\d.]/g, ""))}
+                  inputMode="decimal"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs">Transfer Notes</Label>
+              <Textarea
+                placeholder="Optional note"
+                value={transferNote}
+                onChange={(e) => setTransferNote(e.target.value)}
+                rows={3}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-2 pt-2">
+            <Button variant="outline" onClick={() => setTransferOpen(false)}>Cancel</Button>
+            <Button
+              disabled={!transferBank || !transferVerified || !transferAmount || !transferRate}
+              onClick={() => {
+                const amt = Number(transferAmount || 0);
+                addSystemMessage(
+                  `💸 Transfer sent via ${transferMethod}: ₦${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
+                );
+                toast.success("Transfer initiated");
+                setTransferOpen(false);
+                resetTransferForm();
+              }}
+            >
+              Transfer Now
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
