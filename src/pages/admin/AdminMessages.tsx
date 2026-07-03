@@ -1183,7 +1183,8 @@ export default function AdminMessages() {
                     }
                     const isCustomer = msg.sender === "customer";
                     return (
-                      <div key={msg.id} className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                      <React.Fragment key={msg.id}>
+                      <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
                         <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
                           <p
                             className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
