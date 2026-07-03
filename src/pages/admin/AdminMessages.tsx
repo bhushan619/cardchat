@@ -391,6 +391,40 @@ export default function AdminMessages() {
 
   const canAdjustFunds = role === "super_admin" || role === "team_lead";
 
+  // Transfer (WhatsApp payment) state
+  const [transferOpen, setTransferOpen] = useState(false);
+  const [transferMethod, setTransferMethod] = useState("PalmPay2");
+  const [transferBank, setTransferBank] = useState("");
+  const [transferAccount, setTransferAccount] = useState("");
+  const [transferRecipient, setTransferRecipient] = useState("");
+  const [transferAmount, setTransferAmount] = useState("");
+  const [transferRate, setTransferRate] = useState("");
+  const [transferNote, setTransferNote] = useState("");
+  const [transferVerified, setTransferVerified] = useState(false);
+  const [transferVerifying, setTransferVerifying] = useState(false);
+
+  const transferMethods = ["PalmPay2", "OPay", "Moniepoint", "Kuda", "Manual Bank Transfer"];
+  const nigerianBanks = [
+    "Access Bank", "Citibank", "Ecobank", "Fidelity Bank", "First Bank of Nigeria",
+    "First City Monument Bank (FCMB)", "Guaranty Trust Bank (GTBank)", "Heritage Bank",
+    "Keystone Bank", "Kuda Bank", "OPay", "PalmPay", "Polaris Bank", "Providus Bank",
+    "Stanbic IBTC Bank", "Standard Chartered", "Sterling Bank", "Union Bank",
+    "United Bank for Africa (UBA)", "Unity Bank", "Wema Bank", "Zenith Bank",
+  ];
+
+  const resetTransferForm = () => {
+    setTransferMethod("PalmPay2");
+    setTransferBank("");
+    setTransferAccount("");
+    setTransferRecipient("");
+    setTransferAmount("");
+    setTransferRate("");
+    setTransferNote("");
+    setTransferVerified(false);
+    setTransferVerifying(false);
+  };
+
+
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
