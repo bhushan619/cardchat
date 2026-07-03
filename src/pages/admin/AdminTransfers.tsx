@@ -263,12 +263,15 @@ export default function AdminTransfers() {
   );
 }
 
-function SummaryCard({ label, value, hint, tone }: { label: string; value: string; hint: string; tone?: "success" | "warning" }) {
+function SummaryCard({ label, value, hint, tone, points }: { label: string; value: string | number; hint: string; tone?: "success" | "warning"; points?: boolean }) {
   const toneClass = tone === "success" ? "text-emerald-600" : tone === "warning" ? "text-amber-600" : "text-foreground";
   return (
     <div className="bg-card border rounded-xl p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-lg font-bold mt-1 ${toneClass}`}>{value}</p>
+      <p className={`text-lg font-bold mt-1 ${toneClass} inline-flex items-center gap-0.5`}>
+        {points && <Coins className="w-4 h-4" />}
+        {typeof value === "number" ? value.toLocaleString() : value}
+      </p>
       <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>
     </div>
   );
