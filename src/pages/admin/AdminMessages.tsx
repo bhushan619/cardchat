@@ -2442,7 +2442,7 @@ export default function AdminMessages() {
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(0,1fr)_360px] flex-1 min-h-0">
+          <div className="grid grid-cols-[minmax(0,1fr)_480px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
             <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
               {/* Recipient card */}
