@@ -13,7 +13,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet } from "lucide-react";
+import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 type Status = "pending" | "successful" | "failed" | "processing";
@@ -125,9 +125,9 @@ export default function AdminTransfers() {
 
         <div className="grid grid-cols-4 gap-3 mb-5">
           <SummaryCard label="Total Transfers" value={totals.count.toString()} hint="In current view" />
-          <SummaryCard label="Total Volume" value={`Pts ${totals.all.toLocaleString()}`} hint="All filtered" />
-          <SummaryCard label="Pending" value={`Pts ${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
-          <SummaryCard label="Successful" value={`Pts ${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
+          <SummaryCard label="Total Volume" value={totals.all} hint="All filtered" points />
+          <SummaryCard label="Pending" value={totals.pending} hint="Awaiting action" tone="warning" points />
+          <SummaryCard label="Successful" value={totals.successful} hint="Disbursed" tone="success" points />
         </div>
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -197,7 +197,7 @@ export default function AdminTransfers() {
                         <span className="text-sm font-medium">{w.alias}</span>
                       </div>
                     </TableCell>
-                    <TableCell className="text-right text-sm font-semibold">Pts {w.amount.toLocaleString()}</TableCell>
+                    <TableCell className="text-right text-sm font-semibold"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{w.amount.toLocaleString()}</span></TableCell>
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
                       <p className="text-muted-foreground">{w.accountNumber}</p>
@@ -241,7 +241,7 @@ export default function AdminTransfers() {
             <div className="space-y-3 text-sm">
               {[
                 ["Customer", selected.alias],
-                ["Amount", `Pts ${selected.amount.toLocaleString()}`],
+                ["Amount", <span key="amt" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selected.amount.toLocaleString()}</span>],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],
@@ -250,7 +250,7 @@ export default function AdminTransfers() {
                 ["Requested", selected.requestedAt],
                 ["Status", statusConfig[selected.status].label],
               ].map(([k, v]) => (
-                <div key={k} className="flex justify-between">
+                <div key={k as string} className="flex justify-between">
                   <span className="text-muted-foreground">{k}</span>
                   <span className="font-medium">{v}</span>
                 </div>
@@ -263,12 +263,15 @@ export default function AdminTransfers() {
   );
 }
 
-function SummaryCard({ label, value, hint, tone }: { label: string; value: string; hint: string; tone?: "success" | "warning" }) {
+function SummaryCard({ label, value, hint, tone, points }: { label: string; value: string | number; hint: string; tone?: "success" | "warning"; points?: boolean }) {
   const toneClass = tone === "success" ? "text-emerald-600" : tone === "warning" ? "text-amber-600" : "text-foreground";
   return (
     <div className="bg-card border rounded-xl p-4">
       <p className="text-xs text-muted-foreground">{label}</p>
-      <p className={`text-lg font-bold mt-1 ${toneClass}`}>{value}</p>
+      <p className={`text-lg font-bold mt-1 ${toneClass} inline-flex items-center gap-0.5`}>
+        {points && <Coins className="w-4 h-4" />}
+        {typeof value === "number" ? value.toLocaleString() : value}
+      </p>
       <p className="text-[10px] text-muted-foreground mt-1">{hint}</p>
     </div>
   );

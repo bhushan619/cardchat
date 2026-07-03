@@ -2624,13 +2624,13 @@ export default function AdminMessages() {
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
                         inputMode="decimal"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">NGN</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">PTS</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">Max ₦2,000,000 per transaction</p>
+                    <p className="text-[10px] text-muted-foreground">Max Pts 2,000,000 per transaction</p>
                   </div>
                   <div className="space-y-1.5">
                     <Label className="text-xs">
-                      <span className="text-destructive">*</span> Naira Rate
+                      <span className="text-destructive">*</span> Points Rate
                     </Label>
                     <Input
                       className="h-11 text-base font-semibold"
@@ -2778,7 +2778,7 @@ export default function AdminMessages() {
                               <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
-                              ₦{r.amount.toLocaleString()}
+                              Pts {r.amount.toLocaleString()}
                             </div>
                             <div className="text-right text-[10px] font-semibold text-emerald-600 uppercase">
                               Success
@@ -2797,7 +2797,7 @@ export default function AdminMessages() {
           <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
             <div className="text-[11px] text-muted-foreground">
               {transferAmount && transferRate && Number(transferRate) > 0 ? (
-                <>Sending <span className="font-semibold text-foreground">₦{Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
+                <>Sending <span className="font-semibold text-foreground">Pts {Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
               ) : (
                 <>Fill in required fields to enable transfer</>
               )}
@@ -2822,7 +2822,7 @@ export default function AdminMessages() {
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
                   }
                   addSystemMessage(
-                    `💸 Transfer sent via ${transferMethod}: ₦${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
+                    `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
                   );
                   toast.success("Transfer initiated");
                   setTransferOpen(false);
