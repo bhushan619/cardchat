@@ -44,6 +44,7 @@ import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 import AdminCustomers from "./pages/admin/AdminCustomers";
 import AdminWallets from "./pages/admin/AdminWallets";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
+import AdminTransfers from "./pages/admin/AdminTransfers";
 import AdminTeamChat from "./pages/admin/AdminTeamChat";
 import AdminProfile from "./pages/admin/AdminProfile";
 import AdminRanking from "./pages/admin/AdminRanking";
