@@ -241,7 +241,7 @@ export default function AdminTransfers() {
             <div className="space-y-3 text-sm">
               {[
                 ["Customer", selected.alias],
-                ["Amount", `Pts ${selected.amount.toLocaleString()}`],
+                ["Amount", <span key="amt" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selected.amount.toLocaleString()}</span>],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],
