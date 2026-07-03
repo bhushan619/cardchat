@@ -2778,7 +2778,7 @@ export default function AdminMessages() {
                               <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
-                              ₦{r.amount.toLocaleString()}
+                              Pts {r.amount.toLocaleString()}
                             </div>
                             <div className="text-right text-[10px] font-semibold text-emerald-600 uppercase">
                               Success
