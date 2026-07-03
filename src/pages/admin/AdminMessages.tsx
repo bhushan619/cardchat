@@ -412,6 +412,40 @@ export default function AdminMessages() {
     "United Bank for Africa (UBA)", "Unity Bank", "Wema Bank", "Zenith Bank",
   ];
 
+  // Detect bank account details in a message. Returns null when nothing matches.
+  const bankAliases: Record<string, string> = {
+    gtb: "Guaranty Trust Bank (GTBank)", gtbank: "Guaranty Trust Bank (GTBank)",
+    uba: "United Bank for Africa (UBA)",
+    fcmb: "First City Monument Bank (FCMB)",
+    firstbank: "First Bank of Nigeria", "first bank": "First Bank of Nigeria",
+    opay: "OPay", palmpay: "PalmPay", kuda: "Kuda Bank",
+    moniepoint: "OPay", // treat as generic; adjust as needed
+    ecobank: "Ecobank", zenith: "Zenith Bank", access: "Access Bank",
+    fidelity: "Fidelity Bank", sterling: "Sterling Bank", wema: "Wema Bank",
+    union: "Union Bank", polaris: "Polaris Bank", stanbic: "Stanbic IBTC Bank",
+    heritage: "Heritage Bank", keystone: "Keystone Bank", providus: "Providus Bank",
+    unity: "Unity Bank", citibank: "Citibank",
+  };
+  const detectBankDetails = (text: string): { bank: string; account: string; recipient?: string } | null => {
+    if (!text) return null;
+    const accountMatch = text.match(/\b\d{10}\b/);
+    if (!accountMatch) return null;
+    const account = accountMatch[0];
+    const lower = text.toLowerCase();
+    // Try full bank names first, then aliases
+    let bank = nigerianBanks.find((b) => lower.includes(b.toLowerCase()));
+    if (!bank) {
+      const aliasKey = Object.keys(bankAliases).find((k) => new RegExp(`\\b${k}\\b`, "i").test(text));
+      if (aliasKey) bank = bankAliases[aliasKey];
+    }
+    if (!bank) return null;
+    // Look for a capitalized name (2-4 words) that isn't the bank
+    const nameMatch = text.match(/\b([A-Z][A-Za-z'-]+(?:\s+[A-Z][A-Za-z'-]+){1,3})\b/);
+    const recipient = nameMatch && !bank.includes(nameMatch[1]) ? nameMatch[1] : undefined;
+    return { bank, account, recipient };
+  };
+
+
   const resetTransferForm = () => {
     setTransferMethod("PalmPay2");
     setTransferBank("");
