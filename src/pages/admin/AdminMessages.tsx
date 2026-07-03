@@ -2425,7 +2425,7 @@ export default function AdminMessages() {
         }}
       >
         <DialogContent
-          className="max-w-none w-[66vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
+          className="max-w-none w-[53vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
           style={{ resize: "both" as const, minWidth: 640, minHeight: 560 }}
         >
           <DialogHeader className="px-6 py-4 border-b shrink-0">
@@ -2535,23 +2535,6 @@ export default function AdminMessages() {
                         <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
                       )}
                     </div>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Nickname / Group Name</Label>
-                    <Input
-                      className="h-10"
-                      placeholder="Enter nickname/group"
-                      defaultValue={selectedConvo?.alias || ""}
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Customer ID</Label>
-                    <Input
-                      className="h-10 font-mono text-sm"
-                      placeholder="Customer ID"
-                      defaultValue={selectedConvo?.id || ""}
-                    />
                   </div>
                 </div>
               </section>
