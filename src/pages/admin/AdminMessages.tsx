@@ -2425,8 +2425,8 @@ export default function AdminMessages() {
         }}
       >
         <DialogContent
-          className="max-w-none w-[95vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
-          style={{ resize: "both" as const, minWidth: 720, minHeight: 560 }}
+          className="max-w-none w-[66vw] h-[60vh] p-0 gap-0 overflow-hidden flex flex-col"
+          style={{ resize: "both" as const, minWidth: 560, minHeight: 420 }}
         >
           <DialogHeader className="px-6 py-4 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2 font-heading">
