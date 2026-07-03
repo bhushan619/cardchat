@@ -323,7 +323,7 @@ export default function AdminCustomers() {
                     <p className="text-sm font-bold text-warning inline-flex items-center gap-0.5 justify-center">
                       <Coins className="w-3 h-3" />{selectedCustomer.totalWithdrawals.toLocaleString()}
                     </p>
-                    <p className="text-[10px] text-muted-foreground">Withdrawals</p>
+                    <p className="text-[10px] text-muted-foreground">{selectedCustomer.channel === "whatsapp" ? "Transfers" : "Withdrawals"}</p>
                   </div>
                 </div>
                 <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
