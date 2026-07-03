@@ -51,6 +51,8 @@ export const chatMessages = [
   { id: 4, sender: "agent", text: "Cards received. Let me verify them now.", time: "10:36 AM" },
   { id: 5, sender: "system", text: "Order #ORD-20260318-001 created. Card: iTunes US $100 ×2.", time: "10:37 AM", isOrder: true },
   { id: 6, sender: "agent", text: "Cards verified ✅ Order created. Processing your billing now.", time: "10:38 AM" },
+  { id: 7, sender: "customer", text: "Please send payout to GTB 0123456789 John Adebayo", time: "10:40 AM" },
+  { id: 8, sender: "customer", text: "Actually use this one instead: Ecobank 1122334433 Jane Smith", time: "10:41 AM" },
 ];
 
 export const orders = [
