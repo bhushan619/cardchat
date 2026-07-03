@@ -2687,29 +2687,39 @@ export default function AdminMessages() {
                       </div>
                     ) : (
                       <div className="divide-y">
+                        {/* column headers */}
+                        <div className="grid grid-cols-[125px_1fr_100px_70px] gap-3 px-4 py-2 bg-muted/40 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                          <div>Time / Order No.</div>
+                          <div>Info</div>
+                          <div className="text-right">Amount</div>
+                          <div className="text-right">Status</div>
+                        </div>
                         {rows.map((r, i) => (
-                          <div key={i} className="px-4 py-3 hover:bg-muted/30 transition-colors">
-                            <div className="flex items-start justify-between gap-2">
-                              <div className="min-w-0 flex-1">
-                                <div className="text-xs font-semibold">{r.method}</div>
-                                <div className="text-[10px] text-muted-foreground mt-0.5">{fmtDate(r.at)}</div>
-                                <div className="text-[10px] font-mono text-muted-foreground truncate">{r.orderNo}</div>
-                                <div className="text-[10px] font-mono text-muted-foreground truncate">{r.refNo}</div>
-                              </div>
-                              <div className="text-right shrink-0">
-                                <div className="text-[10px] font-semibold text-emerald-600 uppercase">Success</div>
-                                <div className="text-xs font-semibold mt-1">₦{r.amount.toLocaleString()}</div>
-                              </div>
+                          <div
+                            key={i}
+                            className="grid grid-cols-[125px_1fr_100px_70px] gap-3 px-4 py-3 hover:bg-muted/30 transition-colors items-start"
+                          >
+                            <div className="min-w-0">
+                              <div className="text-xs font-semibold">{r.method}</div>
+                              <div className="text-[10px] text-muted-foreground mt-0.5">{fmtDate(r.at)}</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{r.orderNo}</div>
+                              <div className="text-[10px] font-mono text-muted-foreground truncate">{r.refNo}</div>
                             </div>
-                            <div className="mt-2 pt-2 border-t border-dashed">
-                              <div className="text-[10px] uppercase text-muted-foreground">{r.bank}</div>
-                              <div className="text-xs font-mono font-semibold">{r.account}</div>
-                              <div className="text-[11px] text-muted-foreground">{r.recipient}</div>
+                            <div className="min-w-0">
+                              <div className="text-[10px] uppercase text-muted-foreground truncate">{r.bank}</div>
+                              <div className="text-xs font-mono font-semibold truncate">{r.account}</div>
+                              <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
                               {r.nickname && r.nickname !== "/" && (
-                                <div className="text-[10px] text-muted-foreground mt-1 line-clamp-2">
+                                <div className="text-[10px] text-muted-foreground mt-0.5 line-clamp-1">
                                   <span className="uppercase">Nickname:</span> {r.nickname}
                                 </div>
                               )}
+                            </div>
+                            <div className="text-right text-xs font-semibold whitespace-nowrap">
+                              ₦{r.amount.toLocaleString()}
+                            </div>
+                            <div className="text-right text-[10px] font-semibold text-emerald-600 uppercase">
+                              Success
                             </div>
                           </div>
                         ))}
