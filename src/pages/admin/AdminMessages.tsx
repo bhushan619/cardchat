@@ -1293,7 +1293,7 @@ export default function AdminMessages() {
                               resetTransferForm();
                               setTransferOpen(true);
                             }}
-                            className="h-8 text-xs gap-1 text-accent border-accent/30 hover:bg-accent/10"
+                            className="h-8 text-xs gap-1 text-accent border-accent/30 bg-transparent hover:bg-accent/10 hover:text-accent hover:border-accent/50"
                           >
                             <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
                           </Button>
