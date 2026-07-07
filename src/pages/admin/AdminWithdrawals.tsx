@@ -68,7 +68,8 @@ export default function AdminWithdrawals() {
   const canAct = role === "super_admin" || role === "finance";
 
   const [items, setItems] = useState<Withdrawal[]>(seed);
-  const [search, setSearch] = useState("");
+  const [idSearch, setIdSearch] = useState("");
+  const [customerSearch, setCustomerSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
@@ -77,7 +78,8 @@ export default function AdminWithdrawals() {
   const [selected, setSelected] = useState<Withdrawal | null>(null);
 
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
+    const idQ = idSearch.toLowerCase();
+    const custQ = customerSearch.toLowerCase();
     const min = minAmount === "" ? -Infinity : Number(minAmount);
     const max = maxAmount === "" ? Infinity : Number(maxAmount);
     return items.filter(w =>
@@ -85,9 +87,10 @@ export default function AdminWithdrawals() {
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
       w.amount >= min && w.amount <= max &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
+      (idQ === "" || w.id.toLowerCase().includes(idQ) || w.reference.toLowerCase().includes(idQ)) &&
+      (custQ === "" || w.alias.toLowerCase().includes(custQ) || w.accountName.toLowerCase().includes(custQ))
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, idSearch, customerSearch, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -143,13 +146,22 @@ export default function AdminWithdrawals() {
 
         {/* Filters */}
         <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <div className="relative flex-1 max-w-sm min-w-[220px]">
+          <div className="relative w-56">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search alias, ID, bank, account, ref..."
+              placeholder="Request ID / Reference"
               className="pl-10"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
+              value={idSearch}
+              onChange={e => setIdSearch(e.target.value)}
+            />
+          </div>
+          <div className="relative w-56">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+            <Input
+              placeholder="Customer alias / name"
+              className="pl-10"
+              value={customerSearch}
+              onChange={e => setCustomerSearch(e.target.value)}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
