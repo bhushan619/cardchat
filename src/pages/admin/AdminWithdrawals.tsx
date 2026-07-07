@@ -4,14 +4,15 @@ import { customerWallets } from "@/data/mock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet } from "lucide-react";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -42,16 +43,16 @@ const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
   return Array.from({ length: count }).map((_, j) => {
     const idx = i * 5 + j;
     return {
-      id: `WD-2026031${(8 - (j % 4))}-${String(100 + idx).padStart(3, "0")}`,
+      id: `WD-2026031${8 - (j % 4)}-${String(100 + idx).padStart(3, "0")}`,
       alias: w.alias,
-      amount: Math.round((w.totalWithdrawals / count) * (0.6 + (j * 0.15))),
-      bankName: banks[(idx) % banks.length],
+      amount: Math.round((w.totalWithdrawals / count) * (0.6 + j * 0.15)),
+      bankName: banks[idx % banks.length],
       accountNumber: `****${String(1000 + idx * 137).slice(-4)}`,
       accountName: `Customer ${w.alias}`,
-      requestedAt: `Mar ${10 + ((idx) % 9)}, 2026 · ${String(8 + (j % 9)).padStart(2, "0")}:${String((idx * 7) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
-      status: statuses[(idx) % statuses.length],
+      requestedAt: `Mar ${10 + (idx % 9)}, 2026 · ${String(8 + (j % 9)).padStart(2, "0")}:${String((idx * 7) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
+      status: statuses[idx % statuses.length],
       reference: `REF${(idx * 9173).toString(36).toUpperCase()}`,
-      channel: channels[(idx) % channels.length],
+      channel: channels[idx % channels.length],
     } satisfies Withdrawal;
   });
 });
@@ -82,18 +83,20 @@ export default function AdminWithdrawals() {
     const custQ = customerSearch.toLowerCase();
     const min = minAmount === "" ? -Infinity : Number(minAmount);
     const max = maxAmount === "" ? Infinity : Number(maxAmount);
-    return items.filter(w =>
-      (statusFilter === "all" || w.status === statusFilter) &&
-      (channelFilter === "all" || w.channel === channelFilter) &&
-      (bankFilter === "all" || w.bankName === bankFilter) &&
-      w.amount >= min && w.amount <= max &&
-      (idQ === "" || w.id.toLowerCase().includes(idQ) || w.reference.toLowerCase().includes(idQ)) &&
-      (custQ === "" || w.alias.toLowerCase().includes(custQ) || w.accountName.toLowerCase().includes(custQ))
+    return items.filter(
+      (w) =>
+        (statusFilter === "all" || w.status === statusFilter) &&
+        (channelFilter === "all" || w.channel === channelFilter) &&
+        (bankFilter === "all" || w.bankName === bankFilter) &&
+        w.amount >= min &&
+        w.amount <= max &&
+        (idQ === "" || w.id.toLowerCase().includes(idQ) || w.reference.toLowerCase().includes(idQ)) &&
+        (custQ === "" || w.alias.toLowerCase().includes(custQ) || w.accountName.toLowerCase().includes(custQ)),
     );
   }, [items, idSearch, customerSearch, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
-    const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
+    const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
     return {
       all: filtered.reduce((a, w) => a + w.amount, 0),
       pending: sum("pending"),
@@ -104,19 +107,31 @@ export default function AdminWithdrawals() {
   }, [filtered]);
 
   const updateStatus = (id: string, status: Status) => {
-    setItems(prev => prev.map(w => w.id === id ? { ...w, status } : w));
-    setSelected(s => s && s.id === id ? { ...s, status } : s);
+    setItems((prev) => prev.map((w) => (w.id === id ? { ...w, status } : w)));
+    setSelected((s) => (s && s.id === id ? { ...s, status } : s));
     toast({ title: `Withdrawal ${status}`, description: `${id} marked as ${status}.` });
   };
 
   const exportCsv = () => {
     const headers = ["ID", "Alias", "Amount", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
-    const rows = filtered.map(w => [w.id, w.alias, w.amount, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
-    const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
+    const rows = filtered.map((w) => [
+      w.id,
+      w.alias,
+      w.amount,
+      w.bankName,
+      w.accountNumber,
+      w.channel,
+      w.status,
+      w.reference,
+      w.requestedAt,
+    ]);
+    const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `withdrawals-${Date.now()}.csv`; a.click();
+    a.href = url;
+    a.download = `withdrawals-${Date.now()}.csv`;
+    a.click();
     URL.revokeObjectURL(url);
     toast({ title: "Exported", description: `${filtered.length} records exported.` });
   };
@@ -140,8 +155,18 @@ export default function AdminWithdrawals() {
         <div className="grid grid-cols-4 gap-3 mb-5">
           <SummaryCard label="Total Requests" value={totals.count.toString()} hint="In current view" />
           <SummaryCard label="Total Volume" value={`Pts ${totals.all.toLocaleString()}`} hint="All filtered" />
-          <SummaryCard label="Pending" value={`Pts ${totals.pending.toLocaleString()}`} hint="Awaiting action" tone="warning" />
-          <SummaryCard label="Successful" value={`Pts ${totals.successful.toLocaleString()}`} hint="Disbursed" tone="success" />
+          <SummaryCard
+            label="Pending"
+            value={`Pts ${totals.pending.toLocaleString()}`}
+            hint="Awaiting action"
+            tone="warning"
+          />
+          <SummaryCard
+            label="Successful"
+            value={`Pts ${totals.successful.toLocaleString()}`}
+            hint="Disbursed"
+            tone="success"
+          />
         </div>
 
         {/* Filters */}
@@ -149,40 +174,58 @@ export default function AdminWithdrawals() {
           <div className="relative w-56">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Request ID / Reference"
+              placeholder="Request ID"
               className="pl-10"
               value={idSearch}
-              onChange={e => setIdSearch(e.target.value)}
+              onChange={(e) => setIdSearch(e.target.value)}
             />
           </div>
           <div className="relative w-56">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Customer alias / name"
+              placeholder="Customer alias"
               className="pl-10"
               value={customerSearch}
-              onChange={e => setCustomerSearch(e.target.value)}
+              onChange={(e) => setCustomerSearch(e.target.value)}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
-              {statuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
+              {statuses.map((s) => (
+                <SelectItem key={s} value={s} className="capitalize">
+                  {s}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Channel" /></SelectTrigger>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Channel" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All channels</SelectItem>
-              {channels.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              {channels.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Select value={bankFilter} onValueChange={setBankFilter}>
-            <SelectTrigger className="w-36"><SelectValue placeholder="Bank" /></SelectTrigger>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Bank" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All banks</SelectItem>
-              {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+              {banks.map((b) => (
+                <SelectItem key={b} value={b}>
+                  {b}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <Input
@@ -190,14 +233,14 @@ export default function AdminWithdrawals() {
             placeholder="Min pts"
             className="w-24"
             value={minAmount}
-            onChange={e => setMinAmount(e.target.value)}
+            onChange={(e) => setMinAmount(e.target.value)}
           />
           <Input
             type="number"
             placeholder="Max pts"
             className="w-24"
             value={maxAmount}
-            onChange={e => setMaxAmount(e.target.value)}
+            onChange={(e) => setMaxAmount(e.target.value)}
           />
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
@@ -219,7 +262,7 @@ export default function AdminWithdrawals() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(w => {
+              {filtered.map((w) => {
                 const cfg = statusConfig[w.status];
                 const Icon = cfg.icon;
                 return (
@@ -239,16 +282,22 @@ export default function AdminWithdrawals() {
                       <p className="text-muted-foreground">{w.accountNumber}</p>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-[10px]">{w.channel}</Badge>
+                      <Badge variant="outline" className="text-[10px]">
+                        {w.channel}
+                      </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full ${cfg.className}`}>
+                      <span
+                        className={`inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full ${cfg.className}`}
+                      >
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>View</Button>
+                      <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>
+                        View
+                      </Button>
                     </TableCell>
                   </TableRow>
                 );
@@ -299,7 +348,17 @@ export default function AdminWithdrawals() {
   );
 }
 
-function SummaryCard({ label, value, hint, tone }: { label: string; value: string; hint: string; tone?: "success" | "warning" }) {
+function SummaryCard({
+  label,
+  value,
+  hint,
+  tone,
+}: {
+  label: string;
+  value: string;
+  hint: string;
+  tone?: "success" | "warning";
+}) {
   const toneClass = tone === "success" ? "text-emerald-600" : tone === "warning" ? "text-amber-600" : "text-foreground";
   return (
     <div className="bg-card border rounded-xl p-4">
