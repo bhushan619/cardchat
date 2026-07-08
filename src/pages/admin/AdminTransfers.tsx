@@ -41,7 +41,7 @@ const seed: Transfer[] = customerWallets.flatMap((w, i) => {
   return Array.from({ length: count }).map((_, j) => {
     const idx = i * 5 + j;
     return {
-      id: `TR-2026031${(8 - (j % 4))}-${String(200 + idx).padStart(3, "0")}`,
+      id: `${20260311 + ((idx) % 8)}${String(200 + idx).padStart(4, "0")}`,
       alias: w.alias,
       amount: Math.round((w.totalWithdrawals / count) * (0.5 + (j * 0.2))),
       bankName: banks[(idx + 3) % banks.length],
