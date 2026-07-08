@@ -405,26 +405,56 @@ export default function AdminMessages() {
 
   const transferMethods = ["PalmPay2", "OPay", "Moniepoint", "Kuda", "Manual Bank Transfer"];
   const nigerianBanks = [
-    "Access Bank", "Citibank", "Ecobank", "Fidelity Bank", "First Bank of Nigeria",
-    "First City Monument Bank (FCMB)", "Guaranty Trust Bank (GTBank)", "Heritage Bank",
-    "Keystone Bank", "Kuda Bank", "OPay", "PalmPay", "Polaris Bank", "Providus Bank",
-    "Stanbic IBTC Bank", "Standard Chartered", "Sterling Bank", "Union Bank",
-    "United Bank for Africa (UBA)", "Unity Bank", "Wema Bank", "Zenith Bank",
+    "Access Bank",
+    "Citibank",
+    "Ecobank",
+    "Fidelity Bank",
+    "First Bank of Nigeria",
+    "First City Monument Bank (FCMB)",
+    "Guaranty Trust Bank (GTBank)",
+    "Heritage Bank",
+    "Keystone Bank",
+    "Kuda Bank",
+    "OPay",
+    "PalmPay",
+    "Polaris Bank",
+    "Providus Bank",
+    "Stanbic IBTC Bank",
+    "Standard Chartered",
+    "Sterling Bank",
+    "Union Bank",
+    "United Bank for Africa (UBA)",
+    "Unity Bank",
+    "Wema Bank",
+    "Zenith Bank",
   ];
 
   // Detect bank account details in a message. Returns null when nothing matches.
   const bankAliases: Record<string, string> = {
-    gtb: "Guaranty Trust Bank (GTBank)", gtbank: "Guaranty Trust Bank (GTBank)",
+    gtb: "Guaranty Trust Bank (GTBank)",
+    gtbank: "Guaranty Trust Bank (GTBank)",
     uba: "United Bank for Africa (UBA)",
     fcmb: "First City Monument Bank (FCMB)",
-    firstbank: "First Bank of Nigeria", "first bank": "First Bank of Nigeria",
-    opay: "OPay", palmpay: "PalmPay", kuda: "Kuda Bank",
+    firstbank: "First Bank of Nigeria",
+    "first bank": "First Bank of Nigeria",
+    opay: "OPay",
+    palmpay: "PalmPay",
+    kuda: "Kuda Bank",
     moniepoint: "OPay", // treat as generic; adjust as needed
-    ecobank: "Ecobank", zenith: "Zenith Bank", access: "Access Bank",
-    fidelity: "Fidelity Bank", sterling: "Sterling Bank", wema: "Wema Bank",
-    union: "Union Bank", polaris: "Polaris Bank", stanbic: "Stanbic IBTC Bank",
-    heritage: "Heritage Bank", keystone: "Keystone Bank", providus: "Providus Bank",
-    unity: "Unity Bank", citibank: "Citibank",
+    ecobank: "Ecobank",
+    zenith: "Zenith Bank",
+    access: "Access Bank",
+    fidelity: "Fidelity Bank",
+    sterling: "Sterling Bank",
+    wema: "Wema Bank",
+    union: "Union Bank",
+    polaris: "Polaris Bank",
+    stanbic: "Stanbic IBTC Bank",
+    heritage: "Heritage Bank",
+    keystone: "Keystone Bank",
+    providus: "Providus Bank",
+    unity: "Unity Bank",
+    citibank: "Citibank",
   };
   const detectBankDetails = (text: string): { bank: string; account: string; recipient?: string } | null => {
     if (!text) return null;
@@ -445,7 +475,6 @@ export default function AdminMessages() {
     return { bank, account, recipient };
   };
 
-
   const resetTransferForm = () => {
     setTransferMethod("PalmPay2");
     setTransferBank("");
@@ -457,7 +486,6 @@ export default function AdminMessages() {
     setTransferVerified(false);
     setTransferVerifying(false);
   };
-
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -913,17 +941,18 @@ export default function AdminMessages() {
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
                             <ChannelBadge channel={c.channel} size="xs" showLabel={false} />
-                            {c.channel === "whatsapp" && (() => {
-                              const line = pickBusinessNumberFor(c.id);
-                              return (
-                                <span
-                                  className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium truncate leading-none"
-                                  title={`Received on ${line.label} · ${line.phone}`}
-                                >
-                                  {line.label}
-                                </span>
-                              );
-                            })()}
+                            {c.channel === "whatsapp" &&
+                              (() => {
+                                const line = pickBusinessNumberFor(c.id);
+                                return (
+                                  <span
+                                    className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium truncate leading-none"
+                                    title={`Received on ${line.label} · ${line.phone}`}
+                                  >
+                                    {line.label}
+                                  </span>
+                                );
+                              })()}
                           </div>
                           <div className="flex items-center gap-1">
                             {cStatus && (
@@ -979,14 +1008,16 @@ export default function AdminMessages() {
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-semibold whitespace-nowrap">{selectedConvo.alias}</p>
                         <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
-                        {selectedConvo.channel === "whatsapp" && !isGroupChat && (() => {
-                          const line = pickBusinessNumberFor(selectedConvo.id);
-                          return (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap leading-none">
-                              {line.label}
-                            </span>
-                          );
-                        })()}
+                        {selectedConvo.channel === "whatsapp" &&
+                          !isGroupChat &&
+                          (() => {
+                            const line = pickBusinessNumberFor(selectedConvo.id);
+                            return (
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap leading-none">
+                                {line.label}
+                              </span>
+                            );
+                          })()}
                         {isGroupChat && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
                             <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
@@ -1005,7 +1036,10 @@ export default function AdminMessages() {
                       <div className="flex flex-col gap-0.5 leading-tight">
                         <div className="flex items-center gap-1">
                           <span className="text-[10px] font-semibold text-muted-foreground w-9">TP</span>
-                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />4,850,000</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5">
+                            <Coins className="w-3 h-3" />
+                            4,850,000
+                          </span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
@@ -1018,7 +1052,10 @@ export default function AdminMessages() {
                         </div>
                         <div className="flex items-center gap-1">
                           <span className="text-[10px] font-semibold text-muted-foreground w-9">MTP</span>
-                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />1,250,000</span>
+                          <span className="text-[10px] font-bold text-foreground inline-flex items-center gap-0.5">
+                            <Coins className="w-3 h-3" />
+                            1,250,000
+                          </span>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <Info className="w-3 h-3 text-muted-foreground cursor-help" />
@@ -1184,72 +1221,72 @@ export default function AdminMessages() {
                     const isCustomer = msg.sender === "customer";
                     return (
                       <Fragment key={msg.id}>
-                      <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
-                        <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
-                          <p
-                            className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
-                          >
-                            {msg.senderName}
-                          </p>
-                          {msg.image ? (
-                            msg.imageUrl ? (
-                              <button
-                                onClick={() => openViewer(msg.imageUrl!)}
-                                className="group relative block rounded-lg overflow-hidden"
-                              >
-                                <img
-                                  src={msg.imageUrl}
-                                  alt="attachment"
-                                  className="max-w-[12rem] max-h-40 object-cover"
-                                />
-                                <span className="absolute inset-0 bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-colors">
-                                  <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
-                                </span>
-                              </button>
-                            ) : (
-                              <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
-                                <Image className="w-6 h-6 text-muted-foreground" />
-                                <span className="text-xs text-muted-foreground ml-1">Card Image</span>
-                              </div>
-                            )
-                          ) : (
-                            <p>{msg.text}</p>
-                          )}
-                          <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
-                        </div>
-                      </div>
-                      {/* Detected bank details chip */}
-                      {(() => {
-                        if (msg.image || msg.sender !== "customer") return null;
-                        if (selectedConvo?.channel !== "whatsapp") return null;
-                        const det = detectBankDetails(msg.text);
-                        if (!det) return null;
-                        return (
-                          <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
-                            <button
-                              type="button"
-                              onClick={() => {
-                                resetTransferForm();
-                                setTransferBank(det.bank);
-                                setTransferAccount(det.account);
-                                if (det.recipient) {
-                                  setTransferRecipient(det.recipient);
-                                  setTransferVerified(true);
-                                }
-                                setTransferOpen(true);
-                                toast.success("Bank details prefilled");
-                              }}
-                              className="mt-1 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/5 hover:bg-accent/10 text-accent px-3 py-1 text-[11px] font-medium transition-colors"
+                        <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                          <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
+                            <p
+                              className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
                             >
-                              <ArrowRightLeft className="w-3 h-3" />
-                              <span className="font-semibold">{det.bank}</span>
-                              <span className="font-mono opacity-80">· {det.account}</span>
-                              <span className="opacity-70">→ Use in Transfer</span>
-                            </button>
+                              {msg.senderName}
+                            </p>
+                            {msg.image ? (
+                              msg.imageUrl ? (
+                                <button
+                                  onClick={() => openViewer(msg.imageUrl!)}
+                                  className="group relative block rounded-lg overflow-hidden"
+                                >
+                                  <img
+                                    src={msg.imageUrl}
+                                    alt="attachment"
+                                    className="max-w-[12rem] max-h-40 object-cover"
+                                  />
+                                  <span className="absolute inset-0 bg-black/0 group-hover:bg-black/30 flex items-center justify-center transition-colors">
+                                    <ZoomIn className="w-5 h-5 text-white opacity-0 group-hover:opacity-100" />
+                                  </span>
+                                </button>
+                              ) : (
+                                <div className="w-48 h-32 bg-muted rounded-lg flex items-center justify-center">
+                                  <Image className="w-6 h-6 text-muted-foreground" />
+                                  <span className="text-xs text-muted-foreground ml-1">Card Image</span>
+                                </div>
+                              )
+                            ) : (
+                              <p>{msg.text}</p>
+                            )}
+                            <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                           </div>
-                        );
-                      })()}
-                    </Fragment>
+                        </div>
+                        {/* Detected bank details chip */}
+                        {(() => {
+                          if (msg.image || msg.sender !== "customer") return null;
+                          if (selectedConvo?.channel !== "whatsapp") return null;
+                          const det = detectBankDetails(msg.text);
+                          if (!det) return null;
+                          return (
+                            <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  resetTransferForm();
+                                  setTransferBank(det.bank);
+                                  setTransferAccount(det.account);
+                                  if (det.recipient) {
+                                    setTransferRecipient(det.recipient);
+                                    setTransferVerified(true);
+                                  }
+                                  setTransferOpen(true);
+                                  toast.success("Bank details prefilled");
+                                }}
+                                className="mt-1 inline-flex items-center gap-2 rounded-full border border-accent/40 bg-accent/5 hover:bg-accent/10 text-accent px-3 py-1 text-[11px] font-medium transition-colors"
+                              >
+                                <ArrowRightLeft className="w-3 h-3" />
+                                <span className="font-semibold">{det.bank}</span>
+                                <span className="font-mono opacity-80">· {det.account}</span>
+                                <span className="opacity-70">→ Use in Transfer</span>
+                              </button>
+                            </div>
+                          );
+                        })()}
+                      </Fragment>
                     );
                   })}
                 </div>
@@ -1524,15 +1561,29 @@ export default function AdminMessages() {
                                     </Button>
                                   </div>
                                   <div className="space-y-1.5">
-                                    {([
-                                      ["Order ID", o.id],
-                                      ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
-                                      ["Amount", `$${o.amount}`],
-                                      ["Points price", <span key="pp" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{(o.unitPrice || o.nairaRate).toLocaleString()}</span>],
-                                      ["Release", <span key="rel" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{o.payout.toLocaleString()}</span>],
-                                      ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
-                                      ["Time", o.timestamp],
-                                    ] as Array<[string, React.ReactNode]>).map(([k, v]) => (
+                                    {(
+                                      [
+                                        ["Order ID", o.id],
+                                        ["Card", `${o.cardType}${o.cardCurrency ? ` / ${o.cardCurrency}` : ""}`],
+                                        ["Amount", `$${o.amount}`],
+                                        [
+                                          "Points price",
+                                          <span key="pp" className="inline-flex items-center gap-0.5">
+                                            <Coins className="w-3 h-3" />
+                                            {(o.unitPrice || o.nairaRate).toLocaleString()}
+                                          </span>,
+                                        ],
+                                        [
+                                          "Release",
+                                          <span key="rel" className="inline-flex items-center gap-0.5">
+                                            <Coins className="w-3 h-3" />
+                                            {o.payout.toLocaleString()}
+                                          </span>,
+                                        ],
+                                        ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
+                                        ["Time", o.timestamp],
+                                      ] as Array<[string, React.ReactNode]>
+                                    ).map(([k, v]) => (
                                       <div key={k} className="flex justify-between text-xs">
                                         <span className="text-muted-foreground">{k}</span>
                                         <span className="font-medium">{v}</span>
@@ -1658,8 +1709,9 @@ export default function AdminMessages() {
                   // Deterministic mock fallbacks derived from order id so each order shows realistic data
                   const seed = detailOrder.id || "0";
                   const seedNum = Array.from(seed).reduce((a, c) => a + c.charCodeAt(0), 0);
-                  const fallbackCardNumber = String(4000000000000000 + (seedNum * 7919) % 999999999999).slice(0, 16);
-                  const cardNumber = detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : fallbackCardNumber;
+                  const fallbackCardNumber = String(4000000000000000 + ((seedNum * 7919) % 999999999999)).slice(0, 16);
+                  const cardNumber =
+                    detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : fallbackCardNumber;
                   const orderCode = detailOrder.id;
                   const mockNicknames = ["肖捺", "王伟", "李娜", "Chen Yu", "Zhang Min", "Liu Yang"];
                   const mockAliases = ["M09L81", "K23P47", "T81X02", "Q44R19", "B67N38", "Z12V90"];
@@ -1741,182 +1793,194 @@ export default function AdminMessages() {
                     ["Order face value", `${purchaseFaceValue}`],
                     ["Order unit price", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
                     ["Order amount", orderAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })],
-                    ["Points rate", <span className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{Number(nairaRate).toLocaleString()}</span>],
+                    [
+                      "Points rate",
+                      <span className="inline-flex items-center gap-0.5">
+                        <Coins className="w-3 h-3" />
+                        {Number(nairaRate).toLocaleString()}
+                      </span>,
+                    ],
                     ["Settlement coin", settleCoin],
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
-                    ["Settlement amount", `₦${settlementAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })}`],
+                    [
+                      "Settlement amount",
+                      `₦${settlementAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
+                    ],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
-
 
                   return (
                     <div className="space-y-5 pt-2">
                       <div className="grid grid-cols-2 gap-8">
-                      {/* Product Information */}
-                      <div className="space-y-4">
-                        <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
-                        <div className="space-y-3">
-                          {productRows.map(([label, value, copyable]) => (
-                            <div key={label} className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-medium break-all">{value}</span>
-                                {copyable && (
+                        {/* Product Information */}
+                        <div className="space-y-4">
+                          <h4 className="font-heading font-semibold text-sm text-center">Product Information</h4>
+                          <div className="space-y-3">
+                            {productRows.map(([label, value, copyable]) => (
+                              <div key={label} className="flex gap-3 text-sm">
+                                <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="font-medium break-all">{value}</span>
+                                  {copyable && (
+                                    <button
+                                      onClick={() => handleCopy(String(value), `modal-${label}`)}
+                                      className="text-muted-foreground hover:text-primary shrink-0"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                  {copyFeedback === `modal-${label}` && (
+                                    <span className="text-[9px] text-success">Copied!</span>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                            {/* Card number with masking + reveal toggle (unified with card number) */}
+                            {cardNumber !== "—" && (
+                              <div className="flex gap-3 text-sm">
+                                <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card number</span>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span className="font-medium font-mono break-all">
+                                    {showCardNumber
+                                      ? cardNumber
+                                      : cardNumber.length <= 4
+                                        ? "•".repeat(cardNumber.length)
+                                        : `${"•".repeat(Math.max(0, cardNumber.length - 4))}${cardNumber.slice(-4)}`}
+                                  </span>
                                   <button
-                                    onClick={() => handleCopy(String(value), `modal-${label}`)}
+                                    onClick={() => setShowCardNumber((v) => !v)}
+                                    className="text-muted-foreground hover:text-primary shrink-0"
+                                    aria-label={showCardNumber ? "Hide card code" : "Show card code"}
+                                  >
+                                    {showCardNumber ? (
+                                      <EyeOff className="w-3.5 h-3.5" />
+                                    ) : (
+                                      <Eye className="w-3.5 h-3.5" />
+                                    )}
+                                  </button>
+                                  <button
+                                    onClick={() => handleCopy(cardNumber, "modal-Card number")}
                                     className="text-muted-foreground hover:text-primary shrink-0"
                                   >
                                     <Copy className="w-3.5 h-3.5" />
                                   </button>
-                                )}
-                                {copyFeedback === `modal-${label}` && (
-                                  <span className="text-[9px] text-success">Copied!</span>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                          {/* Card number with masking + reveal toggle (unified with card number) */}
-                          {cardNumber !== "—" && (
-                            <div className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">Card number</span>
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <span className="font-medium font-mono break-all">
-                                  {showCardNumber
-                                    ? cardNumber
-                                    : cardNumber.length <= 4
-                                      ? "•".repeat(cardNumber.length)
-                                      : `${"•".repeat(Math.max(0, cardNumber.length - 4))}${cardNumber.slice(-4)}`}
-                                </span>
-                                <button
-                                  onClick={() => setShowCardNumber((v) => !v)}
-                                  className="text-muted-foreground hover:text-primary shrink-0"
-                                  aria-label={showCardNumber ? "Hide card code" : "Show card code"}
-                                >
-                                  {showCardNumber ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                                </button>
-                                <button
-                                  onClick={() => handleCopy(cardNumber, "modal-Card number")}
-                                  className="text-muted-foreground hover:text-primary shrink-0"
-                                >
-                                  <Copy className="w-3.5 h-3.5" />
-                                </button>
-                                {copyFeedback === "modal-Card number" && (
-                                  <span className="text-[9px] text-success">Copied!</span>
-                                )}
-                              </div>
-                            </div>
-                          )}
-                          {/* Card images (may be multiple) */}
-                          <div className="flex gap-3 text-sm">
-                            <span className="text-muted-foreground w-[130px] shrink-0 text-right pt-1">
-                              {cardImages.length > 1 ? `Card images (${cardImages.length})` : "Card image"}
-                            </span>
-                            <div className="flex gap-2 flex-wrap">
-                              {cardImages.length > 0 ? (
-                                cardImages.map((src, i) => (
-                                  <a key={i} href={src} target="_blank" rel="noreferrer" className="block">
-                                    <img
-                                      src={src}
-                                      alt={`Card ${i + 1}`}
-                                      className="w-20 h-14 object-cover rounded border hover:ring-2 hover:ring-primary transition"
-                                    />
-                                  </a>
-                                ))
-                              ) : (
-                                <div className="w-20 h-14 bg-muted rounded flex items-center justify-center">
-                                  <CreditCard className="w-5 h-5 text-muted-foreground" />
+                                  {copyFeedback === "modal-Card number" && (
+                                    <span className="text-[9px] text-success">Copied!</span>
+                                  )}
                                 </div>
-                              )}
+                              </div>
+                            )}
+                            {/* Card images (may be multiple) */}
+                            <div className="flex gap-3 text-sm">
+                              <span className="text-muted-foreground w-[130px] shrink-0 text-right pt-1">
+                                {cardImages.length > 1 ? `Card images (${cardImages.length})` : "Card image"}
+                              </span>
+                              <div className="flex gap-2 flex-wrap">
+                                {cardImages.length > 0 ? (
+                                  cardImages.map((src, i) => (
+                                    <a key={i} href={src} target="_blank" rel="noreferrer" className="block">
+                                      <img
+                                        src={src}
+                                        alt={`Card ${i + 1}`}
+                                        className="w-20 h-14 object-cover rounded border hover:ring-2 hover:ring-primary transition"
+                                      />
+                                    </a>
+                                  ))
+                                ) : (
+                                  <div className="w-20 h-14 bg-muted rounded flex items-center justify-center">
+                                    <CreditCard className="w-5 h-5 text-muted-foreground" />
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
 
-                      {/* Order Information */}
-                      <div className="space-y-4">
-                        <h4 className="font-heading font-semibold text-sm text-center">Order Information</h4>
-                        <div className="space-y-3">
-                          {orderRows.map(([label, value, copyable, kind]) => (
-                            <div key={label} className="flex gap-3 text-sm">
-                              <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
-                              <div className="flex items-center gap-1.5 min-w-0">
-                                <span
-                                  className={`font-medium break-all ${
-                                    kind === "status" && value === "success"
-                                      ? "text-success"
-                                      : kind === "status" && value === "order_cancelled"
-                                        ? "text-destructive"
-                                        : kind === "status" && value === "in_trade"
-                                          ? "text-accent"
-                                          : kind === "status"
-                                            ? "text-warning"
-                                            : ""
-                                  }`}
-                                >
-                                  {value}
-                                </span>
-                                {copyable && (
-                                  <button
-                                    onClick={() => handleCopy(String(value), `modal-${label}`)}
-                                    className="text-muted-foreground hover:text-primary shrink-0"
+                        {/* Order Information */}
+                        <div className="space-y-4">
+                          <h4 className="font-heading font-semibold text-sm text-center">Order Information</h4>
+                          <div className="space-y-3">
+                            {orderRows.map(([label, value, copyable, kind]) => (
+                              <div key={label} className="flex gap-3 text-sm">
+                                <span className="text-muted-foreground w-[130px] shrink-0 text-right">{label}</span>
+                                <div className="flex items-center gap-1.5 min-w-0">
+                                  <span
+                                    className={`font-medium break-all ${
+                                      kind === "status" && value === "success"
+                                        ? "text-success"
+                                        : kind === "status" && value === "order_cancelled"
+                                          ? "text-destructive"
+                                          : kind === "status" && value === "in_trade"
+                                            ? "text-accent"
+                                            : kind === "status"
+                                              ? "text-warning"
+                                              : ""
+                                    }`}
                                   >
-                                    <Copy className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                                {copyFeedback === `modal-${label}` && (
-                                  <span className="text-[9px] text-success">Copied!</span>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-
-                          {/* Negotiation comparison */}
-                          {detailOrder &&
-                            negotiationData[detailOrder.id] &&
-                            (() => {
-                              const neg = negotiationData[detailOrder.id];
-                              const currSym = detailOrder.cardCurrency === "GBP" ? "£" : "$";
-                              return (
-                                <div className="mt-3 pt-3 border-t border-warning/30">
-                                  <h4 className="font-heading font-semibold text-xs text-warning mb-2">
-                                    Negotiation Details
-                                  </h4>
-                                  <div className="space-y-2">
-                                    {[
-                                      [
-                                        "Denomination",
-                                        `${currSym}${neg.oldDenom.toLocaleString()}`,
-                                        `${currSym}${neg.newDenom.toLocaleString()}`,
-                                      ],
-                                      [
-                                        "Points price",
-                                        `${neg.oldRate.toLocaleString()}`,
-                                        `${neg.newRate.toLocaleString()}`,
-                                      ],
-                                      [
-                                        "Release",
-                                        `${neg.oldAmount.toLocaleString()}`,
-                                        `${neg.newAmount.toLocaleString()}`,
-                                      ],
-                                    ].map(([label, oldVal, newVal]) => (
-                                      <div key={label} className="flex gap-3 text-sm">
-                                        <span className="text-muted-foreground w-[130px] shrink-0 text-right">
-                                          {label}
-                                        </span>
-                                        <div className="flex items-center gap-2">
-                                          <span className="line-through text-muted-foreground">{oldVal}</span>
-                                          <span className="text-foreground">→</span>
-                                          <span className="font-semibold text-warning">{newVal}</span>
-                                        </div>
-                                      </div>
-                                    ))}
-                                  </div>
+                                    {value}
+                                  </span>
+                                  {copyable && (
+                                    <button
+                                      onClick={() => handleCopy(String(value), `modal-${label}`)}
+                                      className="text-muted-foreground hover:text-primary shrink-0"
+                                    >
+                                      <Copy className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                  {copyFeedback === `modal-${label}` && (
+                                    <span className="text-[9px] text-success">Copied!</span>
+                                  )}
                                 </div>
-                              );
-                            })()}
+                              </div>
+                            ))}
+
+                            {/* Negotiation comparison */}
+                            {detailOrder &&
+                              negotiationData[detailOrder.id] &&
+                              (() => {
+                                const neg = negotiationData[detailOrder.id];
+                                const currSym = detailOrder.cardCurrency === "GBP" ? "£" : "$";
+                                return (
+                                  <div className="mt-3 pt-3 border-t border-warning/30">
+                                    <h4 className="font-heading font-semibold text-xs text-warning mb-2">
+                                      Negotiation Details
+                                    </h4>
+                                    <div className="space-y-2">
+                                      {[
+                                        [
+                                          "Denomination",
+                                          `${currSym}${neg.oldDenom.toLocaleString()}`,
+                                          `${currSym}${neg.newDenom.toLocaleString()}`,
+                                        ],
+                                        [
+                                          "Points price",
+                                          `${neg.oldRate.toLocaleString()}`,
+                                          `${neg.newRate.toLocaleString()}`,
+                                        ],
+                                        [
+                                          "Release",
+                                          `${neg.oldAmount.toLocaleString()}`,
+                                          `${neg.newAmount.toLocaleString()}`,
+                                        ],
+                                      ].map(([label, oldVal, newVal]) => (
+                                        <div key={label} className="flex gap-3 text-sm">
+                                          <span className="text-muted-foreground w-[130px] shrink-0 text-right">
+                                            {label}
+                                          </span>
+                                          <div className="flex items-center gap-2">
+                                            <span className="line-through text-muted-foreground">{oldVal}</span>
+                                            <span className="text-foreground">→</span>
+                                            <span className="font-semibold text-warning">{newVal}</span>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  </div>
+                                );
+                              })()}
+                          </div>
                         </div>
-                      </div>
                       </div>
 
                       {/* Buyer Details — full width below the grid */}
@@ -2044,7 +2108,7 @@ export default function AdminMessages() {
 
               <div className="space-y-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-medium">Actual Denomination ({currSymbol})</label>
+                  <label className="text-xs font-medium">Actual Denomination</label>
                   <Input
                     type="number"
                     placeholder={`e.g. 50`}
@@ -2526,9 +2590,15 @@ export default function AdminMessages() {
                   <div className="space-y-1.5">
                     <Label className="text-xs">Transfer Method</Label>
                     <Select value={transferMethod} onValueChange={setTransferMethod}>
-                      <SelectTrigger className="h-10"><SelectValue /></SelectTrigger>
+                      <SelectTrigger className="h-10">
+                        <SelectValue />
+                      </SelectTrigger>
                       <SelectContent>
-                        {transferMethods.map((m) => <SelectItem key={m} value={m}>{m}</SelectItem>)}
+                        {transferMethods.map((m) => (
+                          <SelectItem key={m} value={m}>
+                            {m}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2544,9 +2614,15 @@ export default function AdminMessages() {
                         setTransferRecipient("");
                       }}
                     >
-                      <SelectTrigger className="h-10"><SelectValue placeholder="Please select bank" /></SelectTrigger>
+                      <SelectTrigger className="h-10">
+                        <SelectValue placeholder="Please select bank" />
+                      </SelectTrigger>
                       <SelectContent>
-                        {nigerianBanks.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+                        {nigerianBanks.map((b) => (
+                          <SelectItem key={b} value={b}>
+                            {b}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
@@ -2624,7 +2700,9 @@ export default function AdminMessages() {
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
                         inputMode="decimal"
                       />
-                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">PTS</span>
+                      <span className="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground border rounded px-1.5 py-0.5 bg-muted">
+                        PTS
+                      </span>
                     </div>
                     <p className="text-[10px] text-muted-foreground">Max Pts 2,000,000 per transaction</p>
                   </div>
@@ -2651,7 +2729,9 @@ export default function AdminMessages() {
               {/* Notes */}
               <section className="rounded-xl border bg-card">
                 <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">Notes <span className="font-normal text-muted-foreground">(optional)</span></h3>
+                  <h3 className="text-sm font-semibold">
+                    Notes <span className="font-normal text-muted-foreground">(optional)</span>
+                  </h3>
                 </header>
                 <div className="p-4">
                   <Textarea
@@ -2669,8 +2749,14 @@ export default function AdminMessages() {
             <div className="overflow-y-auto bg-muted/10">
               {(() => {
                 const key = `cc.transfers.${selectedConvo?.id || ""}`;
-                const saved: Array<{ bank: string; account: string; recipient: string; method: string; amount: number; at: number }> =
-                  selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
+                const saved: Array<{
+                  bank: string;
+                  account: string;
+                  recipient: string;
+                  method: string;
+                  amount: number;
+                  at: number;
+                }> = selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
 
                 // Saved beneficiaries — dedupe by bank+account
                 const seen = new Set<string>();
@@ -2681,11 +2767,46 @@ export default function AdminMessages() {
                   return true;
                 });
 
-                const mock = selectedConvo ? [
-                  { method: "PalmPay3", at: new Date("2026-06-30T03:08:00").getTime(), orderNo: "X1782763735728586", refNo: "41260629200855993684", bank: "Opay", account: "9044585925", recipient: "TSEYI OLOLO", amount: 1641500, nickname: "/", status: "Success" as const },
-                  { method: "PalmPay2", at: new Date("2026-06-16T04:27:00").getTime(), orderNo: "X1781558859434543", refNo: "41260615212739917821", bank: "MONIEPOINT MICROFINANCE BANK", account: "7025207542", recipient: "OBORO SAMUEL ANOINTED", amount: 330900, nickname: "Sammy", status: "Success" as const },
-                  { method: "PalmPay3", at: new Date("2026-06-03T23:21:00").getTime(), orderNo: "X1782050366673779", refNo: "41260603162107663455", bank: "Opay", account: "8168956827", recipient: "OGAGA PERKINS ESIENNA", amount: 5000, nickname: "Buying All countries Gift cards & Mailing items to all countries", status: "Success" as const },
-                ] : [];
+                const mock = selectedConvo
+                  ? [
+                      {
+                        method: "PalmPay3",
+                        at: new Date("2026-06-30T03:08:00").getTime(),
+                        orderNo: "X1782763735728586",
+                        refNo: "41260629200855993684",
+                        bank: "Opay",
+                        account: "9044585925",
+                        recipient: "TSEYI OLOLO",
+                        amount: 1641500,
+                        nickname: "/",
+                        status: "Success" as const,
+                      },
+                      {
+                        method: "PalmPay2",
+                        at: new Date("2026-06-16T04:27:00").getTime(),
+                        orderNo: "X1781558859434543",
+                        refNo: "41260615212739917821",
+                        bank: "MONIEPOINT MICROFINANCE BANK",
+                        account: "7025207542",
+                        recipient: "OBORO SAMUEL ANOINTED",
+                        amount: 330900,
+                        nickname: "Sammy",
+                        status: "Success" as const,
+                      },
+                      {
+                        method: "PalmPay3",
+                        at: new Date("2026-06-03T23:21:00").getTime(),
+                        orderNo: "X1782050366673779",
+                        refNo: "41260603162107663455",
+                        bank: "Opay",
+                        account: "8168956827",
+                        recipient: "OGAGA PERKINS ESIENNA",
+                        amount: 5000,
+                        nickname: "Buying All countries Gift cards & Mailing items to all countries",
+                        status: "Success" as const,
+                      },
+                    ]
+                  : [];
                 const rows = [
                   ...saved.map((s) => ({
                     method: s.method,
@@ -2749,9 +2870,7 @@ export default function AdminMessages() {
                       </div>
                     </div>
                     {rows.length === 0 ? (
-                      <div className="text-xs text-muted-foreground text-center py-10">
-                        No transfer records
-                      </div>
+                      <div className="text-xs text-muted-foreground text-center py-10">No transfer records</div>
                     ) : (
                       <div className="divide-y">
                         {/* column headers */}
@@ -2797,13 +2916,19 @@ export default function AdminMessages() {
           <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
             <div className="text-[11px] text-muted-foreground">
               {transferAmount && transferRate && Number(transferRate) > 0 ? (
-                <>Sending <span className="font-semibold text-foreground">Pts {Number(transferAmount).toLocaleString()}</span> via {transferMethod}</>
+                <>
+                  Sending{" "}
+                  <span className="font-semibold text-foreground">Pts {Number(transferAmount).toLocaleString()}</span>{" "}
+                  via {transferMethod}
+                </>
               ) : (
                 <>Fill in required fields to enable transfer</>
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setTransferOpen(false)}>Cancel</Button>
+              <Button variant="outline" onClick={() => setTransferOpen(false)}>
+                Cancel
+              </Button>
               <Button
                 disabled={!transferBank || !transferVerified || !transferAmount || !transferRate}
                 onClick={() => {
