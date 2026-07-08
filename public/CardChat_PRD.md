@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.4  
-**Date:** May 28, 2026
+**Version:** 5.5  
+**Date:** July 8, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -94,6 +94,7 @@ The current build is a **fully interactive frontend prototype** using mock data.
 /admin/rewards             → Rewards management (all roles)
 /admin/wallets             → Platform wallet (deposits, disbursements)
 /admin/withdrawals        → Consolidated customer withdrawals
+/admin/transfers          → Consolidated customer transfers (chat pop-up)
 /admin/broadcast           → SMS broadcast
 /admin/customer-guide      → Customer guide reference (for agents)
 /admin/guide               → Admin user guide
@@ -616,6 +617,7 @@ Four roles with hierarchical access:
 | Rewards | ✅ | ✅ | ✅ | ❌ |
 | Platform Wallet | ✅ | ❌ | ❌ | ✅ |
 | Withdrawals | ✅ | ✅ | ❌ | ✅ |
+| Transfers | ✅ | ✅ | ❌ | ✅ |
 | Customer Guide | ✅ | ✅ | ✅ | ❌ |
 | Admin Guide | ✅ | ✅ | ✅ | ❌ |
 | Naira Rate | ✅ | ✅ | ❌ | ✅ |
@@ -1143,12 +1145,14 @@ A consolidated ledger of all customer withdrawal requests across the platform, d
 - **Approved** — sum of approved withdrawal amounts (success tone)
 
 #### Filters
-- **Search:** Free-text across alias, request ID, bank name, and reference
+- **Request ID search:** dedicated input matching `id` and `reference`
+- **Customer search:** dedicated input matching `alias` and `accountName`
 - **Status filter:** All / Pending / Processing / Approved / Rejected
 - **Channel filter:** All / PalmPay 1 / PalmPay 2 / Manual
+- **Points range:** Min/Max numeric inputs
 
 #### Withdrawals Table
-- **Columns:** Request ID (monospace), Customer (avatar + alias), Amount (₦, right-aligned), Bank (name + masked account number), Channel (outline badge), Status (colored pill: Pending=amber, Processing=blue, Approved=emerald, Rejected=rose), Requested (timestamp), Actions (View button)
+- **Columns:** Request ID (monospace), Customer (avatar + alias), Amount (Points with Coins icon, right-aligned), Bank (name + masked account number), Channel (outline badge), Status (colored pill: Pending=amber, Processing=blue, Approved=emerald, Rejected=rose), Requested (timestamp), Actions (View button)
 - **Empty state:** "No withdrawal requests match your filters"
 
 #### Details Dialog
@@ -1159,6 +1163,37 @@ A consolidated ledger of all customer withdrawal requests across the platform, d
 #### CSV Export
 - Exports filtered records with all columns
 - Filename: `withdrawals-{timestamp}.csv`
+
+### 5.18c Customer Transfers (`/admin/transfers`)
+
+**Component:** `src/pages/admin/AdminTransfers.tsx`  
+**Access:** Super Admin, Team Lead, Finance
+
+A consolidated ledger of all transfers initiated from the in-chat **Transfer pop-up** on the Messages page. Structurally mirrors the Withdrawals page but scoped to chat-initiated disbursements to customers.
+
+#### Summary Widgets
+- Total Transfers (count), Total Volume (Points), Pending (warning tone), Successful (success tone)
+
+#### Filters
+- Free-text search (alias, transfer ID, bank, account, reference)
+- Status: All / Pending / Processing / Successful / Failed
+- Channel: All / PalmPay 1 / PalmPay 2 / Manual
+- Bank filter + Min/Max Points range
+
+#### Table
+- Columns: Transfer ID, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
+- Status pills: Pending=amber, Processing=blue, Successful=emerald, Failed=rose
+- Row "View" opens a Transfer Details dialog
+
+#### Details Dialog
+- Shows: Customer, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
+
+#### CSV Export
+- Exports filtered records; filename `transfers-{timestamp}.csv`
+
+#### Related Changes
+- **WhatsApp channel customers:** In `/admin/customers`, the transaction ledger relabels "Withdrawal" as "Transfer" when the selected customer's channel is `whatsapp`. Native TRTC customers continue to use "Withdrawal".
+- **Points currency:** All admin monetary values across Withdrawals, Transfers, Wallets and the chat Transfer pop-up display as **Points** (Coins icon + integer), replacing the Naira (`₦`) symbol previously used in admin surfaces.
 
 ### 5.19 SMS Broadcast (`/admin/broadcast`)
 
@@ -1583,6 +1618,7 @@ src/
 │   │   ├── AdminGuide.tsx            # Admin user guide
 │   │   ├── AdminWallets.tsx          # Platform wallet ledger
 │   │   ├── AdminWithdrawals.tsx      # Consolidated customer withdrawals
+│   │   ├── AdminTransfers.tsx        # Consolidated customer transfers (chat pop-up)
 │   │   ├── AdminProfile.tsx          # Admin profile settings
 │   │   ├── AdminScreensGallery.tsx   # Interactive screens gallery
 │   │   ├── AdminSetPassword.tsx      # Invite link password setup
@@ -1645,6 +1681,17 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.4 → v5.5 — July 8, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Customer Transfers Page** | New `/admin/transfers` page (`AdminTransfersx`) consolidating all transfers initiated from the in-chat Transfer pop-up. Includes 4 summary widgets, search + status/channel/bank filters, Points-range inputs, table with Coins-icon amounts, and CSV export (`transfers-{timestamp}.csv`). Access: Super Admin, Team Lead, Finance. |
+| **WhatsApp Customer Ledger Relabel** | In `/admin/customers`, "Withdrawal" transactions are relabeled to "Transfer" when the selected customer's channel is `whatsapp` (native TRTC customers unchanged). |
+| **Points Currency Across Admin** | Replaced Naira (`₦` / `NGN`) with **Points** (Coins icon + integer) across Admin Withdrawals, Admin Transfers, Admin Wallets summary/values, and the in-chat Transfer pop-up on Messages (max amount hint and displayed values). |
+| **Withdrawals Search Split** | `/admin/withdrawals` split its single search field into two dedicated inputs: Request ID (matches `id` + `reference`) and Customer (matches `alias` + `accountName`). Dropdown filters and Points min/max range preserved. |
+| **RBAC / Routes / File Structure** | Added `/admin/transfers` to §2.2, a "Transfers" row to the RBAC matrix in §5.3, section 5.18c for the Transfers page, and `AdminTransfers.tsx` to §9. |
+| **PRD Updated** | PRD bumped to v5.5 to document the Transfers page, Points currency migration, WhatsApp ledger relabel, and Withdrawals search split. |
 
 ### v5.3 → v5.4 — May 28, 2026
 
