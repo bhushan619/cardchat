@@ -69,8 +69,7 @@ export default function AdminWithdrawals() {
   const canAct = role === "super_admin" || role === "finance";
 
   const [items, setItems] = useState<Withdrawal[]>(seed);
-  const [idSearch, setIdSearch] = useState("");
-  const [customerSearch, setCustomerSearch] = useState("");
+  const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
@@ -79,8 +78,7 @@ export default function AdminWithdrawals() {
   const [selected, setSelected] = useState<Withdrawal | null>(null);
 
   const filtered = useMemo(() => {
-    const idQ = idSearch.toLowerCase();
-    const custQ = customerSearch.toLowerCase();
+    const q = search.toLowerCase();
     const min = minAmount === "" ? -Infinity : Number(minAmount);
     const max = maxAmount === "" ? Infinity : Number(maxAmount);
     return items.filter(
@@ -90,10 +88,13 @@ export default function AdminWithdrawals() {
         (bankFilter === "all" || w.bankName === bankFilter) &&
         w.amount >= min &&
         w.amount <= max &&
-        (idQ === "" || w.id.toLowerCase().includes(idQ) || w.reference.toLowerCase().includes(idQ)) &&
-        (custQ === "" || w.alias.toLowerCase().includes(custQ) || w.accountName.toLowerCase().includes(custQ)),
+        (q === "" ||
+          w.id.toLowerCase().includes(q) ||
+          w.reference.toLowerCase().includes(q) ||
+          w.alias.toLowerCase().includes(q) ||
+          w.accountName.toLowerCase().includes(q)),
     );
-  }, [items, idSearch, customerSearch, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -171,22 +172,13 @@ export default function AdminWithdrawals() {
 
         {/* Filters */}
         <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <div className="relative w-56">
+          <div className="relative flex-1 max-w-sm min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Request ID"
+              placeholder="Search Request ID or customer alias..."
               className="pl-10"
-              value={idSearch}
-              onChange={(e) => setIdSearch(e.target.value)}
-            />
-          </div>
-          <div className="relative w-56">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Customer alias"
-              className="pl-10"
-              value={customerSearch}
-              onChange={(e) => setCustomerSearch(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
