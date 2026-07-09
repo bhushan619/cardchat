@@ -1374,7 +1374,7 @@ export default function AdminMessages() {
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && selectedConvo && (
+                        {canAdjustFunds && selectedConvo && selectedConvo.channel !== "whatsapp" && (
                           <Button
                             size="sm"
                             variant="outline"
