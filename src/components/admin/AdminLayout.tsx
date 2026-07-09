@@ -42,26 +42,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
   const { role, setRole } = useAdminRole();
   const { theme, toggleTheme } = useTheme();
 
-  useEffect(() => {
-    const auth = sessionStorage.getItem("adminAuth");
-    let valid = false;
-    if (auth) {
-      try {
-        const parsed = JSON.parse(auth);
-        valid =
-          parsed &&
-          typeof parsed === "object" &&
-          typeof parsed.email === "string" &&
-          ["super_admin", "team_lead", "agent", "finance"].includes(parsed.role);
-      } catch {
-        valid = false;
-      }
-    }
-    if (!valid) {
-      sessionStorage.removeItem("adminAuth");
-      navigate("/admin/login", { replace: true });
-    }
-  }, [navigate]);
+  // Login is not required to browse the admin panel in prototype mode.
 
   const handleLogout = () => {
     sessionStorage.removeItem("adminAuth");
