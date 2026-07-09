@@ -50,6 +50,7 @@ import AdminProfile from "./pages/admin/AdminProfile";
 import AdminRanking from "./pages/admin/AdminRanking";
 import AdminRewards from "./pages/admin/AdminRewards";
 import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
+import AdminWhatsAppSessions from "./pages/admin/AdminWhatsAppSessions";
 
 const queryClient = new QueryClient();
 
@@ -93,6 +94,7 @@ const App = () => (
             <Route path="/admin/users" element={<AdminRoleProvider><AdminUsers /></AdminRoleProvider>} />
             <Route path="/admin/team" element={<AdminRoleProvider><AdminTeam /></AdminRoleProvider>} />
             <Route path="/admin/api-config" element={<AdminRoleProvider><AdminApiConfig /></AdminRoleProvider>} />
+            <Route path="/admin/whatsapp-sessions" element={<AdminRoleProvider><AdminWhatsAppSessions /></AdminRoleProvider>} />
             <Route path="/admin/broadcast" element={<AdminRoleProvider><AdminBroadcast /></AdminRoleProvider>} />
             <Route path="/admin/guide" element={<AdminRoleProvider><AdminGuide /></AdminRoleProvider>} />
             <Route path="/admin/ip-restrictions" element={<AdminRoleProvider><AdminIpRestrictions /></AdminRoleProvider>} />
