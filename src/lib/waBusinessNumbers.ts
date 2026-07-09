@@ -169,10 +169,8 @@ export function upsertWaNumber(
     id: `wa_${Math.random().toString(36).slice(2, 8)}`,
     ...n,
   } as WaBusinessNumber;
-  created.auditLog = [
-    { ts: now(), event: "created", actor: "Admin One", note: `Added ${created.label}` },
-    ...(created.auditLog || []),
-  ];
+  const seed: WaAuditEvent = { ts: now(), event: "created", actor: "Admin One", note: `Added ${created.label}` };
+  created.auditLog = [seed, ...(created.auditLog || [])];
   list.push(created);
   write(list);
   return created;
