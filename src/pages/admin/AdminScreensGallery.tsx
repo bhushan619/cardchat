@@ -30,11 +30,7 @@ export default function AdminScreensGallery() {
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 
   // Require prior admin authentication; never auto-grant access from this page.
-  useEffect(() => {
-    if (!sessionStorage.getItem("adminAuth")) {
-      navigate("/admin/login", { replace: true });
-    }
-  }, [navigate]);
+  // Login is not required to view the screens gallery in prototype mode.
 
   return (
     <div className="min-h-screen bg-background">
