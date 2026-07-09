@@ -232,7 +232,7 @@ export function completeLink(id: string, actor = "Admin One") {
     memoryMB: 380,
     warmupDay: list[idx].warmupDay ?? 1,
     auditLog: [
-      { ts: now(), event: "linked", actor, note: "QR scanned from handset" },
+      { ts: now(), event: "linked" as const, actor, note: "QR scanned from handset" },
       ...list[idx].auditLog,
     ].slice(0, 50),
   };
