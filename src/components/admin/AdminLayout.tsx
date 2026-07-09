@@ -26,6 +26,7 @@ const navItems = [
   { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
   { id: "sensitive-words", label: "Sensitive Words", icon: ShieldAlert, path: "/admin/sensitive-words", roles: ["super_admin"] },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
+  { id: "whatsapp-sessions", label: "WhatsApp Sessions", icon: Phone, path: "/admin/whatsapp-sessions", roles: ["super_admin"] },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   { id: "ranking", label: "Volume Ranking", icon: TrendingUp, path: "/admin/ranking", roles: ["super_admin", "team_lead", "agent"] },
   { id: "rewards", label: "Rewards", icon: Gift, path: "/admin/rewards", roles: ["super_admin", "team_lead", "agent"] },
