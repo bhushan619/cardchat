@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.5  
-**Date:** July 8, 2026
+**Version:** 5.6  
+**Date:** July 9, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1681,6 +1681,19 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.5 → v5.6 — July 9, 2026
+
+| Change | Description |
+|--------|-------------|
+| **WhatsApp Gateway Migration (Meta → wwebjs)** | Replaced the Meta WhatsApp Business Cloud API integration with a self-hosted **whatsapp-web.js (wwebjs)** gateway to avoid Meta's template, rate-limit, and account-review restrictions. Session ownership follows a **shared pool** model: Super Admin links WhatsApp numbers via QR and inbound conversations are auto-routed to available agents. Channel label remains "WhatsApp" everywhere. |
+| **WhatsApp Sessions Page** | New `/admin/whatsapp-sessions` page (`AdminWhatsAppSessions.tsx`, Super Admin only). Session table shows label, phone, status (connected / linking / initializing / paused / disconnected / banned), warmup day (1–14), daily conv/msg counters, reply ratio, RAM usage, proxy region, and last-seen. Per-session actions: **Link (QR modal)**, **Pause / Resume**, **Re-link**, **Advance Warmup**, **Remove**, and an **Audit Log** drawer capturing created / linked / paused / resumed / disconnected / relinked / warmup_advanced events. |
+| **Gateway Health Widget** | `WhatsAppGatewayCard` added to `/admin/api-config`, showing gateway uptime, active vs. total sessions, aggregate Puppeteer RAM, disconnect alerts, and last restart. |
+| **Warmup / Anti-Ban Settings** | `WarmupAntiBanCard` added to `/admin/api-config`. Configurable per-phase daily caps (Day 1–3 / 4–7 / 8–14 / 15+) for conversations and outbound messages, minimum reply-ratio threshold, proxy region, number rotation toggle, and daily restart time. Persisted to `cc_wa_warmup_policy_v1`. |
+| **Removed Meta Cloud Card** | `WhatsAppBusinessNumbersCard` (Meta Business Numbers UI) deleted from `/admin/api-config`. Meta-specific fields (`phoneNumberId`, `wabaId`) retained as optional on the session type for backward compatibility with existing consumers but are ignored by wwebjs. |
+| **Session Registry Refactor** | `src/lib/waBusinessNumbers.ts` rewritten as a wwebjs session registry: `WaSessionStatus`, `WaAuditEvent`, warmup/telemetry fields, `setStatus`, `completeLink`, `appendAudit`, `gatewayHealth`, and `getWarmupPolicy`/`saveWarmupPolicy`. Persisted to `sessionStorage` under `cc_wa_sessions_v2`; `pickBusinessNumberFor(customerId)` now prefers `connected + active` sessions from the shared pool. |
+| **Navigation / Routes / File Structure** | Added "WhatsApp Sessions" link to the admin sidebar (Super Admin only) and registered `/admin/whatsapp-sessions` in `App.tsx`. Added `AdminWhatsAppSessions.tsx`, `WhatsAppGatewayCard.tsx`, and `WarmupAntiBanCard.tsx` to the file structure. |
+| **PRD Updated** | PRD bumped to v5.6 to document the wwebjs migration, shared-pool session model, new WhatsApp Sessions page, gateway health widget, and warmup/anti-ban policy. |
 
 ### v5.4 → v5.5 — July 8, 2026
 
