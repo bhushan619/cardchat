@@ -94,6 +94,7 @@ const App = () => (
             <Route path="/admin/users" element={<AdminRoleProvider><AdminUsers /></AdminRoleProvider>} />
             <Route path="/admin/team" element={<AdminRoleProvider><AdminTeam /></AdminRoleProvider>} />
             <Route path="/admin/api-config" element={<AdminRoleProvider><AdminApiConfig /></AdminRoleProvider>} />
+            <Route path="/admin/whatsapp-sessions" element={<AdminRoleProvider><AdminWhatsAppSessions /></AdminRoleProvider>} />
             <Route path="/admin/broadcast" element={<AdminRoleProvider><AdminBroadcast /></AdminRoleProvider>} />
             <Route path="/admin/guide" element={<AdminRoleProvider><AdminGuide /></AdminRoleProvider>} />
             <Route path="/admin/ip-restrictions" element={<AdminRoleProvider><AdminIpRestrictions /></AdminRoleProvider>} />
