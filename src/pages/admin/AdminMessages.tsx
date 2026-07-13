@@ -832,7 +832,12 @@ export default function AdminMessages() {
                         <span className="text-muted-foreground line-through text-[10px]">
                           Pts {neg.oldAmount.toLocaleString()}
                         </span>
-                        <span className="font-bold text-warning">Pts {neg.newAmount.toLocaleString()}</span>
+                        <span className="font-bold text-warning">
+                          Pts {Math.round(neg.newAmount).toLocaleString()}
+                          <span className="text-[10px] text-muted-foreground font-normal ml-1">
+                            ({neg.newAmount.toLocaleString(undefined, { maximumFractionDigits: 2 })})
+                          </span>
+                        </span>
                       </div>
                     </div>
                   </>
