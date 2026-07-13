@@ -1403,11 +1403,13 @@ export default function AdminMessages() {
                           <Button
                             size="sm"
                             variant="outline"
+                            disabled={!(currentOrderStatus === "success" || (currentOrderId && !!negotiationData[currentOrderId]))}
                             onClick={() => {
                               resetTransferForm();
                               setTransferOpen(true);
                             }}
-                            className="h-8 text-xs gap-1 text-accent border-accent/30 bg-transparent hover:bg-accent/10 hover:text-accent hover:border-accent/50"
+                            title="Transfer is only available once the order is successful or a negotiation is confirmed"
+                            className="h-8 text-xs gap-1 text-accent border-accent/30 bg-transparent hover:bg-accent/10 hover:text-accent hover:border-accent/50 disabled:opacity-50 disabled:cursor-not-allowed"
                           >
                             <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
                           </Button>
