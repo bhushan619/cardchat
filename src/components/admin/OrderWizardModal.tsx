@@ -648,7 +648,10 @@ export default function CardlightPanel({
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">Total Release</span>
                       <span className="font-bold text-success inline-flex items-center gap-0.5">
-                        <Coins className="w-3 h-3" />{totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        <Coins className="w-3 h-3" />{Math.round(totalPayout).toLocaleString()}
+                        <span className="text-[10px] text-muted-foreground font-normal">
+                          ({totalPayout.toLocaleString(undefined, { maximumFractionDigits: 2 })})
+                        </span>
                       </span>
                     </div>
                   </div>
