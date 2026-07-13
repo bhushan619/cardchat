@@ -402,8 +402,11 @@ export default function AdminMessages() {
   const [transferNote, setTransferNote] = useState("");
   const [transferVerified, setTransferVerified] = useState(false);
   const [transferVerifying, setTransferVerifying] = useState(false);
+  const [transferOrderId, setTransferOrderId] = useState<string>("");
 
   const transferMethods = ["PalmPay2", "OPay", "Moniepoint", "Kuda", "Manual Bank Transfer"];
+
+
   const nigerianBanks = [
     "Access Bank",
     "Citibank",
@@ -485,7 +488,9 @@ export default function AdminMessages() {
     setTransferNote("");
     setTransferVerified(false);
     setTransferVerifying(false);
+    setTransferOrderId("");
   };
+
 
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
@@ -526,6 +531,7 @@ export default function AdminMessages() {
   const selectedOrder = selectedOrderId ? allOrders.find((o) => o.id === selectedOrderId) : null;
 
   const handleExecuteTransfer = (orderId: string, payout: number) => {
+
     setTransferCompletedOrders((prev) => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
@@ -582,7 +588,54 @@ export default function AdminMessages() {
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
+  // Orders eligible for transfer for the currently selected customer
+  const transferEligibleOrders = useMemo(() => {
+    if (!selectedConvo) return [];
+    const map = new Map<
+      string,
+      { id: string; amount: number; payout: number; cardType: string; status: string; customer: string }
+    >();
+    orders
+      .filter((o) => o.customer === selectedConvo.alias)
+      .forEach((o) => {
+        map.set(o.id, {
+          id: o.id,
+          amount: o.amount,
+          payout: o.amount * o.unitPrice,
+          cardType: o.cardType,
+          status: o.status,
+          customer: o.customer,
+        });
+      });
+    if (currentOrderId && !map.has(currentOrderId)) {
+      const current = allOrders.find((o) => o.id === currentOrderId);
+      if (current) {
+        map.set(currentOrderId, {
+          id: currentOrderId,
+          amount: current.amount,
+          payout: current.payout,
+          cardType: current.cardType,
+          status: current.status,
+          customer: selectedConvo.alias,
+        });
+      }
+    }
+    return Array.from(map.values());
+  }, [selectedConvo, currentOrderId, allOrders]);
+
+  // Pre-select the current linked order when the transfer modal opens
+  useEffect(() => {
+    if (transferOpen && !transferOrderId) {
+      if (currentOrderId && transferEligibleOrders.some((o) => o.id === currentOrderId)) {
+        setTransferOrderId(currentOrderId);
+        const order = transferEligibleOrders.find((o) => o.id === currentOrderId);
+        if (order) setTransferAmount(String(Math.round(order.payout)));
+      }
+    }
+  }, [transferOpen, currentOrderId, transferEligibleOrders, transferOrderId]);
+
   const simulateCardlightWebhook = (orderId: string, simulatedResult?: CardlightResult) => {
+
     setCardlightResults((prev) => ({ ...prev, [orderId]: "pending" }));
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
@@ -2588,8 +2641,66 @@ export default function AdminMessages() {
           <div className="grid grid-cols-[minmax(0,1fr)_480px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
             <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
+              {/* Order selector card */}
+              <section className="rounded-xl border bg-card">
+                <header className="px-4 py-2.5 border-b">
+                  <h3 className="text-sm font-semibold">Linked Order</h3>
+                </header>
+                <div className="p-4 space-y-1.5">
+                  <Label className="text-xs">
+                    <span className="text-destructive">*</span> Select Order
+                  </Label>
+                  <Select
+                    value={transferOrderId}
+                    onValueChange={(id) => {
+                      setTransferOrderId(id);
+                      const order = transferEligibleOrders.find((o) => o.id === id);
+                      if (order) setTransferAmount(String(Math.round(order.payout)));
+                    }}
+                  >
+                    <SelectTrigger className="h-10">
+                      <SelectValue placeholder="Choose an order to transfer against" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {transferEligibleOrders.length === 0 && (
+                        <SelectItem value="none" disabled>
+                          No eligible orders for this customer
+                        </SelectItem>
+                      )}
+                      {transferEligibleOrders.map((o) => {
+                        const completed = transferCompletedOrders.has(o.id);
+                        return (
+                          <SelectItem key={o.id} value={o.id}>
+                            <div className="flex items-center justify-between w-full gap-4">
+                              <span className="font-mono text-xs">#{o.id}</span>
+                              <span className="text-[11px] text-muted-foreground">
+                                {o.cardType} · Pts {Math.round(o.payout).toLocaleString()}
+                              </span>
+                              <span
+                                className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
+                                  completed
+                                    ? "bg-emerald-500/10 text-emerald-600"
+                                    : "bg-amber-500/10 text-amber-600"
+                                }`}
+                              >
+                                {completed ? "Transferred" : "Pending"}
+                              </span>
+                            </div>
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-[10px] text-muted-foreground">
+                    Shows orders for this customer and whether their payout has already been transferred. Selecting an order auto-fills the transfer amount.
+                  </p>
+
+                </div>
+              </section>
+
               {/* Recipient card */}
               <section className="rounded-xl border bg-card">
+
                 <header className="px-4 py-2.5 border-b flex items-center justify-between">
                   <h3 className="text-sm font-semibold">Recipient</h3>
                   {transferVerified && (
@@ -2942,7 +3053,7 @@ export default function AdminMessages() {
                 Cancel
               </Button>
               <Button
-                disabled={!transferBank || !transferVerified || !transferAmount || !transferRate}
+                disabled={!transferOrderId || !transferBank || !transferVerified || !transferAmount || !transferRate}
                 onClick={() => {
                   const amt = Number(transferAmount || 0);
                   if (selectedConvo) {
@@ -2958,6 +3069,9 @@ export default function AdminMessages() {
                     });
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
                   }
+                  if (transferOrderId) {
+                    setTransferCompletedOrders((prev) => new Set(prev).add(transferOrderId));
+                  }
                   addSystemMessage(
                     `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
                   );
@@ -2965,6 +3079,7 @@ export default function AdminMessages() {
                   setTransferOpen(false);
                   resetTransferForm();
                 }}
+
               >
                 Transfer Now
               </Button>
