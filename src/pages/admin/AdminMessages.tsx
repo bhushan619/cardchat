@@ -2692,8 +2692,9 @@ export default function AdminMessages() {
                     </SelectContent>
                   </Select>
                   <p className="text-[10px] text-muted-foreground">
-                    Only successful or negotiated orders are shown. Selecting an order auto-fills the transfer amount.
+                    Shows orders for this customer and whether their payout has already been transferred. Selecting an order auto-fills the transfer amount.
                   </p>
+
                 </div>
               </section>
 
