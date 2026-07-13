@@ -856,7 +856,12 @@ export default function AdminMessages() {
                   ))}
                   <div className="flex items-center justify-between text-xs border-t border-border pt-1.5 mt-1">
                     <span className="text-muted-foreground font-medium">Total Release</span>
-                    <span className="font-bold text-primary">Pts {statusOrder.payout.toLocaleString()}</span>
+                    <span className="font-bold text-primary">
+                      Pts {Math.round(statusOrder.payout).toLocaleString()}
+                      <span className="text-[10px] text-muted-foreground font-normal ml-1">
+                        ({statusOrder.payout.toLocaleString(undefined, { maximumFractionDigits: 2 })})
+                      </span>
+                    </span>
                   </div>
                 </>
               );
