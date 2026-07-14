@@ -227,8 +227,9 @@ export default function AdminOrders() {
           <div className="overflow-y-auto flex-1 min-h-0">
 
             <table className="w-full">
-              <thead className="sticky top-0 z-10">
-                <tr className="border-b bg-muted/50">
+              <thead>
+                <tr className="border-b bg-muted sticky top-0 z-10">
+
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
