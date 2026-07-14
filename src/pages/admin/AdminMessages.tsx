@@ -709,13 +709,24 @@ export default function AdminMessages() {
             desc: "This order has been cancelled.",
             colorClass: "text-destructive",
           };
-        case "success":
+        case "success": {
+          const isWa = selectedConvo?.channel === "whatsapp";
+          const transferred = currentOrderId ? transferCompletedOrders.has(currentOrderId) : false;
           return {
             icon: "✅",
-            title: "Trade Successful — Wallet Credited",
-            desc: "Funds have been credited to the customer's wallet.",
+            title: isWa
+              ? transferred
+                ? "Trade Successful — Transfer Recorded"
+                : "Trade Successful — Awaiting Transfer"
+              : "Trade Successful — Wallet Credited",
+            desc: isWa
+              ? transferred
+                ? "A bank transfer has been recorded against this order."
+                : "Record a bank transfer against this order to complete payout."
+              : "Funds have been credited to the customer's wallet.",
             colorClass: "text-success",
           };
+        }
       }
     };
 
