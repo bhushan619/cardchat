@@ -1674,15 +1674,35 @@ export default function AdminMessages() {
                                     ))}
                                   </div>
 
-                                  {/* Wallet credit indicator */}
+                                  {/* Payout indicator — wallet for in-app, transfer for WhatsApp */}
                                   {currentOrderStatus === "success" && (
-                                    <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                                      <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                      <p className="text-xs font-medium text-success">Wallet Credited</p>
-                                      <p className="text-[10px] text-muted-foreground">
-                                        Pts {o.payout.toLocaleString()} added to customer's wallet
-                                      </p>
-                                    </div>
+                                    selectedConvo.channel === "whatsapp" ? (
+                                      transferCompletedOrders.has(o.id) ? (
+                                        <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                          <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                          <p className="text-xs font-medium text-success">Transfer Recorded</p>
+                                          <p className="text-[10px] text-muted-foreground">
+                                            ₦{o.payout.toLocaleString()} transferred against this order
+                                          </p>
+                                        </div>
+                                      ) : (
+                                        <div className="mt-2 bg-warning/10 border border-warning/30 rounded-lg p-2.5 text-center">
+                                          <ArrowRightLeft className="w-4 h-4 text-warning mx-auto mb-1" />
+                                          <p className="text-xs font-medium text-warning">Awaiting Transfer</p>
+                                          <p className="text-[10px] text-muted-foreground">
+                                            Record ₦{o.payout.toLocaleString()} bank transfer against this order
+                                          </p>
+                                        </div>
+                                      )
+                                    ) : (
+                                      <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                        <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                        <p className="text-xs font-medium text-success">Wallet Credited</p>
+                                        <p className="text-[10px] text-muted-foreground">
+                                          Pts {o.payout.toLocaleString()} added to customer's wallet
+                                        </p>
+                                      </div>
+                                    )
                                   )}
                                 </div>
                               )}
