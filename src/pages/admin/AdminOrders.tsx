@@ -224,9 +224,10 @@ export default function AdminOrders() {
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b bg-muted/50">
+          <div className="overflow-y-auto max-h-[600px]">
+            <table className="w-full">
+              <thead className="sticky top-0 z-10">
+                <tr className="border-b bg-muted/50">
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
@@ -405,6 +406,7 @@ export default function AdminOrders() {
               })}
             </tbody>
           </table>
+          </div>
         </div>
       </div>
     </AdminLayout>
