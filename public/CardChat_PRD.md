@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.6  
-**Date:** July 9, 2026
+**Version:** 5.7  
+**Date:** July 14, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -702,6 +702,13 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Clicking a status button triggers the transition and adds a system message (if customer-facing)
   - Payment flow: selecting "Pending Payment" enables a payment mode with bank selection and amount input
 
+#### Transfer Pop-up (WhatsApp / In-App Payout)
+- Opened from the chat action bar for the selected conversation
+- **Linked Order selector:** Dropdown lists eligible orders for the customer; each item shows Order ID, card type, payout amount, and a **transfer status pill** (`Transferred` / `Pending`). Selecting an order auto-fills the transfer amount.
+- **Transfer Now button** is disabled until an order, bank, verified account, amount, and rate are provided; it is also disabled when the selected order has already been transferred (`transferCompletedOrders` set).
+- On submit, the transfer is recorded against the selected order ID, the order is marked as transferred, and a system message is posted to the chat.
+- **WhatsApp-sourced orders:** No customer wallet is credited. The platform records the transfer against the order only and maintains the order details for reconciliation.
+
 #### Right Panel — Order Sidebar (35% width, 320–504px, hidden below `xl`)
 - **Tabbed interface:** "Orders" tab and "Sales Order" (Cardlight) tab
 
@@ -892,15 +899,17 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
 - Search by order ID or customer alias
 - **Data table** columns:
   - **Alias** (first column — customer identifier)
-  - Order ID
-  - Card Type
-  - Card Rate (₦)
-  - **Naira Rate (₦)** — per-order naira rate at time of trade
+  - Card Number
+  - **Source** — `In-App` (primary) or `WhatsApp` (emerald) badge
+  - **Transfer** — transfer status badge: `Pending` (amber), `Processing` (blue), `Transferred` (emerald), `Failed` (rose), `Not Transferred` (muted)
+  - Points price
+  - Card Rate
+  - Points rate
   - Amount ($)
-  - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
+  - Status — order status badges
   - Created (timestamp)
 - **Expanded details** include Naira Rate alongside other order fields
-- **CSV export** includes Naira Rate column
+- **CSV export** includes Source and Transfer Status columns
 
 ### 5.12 Naira Rate (`/admin/naira-rate`)
 
@@ -1175,21 +1184,22 @@ A consolidated ledger of all transfers initiated from the in-chat **Transfer pop
 - Total Transfers (count), Total Volume (Points), Pending (warning tone), Successful (success tone)
 
 #### Filters
-- Free-text search (alias, transfer ID, bank, account, reference)
+- Free-text search (alias, transfer ID, **order ID**, bank, account, reference)
 - Status: All / Pending / Processing / Successful / Failed
 - Channel: All / PalmPay 1 / PalmPay 2 / Manual
 - Bank filter + Min/Max Points range
 
 #### Table
-- Columns: Transfer ID, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
+- Columns: Transfer ID, **Order ID**, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
 - Status pills: Pending=amber, Processing=blue, Successful=emerald, Failed=rose
 - Row "View" opens a Transfer Details dialog
 
 #### Details Dialog
-- Shows: Customer, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
+- Shows: Customer, **Order ID**, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
 
 #### CSV Export
 - Exports filtered records; filename `transfers-{timestamp}.csv`
+- Includes Order ID column
 
 #### Related Changes
 - **WhatsApp channel customers:** In `/admin/customers`, the transaction ledger relabels "Withdrawal" as "Transfer" when the selected customer's channel is `whatsapp`. Native TRTC customers continue to use "Withdrawal".
@@ -1266,6 +1276,8 @@ A finite state machine governing order lifecycle:
 pending_sale → pending → in_trade → success → pending_payment → payment_completed
                                   ↘ order_cancelled
 ```
+
+> **WhatsApp-sourced orders:** When a customer is reached via WhatsApp, the order lifecycle is the same, but the platform does **not** maintain a customer wallet. Payouts are recorded as direct transfers against the order instead of wallet credits.
 
 | Status | Label | Next Statuses |
 |--------|-------|---------------|
@@ -1369,6 +1381,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 6 mock messages in a typical sell-verify-order flow.
 
 ### 7.4 Orders
+
 ```typescript
 {
   id: string;                          // "ORD-20260318-001"
@@ -1379,6 +1392,8 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
   nairaRate: number;
   unitPrice: number;
   status: "settled" | "trading" | "pending_payment";
+  source: "in-app" | "whatsapp";       // Origin channel for the order
+  transferStatus: "pending" | "processing" | "successful" | "failed" | "not_transferred";
   created: string;
 }
 ```
@@ -1681,6 +1696,17 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.6 → v5.7 — July 14, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Order Source & Transfer Status Columns** | `/admin/orders` table now shows **Source** (`In-App` / `WhatsApp`) and **Transfer** status (`Pending` / `Processing` / `Transferred` / `Failed` / `Not Transferred`) for every order. CSV export updated to include both columns. Mock `orders` data carries `source` and `transferStatus` fields. |
+| **Transfer Modal Order Linking** | The in-chat **Process Transfer** pop-up on `/admin` now requires selecting a linked order. The dropdown shows order ID, card type, payout amount, and a `Transferred` / `Pending` status pill. Selecting an order auto-fills the transfer amount. |
+| **Transfer Button Guard** | **Transfer Now** is disabled when the selected order has already been transferred, even if all amount fields are filled. Completed transfers are tracked in `transferCompletedOrders` and persisted to `sessionStorage` under `cardchat_transfer_completed`. |
+| **WhatsApp Order Wallet Behavior** | Orders originating from WhatsApp do **not** credit a customer wallet. The platform records the transfer against the order only and preserves order details for reconciliation. In-app orders continue to use the wallet model. |
+| **Customer Transfers Order ID** | `/admin/transfers` now stores and displays a mapped `orderId` on every transfer record. Search, table, details dialog, and CSV export all include Order ID. |
+| **PRD Updated** | PRD bumped to v5.7 to document order source/transfer status, linked transfer workflow, WhatsApp wallet exception, and transfer order ID mapping. |
 
 ### v5.5 → v5.6 — July 9, 2026
 
