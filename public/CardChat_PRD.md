@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.6  
-**Date:** July 9, 2026
+**Version:** 5.7  
+**Date:** July 14, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -702,6 +702,13 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Clicking a status button triggers the transition and adds a system message (if customer-facing)
   - Payment flow: selecting "Pending Payment" enables a payment mode with bank selection and amount input
 
+#### Transfer Pop-up (WhatsApp / In-App Payout)
+- Opened from the chat action bar for the selected conversation
+- **Linked Order selector:** Dropdown lists eligible orders for the customer; each item shows Order ID, card type, payout amount, and a **transfer status pill** (`Transferred` / `Pending`). Selecting an order auto-fills the transfer amount.
+- **Transfer Now button** is disabled until an order, bank, verified account, amount, and rate are provided; it is also disabled when the selected order has already been transferred (`transferCompletedOrders` set).
+- On submit, the transfer is recorded against the selected order ID, the order is marked as transferred, and a system message is posted to the chat.
+- **WhatsApp-sourced orders:** No customer wallet is credited. The platform records the transfer against the order only and maintains the order details for reconciliation.
+
 #### Right Panel — Order Sidebar (35% width, 320–504px, hidden below `xl`)
 - **Tabbed interface:** "Orders" tab and "Sales Order" (Cardlight) tab
 
@@ -892,15 +899,17 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
 - Search by order ID or customer alias
 - **Data table** columns:
   - **Alias** (first column — customer identifier)
-  - Order ID
-  - Card Type
-  - Card Rate (₦)
-  - **Naira Rate (₦)** — per-order naira rate at time of trade
+  - Card Number
+  - **Source** — `In-App` (primary) or `WhatsApp` (emerald) badge
+  - **Transfer** — transfer status badge: `Pending` (amber), `Processing` (blue), `Transferred` (emerald), `Failed` (rose), `Not Transferred` (muted)
+  - Points price
+  - Card Rate
+  - Points rate
   - Amount ($)
-  - Status — badges: Settled (success), Trading (primary), Pending Payment (warning)
+  - Status — order status badges
   - Created (timestamp)
 - **Expanded details** include Naira Rate alongside other order fields
-- **CSV export** includes Naira Rate column
+- **CSV export** includes Source and Transfer Status columns
 
 ### 5.12 Naira Rate (`/admin/naira-rate`)
 
@@ -1175,21 +1184,22 @@ A consolidated ledger of all transfers initiated from the in-chat **Transfer pop
 - Total Transfers (count), Total Volume (Points), Pending (warning tone), Successful (success tone)
 
 #### Filters
-- Free-text search (alias, transfer ID, bank, account, reference)
+- Free-text search (alias, transfer ID, **order ID**, bank, account, reference)
 - Status: All / Pending / Processing / Successful / Failed
 - Channel: All / PalmPay 1 / PalmPay 2 / Manual
 - Bank filter + Min/Max Points range
 
 #### Table
-- Columns: Transfer ID, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
+- Columns: Transfer ID, **Order ID**, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
 - Status pills: Pending=amber, Processing=blue, Successful=emerald, Failed=rose
 - Row "View" opens a Transfer Details dialog
 
 #### Details Dialog
-- Shows: Customer, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
+- Shows: Customer, **Order ID**, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
 
 #### CSV Export
 - Exports filtered records; filename `transfers-{timestamp}.csv`
+- Includes Order ID column
 
 #### Related Changes
 - **WhatsApp channel customers:** In `/admin/customers`, the transaction ledger relabels "Withdrawal" as "Transfer" when the selected customer's channel is `whatsapp`. Native TRTC customers continue to use "Withdrawal".
