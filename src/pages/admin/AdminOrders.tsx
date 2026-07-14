@@ -15,6 +15,19 @@ const statusColors: Record<string, string> = {
   success: "bg-success/10 text-success",
 };
 
+const sourceConfig: Record<string, { label: string; className: string }> = {
+  "in-app": { label: "In-App", className: "bg-primary/10 text-primary" },
+  whatsapp: { label: "WhatsApp", className: "bg-emerald-500/10 text-emerald-600" },
+};
+
+const transferStatusConfig: Record<string, { label: string; className: string }> = {
+  pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600" },
+  processing: { label: "Processing", className: "bg-blue-500/10 text-blue-600" },
+  successful: { label: "Transferred", className: "bg-emerald-500/10 text-emerald-600" },
+  failed: { label: "Failed", className: "bg-rose-500/10 text-rose-600" },
+  not_transferred: { label: "Not Transferred", className: "bg-muted text-muted-foreground" },
+};
+
 interface OrderDetail {
   cardFormat: string;
   agent: string;
@@ -165,8 +178,8 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
-    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const headers = ["Alias", "Card Type", "Source", "Transfer Status", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
+    const rows = filtered.map(o => [o.customer, o.cardType, o.source || "in-app", o.transferStatus || "not_transferred", `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -230,6 +243,8 @@ export default function AdminOrders() {
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Source</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Transfer</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points rate</th>
@@ -257,6 +272,16 @@ export default function AdminOrders() {
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`status-badge ${sourceConfig[o.source || "in-app"]?.className || ""}`}>
+                          {sourceConfig[o.source || "in-app"]?.label || o.source || "In-App"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`status-badge ${transferStatusConfig[o.transferStatus || "not_transferred"]?.className || ""}`}>
+                          {transferStatusConfig[o.transferStatus || "not_transferred"]?.label || o.transferStatus?.replace("_", " ")}
+                        </span>
+                      </td>
                        <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
                        <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
@@ -270,7 +295,7 @@ export default function AdminOrders() {
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={9} className="px-6 py-5 bg-muted/20">
+                        <td colSpan={11} className="px-6 py-5 bg-muted/20">
                           <div className="animate-slide-up space-y-5">
                             {/* Order Details Title */}
                             <h3 className="text-sm font-bold">Order Details</h3>
