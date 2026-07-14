@@ -37,12 +37,15 @@ const channels: Transfer["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
 // Build consolidated transfers (initiated from chat transfer pop-up) from customer wallet mock data
+const orderPool = [...orders.map(o => o.id), "ORD-20260318-004", "ORD-20260318-005", "ORD-20260318-006", "ORD-20260318-007", "ORD-20260318-008"];
+
 const seed: Transfer[] = customerWallets.flatMap((w, i) => {
   const count = 2 + ((i + 1) % 3);
   return Array.from({ length: count }).map((_, j) => {
     const idx = i * 5 + j;
     return {
       id: `${20260311 + ((idx) % 8)}${String(200 + idx).padStart(4, "0")}`,
+      orderId: orderPool[idx % orderPool.length],
       alias: w.alias,
       amount: Math.round((w.totalWithdrawals / count) * (0.5 + (j * 0.2))),
       bankName: banks[(idx + 3) % banks.length],
