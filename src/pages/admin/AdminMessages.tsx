@@ -763,7 +763,9 @@ export default function AdminMessages() {
                     setConfirmAction({
                       type: "good_card",
                       title: "Confirm Successful Trade",
-                      desc: `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                      desc: selectedConvo?.channel === "whatsapp"
+                        ? `This will mark the order as successful. A bank transfer of ₦${statusOrder?.payout.toLocaleString() || "0"} must then be recorded against this order.`
+                        : `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                       onConfirm: () => {
                         handleStatusTransition(selectedId, "success", statusOrder?.payout);
                         setConfirmAction(null);
