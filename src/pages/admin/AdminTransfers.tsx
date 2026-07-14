@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { customerWallets } from "@/data/mock";
+import { customerWallets, orders } from "@/data/mock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,7 @@ type Status = "pending" | "successful" | "failed" | "processing";
 
 type Transfer = {
   id: string;
+  orderId: string;
   alias: string;
   amount: number;
   bankName: string;
@@ -36,12 +37,15 @@ const channels: Transfer["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
 // Build consolidated transfers (initiated from chat transfer pop-up) from customer wallet mock data
+const orderPool = [...orders.map(o => o.id), "ORD-20260318-004", "ORD-20260318-005", "ORD-20260318-006", "ORD-20260318-007", "ORD-20260318-008"];
+
 const seed: Transfer[] = customerWallets.flatMap((w, i) => {
   const count = 2 + ((i + 1) % 3);
   return Array.from({ length: count }).map((_, j) => {
     const idx = i * 5 + j;
     return {
       id: `${20260311 + ((idx) % 8)}${String(200 + idx).padStart(4, "0")}`,
+      orderId: orderPool[idx % orderPool.length],
       alias: w.alias,
       amount: Math.round((w.totalWithdrawals / count) * (0.5 + (j * 0.2))),
       bankName: banks[(idx + 3) % banks.length],
@@ -81,7 +85,7 @@ export default function AdminTransfers() {
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
       w.amount >= min && w.amount <= max &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
+      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.orderId.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
   }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
@@ -97,8 +101,8 @@ export default function AdminTransfers() {
   }, [filtered]);
 
   const exportCsv = () => {
-    const headers = ["ID", "Alias", "Amount", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
-    const rows = filtered.map(w => [w.id, w.alias, w.amount, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
+    const headers = ["ID", "Order ID", "Alias", "Amount", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
+    const rows = filtered.map(w => [w.id, w.orderId, w.alias, w.amount, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -134,7 +138,7 @@ export default function AdminTransfers() {
           <div className="relative flex-1 max-w-sm min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
             <Input
-              placeholder="Search alias, ID, bank, account, ref..."
+              placeholder="Search alias, transfer ID, order ID, bank, account, ref..."
               className="pl-10"
               value={search}
               onChange={e => setSearch(e.target.value)}
@@ -173,6 +177,7 @@ export default function AdminTransfers() {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
+                <TableHead className="text-xs font-semibold">Order ID</TableHead>
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
@@ -189,6 +194,7 @@ export default function AdminTransfers() {
                 return (
                   <TableRow key={w.id} className="hover:bg-muted/30">
                     <TableCell className="font-mono text-xs">{w.id}</TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{w.orderId}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
@@ -219,7 +225,7 @@ export default function AdminTransfers() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
                     No transfers match your filters
                   </TableCell>
                 </TableRow>
@@ -241,6 +247,7 @@ export default function AdminTransfers() {
             <div className="space-y-3 text-sm">
               {[
                 ["Customer", selected.alias],
+                ["Order ID", selected.orderId],
                 ["Amount", <span key="amt" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selected.amount.toLocaleString()}</span>],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
