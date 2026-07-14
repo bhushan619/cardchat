@@ -15,6 +15,19 @@ const statusColors: Record<string, string> = {
   success: "bg-success/10 text-success",
 };
 
+const sourceConfig: Record<string, { label: string; className: string }> = {
+  "in-app": { label: "In-App", className: "bg-primary/10 text-primary" },
+  whatsapp: { label: "WhatsApp", className: "bg-emerald-500/10 text-emerald-600" },
+};
+
+const transferStatusConfig: Record<string, { label: string; className: string }> = {
+  pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600" },
+  processing: { label: "Processing", className: "bg-blue-500/10 text-blue-600" },
+  successful: { label: "Transferred", className: "bg-emerald-500/10 text-emerald-600" },
+  failed: { label: "Failed", className: "bg-rose-500/10 text-rose-600" },
+  not_transferred: { label: "Not Transferred", className: "bg-muted text-muted-foreground" },
+};
+
 interface OrderDetail {
   cardFormat: string;
   agent: string;
