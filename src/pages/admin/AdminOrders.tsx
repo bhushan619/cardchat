@@ -272,6 +272,16 @@ export default function AdminOrders() {
                         <div>{o.cardType}</div>
                         <div className="text-[10px] text-muted-foreground">{o.id}</div>
                       </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`status-badge ${sourceConfig[o.source || "in-app"]?.className || ""}`}>
+                          {sourceConfig[o.source || "in-app"]?.label || o.source || "In-App"}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <span className={`status-badge ${transferStatusConfig[o.transferStatus || "not_transferred"]?.className || ""}`}>
+                          {transferStatusConfig[o.transferStatus || "not_transferred"]?.label || o.transferStatus?.replace("_", " ")}
+                        </span>
+                      </td>
                        <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
                        <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
