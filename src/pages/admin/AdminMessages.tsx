@@ -285,10 +285,15 @@ export default function AdminMessages() {
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // When success: auto-credit wallet with specific amount
+      // When success: WhatsApp orders record a transfer against the order (no wallet);
+      // in-app orders auto-credit the customer's wallet.
       if (newStatus === "success" && payoutAmount) {
-        // Agent sees detailed credit message
-        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
+        const isWhatsApp = rawConversations.find((c) => c.id === conversationId)?.channel === "whatsapp";
+        if (isWhatsApp) {
+          addSystemMessage(`📌 💸 Record a bank transfer of ₦${payoutAmount.toLocaleString()} against this order`);
+        } else {
+          addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
+        }
       }
     }
   };
@@ -704,13 +709,24 @@ export default function AdminMessages() {
             desc: "This order has been cancelled.",
             colorClass: "text-destructive",
           };
-        case "success":
+        case "success": {
+          const isWa = selectedConvo?.channel === "whatsapp";
+          const transferred = currentOrderId ? transferCompletedOrders.has(currentOrderId) : false;
           return {
             icon: "✅",
-            title: "Trade Successful — Wallet Credited",
-            desc: "Funds have been credited to the customer's wallet.",
+            title: isWa
+              ? transferred
+                ? "Trade Successful — Transfer Recorded"
+                : "Trade Successful — Awaiting Transfer"
+              : "Trade Successful — Wallet Credited",
+            desc: isWa
+              ? transferred
+                ? "A bank transfer has been recorded against this order."
+                : "Record a bank transfer against this order to complete payout."
+              : "Funds have been credited to the customer's wallet.",
             colorClass: "text-success",
           };
+        }
       }
     };
 
@@ -747,7 +763,9 @@ export default function AdminMessages() {
                     setConfirmAction({
                       type: "good_card",
                       title: "Confirm Successful Trade",
-                      desc: `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                      desc: selectedConvo?.channel === "whatsapp"
+                        ? `This will mark the order as successful. A bank transfer of ₦${statusOrder?.payout.toLocaleString() || "0"} must then be recorded against this order.`
+                        : `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                       onConfirm: () => {
                         handleStatusTransition(selectedId, "success", statusOrder?.payout);
                         setConfirmAction(null);
@@ -1656,15 +1674,35 @@ export default function AdminMessages() {
                                     ))}
                                   </div>
 
-                                  {/* Wallet credit indicator */}
+                                  {/* Payout indicator — wallet for in-app, transfer for WhatsApp */}
                                   {currentOrderStatus === "success" && (
-                                    <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                                      <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                      <p className="text-xs font-medium text-success">Wallet Credited</p>
-                                      <p className="text-[10px] text-muted-foreground">
-                                        Pts {o.payout.toLocaleString()} added to customer's wallet
-                                      </p>
-                                    </div>
+                                    selectedConvo.channel === "whatsapp" ? (
+                                      transferCompletedOrders.has(o.id) ? (
+                                        <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                          <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                          <p className="text-xs font-medium text-success">Transfer Recorded</p>
+                                          <p className="text-[10px] text-muted-foreground">
+                                            ₦{o.payout.toLocaleString()} transferred against this order
+                                          </p>
+                                        </div>
+                                      ) : (
+                                        <div className="mt-2 bg-warning/10 border border-warning/30 rounded-lg p-2.5 text-center">
+                                          <ArrowRightLeft className="w-4 h-4 text-warning mx-auto mb-1" />
+                                          <p className="text-xs font-medium text-warning">Awaiting Transfer</p>
+                                          <p className="text-[10px] text-muted-foreground">
+                                            Record ₦{o.payout.toLocaleString()} bank transfer against this order
+                                          </p>
+                                        </div>
+                                      )
+                                    ) : (
+                                      <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                        <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                        <p className="text-xs font-medium text-success">Wallet Credited</p>
+                                        <p className="text-[10px] text-muted-foreground">
+                                          Pts {o.payout.toLocaleString()} added to customer's wallet
+                                        </p>
+                                      </div>
+                                    )
                                   )}
                                 </div>
                               )}
