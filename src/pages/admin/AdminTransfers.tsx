@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { customerWallets } from "@/data/mock";
+import { customerWallets, orders } from "@/data/mock";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
