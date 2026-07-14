@@ -55,10 +55,13 @@ export const chatMessages = [
   { id: 8, sender: "customer", text: "Actually use this one instead: Ecobank 1122334433 Jane Smith", time: "10:41 AM" },
 ];
 
+export type OrderSource = "in-app" | "whatsapp";
+export type OrderTransferStatus = "pending" | "processing" | "successful" | "failed" | "not_transferred";
+
 export const orders = [
-  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, created: "10:37 AM" },
-  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, created: "09:15 AM" },
-  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, created: "08:45 AM" },
+  { id: "ORD-20260318-001", customer: "A7X3KP", cardType: "iTunes US", amount: 200, nairaRate: 289, unitPrice: 680, status: "success" as const, source: "in-app" as OrderSource, transferStatus: "successful" as OrderTransferStatus, created: "10:37 AM" },
+  { id: "ORD-20260318-002", customer: "K9M2BL", cardType: "Amazon US", amount: 150, nairaRate: 289, unitPrice: 620, status: "in_trade" as const, source: "whatsapp" as OrderSource, transferStatus: "pending" as OrderTransferStatus, created: "09:15 AM" },
+  { id: "ORD-20260318-003", customer: "R4P8TN", cardType: "Steam US", amount: 200, nairaRate: 289, unitPrice: 600, status: "order_cancelled" as const, source: "in-app" as OrderSource, transferStatus: "not_transferred" as OrderTransferStatus, created: "08:45 AM" },
 ];
 
 export const bankAccounts = [
