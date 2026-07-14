@@ -178,8 +178,8 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
-    const rows = filtered.map(o => [o.customer, o.cardType, `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const headers = ["Alias", "Card Type", "Source", "Transfer Status", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
+    const rows = filtered.map(o => [o.customer, o.cardType, o.source || "in-app", o.transferStatus || "not_transferred", `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
