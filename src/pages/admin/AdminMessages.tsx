@@ -3091,7 +3091,14 @@ export default function AdminMessages() {
                 Cancel
               </Button>
               <Button
-                disabled={!transferOrderId || !transferBank || !transferVerified || !transferAmount || !transferRate}
+                disabled={
+                  !transferOrderId ||
+                  !transferBank ||
+                  !transferVerified ||
+                  !transferAmount ||
+                  !transferRate ||
+                  transferCompletedOrders.has(transferOrderId)
+                }
                 onClick={() => {
                   const amt = Number(transferAmount || 0);
                   if (selectedConvo) {
