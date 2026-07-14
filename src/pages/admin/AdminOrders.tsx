@@ -179,7 +179,7 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-6 flex flex-col h-[calc(100vh-0px)]">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold">Orders</h1>
@@ -223,11 +223,13 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        <div className="bg-card border rounded-xl overflow-hidden">
-          <div className="overflow-y-auto max-h-[600px]">
+        <div className="bg-card border rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
+          <div className="overflow-y-auto flex-1 min-h-0">
+
             <table className="w-full">
-              <thead className="sticky top-0 z-10">
-                <tr className="border-b bg-muted/50">
+              <thead>
+                <tr className="border-b bg-muted sticky top-0 z-10">
+
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
