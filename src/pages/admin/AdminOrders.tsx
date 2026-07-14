@@ -179,7 +179,7 @@ export default function AdminOrders() {
 
   return (
     <AdminLayout>
-      <div className="p-6">
+      <div className="p-6 flex flex-col h-[calc(100vh-0px)]">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold">Orders</h1>
