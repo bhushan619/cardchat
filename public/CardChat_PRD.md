@@ -1277,6 +1277,8 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
                                   ↘ order_cancelled
 ```
 
+> **WhatsApp-sourced orders:** When a customer is reached via WhatsApp, the order lifecycle is the same, but the platform does **not** maintain a customer wallet. Payouts are recorded as direct transfers against the order instead of wallet credits.
+
 | Status | Label | Next Statuses |
 |--------|-------|---------------|
 | `pending_sale` | Pending Sale | `pending` |
@@ -1379,6 +1381,7 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
 6 mock messages in a typical sell-verify-order flow.
 
 ### 7.4 Orders
+
 ```typescript
 {
   id: string;                          // "ORD-20260318-001"
@@ -1389,6 +1392,8 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
   nairaRate: number;
   unitPrice: number;
   status: "settled" | "trading" | "pending_payment";
+  source: "in-app" | "whatsapp";       // Origin channel for the order
+  transferStatus: "pending" | "processing" | "successful" | "failed" | "not_transferred";
   created: string;
 }
 ```
@@ -1691,6 +1696,17 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.6 → v5.7 — July 14, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Order Source & Transfer Status Columns** | `/admin/orders` table now shows **Source** (`In-App` / `WhatsApp`) and **Transfer** status (`Pending` / `Processing` / `Transferred` / `Failed` / `Not Transferred`) for every order. CSV export updated to include both columns. Mock `orders` data carries `source` and `transferStatus` fields. |
+| **Transfer Modal Order Linking** | The in-chat **Process Transfer** pop-up on `/admin` now requires selecting a linked order. The dropdown shows order ID, card type, payout amount, and a `Transferred` / `Pending` status pill. Selecting an order auto-fills the transfer amount. |
+| **Transfer Button Guard** | **Transfer Now** is disabled when the selected order has already been transferred, even if all amount fields are filled. Completed transfers are tracked in `transferCompletedOrders` and persisted to `sessionStorage` under `cardchat_transfer_completed`. |
+| **WhatsApp Order Wallet Behavior** | Orders originating from WhatsApp do **not** credit a customer wallet. The platform records the transfer against the order only and preserves order details for reconciliation. In-app orders continue to use the wallet model. |
+| **Customer Transfers Order ID** | `/admin/transfers` now stores and displays a mapped `orderId` on every transfer record. Search, table, details dialog, and CSV export all include Order ID. |
+| **PRD Updated** | PRD bumped to v5.7 to document order source/transfer status, linked transfer workflow, WhatsApp wallet exception, and transfer order ID mapping. |
 
 ### v5.5 → v5.6 — July 9, 2026
 
