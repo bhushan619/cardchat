@@ -243,6 +243,8 @@ export default function AdminOrders() {
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Source</th>
+                <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Transfer</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Card Rate</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points rate</th>
