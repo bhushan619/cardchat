@@ -285,10 +285,15 @@ export default function AdminMessages() {
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // When success: auto-credit wallet with specific amount
+      // When success: WhatsApp orders record a transfer against the order (no wallet);
+      // in-app orders auto-credit the customer's wallet.
       if (newStatus === "success" && payoutAmount) {
-        // Agent sees detailed credit message
-        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
+        const isWhatsApp = rawConversations.find((c) => c.id === conversationId)?.channel === "whatsapp";
+        if (isWhatsApp) {
+          addSystemMessage(`📌 💸 Record a bank transfer of ₦${payoutAmount.toLocaleString()} against this order`);
+        } else {
+          addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
+        }
       }
     }
   };
