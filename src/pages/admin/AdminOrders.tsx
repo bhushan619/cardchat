@@ -223,8 +223,9 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        <div className="bg-card border rounded-xl overflow-hidden">
-          <div className="overflow-y-auto max-h-[600px]">
+        <div className="bg-card border rounded-xl overflow-hidden flex-1 min-h-0 flex flex-col">
+          <div className="overflow-y-auto flex-1 min-h-0">
+
             <table className="w-full">
               <thead className="sticky top-0 z-10">
                 <tr className="border-b bg-muted/50">
