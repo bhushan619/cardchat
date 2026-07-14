@@ -20,6 +20,7 @@ type Status = "pending" | "successful" | "failed" | "processing";
 
 type Transfer = {
   id: string;
+  orderId: string;
   alias: string;
   amount: number;
   bankName: string;
