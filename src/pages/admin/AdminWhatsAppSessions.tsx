@@ -11,14 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
-  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users,
+  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   listWaNumbers, upsertWaNumber, removeWaNumber, setStatus, completeLink,
-  onWaNumbersChange, appendAudit, gatewayHealth,
+  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgents,
   type WaBusinessNumber, type WaSessionStatus,
 } from "@/lib/waBusinessNumbers";
+import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 const statusMeta: Record<WaSessionStatus, { label: string; cls: string; Icon: any }> = {
