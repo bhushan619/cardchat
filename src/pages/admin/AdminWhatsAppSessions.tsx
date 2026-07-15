@@ -85,6 +85,10 @@ export default function AdminWhatsAppSessions() {
   const [addForm, setAddForm] = useState<{ label: string; phone: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<WaBusinessNumber | null>(null);
   const [selected, setSelected] = useState<WaBusinessNumber | null>(null);
+  const [assignFor, setAssignFor] = useState<WaBusinessNumber | null>(null);
+  const [assignDraft, setAssignDraft] = useState<string[]>([]);
+
+  const agentUsers = useMemo(() => adminUsers.filter((u) => u.role === "agent"), []);
 
   useEffect(() => onWaNumbersChange(() => setSessions(listWaNumbers())), []);
   useEffect(() => {
