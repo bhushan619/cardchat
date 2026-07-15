@@ -1159,7 +1159,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </TooltipProvider>
 
-                    {canReassign && (
+                    {canReassign && channelFilter !== "whatsapp" && (
                       <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
                         <PopoverTrigger asChild>
                           <Button
