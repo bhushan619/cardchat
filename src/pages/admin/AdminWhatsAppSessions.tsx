@@ -179,6 +179,7 @@ export default function AdminWhatsAppSessions() {
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Number</th>
                 <th className="text-left px-4 py-3 font-medium">Status</th>
+                <th className="text-left px-4 py-3 font-medium">Assigned agents</th>
                 <th className="text-left px-4 py-3 font-medium">Warmup</th>
                 <th className="text-left px-4 py-3 font-medium">Today</th>
                 <th className="text-left px-4 py-3 font-medium">Reply ratio</th>
