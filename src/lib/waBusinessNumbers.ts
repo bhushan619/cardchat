@@ -243,6 +243,24 @@ export function completeLink(id: string, actor = "Admin One") {
   write(list);
 }
 
+export function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
+  const list = read();
+  const idx = list.findIndex((x) => x.id === id);
+  if (idx < 0) return;
+  const prev = list[idx].assignedAgents || [];
+  list[idx] = {
+    ...list[idx],
+    assignedAgents: agents,
+    auditLog: [
+      { ts: now(), event: "warmup_advanced", actor, note: `Assigned agents: ${agents.join(", ") || "(none)"} (was: ${prev.join(", ") || "(none)"})` },
+      ...list[idx].auditLog,
+    ].slice(0, 50),
+  };
+  write(list);
+}
+
+
+
 export function onWaNumbersChange(cb: () => void): () => void {
   const handler = () => cb();
   window.addEventListener(EVENT, handler);
