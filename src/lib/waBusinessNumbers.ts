@@ -68,7 +68,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "emerald",
     warmupDay: null, dailyMsgCount: 187, dailyConvCount: 34, replyRatio: 0.71,
     memoryMB: 412, sessionStartedAt: daysAgo(6), lastSeenAt: now(),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: ["Mike Agent", "Tunde Agent"],
     auditLog: [
       { ts: daysAgo(30), event: "created", actor: "Admin One" },
       { ts: daysAgo(30), event: "linked", actor: "Admin One", note: "QR scanned from Main Sales handset" },
