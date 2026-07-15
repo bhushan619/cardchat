@@ -252,7 +252,7 @@ export function setAssignedAgents(id: string, agents: string[], actor = "Admin O
     ...list[idx],
     assignedAgents: agents,
     auditLog: [
-      { ts: now(), event: "warmup_advanced", actor, note: `Assigned agents: ${agents.join(", ") || "(none)"} (was: ${prev.join(", ") || "(none)"})` },
+      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agents: ${agents.join(", ") || "(none)"} (was: ${prev.join(", ") || "(none)"})` },
       ...list[idx].auditLog,
     ].slice(0, 50),
   };
