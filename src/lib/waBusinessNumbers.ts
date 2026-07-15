@@ -79,7 +79,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "sky",
     warmupDay: 9, dailyMsgCount: 63, dailyConvCount: 11, replyRatio: 0.64,
     memoryMB: 386, sessionStartedAt: daysAgo(2), lastSeenAt: now(),
-    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: [],
+    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: ["Mike Agent"],
     auditLog: [
       { ts: daysAgo(9), event: "created", actor: "Admin One" },
       { ts: daysAgo(9), event: "linked", actor: "Admin One" },
