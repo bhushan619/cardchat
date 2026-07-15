@@ -1159,7 +1159,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </TooltipProvider>
 
-                    {canReassign && (
+                    {canReassign && channelFilter !== "whatsapp" && (
                       <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
                         <PopoverTrigger asChild>
                           <Button
@@ -1229,7 +1229,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </Popover>
                     )}
 
+                    {channelFilter !== "whatsapp" && (
                     <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
+
                       <PopoverTrigger asChild>
                         <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
                           <Users className="w-3.5 h-3.5" /> Escalate
@@ -1274,6 +1276,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                       </PopoverContent>
                     </Popover>
+                    )}
                   </div>
                 </header>
 

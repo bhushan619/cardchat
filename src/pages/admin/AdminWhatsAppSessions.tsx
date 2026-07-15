@@ -11,14 +11,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
-  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users,
+  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   listWaNumbers, upsertWaNumber, removeWaNumber, setStatus, completeLink,
-  onWaNumbersChange, appendAudit, gatewayHealth,
+  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgents,
   type WaBusinessNumber, type WaSessionStatus,
 } from "@/lib/waBusinessNumbers";
+import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 
 const statusMeta: Record<WaSessionStatus, { label: string; cls: string; Icon: any }> = {
@@ -84,6 +85,10 @@ export default function AdminWhatsAppSessions() {
   const [addForm, setAddForm] = useState<{ label: string; phone: string } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<WaBusinessNumber | null>(null);
   const [selected, setSelected] = useState<WaBusinessNumber | null>(null);
+  const [assignFor, setAssignFor] = useState<WaBusinessNumber | null>(null);
+  const [assignDraft, setAssignDraft] = useState<string[]>([]);
+
+  const agentUsers = useMemo(() => adminUsers.filter((u) => u.role === "agent"), []);
 
   useEffect(() => onWaNumbersChange(() => setSessions(listWaNumbers())), []);
   useEffect(() => {
@@ -174,6 +179,7 @@ export default function AdminWhatsAppSessions() {
               <tr>
                 <th className="text-left px-4 py-3 font-medium">Number</th>
                 <th className="text-left px-4 py-3 font-medium">Status</th>
+                <th className="text-left px-4 py-3 font-medium">Assigned agents</th>
                 <th className="text-left px-4 py-3 font-medium">Warmup</th>
                 <th className="text-left px-4 py-3 font-medium">Today</th>
                 <th className="text-left px-4 py-3 font-medium">Reply ratio</th>
@@ -206,6 +212,22 @@ export default function AdminWhatsAppSessions() {
                       <Badge variant="outline" className={`gap-1 ${st.cls}`}>
                         <StatusIcon className="w-3 h-3" /> {st.label}
                       </Badge>
+                    </td>
+                    <td className="px-4 py-3 text-xs">
+                      {s.assignedAgents && s.assignedAgents.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 max-w-[180px]">
+                          {s.assignedAgents.slice(0, 3).map((a) => (
+                            <span key={a} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-md text-[10px] font-medium">
+                              {a}
+                            </span>
+                          ))}
+                          {s.assignedAgents.length > 3 && (
+                            <span className="text-[10px] text-muted-foreground">+{s.assignedAgents.length - 3}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground italic">Shared pool</span>
+                      )}
                     </td>
                     <td className="px-4 py-3 text-xs">
                       {s.warmupDay ? (
@@ -254,6 +276,9 @@ export default function AdminWhatsAppSessions() {
                             <DropdownMenuItem onClick={() => { appendAudit(s.id, { ts: new Date().toISOString(), event: "warmup_advanced", actor: "Admin One", note: "Manually advanced warmup day" }); toast.success("Warmup day advanced"); }}>
                               <RotateCw className="w-3.5 h-3.5 mr-2" /> Advance warmup
                             </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgents || []); }}>
+                              <UserPlus className="w-3.5 h-3.5 mr-2" /> Assign agents
+                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(s)}>
                               <Trash2 className="w-3.5 h-3.5 mr-2" /> Remove
@@ -266,7 +291,7 @@ export default function AdminWhatsAppSessions() {
                 );
               })}
               {sessions.length === 0 && (
-                <tr><td colSpan={8} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
               )}
             </tbody>
           </table>
@@ -382,6 +407,72 @@ export default function AdminWhatsAppSessions() {
               </div>
             ))}
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Assign agents dialog */}
+      <Dialog open={!!assignFor} onOpenChange={(o) => !o && setAssignFor(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-4 h-4" /> Assign agents to {assignFor?.label}
+            </DialogTitle>
+            <DialogDescription>
+              Select agents who can handle conversations on <span className="font-mono">{assignFor?.phone}</span>. One agent can be assigned to multiple numbers. Leave empty to keep this number in the shared pool.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1 max-h-72 overflow-y-auto -mx-1 px-1">
+            {agentUsers.map((agent) => {
+              const checked = assignDraft.includes(agent.name);
+              return (
+                <label
+                  key={agent.id}
+                  className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors ${
+                    checked ? "bg-primary/5 border-primary/40" : "hover:bg-muted border-transparent"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-primary"
+                    checked={checked}
+                    onChange={(e) => {
+                      setAssignDraft((d) =>
+                        e.target.checked ? [...d, agent.name] : d.filter((n) => n !== agent.name)
+                      );
+                    }}
+                  />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                    {agent.name[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{agent.name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{agent.email} · {agent.status}</p>
+                  </div>
+                </label>
+              );
+            })}
+            {agentUsers.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-6">No agents available.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssignFor(null)}>Cancel</Button>
+            <Button
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => {
+                if (!assignFor) return;
+                setAssignedAgents(assignFor.id, assignDraft);
+                toast.success(
+                  assignDraft.length === 0
+                    ? `${assignFor.label} moved back to the shared pool`
+                    : `${assignFor.label} assigned to ${assignDraft.length} agent${assignDraft.length === 1 ? "" : "s"}`
+                );
+                setAssignFor(null);
+              }}
+            >
+              Save assignment
+            </Button>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
     </AdminLayout>

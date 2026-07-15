@@ -46,7 +46,8 @@ export type WaBusinessNumber = {
   sessionStartedAt: string;   // ISO
   lastSeenAt: string;         // ISO
   proxyRegion: string;        // e.g. "NG-Lagos-Residential"
-  assignedAgent: string | null; // shared pool → null; otherwise agent display name
+  assignedAgent: string | null; // legacy single-agent field (kept for back-compat)
+  assignedAgents: string[];   // agents (by display name) who handle this number; one agent can handle multiple numbers
   auditLog: WaAuditEvent[];
 
   // Legacy (kept for existing card code that references them; ignored by wwebjs)
@@ -67,7 +68,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "emerald",
     warmupDay: null, dailyMsgCount: 187, dailyConvCount: 34, replyRatio: 0.71,
     memoryMB: 412, sessionStartedAt: daysAgo(6), lastSeenAt: now(),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: ["Mike Agent", "Tunde Agent"],
     auditLog: [
       { ts: daysAgo(30), event: "created", actor: "Admin One" },
       { ts: daysAgo(30), event: "linked", actor: "Admin One", note: "QR scanned from Main Sales handset" },
@@ -78,7 +79,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "sky",
     warmupDay: 9, dailyMsgCount: 63, dailyConvCount: 11, replyRatio: 0.64,
     memoryMB: 386, sessionStartedAt: daysAgo(2), lastSeenAt: now(),
-    proxyRegion: "NG-Abuja-Residential", assignedAgent: null,
+    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: ["Mike Agent"],
     auditLog: [
       { ts: daysAgo(9), event: "created", actor: "Admin One" },
       { ts: daysAgo(9), event: "linked", actor: "Admin One" },
@@ -89,7 +90,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "paused", active: false, color: "violet",
     warmupDay: null, dailyMsgCount: 0, dailyConvCount: 0, replyRatio: 0.82,
     memoryMB: 0, sessionStartedAt: daysAgo(14), lastSeenAt: daysAgo(1),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(60), event: "created", actor: "Admin One" },
       { ts: daysAgo(60), event: "linked", actor: "Admin One" },
@@ -101,7 +102,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "disconnected", active: false, color: "amber",
     warmupDay: 3, dailyMsgCount: 8, dailyConvCount: 2, replyRatio: 0.35,
     memoryMB: 0, sessionStartedAt: daysAgo(3), lastSeenAt: daysAgo(0.02),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(4), event: "created", actor: "Admin One" },
       { ts: daysAgo(4), event: "linked", actor: "Admin One" },
@@ -117,7 +118,10 @@ function read(): WaBusinessNumber[] {
     if (!raw) return DEFAULTS;
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULTS;
-    return parsed as WaBusinessNumber[];
+    return (parsed as WaBusinessNumber[]).map((n) => ({
+      ...n,
+      assignedAgents: Array.isArray((n as any).assignedAgents) ? (n as any).assignedAgents : [],
+    }));
   } catch {
     return DEFAULTS;
   }
@@ -148,7 +152,7 @@ const DEFAULT_NEW: Omit<WaBusinessNumber, "id" | "label" | "phone"> = {
   sessionStartedAt: now(),
   lastSeenAt: now(),
   proxyRegion: "NG-Lagos-Residential",
-  assignedAgent: null,
+  assignedAgent: null, assignedAgents: [],
   auditLog: [],
 };
 
@@ -238,6 +242,24 @@ export function completeLink(id: string, actor = "Admin One") {
   };
   write(list);
 }
+
+export function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
+  const list = read();
+  const idx = list.findIndex((x) => x.id === id);
+  if (idx < 0) return;
+  const prev = list[idx].assignedAgents || [];
+  list[idx] = {
+    ...list[idx],
+    assignedAgents: agents,
+    auditLog: [
+      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agents: ${agents.join(", ") || "(none)"} (was: ${prev.join(", ") || "(none)"})` },
+      ...list[idx].auditLog,
+    ].slice(0, 50),
+  };
+  write(list);
+}
+
+
 
 export function onWaNumbersChange(cb: () => void): () => void {
   const handler = () => cb();
