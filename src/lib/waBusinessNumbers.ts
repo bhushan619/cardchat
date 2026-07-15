@@ -118,7 +118,10 @@ function read(): WaBusinessNumber[] {
     if (!raw) return DEFAULTS;
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed) || parsed.length === 0) return DEFAULTS;
-    return parsed as WaBusinessNumber[];
+    return (parsed as WaBusinessNumber[]).map((n) => ({
+      ...n,
+      assignedAgents: Array.isArray((n as any).assignedAgents) ? (n as any).assignedAgents : [],
+    }));
   } catch {
     return DEFAULTS;
   }
