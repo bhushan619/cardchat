@@ -68,7 +68,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "emerald",
     warmupDay: null, dailyMsgCount: 187, dailyConvCount: 34, replyRatio: 0.71,
     memoryMB: 412, sessionStartedAt: daysAgo(6), lastSeenAt: now(),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(30), event: "created", actor: "Admin One" },
       { ts: daysAgo(30), event: "linked", actor: "Admin One", note: "QR scanned from Main Sales handset" },
@@ -79,7 +79,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "sky",
     warmupDay: 9, dailyMsgCount: 63, dailyConvCount: 11, replyRatio: 0.64,
     memoryMB: 386, sessionStartedAt: daysAgo(2), lastSeenAt: now(),
-    proxyRegion: "NG-Abuja-Residential", assignedAgent: null,
+    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(9), event: "created", actor: "Admin One" },
       { ts: daysAgo(9), event: "linked", actor: "Admin One" },
@@ -90,7 +90,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "paused", active: false, color: "violet",
     warmupDay: null, dailyMsgCount: 0, dailyConvCount: 0, replyRatio: 0.82,
     memoryMB: 0, sessionStartedAt: daysAgo(14), lastSeenAt: daysAgo(1),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(60), event: "created", actor: "Admin One" },
       { ts: daysAgo(60), event: "linked", actor: "Admin One" },
@@ -102,7 +102,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "disconnected", active: false, color: "amber",
     warmupDay: 3, dailyMsgCount: 8, dailyConvCount: 2, replyRatio: 0.35,
     memoryMB: 0, sessionStartedAt: daysAgo(3), lastSeenAt: daysAgo(0.02),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null,
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: [],
     auditLog: [
       { ts: daysAgo(4), event: "created", actor: "Admin One" },
       { ts: daysAgo(4), event: "linked", actor: "Admin One" },
@@ -149,7 +149,7 @@ const DEFAULT_NEW: Omit<WaBusinessNumber, "id" | "label" | "phone"> = {
   sessionStartedAt: now(),
   lastSeenAt: now(),
   proxyRegion: "NG-Lagos-Residential",
-  assignedAgent: null,
+  assignedAgent: null, assignedAgents: [],
   auditLog: [],
 };
 
