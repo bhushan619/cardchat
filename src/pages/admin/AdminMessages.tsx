@@ -114,7 +114,7 @@ type ChatMessage = {
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
 
-export default function AdminMessages() {
+export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
   const { role } = useAdminRole();
   const orderStatus = useOrderStatus();
   const [starred, setStarred] = useState<Set<string>>(new Set());
@@ -225,14 +225,21 @@ export default function AdminMessages() {
 
   // Dynamic tab assignment based on order status
   const conversationsWithTabs = useMemo(() => {
-    return rawConversations.map((c) => ({
-      ...c,
-      dynamicTab: orderStatus.getConversationTab(c.id),
-    }));
-  }, [orderStatus]);
+    return rawConversations
+      .filter((c) => c.channel === channelFilter)
+      .map((c) => ({
+        ...c,
+        dynamicTab: orderStatus.getConversationTab(c.id),
+      }));
+  }, [orderStatus, channelFilter]);
 
   const [activeTab, setActiveTab] = useState("consulting");
   const [customerSearch, setCustomerSearch] = useState("");
+
+  // Reset selection when channel changes
+  useEffect(() => {
+    setSelectedId(null);
+  }, [channelFilter]);
 
   const filteredConversations = useMemo(() => {
     return conversationsWithTabs.filter((c) => {

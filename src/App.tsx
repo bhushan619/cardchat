@@ -29,6 +29,7 @@ import AdminSetPassword from "./pages/admin/AdminSetPassword";
 import AdminForgotPassword from "./pages/admin/AdminForgotPassword";
 import AdminResetPassword from "./pages/admin/AdminResetPassword";
 import AdminMessages from "./pages/admin/AdminMessages";
+import AdminWhatsApp from "./pages/admin/AdminWhatsApp";
 import AdminChatView from "./pages/admin/AdminChatView";
 import AdminCardRates from "./pages/admin/AdminCardRates";
 import AdminOrders from "./pages/admin/AdminOrders";
@@ -87,6 +88,7 @@ const App = () => (
 
             {/* Admin Panel - wrapped in role provider */}
             <Route path="/admin" element={<AdminRoleProvider><AdminMessages /></AdminRoleProvider>} />
+            <Route path="/admin/whatsapp" element={<AdminRoleProvider><AdminWhatsApp /></AdminRoleProvider>} />
             <Route path="/admin/chat/:id" element={<AdminRoleProvider><AdminChatView /></AdminRoleProvider>} />
             <Route path="/admin/card-rates" element={<AdminRoleProvider><AdminCardRates /></AdminRoleProvider>} />
             <Route path="/admin/orders" element={<AdminRoleProvider><AdminOrders /></AdminRoleProvider>} />
