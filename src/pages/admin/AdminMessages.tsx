@@ -1276,6 +1276,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                       </PopoverContent>
                     </Popover>
+                    )}
                   </div>
                 </header>
 
