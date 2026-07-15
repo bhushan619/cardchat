@@ -409,6 +409,72 @@ export default function AdminWhatsAppSessions() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Assign agents dialog */}
+      <Dialog open={!!assignFor} onOpenChange={(o) => !o && setAssignFor(null)}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <UserPlus className="w-4 h-4" /> Assign agents to {assignFor?.label}
+            </DialogTitle>
+            <DialogDescription>
+              Select agents who can handle conversations on <span className="font-mono">{assignFor?.phone}</span>. One agent can be assigned to multiple numbers. Leave empty to keep this number in the shared pool.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-1 max-h-72 overflow-y-auto -mx-1 px-1">
+            {agentUsers.map((agent) => {
+              const checked = assignDraft.includes(agent.name);
+              return (
+                <label
+                  key={agent.id}
+                  className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors ${
+                    checked ? "bg-primary/5 border-primary/40" : "hover:bg-muted border-transparent"
+                  }`}
+                >
+                  <input
+                    type="checkbox"
+                    className="w-4 h-4 accent-primary"
+                    checked={checked}
+                    onChange={(e) => {
+                      setAssignDraft((d) =>
+                        e.target.checked ? [...d, agent.name] : d.filter((n) => n !== agent.name)
+                      );
+                    }}
+                  />
+                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+                    {agent.name[0]}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{agent.name}</p>
+                    <p className="text-[11px] text-muted-foreground truncate">{agent.email} · {agent.status}</p>
+                  </div>
+                </label>
+              );
+            })}
+            {agentUsers.length === 0 && (
+              <p className="text-sm text-muted-foreground text-center py-6">No agents available.</p>
+            )}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setAssignFor(null)}>Cancel</Button>
+            <Button
+              className="bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => {
+                if (!assignFor) return;
+                setAssignedAgents(assignFor.id, assignDraft);
+                toast.success(
+                  assignDraft.length === 0
+                    ? `${assignFor.label} moved back to the shared pool`
+                    : `${assignFor.label} assigned to ${assignDraft.length} agent${assignDraft.length === 1 ? "" : "s"}`
+                );
+                setAssignFor(null);
+              }}
+            >
+              Save assignment
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
   );
 }
