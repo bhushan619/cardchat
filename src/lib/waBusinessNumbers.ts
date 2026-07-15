@@ -46,7 +46,8 @@ export type WaBusinessNumber = {
   sessionStartedAt: string;   // ISO
   lastSeenAt: string;         // ISO
   proxyRegion: string;        // e.g. "NG-Lagos-Residential"
-  assignedAgent: string | null; // shared pool → null; otherwise agent display name
+  assignedAgent: string | null; // legacy single-agent field (kept for back-compat)
+  assignedAgents: string[];   // agents (by display name) who handle this number; one agent can handle multiple numbers
   auditLog: WaAuditEvent[];
 
   // Legacy (kept for existing card code that references them; ignored by wwebjs)
