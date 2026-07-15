@@ -214,6 +214,22 @@ export default function AdminWhatsAppSessions() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-xs">
+                      {s.assignedAgents && s.assignedAgents.length > 0 ? (
+                        <div className="flex flex-wrap gap-1 max-w-[180px]">
+                          {s.assignedAgents.slice(0, 3).map((a) => (
+                            <span key={a} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-md text-[10px] font-medium">
+                              {a}
+                            </span>
+                          ))}
+                          {s.assignedAgents.length > 3 && (
+                            <span className="text-[10px] text-muted-foreground">+{s.assignedAgents.length - 3}</span>
+                          )}
+                        </div>
+                      ) : (
+                        <span className="text-muted-foreground italic">Shared pool</span>
+                      )}
+                    </td>
+                    <td className="px-4 py-3 text-xs">
                       {s.warmupDay ? (
                         <span className="inline-flex items-center gap-1 text-amber-600 dark:text-amber-400">
                           <Timer className="w-3 h-3" /> Day {s.warmupDay}/14
