@@ -291,7 +291,7 @@ export default function AdminWhatsAppSessions() {
                 );
               })}
               {sessions.length === 0 && (
-                <tr><td colSpan={8} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
               )}
             </tbody>
           </table>
