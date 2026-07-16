@@ -239,7 +239,11 @@ export default function CardlightPanel({
     // Also notify parent
     if (onComplete) {
       const cr2Value = Number(cardRate) || 0;
-      const cr3Value = Number(nairaPrice) > 0 && cr2Value > 0 ? cr2Value / Number(nairaPrice) : 0;
+      const pointsRateNum = Number(nairaPrice) || 0;
+      const cr3Value = pointsRateNum > 0 && cr2Value > 0 ? cr2Value / pointsRateNum : 0;
+      const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
+      // Total Release = Points Rate × Card Rate (CNY) × Card Amount
+      const totalPayout = pointsRateNum * cr3Value * totalFaceValue;
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
         cards: cards.map((c) => ({
@@ -249,8 +253,8 @@ export default function CardlightPanel({
           status: "Wait For Sale",
           cardNo: c.cardNo,
         })),
-        totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * cr2Value,
-        totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
+        totalPayout,
+        totalFaceValue,
         bank: "",
         bankAccount: "",
         holderName: "",
