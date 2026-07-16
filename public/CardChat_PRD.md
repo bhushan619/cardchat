@@ -753,6 +753,8 @@ A multi-phase sales tool embedded in the right sidebar:
   - "Add Card" button (max 15)
 
 - **Summary Bar:** Card count and total calculations
+  - **Total Release formula:** `Points Rate × Card Rate (CNY) × Card Amount`
+  - `Card Rate (CNY) = Points price ÷ Points rate` (derived, read-only)
 
 - **"Create Now" button:** Creates the order and adds it to the session order list
 
