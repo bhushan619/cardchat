@@ -941,6 +941,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </span>
                     </span>
                   </div>
+                  <p className="text-[9px] text-muted-foreground text-right">
+                    Points Rate × Card Rate (CNY) × Card Amount
+                  </p>
                 </>
               );
             })()}
