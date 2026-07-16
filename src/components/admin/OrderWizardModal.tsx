@@ -239,7 +239,11 @@ export default function CardlightPanel({
     // Also notify parent
     if (onComplete) {
       const cr2Value = Number(cardRate) || 0;
-      const cr3Value = Number(nairaPrice) > 0 && cr2Value > 0 ? cr2Value / Number(nairaPrice) : 0;
+      const pointsRateNum = Number(nairaPrice) || 0;
+      const cr3Value = pointsRateNum > 0 && cr2Value > 0 ? cr2Value / pointsRateNum : 0;
+      const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
+      // Total Release = Points Rate × Card Rate (CNY) × Card Amount
+      const totalPayout = pointsRateNum * cr3Value * totalFaceValue;
       const order: CompletedOrder = {
         orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
         cards: cards.map((c) => ({
@@ -249,8 +253,8 @@ export default function CardlightPanel({
           status: "Wait For Sale",
           cardNo: c.cardNo,
         })),
-        totalPayout: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0) * cr2Value,
-        totalFaceValue: cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0),
+        totalPayout,
+        totalFaceValue,
         bank: "",
         bankAccount: "",
         holderName: "",
@@ -617,7 +621,11 @@ export default function CardlightPanel({
               {/* Amount Calculation Summary */}
               {(() => {
                 const totalFaceValue = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
-                const totalPayout = totalFaceValue * (Number(cardRate) || 0);
+                const pointsRateNum = Number(nairaPrice) || 0;
+                const pointsPriceNum = Number(cardRate) || 0;
+                const cardRateCny = pointsRateNum > 0 && pointsPriceNum > 0 ? pointsPriceNum / pointsRateNum : 0;
+                // Total Release = Points Rate × Card Rate (CNY) × Card Amount
+                const totalPayout = pointsRateNum * cardRateCny * totalFaceValue;
                 const currencySymbol =
                   cardCurrency === "GBP"
                     ? "£"
@@ -645,6 +653,12 @@ export default function CardlightPanel({
                         <span className="font-semibold inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{Number(nairaPrice).toLocaleString()}</span>
                       </div>
                     )}
+                    {cardRateCny > 0 && (
+                      <div className="flex items-center justify-between text-[11px]">
+                        <span className="text-muted-foreground">Card Rate (CNY)</span>
+                        <span className="font-semibold">{cardRateCny.toFixed(4)}</span>
+                      </div>
+                    )}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">Total Release</span>
                       <span className="font-bold text-success inline-flex items-center gap-0.5">
@@ -654,6 +668,9 @@ export default function CardlightPanel({
                         </span>
                       </span>
                     </div>
+                    <p className="text-[9px] text-muted-foreground text-right">
+                      Points Rate × Card Rate (CNY) × Card Amount
+                    </p>
                   </div>
                 ) : null;
               })()}
