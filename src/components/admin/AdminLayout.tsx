@@ -195,7 +195,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
         {/* Search overlay */}
         {searchOpen && (
-          <div className="absolute top-14 left-60 right-0 z-50 bg-card border-b shadow-lg p-4 animate-slide-up">
+          <div className="absolute top-14 left-[168px] right-0 z-50 bg-card border-b shadow-lg p-4 animate-slide-up">
             <div className="max-w-2xl mx-auto space-y-3">
               {!searchResults ? (
                 <>
