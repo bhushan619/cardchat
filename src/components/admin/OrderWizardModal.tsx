@@ -697,9 +697,9 @@ export default function CardlightPanel({
                         </span>
                       </span>
                     </div>
-                    <p className="text-[9px] text-muted-foreground text-right">
+                    {/* <p className="text-[9px] text-muted-foreground text-right">
                       Points Rate × Card Rate (CNY) × Card Amount
-                    </p>
+                    </p> */}
                   </div>
                 ) : null;
               })()}
