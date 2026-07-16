@@ -418,7 +418,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const transferMethods = ["PalmPay2", "OPay", "Moniepoint", "Kuda", "Manual Bank Transfer"];
 
-
   const nigerianBanks = [
     "Access Bank",
     "Citibank",
@@ -503,7 +502,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     setTransferOrderId("");
   };
 
-
   const handleCopy = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     setCopyFeedback(label);
@@ -543,7 +541,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const selectedOrder = selectedOrderId ? allOrders.find((o) => o.id === selectedOrderId) : null;
 
   const handleExecuteTransfer = (orderId: string, payout: number) => {
-
     setTransferCompletedOrders((prev) => new Set(prev).add(orderId));
     setPaymentOrderId(null);
     setSelectedBankId(null);
@@ -647,7 +644,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   }, [transferOpen, currentOrderId, transferEligibleOrders, transferOrderId]);
 
   const simulateCardlightWebhook = (orderId: string, simulatedResult?: CardlightResult) => {
-
     setCardlightResults((prev) => ({ ...prev, [orderId]: "pending" }));
     const webhookDelay = 3000 + Math.random() * 3000;
     setTimeout(() => {
@@ -770,9 +766,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     setConfirmAction({
                       type: "good_card",
                       title: "Confirm Successful Trade",
-                      desc: selectedConvo?.channel === "whatsapp"
-                        ? `This will mark the order as successful. A bank transfer of ₦${statusOrder?.payout.toLocaleString() || "0"} must then be recorded against this order.`
-                        : `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                      desc:
+                        selectedConvo?.channel === "whatsapp"
+                          ? `This will mark the order as successful. A bank transfer of ₦${statusOrder?.payout.toLocaleString() || "0"} must then be recorded against this order.`
+                          : `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                       onConfirm: () => {
                         handleStatusTransition(selectedId, "success", statusOrder?.payout);
                         setConfirmAction(null);
@@ -1233,52 +1230,53 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     )}
 
                     {channelFilter !== "whatsapp" && (
-                    <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
-
-                      <PopoverTrigger asChild>
-                        <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-                          <Users className="w-3.5 h-3.5" /> Escalate
-                        </button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-64 p-0" align="end">
-                        <div className="p-3 border-b">
-                          <p className="text-xs font-semibold">Add to Group Chat</p>
-                          <p className="text-[10px] text-muted-foreground mt-0.5">Select a team lead or super admin</p>
-                        </div>
-                        <div className="p-1.5 space-y-0.5">
-                          {escalatableUsers.map((user) => {
-                            const alreadyAdded = groupMembers.some((m) => m.id === user.id);
-                            const roleMeta = ROLE_META[user.role];
-                            const RoleIcon = roleMeta?.icon || Shield;
-                            return (
-                              <button
-                                key={user.id}
-                                onClick={() => !alreadyAdded && addToGroup(user)}
-                                disabled={alreadyAdded}
-                                className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left transition-colors ${
-                                  alreadyAdded ? "opacity-50 cursor-not-allowed" : "hover:bg-muted"
-                                }`}
-                              >
-                                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                  <RoleIcon className="w-3.5 h-3.5 text-primary" />
-                                </div>
-                                <div className="flex-1 min-w-0">
-                                  <p className="text-xs font-medium truncate">{user.name}</p>
-                                  <p className="text-[10px] text-muted-foreground">
-                                    {roleMeta?.label} · {user.status}
-                                  </p>
-                                </div>
-                                {alreadyAdded ? (
-                                  <span className="text-[9px] text-muted-foreground">Added</span>
-                                ) : (
-                                  <span className="text-[9px] text-primary font-medium">+ Add</span>
-                                )}
-                              </button>
-                            );
-                          })}
-                        </div>
-                      </PopoverContent>
-                    </Popover>
+                      <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
+                        <PopoverTrigger asChild>
+                          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                            <Users className="w-3.5 h-3.5" /> Escalate
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-64 p-0" align="end">
+                          <div className="p-3 border-b">
+                            <p className="text-xs font-semibold">Add to Group Chat</p>
+                            <p className="text-[10px] text-muted-foreground mt-0.5">
+                              Select a team lead or super admin
+                            </p>
+                          </div>
+                          <div className="p-1.5 space-y-0.5">
+                            {escalatableUsers.map((user) => {
+                              const alreadyAdded = groupMembers.some((m) => m.id === user.id);
+                              const roleMeta = ROLE_META[user.role];
+                              const RoleIcon = roleMeta?.icon || Shield;
+                              return (
+                                <button
+                                  key={user.id}
+                                  onClick={() => !alreadyAdded && addToGroup(user)}
+                                  disabled={alreadyAdded}
+                                  className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left transition-colors ${
+                                    alreadyAdded ? "opacity-50 cursor-not-allowed" : "hover:bg-muted"
+                                  }`}
+                                >
+                                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
+                                    <RoleIcon className="w-3.5 h-3.5 text-primary" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-xs font-medium truncate">{user.name}</p>
+                                    <p className="text-[10px] text-muted-foreground">
+                                      {roleMeta?.label} · {user.status}
+                                    </p>
+                                  </div>
+                                  {alreadyAdded ? (
+                                    <span className="text-[9px] text-muted-foreground">Added</span>
+                                  ) : (
+                                    <span className="text-[9px] text-primary font-medium">+ Add</span>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
                     )}
                   </div>
                 </header>
@@ -1487,7 +1485,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <Button
                             size="sm"
                             variant="outline"
-                            disabled={!(currentOrderStatus === "success" || (currentOrderId && !!negotiationData[currentOrderId]))}
+                            disabled={
+                              !(
+                                currentOrderStatus === "success" ||
+                                (currentOrderId && !!negotiationData[currentOrderId])
+                              )
+                            }
                             onClick={() => {
                               resetTransferForm();
                               setTransferOpen(true);
@@ -1557,7 +1560,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     {currentOrderStatus && (
                       <div className="p-4 border-b">
                         <h3 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
-                          Order Status
+                          Order Statusrrr
                           {currentOrderId && (
                             <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>
                           )}
@@ -1688,8 +1691,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   </div>
 
                                   {/* Payout indicator — wallet for in-app, transfer for WhatsApp */}
-                                  {currentOrderStatus === "success" && (
-                                    selectedConvo.channel === "whatsapp" ? (
+                                  {currentOrderStatus === "success" &&
+                                    (selectedConvo.channel === "whatsapp" ? (
                                       transferCompletedOrders.has(o.id) ? (
                                         <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
                                           <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
@@ -1715,8 +1718,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                           Pts {o.payout.toLocaleString()} added to customer's wallet
                                         </p>
                                       </div>
-                                    )
-                                  )}
+                                    ))}
                                 </div>
                               )}
                             </div>
@@ -2729,9 +2731,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                               </span>
                               <span
                                 className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                                  completed
-                                    ? "bg-emerald-500/10 text-emerald-600"
-                                    : "bg-amber-500/10 text-amber-600"
+                                  completed ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
                                 }`}
                               >
                                 {completed ? "Transferred" : "Pending"}
@@ -2743,15 +2743,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </SelectContent>
                   </Select>
                   <p className="text-[10px] text-muted-foreground">
-                    Shows orders for this customer and whether their payout has already been transferred. Selecting an order auto-fills the transfer amount.
+                    Shows orders for this customer and whether their payout has already been transferred. Selecting an
+                    order auto-fills the transfer amount.
                   </p>
-
                 </div>
               </section>
 
               {/* Recipient card */}
               <section className="rounded-xl border bg-card">
-
                 <header className="px-4 py-2.5 border-b flex items-center justify-between">
                   <h3 className="text-sm font-semibold">Recipient</h3>
                   {transferVerified && (
@@ -3137,7 +3136,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   setTransferOpen(false);
                   resetTransferForm();
                 }}
-
               >
                 Transfer Now
               </Button>
