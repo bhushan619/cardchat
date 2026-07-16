@@ -680,14 +680,13 @@ export default function CardlightPanel({
                         </span>
                       </div>
                     )}
-                    /*{" "}
-                    {cardRateCny > 0 && (
+
+                    {/* {cardRateCny > 0 && (
                       <div className="flex items-center justify-between text-[11px]">
                         <span className="text-muted-foreground">Card Rate (CNY)</span>
                         <span className="font-semibold">{cardRateCny.toFixed(4)}</span>
                       </div>
-                    )}{" "}
-                    */
+                    )} */}
                     <div className="border-t border-border pt-2 flex items-center justify-between text-xs">
                       <span className="text-muted-foreground font-medium">Total Release</span>
                       <span className="font-bold text-success inline-flex items-center gap-0.5">
