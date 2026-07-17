@@ -671,13 +671,10 @@ export default function CardlightPanel({
                         {totalFaceValue.toLocaleString()}
                       </span>
                     </div>
-                    {nairaPrice && (
+                    {cardRateCny > 0 && (
                       <div className="flex items-center justify-between text-[11px]">
-                        <span className="text-muted-foreground">Points rate</span>
-                        <span className="font-semibold inline-flex items-center gap-0.5">
-                          <Coins className="w-3 h-3" />
-                          {Number(nairaPrice).toLocaleString()}
-                        </span>
+                        <span className="text-muted-foreground">Card Rate (CNY)</span>
+                        <span className="font-semibold">{cardRateCny.toFixed(4)}</span>
                       </div>
                     )}
 
