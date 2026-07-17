@@ -308,7 +308,7 @@ export default function AdminOrders() {
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
-                        <td colSpan={11} className="px-6 py-5 bg-muted/20">
+                        <td colSpan={12} className="px-6 py-5 bg-muted/20">
                           <div className="animate-slide-up space-y-5">
                             {/* Order Details Title */}
                             <h3 className="text-sm font-bold">Order Details</h3>
