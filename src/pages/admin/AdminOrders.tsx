@@ -291,6 +291,14 @@ export default function AdminOrders() {
                        <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
+                      <td className="px-4 py-3 text-sm text-right">
+                        {o.nairaRate ? (
+                          <span className="inline-flex items-center gap-0.5 justify-end font-semibold">
+                            <Coins className="w-3 h-3" />
+                            {(Number(o.nairaRate) * (Number(o.unitPrice) / Number(o.nairaRate)) * Number(o.amount)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                          </span>
+                        ) : "—"}
+                      </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
                           {o.status.replace("_", " ")}
