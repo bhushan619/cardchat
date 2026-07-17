@@ -922,7 +922,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Card Rate (CNY)", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
+                    ["Card Rate (CNY)", "4.2345"],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
