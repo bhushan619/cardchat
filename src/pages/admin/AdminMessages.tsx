@@ -922,7 +922,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    ["Points price", `Pts ${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`],
+                    [
+                      "Points pricessssssss",
+                      `Pts ${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`,
+                    ],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
