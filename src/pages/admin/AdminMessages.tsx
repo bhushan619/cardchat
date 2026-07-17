@@ -893,7 +893,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Points pricessss</span>
+                      <span className="text-muted-foreground">Points price</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           Pts {neg.oldRate.toLocaleString()}
@@ -922,10 +922,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <>
                   {[
                     ["Amount", `${currSym}${statusOrder.amount.toLocaleString()}`],
-                    [
-                      "Points pricessssssss",
-                      `Pts ${(statusOrder.unitPrice || statusOrder.nairaRate).toLocaleString()}`,
-                    ],
+                    ["Card Rate (CNY)", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
                   ].map(([label, value]) => (
                     <div key={label} className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">{label}</span>
