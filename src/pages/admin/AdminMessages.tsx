@@ -893,7 +893,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </div>
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="text-muted-foreground">Points price</span>
+                      <span className="text-muted-foreground">Points pricessss</span>
                       <div className="flex items-center gap-2">
                         <span className="text-muted-foreground line-through text-[10px]">
                           Pts {neg.oldRate.toLocaleString()}
@@ -1560,7 +1560,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     {currentOrderStatus && (
                       <div className="p-4 border-b">
                         <h3 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
-                          Order Statusrrr
+                          Order Status
                           {currentOrderId && (
                             <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>
                           )}
@@ -1911,10 +1911,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     ["Order face value", `${purchaseFaceValue}`],
                     ["Order unit price", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
                     ["Order amount", orderAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })],
-                    [
-                      "Card Rate (CNY)",
-                      unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 }),
-                    ],
+                    ["Card Rate (CNY)", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
                     ["Settlement coin", settleCoin],
                     ["Settle face value", `${settleFaceValue}`],
                     ["Settle rate", `${settleRate}`],
@@ -1926,7 +1923,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       "Total Release",
                       <span className="inline-flex items-center gap-0.5 font-semibold">
                         <Coins className="w-3 h-3" />
-                        {(Number(nairaRate || 0) * unitPriceCalc * Number(purchaseFaceValue || 0)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                        {(Number(nairaRate || 0) * unitPriceCalc * Number(purchaseFaceValue || 0)).toLocaleString(
+                          undefined,
+                          { maximumFractionDigits: 2 },
+                        )}
                       </span>,
                     ],
                   ];
