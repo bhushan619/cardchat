@@ -371,26 +371,39 @@ export default function AdminOrders() {
                                     <span className="font-medium">{(details.orderFaceValue * (o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice)).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
                                   </div>
 
-                                  <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Points rate</span>
-                                    <span className="font-medium inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{details.nairaRate}</span>
-                                  </div>
-                                  <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Settlement coin</span>
-                                    <span className="font-medium">{details.settlementCoin}</span>
-                                  </div>
-                                  <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Settle face value</span>
-                                    <span className="font-medium">{details.settleFaceValue}</span>
-                                  </div>
-                                  <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Settle rate</span>
-                                    <span className="font-medium">{details.settleRate}</span>
-                                  </div>
-                                  <div className="flex justify-between text-sm">
-                                    <span className="text-muted-foreground">Settlement amount</span>
-                                    <span className="font-medium">₦{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
-                                  </div>
+                                  {(() => {
+                                    const cardRateCny = o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice;
+                                    const totalRelease = Number(details.nairaRate) * cardRateCny * Number(details.orderFaceValue);
+                                    return (
+                                      <>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-muted-foreground">Card Rate (CNY)</span>
+                                          <span className="font-medium">{cardRateCny.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-muted-foreground">Settlement coin</span>
+                                          <span className="font-medium">{details.settlementCoin}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-muted-foreground">Settle face value</span>
+                                          <span className="font-medium">{details.settleFaceValue}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-muted-foreground">Settle rate</span>
+                                          <span className="font-medium">{details.settleRate}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm">
+                                          <span className="text-muted-foreground">Settlement amount</span>
+                                          <span className="font-medium">₦{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                        </div>
+                                        <div className="flex justify-between text-sm border-t pt-2 mt-1">
+                                          <span className="text-muted-foreground font-medium">Total Release</span>
+                                          <span className="font-bold inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{totalRelease.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                        </div>
+                                        <p className="text-[9px] text-muted-foreground text-right">Points Rate × Card Rate (CNY) × Card Amount</p>
+                                      </>
+                                    );
+                                  })()}
 
                                 </div>
                               </div>
