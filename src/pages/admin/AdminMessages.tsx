@@ -1912,11 +1912,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     ["Order unit price", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
                     ["Order amount", orderAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })],
                     [
-                      "Points rate",
-                      <span className="inline-flex items-center gap-0.5">
-                        <Coins className="w-3 h-3" />
-                        {Number(nairaRate).toLocaleString()}
-                      </span>,
+                      "Card Rate (CNY)",
+                      unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 }),
                     ],
                     ["Settlement coin", settleCoin],
                     ["Settle face value", `${settleFaceValue}`],
@@ -1924,6 +1921,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     [
                       "Settlement amount",
                       `₦${settlementAmountCalc.toLocaleString(undefined, { maximumFractionDigits: 2 })}`,
+                    ],
+                    [
+                      "Total Release",
+                      <span className="inline-flex items-center gap-0.5 font-semibold">
+                        <Coins className="w-3 h-3" />
+                        {(Number(nairaRate || 0) * unitPriceCalc * Number(purchaseFaceValue || 0)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                      </span>,
                     ],
                   ];
                   const orderRows = orderRowsAll.filter(([, v]) => v !== "—" && v !== "" && v != null);
