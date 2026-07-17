@@ -178,8 +178,12 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Source", "Transfer Status", "Points price", "Card Rate", "Points rate", "Amount", "Status", "Created"];
-    const rows = filtered.map(o => [o.customer, o.cardType, o.source || "in-app", o.transferStatus || "not_transferred", `¥${o.unitPrice}`, `${o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}`, `Pts ${o.nairaRate}`, `$${o.amount}`, o.status, o.created]);
+    const headers = ["Alias", "Card Type", "Source", "Transfer Status", "Points price", "Card Rate (CNY)", "Points rate", "Amount", "Total Release", "Status", "Created"];
+    const rows = filtered.map(o => {
+      const cardRateCny = o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : 0;
+      const totalRelease = Number(o.nairaRate || 0) * cardRateCny * Number(o.amount || 0);
+      return [o.customer, o.cardType, o.source || "in-app", o.transferStatus || "not_transferred", `¥${o.unitPrice}`, cardRateCny ? cardRateCny.toFixed(4) : "—", `Pts ${o.nairaRate}`, `$${o.amount}`, `Pts ${totalRelease.toFixed(2)}`, o.status, o.created];
+    });
     const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
