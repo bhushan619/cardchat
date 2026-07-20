@@ -2205,6 +2205,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   <span className="font-medium">Pts {(negOrder?.nairaRate || 289).toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between text-xs">
+                  <span className="text-muted-foreground">Card Rate (CNY)</span>
+                  <span className="font-medium">
+                    {(negOrder?.nairaRate ? oldRate / negOrder.nairaRate : oldRate).toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                  </span>
+                </div>
+                <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Settlement Coin</span>
                   <span className="font-medium">{settleCoin}</span>
                 </div>
