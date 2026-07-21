@@ -666,10 +666,7 @@ export default function CardlightPanel({
                   <div className="rounded-lg border border-border bg-muted/30 p-3 space-y-2">
                     <div className="flex items-center justify-between text-[11px]">
                       <span className="text-muted-foreground">Total Face Value</span>
-                      <span className="font-semibold">
-                        {currencySymbol}
-                        {totalFaceValue.toLocaleString()}
-                      </span>
+                      <span className="font-semibold">{totalFaceValue.toLocaleString()}</span>
                     </div>
                     {cardRateCny > 0 && (
                       <div className="flex items-center justify-between text-[11px]">
