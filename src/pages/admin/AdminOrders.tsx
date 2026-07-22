@@ -166,9 +166,9 @@ export default function AdminOrders() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [cardTypeFilter, setCardTypeFilter] = useState<string>("all");
 
-  const uniqueCardTypes = Array.from(new Set(orders.map(o => o.cardType)));
+  const uniqueCardTypes = Array.from(new Set(orders.map((o) => o.cardType)));
 
-  const filtered = orders.filter(o => {
+  const filtered = orders.filter((o) => {
     const matchesSearch =
       o.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
       o.customer.toLowerCase().includes(searchQuery.toLowerCase());
@@ -178,13 +178,37 @@ export default function AdminOrders() {
   });
 
   const handleExportCSV = () => {
-    const headers = ["Alias", "Card Type", "Source", "Transfer Status", "Points price", "Card Rate (CNY)", "Points rate", "Amount", "Total Release", "Status", "Created"];
-    const rows = filtered.map(o => {
+    const headers = [
+      "Alias",
+      "Card Type",
+      "Source",
+      "Transfer Status",
+      "Points price",
+      "Card Rate (CNY)",
+      "Points rate",
+      "Amount",
+      "Total Release",
+      "Status",
+      "Created",
+    ];
+    const rows = filtered.map((o) => {
       const cardRateCny = o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : 0;
       const totalRelease = Number(o.nairaRate || 0) * cardRateCny * Number(o.amount || 0);
-      return [o.customer, o.cardType, o.source || "in-app", o.transferStatus || "not_transferred", `¥${o.unitPrice}`, cardRateCny ? cardRateCny.toFixed(4) : "—", `Pts ${o.nairaRate}`, `$${o.amount}`, `Pts ${totalRelease.toFixed(2)}`, o.status, o.created];
+      return [
+        o.customer,
+        o.cardType,
+        o.source || "in-app",
+        o.transferStatus || "not_transferred",
+        `¥${o.unitPrice}`,
+        cardRateCny ? cardRateCny.toFixed(4) : "—",
+        `Pts ${o.nairaRate}`,
+        `$${o.amount}`,
+        `Pts ${totalRelease.toFixed(2)}`,
+        o.status,
+        o.created,
+      ];
     });
-    const csv = [headers, ...rows].map(r => r.join(",")).join("\n");
+    const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -210,10 +234,17 @@ export default function AdminOrders() {
         <div className="flex items-center gap-3 mb-4 flex-wrap">
           <div className="relative max-w-sm flex-1 min-w-[220px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search by order ID, customer..." className="pl-10" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+            <Input
+              placeholder="Search by order ID, customer..."
+              className="pl-10"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Status" /></SelectTrigger>
+            <SelectTrigger className="w-40">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All statuses</SelectItem>
               <SelectItem value="pending_sale">Pending Sale</SelectItem>
@@ -224,10 +255,16 @@ export default function AdminOrders() {
             </SelectContent>
           </Select>
           <Select value={cardTypeFilter} onValueChange={setCardTypeFilter}>
-            <SelectTrigger className="w-44"><SelectValue placeholder="Card type" /></SelectTrigger>
+            <SelectTrigger className="w-44">
+              <SelectValue placeholder="Card type" />
+            </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All card types</SelectItem>
-              {uniqueCardTypes.map(t => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+              {uniqueCardTypes.map((t) => (
+                <SelectItem key={t} value={t}>
+                  {t}
+                </SelectItem>
+              ))}
             </SelectContent>
           </Select>
           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -246,7 +283,7 @@ export default function AdminOrders() {
               <tr className="border-b bg-muted/50">
                 <th className="w-8 px-2"></th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Alias</th>
-                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Card Number</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Order ID</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Source</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Transfer</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Points price</th>
@@ -259,7 +296,7 @@ export default function AdminOrders() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(o => {
+              {filtered.map((o) => {
                 const isExpanded = expandedId === o.id;
                 const details = mockOrderDetails[o.id];
                 return (
@@ -270,7 +307,11 @@ export default function AdminOrders() {
                       className="border-b last:border-0 hover:bg-muted/30 transition-colors cursor-pointer"
                     >
                       <td className="px-2 text-center">
-                        {isExpanded ? <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" /> : <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />}
+                        {isExpanded ? (
+                          <ChevronUp className="w-3.5 h-3.5 text-muted-foreground mx-auto" />
+                        ) : (
+                          <ChevronDown className="w-3.5 h-3.5 text-muted-foreground mx-auto" />
+                        )}
                       </td>
                       <td className="px-4 py-3 text-sm font-medium">{o.customer}</td>
                       <td className="px-4 py-3 text-sm text-muted-foreground">
@@ -283,21 +324,42 @@ export default function AdminOrders() {
                         </span>
                       </td>
                       <td className="px-4 py-3 text-center">
-                        <span className={`status-badge ${transferStatusConfig[o.transferStatus || "not_transferred"]?.className || ""}`}>
-                          {transferStatusConfig[o.transferStatus || "not_transferred"]?.label || o.transferStatus?.replace("_", " ")}
+                        <span
+                          className={`status-badge ${transferStatusConfig[o.transferStatus || "not_transferred"]?.className || ""}`}
+                        >
+                          {transferStatusConfig[o.transferStatus || "not_transferred"]?.label ||
+                            o.transferStatus?.replace("_", " ")}
                         </span>
                       </td>
-                       <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.unitPrice}</span></td>
-                       <td className="px-4 py-3 text-sm text-right">{o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}</td>
-                      <td className="px-4 py-3 text-sm text-right"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{o.nairaRate}</span></td>
+                      <td className="px-4 py-3 text-sm text-right">
+                        <span className="inline-flex items-center gap-0.5 justify-end">
+                          <Coins className="w-3 h-3" />
+                          {o.unitPrice}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right">
+                        {o.nairaRate ? (Number(o.unitPrice) / Number(o.nairaRate)).toFixed(4) : "—"}
+                      </td>
+                      <td className="px-4 py-3 text-sm text-right">
+                        <span className="inline-flex items-center gap-0.5 justify-end">
+                          <Coins className="w-3 h-3" />
+                          {o.nairaRate}
+                        </span>
+                      </td>
                       <td className="px-4 py-3 text-sm text-right">${o.amount}</td>
                       <td className="px-4 py-3 text-sm text-right">
                         {o.nairaRate ? (
                           <span className="inline-flex items-center gap-0.5 justify-end font-semibold">
                             <Coins className="w-3 h-3" />
-                            {(Number(o.nairaRate) * (Number(o.unitPrice) / Number(o.nairaRate)) * Number(o.amount)).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                            {(
+                              Number(o.nairaRate) *
+                              (Number(o.unitPrice) / Number(o.nairaRate)) *
+                              Number(o.amount)
+                            ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
                           </span>
-                        ) : "—"}
+                        ) : (
+                          "—"
+                        )}
                       </td>
                       <td className="px-4 py-3 text-center">
                         <span className={`status-badge ${statusColors[o.status] || ""}`}>
@@ -340,7 +402,11 @@ export default function AdminOrders() {
                                         className="text-muted-foreground hover:text-primary transition-colors"
                                         aria-label={shownCardNumbers.has(o.id) ? "Hide card code" : "Show card code"}
                                       >
-                                        {shownCardNumbers.has(o.id) ? <EyeOff className="w-3 h-3" /> : <Eye className="w-3 h-3" />}
+                                        {shownCardNumbers.has(o.id) ? (
+                                          <EyeOff className="w-3 h-3" />
+                                        ) : (
+                                          <Eye className="w-3 h-3" />
+                                        )}
                                       </button>
                                       <button
                                         onClick={() => navigator.clipboard.writeText(details.cardNumber)}
@@ -377,21 +443,38 @@ export default function AdminOrders() {
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order unit price</span>
-                                    <span className="font-medium">{(o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice).toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                                    <span className="font-medium">
+                                      {(o.nairaRate
+                                        ? Number(o.unitPrice) / Number(o.nairaRate)
+                                        : details.orderUnitPrice
+                                      ).toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                                    </span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order amount</span>
-                                    <span className="font-medium">{(details.orderFaceValue * (o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice)).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                    <span className="font-medium">
+                                      {(
+                                        details.orderFaceValue *
+                                        (o.nairaRate
+                                          ? Number(o.unitPrice) / Number(o.nairaRate)
+                                          : details.orderUnitPrice)
+                                      ).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                    </span>
                                   </div>
 
                                   {(() => {
-                                    const cardRateCny = o.nairaRate ? Number(o.unitPrice) / Number(o.nairaRate) : details.orderUnitPrice;
-                                    const totalRelease = Number(details.nairaRate) * cardRateCny * Number(details.orderFaceValue);
+                                    const cardRateCny = o.nairaRate
+                                      ? Number(o.unitPrice) / Number(o.nairaRate)
+                                      : details.orderUnitPrice;
+                                    const totalRelease =
+                                      Number(details.nairaRate) * cardRateCny * Number(details.orderFaceValue);
                                     return (
                                       <>
                                         <div className="flex justify-between text-sm">
                                           <span className="text-muted-foreground">Card Rate (CNY)</span>
-                                          <span className="font-medium">{cardRateCny.toLocaleString(undefined, { maximumFractionDigits: 4 })}</span>
+                                          <span className="font-medium">
+                                            {cardRateCny.toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                                          </span>
                                         </div>
                                         <div className="flex justify-between text-sm">
                                           <span className="text-muted-foreground">Settlement coin</span>
@@ -407,17 +490,26 @@ export default function AdminOrders() {
                                         </div>
                                         <div className="flex justify-between text-sm">
                                           <span className="text-muted-foreground">Settlement amount</span>
-                                          <span className="font-medium">₦{(details.settleRate * details.settleFaceValue).toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                          <span className="font-medium">
+                                            ₦
+                                            {(details.settleRate * details.settleFaceValue).toLocaleString(undefined, {
+                                              maximumFractionDigits: 2,
+                                            })}
+                                          </span>
                                         </div>
                                         <div className="flex justify-between text-sm border-t pt-2 mt-1">
                                           <span className="text-muted-foreground font-medium">Total Release</span>
-                                          <span className="font-bold inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{totalRelease.toLocaleString(undefined, { maximumFractionDigits: 2 })}</span>
+                                          <span className="font-bold inline-flex items-center gap-0.5">
+                                            <Coins className="w-3 h-3" />
+                                            {totalRelease.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                                          </span>
                                         </div>
-                                        <p className="text-[9px] text-muted-foreground text-right">Points Rate × Card Rate (CNY) × Card Amount</p>
+                                        <p className="text-[9px] text-muted-foreground text-right">
+                                          Points Rate × Card Rate (CNY) × Card Amount
+                                        </p>
                                       </>
                                     );
                                   })()}
-
                                 </div>
                               </div>
                             </div>
