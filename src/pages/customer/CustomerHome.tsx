@@ -21,6 +21,7 @@ export default function CustomerHome() {
   const [calcCardType, setCalcCardType] = useState("");
   const [calcCurrency, setCalcCurrency] = useState("");
   const [calcDenom, setCalcDenom] = useState("");
+  const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
   const [balanceVisible, setBalanceVisible] = useState(false);
 
   // Filter rates by both searches
@@ -32,7 +33,7 @@ export default function CustomerHome() {
 
   // Calculator logic
   const calcRate = cardRates.find(
-    r => r.cardType === calcCardType && r.currency === calcCurrency
+    r => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat
   );
   const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
 
