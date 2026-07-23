@@ -186,6 +186,30 @@ export default function CustomerHome() {
               </div>
 
               <div>
+                <label className="text-xs text-muted-foreground font-medium">Card Format</label>
+                <div className="mt-1 grid grid-cols-2 gap-2">
+                  {(["Physical", "E-Code"] as const).map(f => (
+                    <label
+                      key={f}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+                        calcFormat === f ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="calc-card-format"
+                        value={f}
+                        checked={calcFormat === f}
+                        onChange={() => setCalcFormat(f)}
+                        className="accent-accent"
+                      />
+                      <span className="text-sm font-medium">{f}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
                 <label className="text-xs text-muted-foreground font-medium">Currency</label>
                 <Select value={calcCurrency} onValueChange={v => { setCalcCurrency(v); setCalcDenom(""); }}>
                   <SelectTrigger className="mt-1"><SelectValue placeholder="Select currency" /></SelectTrigger>
