@@ -239,9 +239,6 @@ export default function CustomerHome() {
                   <>
                     <p className="text-xs text-muted-foreground mb-1">You will receive</p>
                     <p className="text-3xl font-heading font-bold text-accent">₦{calcResult.toLocaleString()}</p>
-                    <p className="text-[10px] text-muted-foreground mt-1">
-                      Rate: ₦{calcRate?.buyRate}/{calcCurrency === "GBP" ? "£" : "$"}1 · ${calcDenom} face value
-                    </p>
                   </>
                 ) : (
                   <p className="text-sm text-muted-foreground">Fill in the fields above to see your estimated payout</p>
