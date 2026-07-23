@@ -1,18 +1,39 @@
 // Mock data for Cardchat interactive prototypes
 
-export const cardRates = [
-  { id: 1, cardType: "iTunes US", currency: "USD", cardFormat: "Physical" as const, buyRate: 680, sellRate: 720, lastUpdated: "2 min ago" },
-  { id: 2, cardType: "iTunes US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 700, sellRate: 740, lastUpdated: "2 min ago" },
-  { id: 3, cardType: "Amazon US", currency: "USD", cardFormat: "Physical" as const, buyRate: 620, sellRate: 660, lastUpdated: "2 min ago" },
-  { id: 4, cardType: "Amazon US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 640, sellRate: 680, lastUpdated: "2 min ago" },
-  { id: 5, cardType: "Steam US", currency: "USD", cardFormat: "Physical" as const, buyRate: 600, sellRate: 640, lastUpdated: "3 min ago" },
-  { id: 6, cardType: "Steam US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 620, sellRate: 660, lastUpdated: "3 min ago" },
-  { id: 7, cardType: "Google Play US", currency: "USD", cardFormat: "Physical" as const, buyRate: 590, sellRate: 630, lastUpdated: "2 min ago" },
-  { id: 8, cardType: "iTunes UK", currency: "GBP", cardFormat: "Physical" as const, buyRate: 850, sellRate: 900, lastUpdated: "5 min ago" },
-  { id: 9, cardType: "Amazon UK", currency: "GBP", cardFormat: "Physical" as const, buyRate: 780, sellRate: 830, lastUpdated: "3 min ago" },
-  { id: 10, cardType: "Vanilla Visa", currency: "USD", cardFormat: "Physical" as const, buyRate: 550, sellRate: 590, lastUpdated: "1 min ago" },
-  { id: 11, cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, buyRate: 570, sellRate: 610, lastUpdated: "4 min ago" },
+const baseRates = [
+  { cardType: "iTunes US", currency: "USD", cardFormat: "Physical" as const, sellRate: 720, lastUpdated: "2 min ago" },
+  { cardType: "iTunes US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 740, lastUpdated: "2 min ago" },
+  { cardType: "Amazon US", currency: "USD", cardFormat: "Physical" as const, sellRate: 660, lastUpdated: "2 min ago" },
+  { cardType: "Amazon US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 680, lastUpdated: "2 min ago" },
+  { cardType: "Steam US", currency: "USD", cardFormat: "Physical" as const, sellRate: 640, lastUpdated: "3 min ago" },
+  { cardType: "Steam US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 660, lastUpdated: "3 min ago" },
+  { cardType: "Google Play US", currency: "USD", cardFormat: "Physical" as const, sellRate: 630, lastUpdated: "2 min ago" },
+  { cardType: "iTunes UK", currency: "GBP", cardFormat: "Physical" as const, sellRate: 900, lastUpdated: "5 min ago" },
+  { cardType: "Amazon UK", currency: "GBP", cardFormat: "Physical" as const, sellRate: 830, lastUpdated: "3 min ago" },
+  { cardType: "Vanilla Visa", currency: "USD", cardFormat: "Physical" as const, sellRate: 590, lastUpdated: "1 min ago" },
+  { cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 610, lastUpdated: "4 min ago" },
+  { cardType: "Razer Gold", currency: "USD", cardFormat: "E-Code" as const, sellRate: 700, lastUpdated: "1 min ago" },
+  { cardType: "Sephora", currency: "USD", cardFormat: "Physical" as const, sellRate: 520, lastUpdated: "6 min ago" },
+  { cardType: "Walmart", currency: "USD", cardFormat: "Physical" as const, sellRate: 560, lastUpdated: "4 min ago" },
+  { cardType: "Nordstrom", currency: "USD", cardFormat: "E-Code" as const, sellRate: 540, lastUpdated: "7 min ago" },
 ];
+
+const denomsByCurrency: Record<string, number[]> = {
+  USD: [10, 25, 50, 100, 200, 500],
+  GBP: [10, 25, 50, 100, 200],
+  EUR: [10, 25, 50, 100],
+  CAD: [25, 50, 100, 200],
+  AUD: [25, 50, 100],
+};
+
+export const cardRates = baseRates.flatMap((r, i) =>
+  (denomsByCurrency[r.currency] || [50, 100]).map((d, j) => ({
+    id: i * 100 + j + 1,
+    ...r,
+    denomination: d,
+    buyRate: Math.round(r.sellRate * 0.94),
+  }))
+);
 
 export const systemNairaRate = 289;
 export const systemDenomination = 100;
