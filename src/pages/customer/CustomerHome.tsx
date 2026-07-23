@@ -21,6 +21,7 @@ export default function CustomerHome() {
   const [calcCardType, setCalcCardType] = useState("");
   const [calcCurrency, setCalcCurrency] = useState("");
   const [calcDenom, setCalcDenom] = useState("");
+  const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
   const [balanceVisible, setBalanceVisible] = useState(false);
 
   // Filter rates by both searches
@@ -32,7 +33,7 @@ export default function CustomerHome() {
 
   // Calculator logic
   const calcRate = cardRates.find(
-    r => r.cardType === calcCardType && r.currency === calcCurrency
+    r => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat
   );
   const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
 
@@ -182,6 +183,30 @@ export default function CustomerHome() {
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div>
+                <label className="text-xs text-muted-foreground font-medium">Card Format</label>
+                <div className="mt-1 grid grid-cols-2 gap-2">
+                  {(["Physical", "E-Code"] as const).map(f => (
+                    <label
+                      key={f}
+                      className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
+                        calcFormat === f ? "border-accent bg-accent/10" : "border-border hover:border-accent/40"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="calc-card-format"
+                        value={f}
+                        checked={calcFormat === f}
+                        onChange={() => setCalcFormat(f)}
+                        className="accent-accent"
+                      />
+                      <span className="text-sm font-medium">{f}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
               <div>
