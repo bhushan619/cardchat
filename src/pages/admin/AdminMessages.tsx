@@ -2738,20 +2738,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               })()}
 
               {/* Recipient card */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">Recipient</h3>
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b flex items-center justify-between">
+                  <h3 className="text-xs font-semibold">Recipient</h3>
                   {transferVerified && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
-                      <CheckCheck className="w-3.5 h-3.5" /> Account verified
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                      <CheckCheck className="w-3 h-3" /> Account verified
                     </span>
                   )}
                 </header>
-                <div className="p-4 grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Transfer Method</Label>
+                <div className="p-3 grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">Transfer Method</Label>
                     <Select value={transferMethod} onValueChange={setTransferMethod}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -2763,8 +2763,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Bank Name
                     </Label>
                     <Select
@@ -2775,7 +2775,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         setTransferRecipient("");
                       }}
                     >
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9">
                         <SelectValue placeholder="Please select bank" />
                       </SelectTrigger>
                       <SelectContent>
@@ -2788,13 +2788,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </Select>
                   </div>
 
-                  <div className="space-y-1.5 col-span-2">
-                    <Label className="text-xs">
+                  <div className="space-y-1 col-span-2">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Bank Account Number
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        className="h-10 font-mono"
+                        className="h-9 font-mono"
                         placeholder="Enter 10-digit account number"
                         value={transferAccount}
                         onChange={(e) => {
@@ -2806,7 +2806,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       />
                       <Button
                         variant="outline"
-                        className="h-10 shrink-0 min-w-[92px]"
+                        className="h-9 shrink-0 min-w-[80px]"
                         disabled={!transferBank || transferAccount.length < 10 || transferVerifying}
                         onClick={() => {
                           setTransferVerifying(true);
@@ -2824,13 +2824,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 col-span-2">
-                    <Label className="text-xs">
+                  <div className="space-y-1 col-span-2">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Recipient Name
                     </Label>
                     <div className="relative">
                       <Input
-                        className="h-10 pr-9 font-medium bg-muted/40"
+                        className="h-9 pr-9 font-medium bg-muted/40"
                         placeholder="Verify bank account to fetch recipient name"
                         value={maskName(transferRecipient)}
                         disabled
