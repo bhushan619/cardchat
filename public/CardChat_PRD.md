@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.7  
-**Date:** July 14, 2026
+**Version:** 5.8  
+**Date:** July 27, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1698,6 +1698,33 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.7 → v5.8 — July 27, 2026
+
+| Change | Description |
+|--------|-------------|
+| **WhatsApp Channel Separation** | Split "In-App Messages" and WhatsApp conversations into two dedicated modules. `/admin` (renamed **App Messages** in the sidebar) now handles TRTC in-app chat only; new `/admin/whatsapp` page (`AdminWhatsApp.tsx`, sidebar label **WhatsApp**) hosts all WhatsApp conversations, order processes, and the Process Transfer flow tailored to WhatsApp customers. Reassign / Escalate actions removed from the WhatsApp view. |
+| **Agent ↔ WhatsApp Session Assignment** | `/admin/whatsapp-sessions` now supports assigning a single owning agent per WhatsApp number. One agent can hold multiple numbers, but each number is owned by exactly one agent. Assignments drive routing of inbound WhatsApp conversations to the owning agent's queue. |
+| **Total Release Formula Update** | Standardized formula across all admin surfaces: `Total Release (Points) = Points Rate × Card Rate (CNY) × Card Amount`, rounded to the nearest integer for display with the exact decimal value shown in parentheses. Applied in `OrderWizardModal`, `AdminMessages`, `AdminWhatsApp`, `AdminOrders`, and all order detail modals. The submitted sales-order field is labeled **Card Rate (CNY)** (formerly "Points rate") end-to-end. |
+| **Total Release Everywhere** | "Total Release" is now surfaced on every Order Details modal and as a column on `/admin/orders`. |
+| **Rate Calculator — Card Format** | Customer Home rate calculator adds a required **Card Format** radio (Physical / E-Code). The "Rate: ₦X/$1 · $Y face value" secondary line was removed from the Estimated Payout section. |
+| **Card Rates Page Rewrite** | `/admin/card-rates` redesigned around a **Format** tab switch (Physical / E-Code) with per-format record counts, matching the customer-side format selector. |
+| **WhatsApp Customer Wallets Restored** | WhatsApp customers now receive wallet credit on order completion, mirroring in-app flow. **Fund +/-** button restored for WhatsApp chats. PalmPay Transfer path retained for direct payouts. |
+| **Bank Account Beneficiaries** | New **Bank Accounts** tab on `/admin/customers` customer detail drawer listing saved beneficiaries (bank, masked account, holder name). Also surfaced inside the Process Transfer modal as "Saved Beneficiaries" for one-click prefill. |
+| **Points Rate Column in Transfers** | `/admin/transfers` table adds a **Pts Rate** column recorded at time of transfer, included in details dialog and CSV export. |
+| **Chinese Translation Toggle** | Global EN / 中文 language toggle added to the admin top bar via `AdminLangContext`. Persists selection and translates sidebar, top-bar, and key module labels. |
+| **Withdrawals Search Reverted** | `/admin/withdrawals` reverted from split "Request ID" + "Customer" boxes to a single unified search input. Request IDs standardized to numeric-only strings; Transfer IDs on `/admin/transfers` likewise numeric-only. |
+| **Transfer Button State** | Transfer button in chat is enabled only when the linked order is in **Success** or **Confirmed Negotiation** state; otherwise disabled. Wallet-balance guard added — Transfer Now validates against available wallet balance rather than a linked order. |
+| **Process Transfer Modal — Wallet Context** | The prior "Linked Order" dropdown in the Process Transfer modal was replaced by a **Wallet Balance** card reflecting the customer's live points balance (recomputes when orders flip to Success). Transfer amount validates against balance. |
+| **Process Transfer Modal — Layout** | Modal recomposed into a two-column grid `grid-cols-[minmax(0,0.88fr)_504px]` so all fields fit without scrolling. Right column is an edge-to-edge **Transfer Records** table (`grid-cols-[140px_1fr_120px_90px]`) filling the full panel width with row borders. |
+| **Customer Name Masking** | New `maskName` utility in `src/lib/utils.ts`. Applied to Bank Accounts (`AdminCustomers`), Process Transfer modal recipient field (masked + disabled; populated only via verification / auto-fill), Saved Beneficiaries, Transfer Records inside the modal, and `/admin/transfers` ledger + detail modals. |
+| **WhatsApp Bank Detail Detection** | Inbound WhatsApp messages containing a 10-digit account number plus a recognized bank alias render a **→ Use in Transfer** chip that prefills the Process Transfer modal (bank, account, holder). |
+| **Currency Standardization (Points)** | All Naira references in relevant admin surfaces (including WhatsApp customer transaction ledger and `/admin/transfers`) standardized to **Points** with the `Coins` icon. |
+| **Auto Bank Transfer System Message Removed** | Suppressed the "Record a bank transfer of ₦… against this order" system message previously injected into WhatsApp chats on order completion. |
+| **Admin Login Guard Removed (Prototype)** | Authentication guard lifted in `AdminLayout` for unrestricted prototype browsing. Mock-login screen retained but not enforced. |
+| **Sidebar Rename** | "In-App Messages" → **App Messages**; "WhatsApp Messages" → **WhatsApp**. |
+| **Nickname Removed from Chat Header** | Customer nickname removed from the `AdminMessages` conversation header. |
+| **PRD Updated** | PRD bumped to v5.8 to document channel separation, WhatsApp session ownership, formula standardization, wallet restoration for WhatsApp, beneficiaries, translation toggle, and name masking. |
 
 ### v5.6 → v5.7 — July 14, 2026
 
