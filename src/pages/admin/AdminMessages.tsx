@@ -241,6 +241,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     setSelectedId(null);
   }, [channelFilter]);
 
+  // Mock: current agent identity for prototype filtering. In production this comes from auth.
+  const currentAgentName = "Mike Agent";
+
   const filteredConversations = useMemo(() => {
     return conversationsWithTabs.filter((c) => {
       const matchesTab = c.dynamicTab === activeTab;
@@ -248,9 +251,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         !customerSearch ||
         c.alias.toLowerCase().includes(customerSearch.toLowerCase()) ||
         c.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
-      return matchesTab && matchesSearch;
+      // Agent-scoped visibility: for regular agents, WhatsApp conversations are only
+      // visible when the routed number is assigned to that agent. SA/TL see all.
+      let matchesAgentScope = true;
+      if (channelFilter === "whatsapp" && role === "agent") {
+        const line = pickBusinessNumberFor(c.id);
+        matchesAgentScope = line.assignedAgent === currentAgentName;
+      }
+      return matchesTab && matchesSearch && matchesAgentScope;
     });
-  }, [conversationsWithTabs, activeTab, customerSearch]);
+  }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
@@ -292,15 +302,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // When success: WhatsApp orders record a transfer against the order (no wallet);
-      // in-app orders auto-credit the customer's wallet.
+      // On success: always credit the customer's wallet (WhatsApp + in-app both have wallets).
+      // Actual bank disbursement happens via the PalmPay Transfer flow, which debits the wallet.
       if (newStatus === "success" && payoutAmount) {
-        const isWhatsApp = rawConversations.find((c) => c.id === conversationId)?.channel === "whatsapp";
-        if (isWhatsApp) {
-          addSystemMessage(`📌 💸 Record a bank transfer of ₦${payoutAmount.toLocaleString()} against this order`);
-        } else {
-          addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
-        }
+        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points credited to customer's wallet`);
       }
     }
   };
