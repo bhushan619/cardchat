@@ -134,7 +134,12 @@ export default function AdminWhatsAppSessions() {
   const [confirmDelete, setConfirmDelete] = useState<WaBusinessNumber | null>(null);
   const [selected, setSelected] = useState<WaBusinessNumber | null>(null);
   const [assignFor, setAssignFor] = useState<WaBusinessNumber | null>(null);
-  const [assignDraft, setAssignDraft] = useState<string[]>([]);
+  const [assignDraft, setAssignDraft] = useState<string>("");
+  const [reassignConfirm, setReassignConfirm] = useState<{ agent: string; conflict: WaBusinessNumber } | null>(null);
+
+  const [lang, setLang] = usePageLang("lang_wa_sessions");
+  const t = makeT(T, lang);
+  const statusMeta = useMemo(() => buildStatusMeta(t), [lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const agentUsers = useMemo(() => adminUsers.filter((u) => u.role === "agent"), []);
 
@@ -185,28 +190,29 @@ export default function AdminWhatsAppSessions() {
       <div className="p-6 max-w-6xl">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h1 className="font-heading text-xl font-bold mb-1">WhatsApp Sessions</h1>
-            <p className="text-sm text-muted-foreground">
-              Shared pool of wwebjs numbers powering customer chat. Inbound conversations auto-route to available agents.
-            </p>
+            <h1 className="font-heading text-xl font-bold mb-1">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
           </div>
-          {canManage && (
-            <Button
-              className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-              onClick={() => setAddForm({ label: "", phone: "" })}
-            >
-              <Plus className="w-4 h-4" /> Link WhatsApp Number
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <LangToggle lang={lang} onChange={setLang} />
+            {canManage && (
+              <Button
+                className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={() => setAddForm({ label: "", phone: "" })}
+              >
+                <Plus className="w-4 h-4" /> {t("linkBtn")}
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Health strip */}
         <div className="grid grid-cols-4 gap-3 mb-6">
           {[
-            { label: "Active",   value: `${health.activeSessions}/${health.totalSessions}`, Icon: Wifi,          tint: "emerald" },
-            { label: "Uptime",   value: `${health.uptimeHours.toFixed(1)}h`,                Icon: Timer,         tint: "sky" },
-            { label: "RAM",      value: `${health.totalMemoryMB} MB`,                       Icon: Users,         tint: "violet" },
-            { label: "Alerts",   value: `${health.disconnectAlerts}`,                       Icon: Shield,        tint: health.disconnectAlerts > 0 ? "rose" : "muted" },
+            { label: t("active"),   value: `${health.activeSessions}/${health.totalSessions}`, Icon: Wifi,          tint: "emerald" },
+            { label: t("uptime"),   value: `${health.uptimeHours.toFixed(1)}h`,                Icon: Timer,         tint: "sky" },
+            { label: t("ram"),      value: `${health.totalMemoryMB} MB`,                       Icon: Users,         tint: "violet" },
+            { label: t("alerts"),   value: `${health.disconnectAlerts}`,                       Icon: Shield,        tint: health.disconnectAlerts > 0 ? "rose" : "muted" },
           ].map((s) => (
             <div key={s.label} className="bg-card border rounded-xl p-4 flex items-center gap-3">
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-${s.tint === "muted" ? "muted" : `${s.tint}-500/10`}`}>
@@ -225,14 +231,14 @@ export default function AdminWhatsAppSessions() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-muted-foreground text-xs">
               <tr>
-                <th className="text-left px-4 py-3 font-medium">Number</th>
-                <th className="text-left px-4 py-3 font-medium">Status</th>
-                <th className="text-left px-4 py-3 font-medium">Assigned agents</th>
-                <th className="text-left px-4 py-3 font-medium">Warmup</th>
-                <th className="text-left px-4 py-3 font-medium">Today</th>
-                <th className="text-left px-4 py-3 font-medium">Reply ratio</th>
-                <th className="text-left px-4 py-3 font-medium">RAM</th>
-                <th className="text-left px-4 py-3 font-medium">Last seen</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hNumber")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hStatus")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hAgent")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hWarmup")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hToday")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hReply")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hRam")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hSeen")}</th>
                 <th className="w-10"></th>
               </tr>
             </thead>
