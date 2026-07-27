@@ -2677,13 +2677,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         }}
       >
         <DialogContent
-          className="max-w-none w-[68vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
-          style={{ resize: "both" as const, minWidth: 640, minHeight: 560 }}
+          className="max-w-none w-[72vw] h-[92vh] p-0 gap-0 overflow-hidden flex flex-col"
+          style={{ resize: "both" as const, minWidth: 720, minHeight: 640 }}
         >
-          <DialogHeader className="px-6 py-4 border-b shrink-0">
+          <DialogHeader className="px-5 py-3 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2 font-heading">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                <ArrowRightLeft className="w-4 h-4 text-accent" />
+              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-accent" />
               </div>
               <span>Process Transfer</span>
               {selectedConvo && (
@@ -2694,9 +2694,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(0,1fr)_480px] flex-1 min-h-0">
+          <div className="grid grid-cols-[minmax(0,1fr)_420px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
-            <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
+            <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
               {/* Wallet balance card */}
               {(() => {
                 const credits = transferEligibleOrders
