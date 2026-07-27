@@ -1713,6 +1713,18 @@ src/
 
 ## 12. Full Changelog
 
+### v5.8 → v5.9 — July 27, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Customer Live Rates — Denomination Variants** | `/customer` live-rate cards now render denominations according to the underlying `DenominationSpec`: discrete **lists** as comma-separated values, **ranges** as "min – max", **multiples** as "Multiples of N (bounds)" or "Multiples of N+", and **any** as an "Any denomination" pill. |
+| **Customer Live Rates — Trend Indicator** | Replaced the "per $1" secondary line with a deterministic percent-change badge (e.g., +0.5% / -0.1%) paired with up/down arrow icons in success/destructive tones. |
+| **Customer Live Rates — Remarks & Read More** | Each rate card displays an agent-facing **Note** line. Remarks longer than 90 characters clamp to two lines and expose a **Read more / Show less** toggle. |
+| **Customer Live Rates — Layout Swap** | Currency indicator and last-updated timestamp moved onto the same line as the card type/format badge; the denomination variant now sits directly below the card title. |
+| **Card Rates Data Model** | `src/data/mock.ts` migrated from one record per denomination to a grouped model where each card/currency/format row carries a `denominationSpec` (`list`, `range`, `multiples`, or `any`) plus a `remarks` string. Added `expandDenominations()` and `formatDenominations()` helpers. |
+| **Admin Card Rates — Denomination Column** | `/admin/card-rates` table now shows the full rendered `denominationSpec` in a dedicated **Denomination** column (list, range, multiples, or any). Added Format filter chips with per-format record counts. |
+| **Rate Calculator Denomination Awareness** | The customer rate calculator expands the selected rate's `denominationSpec` into its denomination picker, supporting all four variants. |
+
 ### v5.7 → v5.8 — July 27, 2026
 
 | Change | Description |
