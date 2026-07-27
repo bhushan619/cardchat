@@ -158,13 +158,9 @@ export default function CustomerHome() {
                           {rate.currency} · {rate.lastUpdated}
                         </span>
                       </div>
-                      <div className="mt-1 flex flex-wrap gap-1">
-                        {rate.denominations.map(d => (
-                          <span key={d} className="inline-block text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-foreground/80 tabular-nums">
-                            {symbol}{d}
-                          </span>
-                        ))}
-                      </div>
+                      <p className="mt-1 text-[10px] text-muted-foreground tabular-nums">
+                        {rate.denominations.map(d => `${symbol}${d}`).join(", ")}
+                      </p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
