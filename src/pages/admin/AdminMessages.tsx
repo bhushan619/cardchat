@@ -639,7 +639,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       }
     }
     return Array.from(map.values());
-  }, [selectedConvo, currentOrderId, allOrders]);
+  }, [selectedConvo, selectedId, currentOrderId, currentOrderStatus, allOrders]);
 
   // Pre-select the current linked order when the transfer modal opens
   useEffect(() => {
