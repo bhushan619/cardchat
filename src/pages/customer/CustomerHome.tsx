@@ -190,15 +190,14 @@ export default function CustomerHome() {
                           if (spec.kind === "list") {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
-                                {spec.values.map((d) => `${symbol}${d}`).join(", ")}
+                                {spec.values.map((d) => `${d}`).join(", ")}
                               </p>
                             );
                           }
                           if (spec.kind === "range") {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
-                                {spec.min} – {symbol}
-                                {spec.max}
+                                {spec.min} –{spec.max}
                               </p>
                             );
                           }
