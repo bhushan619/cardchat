@@ -2,7 +2,7 @@ import Logo from "@/components/Logo";
 import { useState, useMemo } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
-import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet } from "lucide-react";
+import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -161,7 +161,21 @@ export default function CustomerHome() {
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
-                      <p className="text-[9px] text-muted-foreground">per {symbol || rate.currency}1</p>
+                      {(() => {
+                        // Deterministic pseudo-change per rate id: range -1.5% .. +1.5%
+                        const seed = (rate.id * 9301 + 49297) % 233280;
+                        const pct = ((seed / 233280) * 3 - 1.5);
+                        const up = pct >= 0;
+                        const Icon = up ? TrendingUp : TrendingDown;
+                        return (
+                          <div className={`inline-flex items-center gap-1 mt-0.5 text-[10px] font-medium ${up ? "text-success" : "text-destructive"}`}>
+                            <span className="tabular-nums">{up ? "+" : ""}{pct.toFixed(1)}%</span>
+                            <span className={`inline-flex items-center justify-center w-4 h-4 rounded ${up ? "bg-success/15" : "bg-destructive/15"}`}>
+                              <Icon className="w-2.5 h-2.5" />
+                            </span>
+                          </div>
+                        );
+                      })()}
                     </div>
                   </div>
                   {rate.remarks && (
