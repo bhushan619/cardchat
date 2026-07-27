@@ -206,16 +206,10 @@ export default function CustomerHome() {
                           if (spec.kind === "multiples") {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
-                                {symbol}
-                                {spec.of}
-                                {(spec.min || spec.max) && (
-                                  <p>
-                                    {" "}
-                                    ({symbol}
-                                    {spec.min ?? spec.of}
-                                    {spec.max ? `–${symbol}${spec.max}` : "+"})
-                                  </p>
-                                )}
+                                {" "}
+                                ({symbol}
+                                {spec.min ?? spec.of}
+                                {spec.max ? `–${symbol}${spec.max}` : "+"})
                               </p>
                             );
                           }
