@@ -87,7 +87,7 @@ export default function AdminTransfers() {
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
       w.amount >= min && w.amount <= max &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.orderId.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
+      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
   }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
 
