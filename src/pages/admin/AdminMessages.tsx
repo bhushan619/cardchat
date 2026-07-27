@@ -2845,18 +2845,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </section>
 
               {/* Amount card */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">Amount</h3>
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b">
+                  <h3 className="text-xs font-semibold">Amount</h3>
                 </header>
-                <div className="p-4 grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                <div className="p-3 grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Transfer Amount
                     </Label>
                     <div className="relative">
                       <Input
-                        className="h-11 pr-16 text-base font-semibold"
+                        className="h-9 pr-14 text-sm font-semibold"
                         placeholder="0.00"
                         value={transferAmount}
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
@@ -2868,12 +2868,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                     <p className="text-[10px] text-muted-foreground">Max Pts 2,000,000 per transaction</p>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Points Rate
                     </Label>
                     <Input
-                      className="h-11 text-base font-semibold"
+                      className="h-9 text-sm font-semibold"
                       placeholder="Enter rate"
                       value={transferRate}
                       onChange={(e) => setTransferRate(e.target.value.replace(/[^\d.]/g, ""))}
