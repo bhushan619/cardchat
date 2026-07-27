@@ -207,9 +207,9 @@ export default function CustomerHome() {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
                                 {" "}
-                                ({symbol}
+                                {symbol}
                                 {spec.min ?? spec.of}
-                                {spec.max ? `–${symbol}${spec.max}` : "+"})
+                                {spec.max ? `–${symbol}${spec.max}` : "+"}
                               </p>
                             );
                           }
