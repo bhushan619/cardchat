@@ -35,7 +35,7 @@ const navItems = [
   { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead"] },
 ];
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children, topRight }: { children: ReactNode; topRight?: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
@@ -175,6 +175,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
                 )}
               </div>
             )}
+            {topRight}
             <button
               onClick={toggleTheme}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
