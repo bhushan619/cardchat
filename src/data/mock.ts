@@ -31,7 +31,7 @@ const remarksByFormat: Record<string, string[]> = {
     "Fast card · Horizontal cards only · Clear picture required",
     "Single card only · Clear picture required",
     "Accepts multiples · Horizontal cards only",
-    "Face value only · Clear picture required",
+    "Face value only · Clear picture required. For high-volume submissions, stack cards neatly and capture all corners in one frame. Processing may take 5–10 minutes during peak hours; contact support if delay exceeds 30 minutes.",
   ],
   "E-Code": [
     "Fast card · Accepts multiples of 5",
