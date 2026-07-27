@@ -37,6 +37,7 @@ const remarksByFormat: Record<string, string[]> = {
     "Fast card · Accepts multiples of 5",
     "E-codes only · Instant processing",
     "Accepts multiples of 10 · No screenshots",
+    "High-volume cards welcome. Please ensure codes are clearly visible and unused. Processing may take 5–10 minutes during peak hours. Contact support if delay exceeds 30 minutes.",
   ],
 };
 
