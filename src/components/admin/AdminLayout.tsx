@@ -182,6 +182,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
               </div>
             )}
             {topRight}
+            <LangToggle lang={lang} onChange={setLang} />
             <button
               onClick={toggleTheme}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
@@ -199,6 +200,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
             </div>
           </div>
         </header>
+
 
         {/* Search overlay */}
         {searchOpen && (
