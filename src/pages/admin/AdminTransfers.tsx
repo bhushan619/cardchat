@@ -210,6 +210,7 @@ export default function AdminTransfers() {
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
                       <p className="text-muted-foreground">{w.accountNumber}</p>
+                      <p className="text-muted-foreground truncate max-w-[160px]" title={maskName(w.accountName)}>{maskName(w.accountName)}</p>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline" className="text-[10px]">{w.channel}</Badge>
