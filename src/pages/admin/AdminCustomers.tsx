@@ -485,7 +485,8 @@ function BankAccountsTab({ alias }: { alias: string }) {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Account Holder Name</label>
-              <Input value={holderName} readOnly placeholder="Auto-filled after verification" className="mt-1 bg-muted/40" />
+              <Input value={maskName(holderName)} disabled placeholder="Auto-filled after verification" className="mt-1 bg-muted/40" />
+              <p className="text-[10px] text-muted-foreground mt-1">Name is masked for privacy after verification.</p>
             </div>
           </div>
           <DialogFooter>
