@@ -23,6 +23,14 @@ export default function CustomerHome() {
   const [calcDenom, setCalcDenom] = useState("");
   const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
   const [balanceVisible, setBalanceVisible] = useState(false);
+  const [expandedRemarks, setExpandedRemarks] = useState<Set<number>>(new Set());
+
+  const toggleRemark = (id: number) => {
+    const next = new Set(expandedRemarks);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedRemarks(next);
+  };
 
   // Filter rates by both searches
   const filteredRates = cardRates.filter(r => {
