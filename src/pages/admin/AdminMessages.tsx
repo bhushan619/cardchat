@@ -1052,6 +1052,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {c.channel === "whatsapp" && (role === "super_admin" || role === "team_lead") && (() => {
+                          const line = pickBusinessNumberFor(c.id);
+                          return (
+                            <p className="text-[9px] text-muted-foreground mt-0.5">
+                              Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
+                            </p>
+                          );
+                        })()}
                       </div>
                       {c.unread > 0 && (
                         <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
