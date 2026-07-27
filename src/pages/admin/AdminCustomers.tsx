@@ -502,7 +502,7 @@ function BankAccountsTab({ alias }: { alias: string }) {
           <DialogHeader>
             <DialogTitle>Remove bank account?</DialogTitle>
             <DialogDescription>
-              Remove <b>{confirmDel?.holderName}</b>'s <b>{confirmDel?.bankName}</b> account ending in <b>{confirmDel?.accountNumber.slice(-4)}</b>? This cannot be undone.
+              Remove <b>{maskName(confirmDel?.holderName)}</b>'s <b>{confirmDel?.bankName}</b> account ending in <b>{confirmDel?.accountNumber.slice(-4)}</b>? This cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
