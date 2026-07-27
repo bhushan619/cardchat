@@ -1,5 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { cardRates, systemPriceControl } from "@/data/mock";
+import { cardRates, systemPriceControl, formatDenominations, expandDenominations } from "@/data/mock";
 import { RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send, Coins, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
