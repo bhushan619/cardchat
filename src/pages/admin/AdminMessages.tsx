@@ -2830,15 +2830,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </Label>
                     <div className="relative">
                       <Input
-                        className="h-10 pr-9 font-medium"
+                        className="h-10 pr-9 font-medium bg-muted/40"
                         placeholder="Verify bank account to fetch recipient name"
-                        value={transferRecipient}
-                        readOnly
+                        value={maskName(transferRecipient)}
+                        disabled
                       />
                       {transferVerified && (
                         <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
                       )}
                     </div>
+                    <p className="text-[10px] text-muted-foreground">Name is masked for privacy; populated only after verification.</p>
                   </div>
                 </div>
               </section>
