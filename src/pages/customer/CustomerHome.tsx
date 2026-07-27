@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
 import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet } from "lucide-react";
@@ -23,6 +23,14 @@ export default function CustomerHome() {
   const [calcDenom, setCalcDenom] = useState("");
   const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
   const [balanceVisible, setBalanceVisible] = useState(false);
+  const [expandedRemarks, setExpandedRemarks] = useState<Set<number>>(new Set());
+
+  const toggleRemark = (id: number) => {
+    const next = new Set(expandedRemarks);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setExpandedRemarks(next);
+  };
 
   // Filter rates by both searches
   const filteredRates = cardRates.filter(r => {
@@ -157,9 +165,23 @@ export default function CustomerHome() {
                     </div>
                   </div>
                   {rate.remarks && (
-                    <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border/40 leading-relaxed">
-                      <span className="font-medium text-foreground/70">Note:</span> {rate.remarks}
-                    </p>
+                    <div className="mt-2 pt-2 border-t border-border/40">
+                      <p
+                        className={`text-[10px] text-muted-foreground leading-relaxed ${
+                          expandedRemarks.has(rate.id) ? "" : "line-clamp-2"
+                        }`}
+                      >
+                        <span className="font-medium text-foreground/70">Note:</span> {rate.remarks}
+                      </p>
+                      {rate.remarks.length > 90 && (
+                        <button
+                          onClick={e => { e.stopPropagation(); toggleRemark(rate.id); }}
+                          className="text-[10px] text-accent font-medium mt-1"
+                        >
+                          {expandedRemarks.has(rate.id) ? "Show less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               );
