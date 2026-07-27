@@ -255,7 +255,7 @@ export default function AdminTransfers() {
                 ["Pts Rate", selected.pointsRate],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
-                ["Account Name", selected.accountName],
+                ["Account Name", maskName(selected.accountName)],
                 ["Channel", selected.channel],
                 ["Reference", selected.reference],
                 ["Requested", selected.requestedAt],
