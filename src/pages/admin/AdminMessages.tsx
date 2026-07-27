@@ -2694,7 +2694,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(0,0.8fr)_504px] flex-1 min-h-0">
+          <div className="grid grid-cols-[minmax(0,0.88fr)_504px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
             <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
               {/* Wallet balance card */}
