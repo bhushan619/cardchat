@@ -2889,19 +2889,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </section>
 
               {/* Notes */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b">
+                  <h3 className="text-xs font-semibold">
                     Notes <span className="font-normal text-muted-foreground">(optional)</span>
                   </h3>
                 </header>
-                <div className="p-4">
+                <div className="p-3">
                   <Textarea
                     placeholder="Add a note for internal reference…"
                     value={transferNote}
                     onChange={(e) => setTransferNote(e.target.value)}
                     rows={2}
-                    className="resize-none"
+                    className="resize-none min-h-[54px]"
                   />
                 </div>
               </section>
