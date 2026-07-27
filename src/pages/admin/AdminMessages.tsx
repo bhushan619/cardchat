@@ -2710,25 +2710,25 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 const amt = Number(transferAmount || 0);
                 const insufficient = amt > 0 && amt > balance;
                 return (
-                  <section className="rounded-xl border bg-card">
-                    <header className="px-4 py-2.5 border-b">
-                      <h3 className="text-sm font-semibold">Wallet Balance</h3>
+                  <section className="rounded-lg border bg-card">
+                    <header className="px-3 py-2 border-b">
+                      <h3 className="text-xs font-semibold">Wallet Balance</h3>
                     </header>
-                    <div className="p-4">
+                    <div className="p-3">
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <p className="text-[11px] text-muted-foreground">Available for transfer</p>
-                          <p className="font-heading text-2xl font-bold mt-0.5">
+                          <p className="text-[10px] text-muted-foreground">Available for transfer</p>
+                          <p className="font-heading text-xl font-bold mt-0.5">
                             Pts {balance.toLocaleString()}
                           </p>
                         </div>
-                        <div className="text-right text-[11px] text-muted-foreground space-y-0.5">
+                        <div className="text-right text-[10px] text-muted-foreground space-y-0.5">
                           <p>Credited: <span className="text-emerald-600 font-medium">Pts {credits.toLocaleString()}</span></p>
                           <p>Transferred: <span className="text-foreground font-medium">Pts {priorTransfers.toLocaleString()}</span></p>
                         </div>
                       </div>
                       {insufficient && (
-                        <p className="mt-2 text-[11px] text-destructive">
+                        <p className="mt-1.5 text-[11px] text-destructive">
                           Transfer amount exceeds available wallet balance.
                         </p>
                       )}
