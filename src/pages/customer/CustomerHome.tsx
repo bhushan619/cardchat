@@ -165,9 +165,23 @@ export default function CustomerHome() {
                     </div>
                   </div>
                   {rate.remarks && (
-                    <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border/40 leading-relaxed">
-                      <span className="font-medium text-foreground/70">Note:</span> {rate.remarks}
-                    </p>
+                    <div className="mt-2 pt-2 border-t border-border/40">
+                      <p
+                        className={`text-[10px] text-muted-foreground leading-relaxed ${
+                          expandedRemarks.has(rate.id) ? "" : "line-clamp-2"
+                        }`}
+                      >
+                        <span className="font-medium text-foreground/70">Note:</span> {rate.remarks}
+                      </p>
+                      {rate.remarks.length > 90 && (
+                        <button
+                          onClick={e => { e.stopPropagation(); toggleRemark(rate.id); }}
+                          className="text-[10px] text-accent font-medium mt-1"
+                        >
+                          {expandedRemarks.has(rate.id) ? "Show less" : "Read more"}
+                        </button>
+                      )}
+                    </div>
                   )}
                 </div>
               );
