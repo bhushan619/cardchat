@@ -1,7 +1,7 @@
 import Logo from "@/components/Logo";
 import { useState, useMemo } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
+import { cardRates, walletBalance, tradingBalance, rewardsBalance, expandDenominations, formatDenominations } from "@/data/mock";
 import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet, TrendingUp, TrendingDown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
