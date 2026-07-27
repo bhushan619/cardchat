@@ -24,8 +24,9 @@ import {
 } from "@/lib/waBusinessNumbers";
 import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
-import LangToggle from "@/components/admin/LangToggle";
-import { usePageLang, makeT } from "@/lib/pageTranslations";
+import { useAdminLang } from "@/contexts/AdminLangContext";
+import { makeT } from "@/lib/pageTranslations";
+
 
 const T = {
   en: {
