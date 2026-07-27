@@ -153,11 +153,13 @@ export default function CustomerHome() {
                         <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-accent/10 text-accent">
                           {rate.cardFormat}
                         </span>
-                        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-foreground/80 tabular-nums">
-                          {symbol}{rate.denomination}
+                        <span className="text-[10px] text-muted-foreground">
+                          {rate.currency} · {rate.lastUpdated}
                         </span>
                       </div>
-                      <p className="text-[10px] text-muted-foreground mt-0.5">{rate.currency} · {rate.lastUpdated}</p>
+                      <span className="inline-block mt-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-foreground/80 tabular-nums">
+                        {symbol}{rate.denomination}
+                      </span>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
