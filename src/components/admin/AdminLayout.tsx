@@ -8,8 +8,11 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { useAdminLang, useSetAdminLang } from "@/contexts/AdminLangContext";
 import { conversations, orders, cardRates, systemNairaRate, systemPriceControl } from "@/data/mock";
 import { useTheme } from "@/hooks/use-theme";
+import LangToggle from "@/components/admin/LangToggle";
+
 
 const navItems = [
   { id: "messages", label: "App Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"], badge: 5 },
