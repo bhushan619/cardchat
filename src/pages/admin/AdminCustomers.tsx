@@ -13,6 +13,7 @@ import ChannelBadge from "@/components/admin/ChannelBadge";
 import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { listBankAccounts, addBankAccount, removeBankAccount, onBankAccountsChange, mockVerifyAccount, NIGERIAN_BANKS, type CustomerBankAccount } from "@/lib/customerBankAccounts";
 import { toast } from "sonner";
+import { maskName } from "@/lib/utils";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
@@ -442,7 +443,7 @@ function BankAccountsTab({ alias }: { alias: string }) {
               <TableRow key={a.id}>
                 <TableCell className="text-xs font-medium">{a.bankName}</TableCell>
                 <TableCell className="text-xs font-mono">{a.accountNumber}</TableCell>
-                <TableCell className="text-xs">{a.holderName}</TableCell>
+                <TableCell className="text-xs font-mono" title="Name masked for privacy">{maskName(a.holderName)}</TableCell>
                 <TableCell className="text-[10px] text-muted-foreground">{new Date(a.addedAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <button onClick={() => setConfirmDel(a)} className="text-muted-foreground hover:text-destructive">
@@ -484,7 +485,8 @@ function BankAccountsTab({ alias }: { alias: string }) {
             </div>
             <div>
               <label className="text-xs font-medium text-muted-foreground">Account Holder Name</label>
-              <Input value={holderName} readOnly placeholder="Auto-filled after verification" className="mt-1 bg-muted/40" />
+              <Input value={maskName(holderName)} disabled placeholder="Auto-filled after verification" className="mt-1 bg-muted/40" />
+              <p className="text-[10px] text-muted-foreground mt-1">Name is masked for privacy after verification.</p>
             </div>
           </div>
           <DialogFooter>
@@ -500,7 +502,7 @@ function BankAccountsTab({ alias }: { alias: string }) {
           <DialogHeader>
             <DialogTitle>Remove bank account?</DialogTitle>
             <DialogDescription>
-              Remove <b>{confirmDel?.holderName}</b>'s <b>{confirmDel?.bankName}</b> account ending in <b>{confirmDel?.accountNumber.slice(-4)}</b>? This cannot be undone.
+              Remove <b>{maskName(confirmDel?.holderName)}</b>'s <b>{confirmDel?.bankName}</b> account ending in <b>{confirmDel?.accountNumber.slice(-4)}</b>? This cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
