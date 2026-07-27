@@ -3012,9 +3012,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 toast.success("Beneficiary loaded");
                               }}
                               className="group text-left rounded-md border bg-background hover:border-accent hover:bg-accent/5 transition-colors px-2.5 py-1.5 max-w-[220px]"
-                              title={`${h.recipient} · ${h.bank} · ${h.account}`}
+                              title={`${maskName(h.recipient)} · ${h.bank} · ${h.account}`}
                             >
-                              <div className="text-[11px] font-semibold truncate">{h.recipient}</div>
+                              <div className="text-[11px] font-semibold truncate">{maskName(h.recipient)}</div>
                               <div className="text-[10px] font-mono text-muted-foreground truncate">
                                 {h.bank} · {h.account}
                               </div>
@@ -3056,7 +3056,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <div className="min-w-0">
                               <div className="text-[10px] uppercase text-muted-foreground truncate">{r.bank}</div>
                               <div className="text-xs font-mono font-semibold truncate">{r.account}</div>
-                              <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
+                              <div className="text-[11px] text-muted-foreground truncate" title={maskName(r.recipient)}>{maskName(r.recipient)}</div>
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
                               Pts {r.amount.toLocaleString()}
