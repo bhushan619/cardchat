@@ -3012,9 +3012,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 toast.success("Beneficiary loaded");
                               }}
                               className="group text-left rounded-md border bg-background hover:border-accent hover:bg-accent/5 transition-colors px-2.5 py-1.5 max-w-[220px]"
-                              title={`${h.recipient} · ${h.bank} · ${h.account}`}
+                              title={`${maskName(h.recipient)} · ${h.bank} · ${h.account}`}
                             >
-                              <div className="text-[11px] font-semibold truncate">{h.recipient}</div>
+                              <div className="text-[11px] font-semibold truncate">{maskName(h.recipient)}</div>
                               <div className="text-[10px] font-mono text-muted-foreground truncate">
                                 {h.bank} · {h.account}
                               </div>
