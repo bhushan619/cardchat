@@ -30,7 +30,10 @@ export default function AdminCardRates() {
   const canPush = role === "super_admin" || role === "team_lead";
 
   const ratesWithFormula = useMemo(
-    () => cardRates.map(r => ({ ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: Math.min(...r.denominations) })),
+    () => cardRates.map(r => {
+      const list = expandDenominations(r.denominationSpec);
+      return { ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: list[0] ?? 0 };
+    }),
     []
   );
 
