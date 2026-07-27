@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.8  
+**Version:** 5.9  
 **Date:** July 27, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -239,13 +239,18 @@ A minimalist, iOS-inspired layout:
 
 #### Live Rates Section
 - Section header: "Live Rates" with "Auto-refresh 60s" indicator
-- Shows first 5 card rates from mock data (filtered by search)
+- Shows first 5 card rates from mock data (filtered by dual Card Type / Currency search)
 - Each rate card shows:
   - Card type name (e.g., "iTunes US")
   - Format badge: "Physical" or "E-Code" (small accent pill)
-  - Currency indicator (e.g., "USD")
-  - Buy rate per $1 in Naira (e.g., "₦680/$1")
-  - Last updated timestamp
+  - Currency + last-updated timestamp on the same line as the card title
+  - **Denomination variant** rendered according to the rate's `denominationSpec`:
+    - **List** — comma-separated values (e.g., "10, 25, 50, 100, 200, 500")
+    - **Range** — "10 – 500"
+    - **Multiples** — "Multiples of 5 (10–500)" or "Multiples of 10+" when unbounded
+    - **Any** — "Any denomination" pill
+  - **Trend indicator** — percent change (+/-) with up/down arrow badge in success/destructive tones, replacing the previous "per $1" line
+  - **Note / Remarks** — agent-facing instruction line shown below the rate; long remarks clamp to two lines with a "Read more / Show less" toggle
 - "View all rates →" link when more than 5 rates exist (navigates to full list)
 
 #### Quick Start CTA
@@ -830,12 +835,13 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 - **Rate calculation formula:**
   - Sell Rate = Current Naira Rate × Buy Rate
   - Buy Rate = Sell Rate × Current Price Control
+- **Format filter chips** — "All Formats", "Physical", "E-Code" with per-chip record counts
 - **Data table** columns:
   - Card Type
+  - Denomination — full `denominationSpec` rendered as list, range, multiples, or "Any denomination"
   - Format — badge: "E-Code" (primary pill) or "Physical" (muted pill)
   - Currency
-  - Buy Rate (₦ per $1)
-  - Sell Rate (₦ per $1)
+  - Points Price (Coins icon)
   - Last Updated
 
 ### 5.9 Volume Ranking (`/admin/ranking`)
@@ -1345,12 +1351,20 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
   cardType: string;                    // "iTunes US", "Amazon UK", etc.
   currency: string;                    // "USD", "GBP"
   cardFormat: "Physical" | "E-Code";
-  buyRate: number;                     // Naira per $1
-  sellRate: number;                    // Naira per $1
+  buyRate: number;                     // Points per $1
+  sellRate: number;                    // Points per $1
   lastUpdated: string;                 // "2 min ago"
+  denominationSpec: DenominationSpec;  // see below
+  remarks: string;                     // Agent-facing note/instruction
 }
+
+export type DenominationSpec =
+  | { kind: "list"; values: number[] }               // e.g. [10, 25, 50, 100]
+  | { kind: "range"; min: number; max: number }      // e.g. 10 – 500
+  | { kind: "multiples"; of: number; min?: number; max?: number }  // e.g. multiples of 5
+  | { kind: "any" };                                 // unrestricted
 ```
-11 mock entries covering iTunes, Amazon, Steam, Google Play, Vanilla Visa, eBay in USD/GBP.
+15 mock entries covering iTunes, Amazon, Steam, Google Play, Vanilla Visa, eBay, Razer Gold, Sephora, Walmart, Nordstrom in USD/GBP. Each card/currency/format combination is a single record with one `denominationSpec`; `expandDenominations(spec)` expands any variant into a concrete picker list, and `formatDenominations(spec, symbol)` renders it for tables and cards.
 
 ### 7.2 Conversations
 ```typescript
@@ -1698,6 +1712,18 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v5.8 → v5.9 — July 27, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Customer Live Rates — Denomination Variants** | `/customer` live-rate cards now render denominations according to the underlying `DenominationSpec`: discrete **lists** as comma-separated values, **ranges** as "min – max", **multiples** as "Multiples of N (bounds)" or "Multiples of N+", and **any** as an "Any denomination" pill. |
+| **Customer Live Rates — Trend Indicator** | Replaced the "per $1" secondary line with a deterministic percent-change badge (e.g., +0.5% / -0.1%) paired with up/down arrow icons in success/destructive tones. |
+| **Customer Live Rates — Remarks & Read More** | Each rate card displays an agent-facing **Note** line. Remarks longer than 90 characters clamp to two lines and expose a **Read more / Show less** toggle. |
+| **Customer Live Rates — Layout Swap** | Currency indicator and last-updated timestamp moved onto the same line as the card type/format badge; the denomination variant now sits directly below the card title. |
+| **Card Rates Data Model** | `src/data/mock.ts` migrated from one record per denomination to a grouped model where each card/currency/format row carries a `denominationSpec` (`list`, `range`, `multiples`, or `any`) plus a `remarks` string. Added `expandDenominations()` and `formatDenominations()` helpers. |
+| **Admin Card Rates — Denomination Column** | `/admin/card-rates` table now shows the full rendered `denominationSpec` in a dedicated **Denomination** column (list, range, multiples, or any). Added Format filter chips with per-format record counts. |
+| **Rate Calculator Denomination Awareness** | The customer rate calculator expands the selected rate's `denominationSpec` into its denomination picker, supporting all four variants. |
 
 ### v5.7 → v5.8 — July 27, 2026
 
