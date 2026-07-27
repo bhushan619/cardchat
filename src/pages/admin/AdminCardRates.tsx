@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 
-type SortKey = "cardType" | "currency" | "sellRate" | "denomination";
+type SortKey = "cardType" | "currency" | "sellRate" | "minDenomination";
 type SortDir = "asc" | "desc";
 
 const popularCards = ["iTunes US", "Steam US", "Razer Gold"];
@@ -30,7 +30,7 @@ export default function AdminCardRates() {
   const canPush = role === "super_admin" || role === "team_lead";
 
   const ratesWithFormula = useMemo(
-    () => cardRates.map(r => ({ ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)) })),
+    () => cardRates.map(r => ({ ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: Math.min(...r.denominations) })),
     []
   );
 
@@ -177,8 +177,8 @@ export default function AdminCardRates() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("cardType")}>
                   <span className="flex items-center gap-1">Card Type <SortIcon col="cardType" /></span>
                 </th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("denomination")}>
-                  <span className="flex items-center gap-1 justify-end">Denomination <SortIcon col="denomination" /></span>
+                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("minDenomination")}>
+                  <span className="flex items-center gap-1 justify-end">Denomination <SortIcon col="minDenomination" /></span>
                 </th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Format</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("currency")}>
@@ -201,8 +201,7 @@ export default function AdminCardRates() {
                 <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium">{r.cardType}</td>
                   <td className="px-4 py-3 text-sm text-right font-medium">
-                    {r.currency === "USD" ? "$" : r.currency === "GBP" ? "£" : r.currency === "EUR" ? "€" : ""}
-                    {r.denomination}
+                    {r.denominations.map(d => `${r.currency === "USD" ? "$" : r.currency === "GBP" ? "£" : r.currency === "EUR" ? "€" : ""}${d}`).join(", ")}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.cardFormat === "E-Code" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
@@ -237,7 +236,7 @@ export default function AdminCardRates() {
             {popularRates.map(r => (
               <div key={r.id} className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {r.cardType} <span className="text-muted-foreground text-xs">({r.denomination} {r.currency} · {r.cardFormat})</span>
+                  {r.cardType} <span className="text-muted-foreground text-xs">({r.denominations.join(", ")} {r.currency} · {r.cardFormat})</span>
                 </span>
                 <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
                   Points price: <strong className="text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{r.sellRate}</strong>
