@@ -1057,14 +1057,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
-                        {c.channel === "whatsapp" && (role === "super_admin" || role === "team_lead") && (() => {
-                          const line = pickBusinessNumberFor(c.id);
-                          return (
-                            <p className="text-[9px] text-muted-foreground mt-0.5">
-                              Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
-                            </p>
-                          );
-                        })()}
+                        {c.channel === "whatsapp" &&
+                          (role === "super_admin" || role === "team_lead") &&
+                          (() => {
+                            const line = pickBusinessNumberFor(c.id);
+                            return (
+                              <p className="text-[9px] text-muted-foreground mt-0.5">
+                                Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
+                              </p>
+                            );
+                          })()}
                       </div>
                       {c.unread > 0 && (
                         <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
@@ -1488,7 +1490,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             }}
                             className="h-8 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10"
                           >
-                            <Wallet className="w-3.5 h-3.5" /> Fund +/-
+                            <Wallet className="w-3.5 h-3.5" /> Points +/-
                           </Button>
                         )}
                         {selectedConvo?.channel === "whatsapp" && (
@@ -1705,7 +1707,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                     <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
                                       <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
                                       <p className="text-xs font-medium text-success">
-                                        {transferCompletedOrders.has(o.id) ? "Wallet Credited · Transferred" : "Wallet Credited"}
+                                        {transferCompletedOrders.has(o.id)
+                                          ? "Wallet Credited · Transferred"
+                                          : "Wallet Credited"}
                                       </p>
                                       <p className="text-[10px] text-muted-foreground">
                                         Pts {o.payout.toLocaleString()} added to customer's wallet
@@ -2200,7 +2204,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <div className="flex justify-between text-xs">
                   <span className="text-muted-foreground">Card Rate (CNY)</span>
                   <span className="font-medium">
-                    {(negOrder?.nairaRate ? oldRate / negOrder.nairaRate : oldRate).toLocaleString(undefined, { maximumFractionDigits: 4 })}
+                    {(negOrder?.nairaRate ? oldRate / negOrder.nairaRate : oldRate).toLocaleString(undefined, {
+                      maximumFractionDigits: 4,
+                    })}
                   </span>
                 </div>
                 <div className="flex justify-between text-xs">
@@ -2703,8 +2709,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   .filter((o) => o.status === "success")
                   .reduce((s, o) => s + (o.payout || 0), 0);
                 const priorTransfers = selectedConvo
-                  ? (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
-                      .reduce((s, t) => s + (t.amount || 0), 0)
+                  ? (
+                      JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                        amount: number;
+                      }>
+                    ).reduce((s, t) => s + (t.amount || 0), 0)
                   : 0;
                 const balance = Math.max(0, credits - priorTransfers);
                 const amt = Number(transferAmount || 0);
@@ -2718,13 +2727,17 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="flex items-end justify-between gap-4">
                         <div>
                           <p className="text-[10px] text-muted-foreground">Available for transfer</p>
-                          <p className="font-heading text-xl font-bold mt-0.5">
-                            Pts {balance.toLocaleString()}
-                          </p>
+                          <p className="font-heading text-xl font-bold mt-0.5">Pts {balance.toLocaleString()}</p>
                         </div>
                         <div className="text-right text-[10px] text-muted-foreground space-y-0.5">
-                          <p>Credited: <span className="text-emerald-600 font-medium">Pts {credits.toLocaleString()}</span></p>
-                          <p>Transferred: <span className="text-foreground font-medium">Pts {priorTransfers.toLocaleString()}</span></p>
+                          <p>
+                            Credited:{" "}
+                            <span className="text-emerald-600 font-medium">Pts {credits.toLocaleString()}</span>
+                          </p>
+                          <p>
+                            Transferred:{" "}
+                            <span className="text-foreground font-medium">Pts {priorTransfers.toLocaleString()}</span>
+                          </p>
                         </div>
                       </div>
                       {insufficient && (
@@ -2839,7 +2852,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
                       )}
                     </div>
-                    <p className="text-[10px] text-muted-foreground">Name is masked for privacy; populated only after verification.</p>
+                    <p className="text-[10px] text-muted-foreground">
+                      Name is masked for privacy; populated only after verification.
+                    </p>
                   </div>
                 </div>
               </section>
@@ -3056,7 +3071,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <div className="min-w-0">
                               <div className="text-[10px] uppercase text-muted-foreground truncate">{r.bank}</div>
                               <div className="text-xs font-mono font-semibold truncate">{r.account}</div>
-                              <div className="text-[11px] text-muted-foreground truncate" title={maskName(r.recipient)}>{maskName(r.recipient)}</div>
+                              <div className="text-[11px] text-muted-foreground truncate" title={maskName(r.recipient)}>
+                                {maskName(r.recipient)}
+                              </div>
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
                               Pts {r.amount.toLocaleString()}
@@ -3100,8 +3117,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const credits = transferEligibleOrders
                     .filter((o) => o.status === "success")
                     .reduce((s, o) => s + (o.payout || 0), 0);
-                  const priorTransfers = (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
-                    .reduce((s, t) => s + (t.amount || 0), 0);
+                  const priorTransfers = (
+                    JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                      amount: number;
+                    }>
+                  ).reduce((s, t) => s + (t.amount || 0), 0);
                   return amt > Math.max(0, credits - priorTransfers);
                 })()}
                 onClick={() => {
