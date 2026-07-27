@@ -158,9 +158,42 @@ export default function CustomerHome() {
                           {rate.currency} · {rate.lastUpdated}
                         </span>
                       </div>
-                      <p className="mt-1 text-[10px] text-muted-foreground tabular-nums">
-                        {rate.denominations.map(d => `${symbol}${d}`).join(", ")}
-                      </p>
+                      <div className="mt-1 flex items-center gap-1.5 flex-wrap">
+                        {(() => {
+                          const spec = rate.denominationSpec;
+                          if (spec.kind === "list") {
+                            return (
+                              <p className="text-[10px] text-muted-foreground tabular-nums">
+                                {spec.values.map(d => `${symbol}${d}`).join(", ")}
+                              </p>
+                            );
+                          }
+                          if (spec.kind === "range") {
+                            return (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary tabular-nums">
+                                Range · {symbol}{spec.min} – {symbol}{spec.max}
+                              </span>
+                            );
+                          }
+                          if (spec.kind === "multiples") {
+                            return (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-warning/15 text-warning tabular-nums">
+                                Multiples of {symbol}{spec.of}
+                                {(spec.min || spec.max) && (
+                                  <span className="opacity-70">
+                                    {" "}({symbol}{spec.min ?? spec.of}{spec.max ? `–${symbol}${spec.max}` : "+"})
+                                  </span>
+                                )}
+                              </span>
+                            );
+                          }
+                          return (
+                            <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-muted text-muted-foreground italic">
+                              Any denomination
+                            </span>
+                          );
+                        })()}
+                      </div>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
