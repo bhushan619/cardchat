@@ -268,19 +268,12 @@ export default function AdminWhatsAppSessions() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-xs">
-                      {s.assignedAgents && s.assignedAgents.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 max-w-[180px]">
-                          {s.assignedAgents.slice(0, 3).map((a) => (
-                            <span key={a} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-md text-[10px] font-medium">
-                              {a}
-                            </span>
-                          ))}
-                          {s.assignedAgents.length > 3 && (
-                            <span className="text-[10px] text-muted-foreground">+{s.assignedAgents.length - 3}</span>
-                          )}
-                        </div>
+                      {s.assignedAgent ? (
+                        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-md text-[11px] font-medium">
+                          {s.assignedAgent}
+                        </span>
                       ) : (
-                        <span className="text-muted-foreground italic">Shared pool</span>
+                        <span className="text-muted-foreground">{t("unassigned")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs">
@@ -317,25 +310,25 @@ export default function AdminWhatsAppSessions() {
                           <DropdownMenuContent align="end" className="w-44">
                             {s.status === "paused" || s.status === "disconnected" ? (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "connected", "Resumed from admin panel"); toast.success(`${s.label} resumed`); }}>
-                                <Play className="w-3.5 h-3.5 mr-2" /> Resume
+                                <Play className="w-3.5 h-3.5 mr-2" /> {t("resume")}
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "paused", "Paused from admin panel"); toast.success(`${s.label} paused`); }}>
-                                <Pause className="w-3.5 h-3.5 mr-2" /> Pause
+                                <Pause className="w-3.5 h-3.5 mr-2" /> {t("pause")}
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem onClick={() => { setStatus(s.id, "linking", "Re-link requested"); setLinking(s); }}>
-                              <LinkIcon className="w-3.5 h-3.5 mr-2" /> Re-link (new QR)
+                              <LinkIcon className="w-3.5 h-3.5 mr-2" /> {t("relink")}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { appendAudit(s.id, { ts: new Date().toISOString(), event: "warmup_advanced", actor: "Admin One", note: "Manually advanced warmup day" }); toast.success("Warmup day advanced"); }}>
-                              <RotateCw className="w-3.5 h-3.5 mr-2" /> Advance warmup
+                              <RotateCw className="w-3.5 h-3.5 mr-2" /> {t("advance")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgents || []); }}>
-                              <UserPlus className="w-3.5 h-3.5 mr-2" /> Assign agents
+                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
+                              <UserPlus className="w-3.5 h-3.5 mr-2" /> {t("assign")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(s)}>
-                              <Trash2 className="w-3.5 h-3.5 mr-2" /> Remove
+                              <Trash2 className="w-3.5 h-3.5 mr-2" /> {t("remove")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -345,15 +338,13 @@ export default function AdminWhatsAppSessions() {
                 );
               })}
               {sessions.length === 0 && (
-                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">{t("emptyRow")}</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <p className="text-[11px] text-muted-foreground mt-3">
-          Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.
-        </p>
+        <p className="text-[11px] text-muted-foreground mt-3">{t("footNote")}</p>
       </div>
 
       {/* Add-session dialog */}
@@ -464,67 +455,80 @@ export default function AdminWhatsAppSessions() {
         </DialogContent>
       </Dialog>
 
-      {/* Assign agents dialog */}
+      {/* Assign agent dialog — single-agent model */}
       <Dialog open={!!assignFor} onOpenChange={(o) => !o && setAssignFor(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-4 h-4" /> Assign agents to {assignFor?.label}
+              <UserPlus className="w-4 h-4" /> {t("assignTitle")} {assignFor?.label}
             </DialogTitle>
-            <DialogDescription>
-              Select agents who can handle conversations on <span className="font-mono">{assignFor?.phone}</span>. One agent can be assigned to multiple numbers. Leave empty to keep this number in the shared pool.
-            </DialogDescription>
+            <DialogDescription>{t("assignDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-1 max-h-72 overflow-y-auto -mx-1 px-1">
-            {agentUsers.map((agent) => {
-              const checked = assignDraft.includes(agent.name);
-              return (
-                <label
-                  key={agent.id}
-                  className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors ${
-                    checked ? "bg-primary/5 border-primary/40" : "hover:bg-muted border-transparent"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 accent-primary"
-                    checked={checked}
-                    onChange={(e) => {
-                      setAssignDraft((d) =>
-                        e.target.checked ? [...d, agent.name] : d.filter((n) => n !== agent.name)
-                      );
-                    }}
-                  />
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                    {agent.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{agent.name}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{agent.email} · {agent.status}</p>
-                  </div>
-                </label>
-              );
-            })}
-            {agentUsers.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-6">No agents available.</p>
+          <div className="space-y-3">
+            <Select value={assignDraft || "__none__"} onValueChange={(v) => setAssignDraft(v === "__none__" ? "" : v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">{t("unassigned")}</SelectItem>
+                {agentUsers.map((a) => (
+                  <SelectItem key={a.id} value={a.name}>{a.name} · {a.status}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {assignFor?.assignedAgent && (
+              <div className="text-[11px] text-muted-foreground">
+                Currently assigned: <span className="font-medium text-foreground">{assignFor.assignedAgent}</span>
+              </div>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAssignFor(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAssignFor(null)}>{t("cancel")}</Button>
             <Button
               className="bg-accent text-accent-foreground hover:bg-accent/90"
               onClick={() => {
                 if (!assignFor) return;
-                setAssignedAgents(assignFor.id, assignDraft);
-                toast.success(
-                  assignDraft.length === 0
-                    ? `${assignFor.label} moved back to the shared pool`
-                    : `${assignFor.label} assigned to ${assignDraft.length} agent${assignDraft.length === 1 ? "" : "s"}`
-                );
+                const agent = assignDraft || null;
+                // Detect conflict: agent already assigned to another number
+                if (agent) {
+                  const conflict = sessions.find((x) => x.id !== assignFor.id && x.assignedAgent === agent);
+                  if (conflict) {
+                    setReassignConfirm({ agent, conflict });
+                    return;
+                  }
+                }
+                setAssignedAgent(assignFor.id, agent);
+                toast.success(agent ? `${assignFor.label} assigned to ${agent}` : `${assignFor.label} unassigned`);
                 setAssignFor(null);
               }}
             >
-              Save assignment
+              {t("save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassign confirmation */}
+      <Dialog open={!!reassignConfirm} onOpenChange={(o) => !o && setReassignConfirm(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("reassign")}</DialogTitle>
+            <DialogDescription>
+              <span className="font-medium">{reassignConfirm?.agent}</span> {t("warn")}{" "}
+              <span className="font-medium">{reassignConfirm?.conflict.label}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReassignConfirm(null)}>{t("cancel")}</Button>
+            <Button
+              onClick={() => {
+                if (!reassignConfirm || !assignFor) return;
+                setAssignedAgent(reassignConfirm.conflict.id, null);
+                setAssignedAgent(assignFor.id, reassignConfirm.agent);
+                toast.success(`${reassignConfirm.agent} reassigned to ${assignFor.label}`);
+                setReassignConfirm(null);
+                setAssignFor(null);
+              }}
+            >
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>
