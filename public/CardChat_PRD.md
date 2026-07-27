@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.8  
+**Version:** 5.9  
 **Date:** July 27, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -830,12 +830,13 @@ A fallback chat view accessible via direct URL or search results. Contains the s
 - **Rate calculation formula:**
   - Sell Rate = Current Naira Rate × Buy Rate
   - Buy Rate = Sell Rate × Current Price Control
+- **Format filter chips** — "All Formats", "Physical", "E-Code" with per-chip record counts
 - **Data table** columns:
   - Card Type
+  - Denomination — full `denominationSpec` rendered as list, range, multiples, or "Any denomination"
   - Format — badge: "E-Code" (primary pill) or "Physical" (muted pill)
   - Currency
-  - Buy Rate (₦ per $1)
-  - Sell Rate (₦ per $1)
+  - Points Price (Coins icon)
   - Last Updated
 
 ### 5.9 Volume Ranking (`/admin/ranking`)
@@ -1345,12 +1346,20 @@ pending_sale → pending → in_trade → success → pending_payment → paymen
   cardType: string;                    // "iTunes US", "Amazon UK", etc.
   currency: string;                    // "USD", "GBP"
   cardFormat: "Physical" | "E-Code";
-  buyRate: number;                     // Naira per $1
-  sellRate: number;                    // Naira per $1
+  buyRate: number;                     // Points per $1
+  sellRate: number;                    // Points per $1
   lastUpdated: string;                 // "2 min ago"
+  denominationSpec: DenominationSpec;  // see below
+  remarks: string;                     // Agent-facing note/instruction
 }
+
+export type DenominationSpec =
+  | { kind: "list"; values: number[] }               // e.g. [10, 25, 50, 100]
+  | { kind: "range"; min: number; max: number }      // e.g. 10 – 500
+  | { kind: "multiples"; of: number; min?: number; max?: number }  // e.g. multiples of 5
+  | { kind: "any" };                                 // unrestricted
 ```
-11 mock entries covering iTunes, Amazon, Steam, Google Play, Vanilla Visa, eBay in USD/GBP.
+15 mock entries covering iTunes, Amazon, Steam, Google Play, Vanilla Visa, eBay, Razer Gold, Sephora, Walmart, Nordstrom in USD/GBP. Each card/currency/format combination is a single record with one `denominationSpec`; `expandDenominations(spec)` expands any variant into a concrete picker list, and `formatDenominations(spec, symbol)` renders it for tables and cards.
 
 ### 7.2 Conversations
 ```typescript
