@@ -45,6 +45,9 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   const [searchQuery, setSearchQuery] = useState("");
   const { role, setRole } = useAdminRole();
   const { theme, toggleTheme } = useTheme();
+  const lang = useAdminLang();
+  const setLang = useSetAdminLang();
+
 
   // Login is not required to browse the admin panel in prototype mode.
 
