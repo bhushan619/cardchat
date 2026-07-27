@@ -2677,13 +2677,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         }}
       >
         <DialogContent
-          className="max-w-none w-[68vw] h-[85vh] p-0 gap-0 overflow-hidden flex flex-col"
-          style={{ resize: "both" as const, minWidth: 640, minHeight: 560 }}
+          className="max-w-none w-[72vw] h-[92vh] p-0 gap-0 overflow-hidden flex flex-col"
+          style={{ resize: "both" as const, minWidth: 720, minHeight: 640 }}
         >
-          <DialogHeader className="px-6 py-4 border-b shrink-0">
+          <DialogHeader className="px-5 py-3 border-b shrink-0">
             <DialogTitle className="flex items-center gap-2 font-heading">
-              <div className="w-8 h-8 rounded-lg bg-accent/10 flex items-center justify-center">
-                <ArrowRightLeft className="w-4 h-4 text-accent" />
+              <div className="w-7 h-7 rounded-lg bg-accent/10 flex items-center justify-center">
+                <ArrowRightLeft className="w-3.5 h-3.5 text-accent" />
               </div>
               <span>Process Transfer</span>
               {selectedConvo && (
@@ -2694,9 +2694,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(0,1fr)_480px] flex-1 min-h-0">
+          <div className="grid grid-cols-[minmax(0,1fr)_420px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
-            <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
+            <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
               {/* Wallet balance card */}
               {(() => {
                 const credits = transferEligibleOrders
@@ -2710,25 +2710,25 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 const amt = Number(transferAmount || 0);
                 const insufficient = amt > 0 && amt > balance;
                 return (
-                  <section className="rounded-xl border bg-card">
-                    <header className="px-4 py-2.5 border-b">
-                      <h3 className="text-sm font-semibold">Wallet Balance</h3>
+                  <section className="rounded-lg border bg-card">
+                    <header className="px-3 py-2 border-b">
+                      <h3 className="text-xs font-semibold">Wallet Balance</h3>
                     </header>
-                    <div className="p-4">
+                    <div className="p-3">
                       <div className="flex items-end justify-between gap-4">
                         <div>
-                          <p className="text-[11px] text-muted-foreground">Available for transfer</p>
-                          <p className="font-heading text-2xl font-bold mt-0.5">
+                          <p className="text-[10px] text-muted-foreground">Available for transfer</p>
+                          <p className="font-heading text-xl font-bold mt-0.5">
                             Pts {balance.toLocaleString()}
                           </p>
                         </div>
-                        <div className="text-right text-[11px] text-muted-foreground space-y-0.5">
+                        <div className="text-right text-[10px] text-muted-foreground space-y-0.5">
                           <p>Credited: <span className="text-emerald-600 font-medium">Pts {credits.toLocaleString()}</span></p>
                           <p>Transferred: <span className="text-foreground font-medium">Pts {priorTransfers.toLocaleString()}</span></p>
                         </div>
                       </div>
                       {insufficient && (
-                        <p className="mt-2 text-[11px] text-destructive">
+                        <p className="mt-1.5 text-[11px] text-destructive">
                           Transfer amount exceeds available wallet balance.
                         </p>
                       )}
@@ -2738,20 +2738,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               })()}
 
               {/* Recipient card */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b flex items-center justify-between">
-                  <h3 className="text-sm font-semibold">Recipient</h3>
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b flex items-center justify-between">
+                  <h3 className="text-xs font-semibold">Recipient</h3>
                   {transferVerified && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600">
-                      <CheckCheck className="w-3.5 h-3.5" /> Account verified
+                    <span className="inline-flex items-center gap-1 text-[10px] font-medium text-emerald-600">
+                      <CheckCheck className="w-3 h-3" /> Account verified
                     </span>
                   )}
                 </header>
-                <div className="p-4 grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">Transfer Method</Label>
+                <div className="p-3 grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">Transfer Method</Label>
                     <Select value={transferMethod} onValueChange={setTransferMethod}>
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
@@ -2763,8 +2763,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </SelectContent>
                     </Select>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Bank Name
                     </Label>
                     <Select
@@ -2775,7 +2775,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         setTransferRecipient("");
                       }}
                     >
-                      <SelectTrigger className="h-10">
+                      <SelectTrigger className="h-9">
                         <SelectValue placeholder="Please select bank" />
                       </SelectTrigger>
                       <SelectContent>
@@ -2788,13 +2788,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </Select>
                   </div>
 
-                  <div className="space-y-1.5 col-span-2">
-                    <Label className="text-xs">
+                  <div className="space-y-1 col-span-2">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Bank Account Number
                     </Label>
                     <div className="flex gap-2">
                       <Input
-                        className="h-10 font-mono"
+                        className="h-9 font-mono"
                         placeholder="Enter 10-digit account number"
                         value={transferAccount}
                         onChange={(e) => {
@@ -2806,7 +2806,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       />
                       <Button
                         variant="outline"
-                        className="h-10 shrink-0 min-w-[92px]"
+                        className="h-9 shrink-0 min-w-[80px]"
                         disabled={!transferBank || transferAccount.length < 10 || transferVerifying}
                         onClick={() => {
                           setTransferVerifying(true);
@@ -2824,13 +2824,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 col-span-2">
-                    <Label className="text-xs">
+                  <div className="space-y-1 col-span-2">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Recipient Name
                     </Label>
                     <div className="relative">
                       <Input
-                        className="h-10 pr-9 font-medium bg-muted/40"
+                        className="h-9 pr-9 font-medium bg-muted/40"
                         placeholder="Verify bank account to fetch recipient name"
                         value={maskName(transferRecipient)}
                         disabled
@@ -2845,18 +2845,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </section>
 
               {/* Amount card */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">Amount</h3>
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b">
+                  <h3 className="text-xs font-semibold">Amount</h3>
                 </header>
-                <div className="p-4 grid grid-cols-2 gap-4">
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                <div className="p-3 grid grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Transfer Amount
                     </Label>
                     <div className="relative">
                       <Input
-                        className="h-11 pr-16 text-base font-semibold"
+                        className="h-9 pr-14 text-sm font-semibold"
                         placeholder="0.00"
                         value={transferAmount}
                         onChange={(e) => setTransferAmount(e.target.value.replace(/[^\d.]/g, ""))}
@@ -2868,12 +2868,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                     <p className="text-[10px] text-muted-foreground">Max Pts 2,000,000 per transaction</p>
                   </div>
-                  <div className="space-y-1.5">
-                    <Label className="text-xs">
+                  <div className="space-y-1">
+                    <Label className="text-[11px]">
                       <span className="text-destructive">*</span> Points Rate
                     </Label>
                     <Input
-                      className="h-11 text-base font-semibold"
+                      className="h-9 text-sm font-semibold"
                       placeholder="Enter rate"
                       value={transferRate}
                       onChange={(e) => setTransferRate(e.target.value.replace(/[^\d.]/g, ""))}
@@ -2889,19 +2889,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </section>
 
               {/* Notes */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">
+              <section className="rounded-lg border bg-card">
+                <header className="px-3 py-2 border-b">
+                  <h3 className="text-xs font-semibold">
                     Notes <span className="font-normal text-muted-foreground">(optional)</span>
                   </h3>
                 </header>
-                <div className="p-4">
+                <div className="p-3">
                   <Textarea
                     placeholder="Add a note for internal reference…"
                     value={transferNote}
                     onChange={(e) => setTransferNote(e.target.value)}
                     rows={2}
-                    className="resize-none"
+                    className="resize-none min-h-[54px]"
                   />
                 </div>
               </section>
@@ -3075,7 +3075,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </div>
 
           {/* Sticky footer */}
-          <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
+          <div className="px-5 py-2.5 border-t bg-background flex items-center justify-between shrink-0">
             <div className="text-[11px] text-muted-foreground">
               {transferAmount && transferRate && Number(transferRate) > 0 ? (
                 <>
@@ -3088,10 +3088,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setTransferOpen(false)}>
+              <Button variant="outline" size="sm" onClick={() => setTransferOpen(false)}>
                 Cancel
               </Button>
               <Button
+                size="sm"
                 disabled={(() => {
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
