@@ -82,14 +82,13 @@ export default function AdminApiConfig() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout topRight={<LangToggle lang={lang} onChange={setLang} />}>
       <div className="p-6 max-w-3xl">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold mb-1">{t("title")}</h1>
             <p className="text-sm text-muted-foreground">{t("sub")}</p>
           </div>
-          <LangToggle lang={lang} onChange={setLang} />
         </div>
 
         {/* API Status */}
