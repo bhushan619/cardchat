@@ -10,26 +10,74 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
   Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   listWaNumbers, upsertWaNumber, removeWaNumber, setStatus, completeLink,
-  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgents,
+  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgent,
   type WaBusinessNumber, type WaSessionStatus,
 } from "@/lib/waBusinessNumbers";
 import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import LangToggle from "@/components/admin/LangToggle";
+import { usePageLang, makeT } from "@/lib/pageTranslations";
 
-const statusMeta: Record<WaSessionStatus, { label: string; cls: string; Icon: any }> = {
-  connected:    { label: "Connected",    cls: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30", Icon: Wifi },
-  linking:      { label: "Awaiting QR",  cls: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",         Icon: QrCode },
-  initializing: { label: "Booting",      cls: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",                 Icon: RotateCw },
-  paused:       { label: "Paused",       cls: "bg-muted text-muted-foreground border-border",                                    Icon: Pause },
-  disconnected: { label: "Disconnected", cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
-  banned:       { label: "Banned",       cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
-};
+const T = {
+  en: {
+    title: "WhatsApp Sessions",
+    subtitle: "Shared pool of wwebjs numbers powering customer chat. Inbound conversations auto-route to assigned agents.",
+    linkBtn: "Link WhatsApp Number",
+    active: "Active", uptime: "Uptime", ram: "RAM", alerts: "Alerts",
+    hNumber: "Number", hStatus: "Status", hAgent: "Assigned Agent", hWarmup: "Warmup",
+    hToday: "Today", hReply: "Reply ratio", hRam: "RAM", hSeen: "Last seen",
+    unassigned: "Unassigned", warmedUp: "Warmed up", pause: "Pause", resume: "Resume",
+    relink: "Re-link (new QR)", advance: "Advance warmup", assign: "Assign Agent", remove: "Remove",
+    emptyRow: `No sessions yet. Click "Link WhatsApp Number" to add one.`,
+    footNote: "Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.",
+    assignTitle: "Assign agent to",
+    assignDesc: "Choose one agent to handle conversations on this WhatsApp number. Only one agent can be assigned at a time.",
+    change: "Change", removeAgent: "Remove agent",
+    warn: "is currently assigned to", reassign: "Reassign?",
+    cancel: "Cancel", save: "Save",
+    connected: "Connected", linking: "Awaiting QR", initializing: "Booting",
+    paused: "Paused", disconnected: "Disconnected", banned: "Banned",
+  },
+  zh: {
+    title: "WhatsApp 会话",
+    subtitle: "由 wwebjs 号码组成的共享池,支持客户聊天。入站会话自动路由至指定坐席。",
+    linkBtn: "绑定 WhatsApp 号码",
+    active: "活跃", uptime: "运行时间", ram: "内存", alerts: "告警",
+    hNumber: "号码", hStatus: "状态", hAgent: "指定坐席", hWarmup: "预热",
+    hToday: "今日", hReply: "回复率", hRam: "内存", hSeen: "最近在线",
+    unassigned: "未分配", warmedUp: "已预热", pause: "暂停", resume: "恢复",
+    relink: "重新绑定 (新二维码)", advance: "推进预热", assign: "分配坐席", remove: "移除",
+    emptyRow: "暂无会话。点击 " + `"绑定 WhatsApp 号码"` + " 添加。",
+    footNote: "每个号码作为一个 Puppeteer 实例运行。若手机离线,网关将尝试自动重连 (10 秒 → 30 秒 → 60 秒) 并通知团队群。",
+    assignTitle: "为以下号码分配坐席:",
+    assignDesc: "选择一位坐席处理此 WhatsApp 号码的会话。同一时间仅能分配一位坐席。",
+    change: "更改", removeAgent: "移除坐席",
+    warn: "当前已被分配至", reassign: "重新分配?",
+    cancel: "取消", save: "保存",
+    connected: "已连接", linking: "等待扫码", initializing: "启动中",
+    paused: "已暂停", disconnected: "已断开", banned: "已封禁",
+  },
+} as const;
+
+type TKey = keyof typeof T["en"];
+
+const buildStatusMeta = (t: (k: TKey) => string): Record<WaSessionStatus, { label: string; cls: string; Icon: any }> => ({
+  connected:    { label: t("connected"),    cls: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30", Icon: Wifi },
+  linking:      { label: t("linking"),      cls: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",         Icon: QrCode },
+  initializing: { label: t("initializing"), cls: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",                 Icon: RotateCw },
+  paused:       { label: t("paused"),       cls: "bg-muted text-muted-foreground border-border",                                    Icon: Pause },
+  disconnected: { label: t("disconnected"), cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
+  banned:       { label: t("banned"),       cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
+});
 
 const maskPhone = (p: string) => {
   const clean = p.replace(/\D/g, "");
