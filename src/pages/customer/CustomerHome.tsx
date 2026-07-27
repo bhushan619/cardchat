@@ -196,27 +196,27 @@ export default function CustomerHome() {
                           }
                           if (spec.kind === "range") {
                             return (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary tabular-nums">
+                              <p className="text-[10px] text-muted-foreground tabular-nums">
                                 {symbol}
                                 {spec.min} – {symbol}
                                 {spec.max}
-                              </span>
+                              </p>
                             );
                           }
                           if (spec.kind === "multiples") {
                             return (
-                              <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-warning/15 text-warning tabular-nums">
+                              <p className="text-[10px] text-muted-foreground tabular-nums">
                                 {symbol}
                                 {spec.of}
                                 {(spec.min || spec.max) && (
-                                  <span className="opacity-70">
+                                   
                                     {" "}
                                     ({symbol}
                                     {spec.min ?? spec.of}
                                     {spec.max ? `–${symbol}${spec.max}` : "+"})
-                                  </span>
+                                   
                                 )}
-                              </span>
+                              </p>
                             );
                           }
                           return (
