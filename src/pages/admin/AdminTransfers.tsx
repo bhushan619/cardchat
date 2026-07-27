@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { maskName } from "@/lib/utils";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
