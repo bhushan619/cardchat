@@ -206,7 +206,7 @@ export default function CustomerHome() {
                               <p className="text-[10px] text-muted-foreground tabular-nums">
                                 {" "}
                                 {spec.min ?? spec.of}
-                                {spec.max ? `–${symbol}${spec.max}` : "+"}
+                                {spec.max ? `– {spec.max}` : "+"}
                               </p>
                             );
                           }
