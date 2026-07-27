@@ -364,6 +364,10 @@ export default function AdminCustomers() {
                   )}
                 </div>
               </TabsContent>
+
+              <TabsContent value="banks" className="py-2">
+                <BankAccountsTab alias={selectedCustomer.alias} />
+              </TabsContent>
             </Tabs>
           )}
         </DialogContent>
