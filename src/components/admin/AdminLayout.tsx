@@ -1,10 +1,32 @@
 import { ReactNode, useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard, MessageSquare, CreditCard, Settings, Users,
-  TrendingUp, Search, Bell, ChevronDown, Shield, Globe, DollarSign,
-  BarChart3, Send, FileText, BookOpen, LogOut, ShieldAlert, ShieldCheck,
-  Sun, Moon, Wallet, Gift, ArrowDownToLine, Coins, Phone
+  LayoutDashboard,
+  MessageSquare,
+  CreditCard,
+  Settings,
+  Users,
+  TrendingUp,
+  Search,
+  Bell,
+  ChevronDown,
+  Shield,
+  Globe,
+  DollarSign,
+  BarChart3,
+  Send,
+  FileText,
+  BookOpen,
+  LogOut,
+  ShieldAlert,
+  ShieldCheck,
+  Sun,
+  Moon,
+  Wallet,
+  Gift,
+  ArrowDownToLine,
+  Coins,
+  Phone,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -13,28 +35,101 @@ import { conversations, orders, cardRates, systemNairaRate, systemPriceControl }
 import { useTheme } from "@/hooks/use-theme";
 import LangToggle from "@/components/admin/LangToggle";
 
-
 const navItems = [
-  { id: "messages", label: "App Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"], badge: 5 },
-  { id: "whatsapp-messages", label: "WhatsApp", icon: Phone, path: "/admin/whatsapp", roles: ["super_admin", "team_lead", "agent"], badge: 2 },
+  {
+    id: "messages",
+    label: "App Messages",
+    icon: MessageSquare,
+    path: "/admin",
+    roles: ["super_admin", "team_lead", "agent"],
+    badge: 5,
+  },
+  {
+    id: "whatsapp-messages",
+    label: "WhatsApp",
+    icon: Phone,
+    path: "/admin/whatsapp",
+    roles: ["super_admin", "team_lead", "agent"],
+    badge: 2,
+  },
   { id: "team-chat", label: "Team Chat", icon: MessageSquare, path: "/admin/team-chat", badge: 3 },
-  { id: "customers", label: "Customers", icon: Users, path: "/admin/customers", roles: ["super_admin", "team_lead", "agent"] },
-  { id: "card-rates", label: "Card Rates", icon: CreditCard, path: "/admin/card-rates", roles: ["super_admin", "team_lead", "agent"] },
+  {
+    id: "customers",
+    label: "Customers",
+    icon: Users,
+    path: "/admin/customers",
+    roles: ["super_admin", "team_lead", "agent"],
+  },
+  {
+    id: "card-rates",
+    label: "Card Rates",
+    icon: CreditCard,
+    path: "/admin/card-rates",
+    roles: ["super_admin", "team_lead", "agent"],
+  },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
-  { id: "withdrawals", label: "Withdrawals", icon: ArrowDownToLine, path: "/admin/withdrawals", roles: ["super_admin", "team_lead", "finance"] },
-  { id: "transfers", label: "Transfers", icon: Send, path: "/admin/transfers", roles: ["super_admin", "team_lead", "finance"] },
-  { id: "naira-rate", label: "Points Rate", icon: Coins, path: "/admin/naira-rate", roles: ["super_admin", "team_lead", "finance"] },
+  {
+    id: "withdrawals",
+    label: "Withdrawals",
+    icon: ArrowDownToLine,
+    path: "/admin/withdrawals",
+    roles: ["super_admin", "team_lead", "finance"],
+  },
+  {
+    id: "transfers",
+    label: "Transfers",
+    icon: Send,
+    path: "/admin/transfers",
+    roles: ["super_admin", "team_lead", "finance"],
+  },
+  {
+    id: "naira-rate",
+    label: "Points Rate",
+    icon: Coins,
+    path: "/admin/naira-rate",
+    roles: ["super_admin", "team_lead", "finance"],
+  },
   { id: "users", label: "User Management", icon: Users, path: "/admin/users", roles: ["super_admin"] },
   { id: "team", label: "Team Dashboard", icon: BarChart3, path: "/admin/team", roles: ["super_admin", "team_lead"] },
-  { id: "ip-restrictions", label: "IP & Country", icon: ShieldCheck, path: "/admin/ip-restrictions", roles: ["super_admin"] },
-  { id: "sensitive-words", label: "Sensitive Words", icon: ShieldAlert, path: "/admin/sensitive-words", roles: ["super_admin"] },
+  {
+    id: "ip-restrictions",
+    label: "IP & Country",
+    icon: ShieldCheck,
+    path: "/admin/ip-restrictions",
+    roles: ["super_admin"],
+  },
+  {
+    id: "sensitive-words",
+    label: "Sensitive Words",
+    icon: ShieldAlert,
+    path: "/admin/sensitive-words",
+    roles: ["super_admin"],
+  },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
-  { id: "whatsapp-sessions", label: "WhatsApp Sessions", icon: Phone, path: "/admin/whatsapp-sessions", roles: ["super_admin"] },
+  {
+    id: "whatsapp-sessions",
+    label: "WhatsApp Sessions",
+    icon: Phone,
+    path: "/admin/whatsapp-sessions",
+    roles: ["super_admin"],
+  },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
-  { id: "ranking", label: "Volume Ranking", icon: TrendingUp, path: "/admin/ranking", roles: ["super_admin", "team_lead", "agent"] },
+  {
+    id: "ranking",
+    label: "Volume Ranking",
+    icon: TrendingUp,
+    path: "/admin/ranking",
+    roles: ["super_admin", "team_lead", "agent"],
+  },
   { id: "rewards", label: "Rewards", icon: Gift, path: "/admin/rewards", roles: ["super_admin", "team_lead", "agent"] },
-  { id: "customer-guide", label: "Customer Guide", icon: BookOpen, path: "/admin/customer-guide", roles: ["super_admin", "team_lead"] },
+  {
+    id: "customer-guide",
+    label: "Customer Guide",
+    icon: BookOpen,
+    path: "/admin/customer-guide",
+    roles: ["super_admin", "team_lead"],
+  },
   { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead"] },
 ];
 
@@ -48,7 +143,6 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   const lang = useAdminLang();
   const setLang = useSetAdminLang();
 
-
   // Login is not required to browse the admin panel in prototype mode.
 
   const handleLogout = () => {
@@ -56,7 +150,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
     navigate("/admin/login", { replace: true });
   };
 
-  const visibleItems = navItems.filter(item => {
+  const visibleItems = navItems.filter((item) => {
     if (!item.roles) return true;
     return item.roles.includes(role);
   });
@@ -72,9 +166,9 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   const searchResults = useMemo(() => {
     if (searchQuery.length < 2) return null;
     const q = searchQuery.toLowerCase();
-    const customers = conversations.filter(c => c.alias.toLowerCase().includes(q));
-    const matchedOrders = orders.filter(o => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q));
-    const rates = cardRates.filter(r => r.cardType.toLowerCase().includes(q) || r.currency.toLowerCase().includes(q));
+    const customers = conversations.filter((c) => c.alias.toLowerCase().includes(q));
+    const matchedOrders = orders.filter((o) => o.id.toLowerCase().includes(q) || o.customer.toLowerCase().includes(q));
+    const rates = cardRates.filter((r) => r.cardType.toLowerCase().includes(q) || r.currency.toLowerCase().includes(q));
     const total = customers.length + matchedOrders.length + rates.length;
     return { customers, orders: matchedOrders, rates, total };
   }, [searchQuery]);
@@ -88,8 +182,10 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
           <p className="text-xs text-sidebar-foreground/60 mt-0.5">Admin Panel</p>
         </div>
         <nav className="flex-1 py-3 px-3 space-y-1 overflow-y-auto">
-          {visibleItems.map(item => {
-            const isActive = location.pathname === item.path || (item.path === "/admin" && location.pathname.startsWith("/admin/chat"));
+          {visibleItems.map((item) => {
+            const isActive =
+              location.pathname === item.path ||
+              (item.path === "/admin" && location.pathname.startsWith("/admin/chat"));
             return (
               <button
                 key={item.id}
@@ -109,10 +205,12 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
         </nav>
         <div className="p-4 border-t border-sidebar-border space-y-3">
           <div className="flex items-center gap-2">
-            <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">View as</span>
+            <span className="text-[10px] uppercase tracking-wider text-sidebar-foreground/40 font-semibold">
+              View as
+            </span>
           </div>
           <div className="flex gap-1 flex-wrap">
-            {(["super_admin", "team_lead", "agent", "finance"] as const).map(r => (
+            {(["super_admin", "team_lead", "agent", "finance"] as const).map((r) => (
               <button
                 key={r}
                 onClick={() => setRole(r)}
@@ -135,12 +233,19 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
               {roleProfiles[role].name[0]}
             </button>
             <div className="flex-1 min-w-0">
-              <button onClick={() => navigate("/admin/profile")} className="block text-left hover:text-sidebar-primary transition-colors">
+              <button
+                onClick={() => navigate("/admin/profile")}
+                className="block text-left hover:text-sidebar-primary transition-colors"
+              >
                 <p className="text-sm font-medium truncate">{roleProfiles[role].name}</p>
                 <p className="text-xs text-sidebar-foreground/50">{roleProfiles[role].label}</p>
               </button>
             </div>
-            <button onClick={handleLogout} className="text-sidebar-foreground/50 hover:text-destructive transition-colors" title="Sign out">
+            <button
+              onClick={handleLogout}
+              className="text-sidebar-foreground/50 hover:text-destructive transition-colors"
+              title="Sign out"
+            >
               <LogOut className="w-4 h-4" />
             </button>
           </div>
@@ -157,9 +262,13 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
               placeholder="Search customers, orders, transactions..."
               className="max-w-md border-0 bg-transparent shadow-none focus-visible:ring-0 text-sm"
               value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
+              onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setSearchOpen(true)}
-              onBlur={() => setTimeout(() => { setSearchOpen(false); }, 200)}
+              onBlur={() =>
+                setTimeout(() => {
+                  setSearchOpen(false);
+                }, 200)
+              }
             />
           </div>
           <div className="flex items-center gap-4">
@@ -192,15 +301,16 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
             </button>
             <button className="relative">
               <Bell className="w-5 h-5 text-muted-foreground" />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] text-destructive-foreground flex items-center justify-center">3</span>
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-destructive rounded-full text-[10px] text-destructive-foreground flex items-center justify-center">
+                3
+              </span>
             </button>
-            <div className="flex items-center gap-2 text-sm">
+            {/* <div className="flex items-center gap-2 text-sm">
               <Shield className="w-4 h-4 text-accent" />
               <span className="font-medium">{roleProfiles[role].label}</span>
-            </div>
+            </div> */}
           </div>
         </header>
-
 
         {/* Search overlay */}
         {searchOpen && (
@@ -209,8 +319,12 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
               {!searchResults ? (
                 <>
                   <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Recent Searches</p>
-                  {["A7X3KP", "ORD-20260318-001", "iTunes"].map(q => (
-                    <button key={q} onClick={() => setSearchQuery(q)} className="flex items-center gap-2 text-sm text-foreground/80 hover:text-foreground">
+                  {["A7X3KP", "ORD-20260318-001", "iTunes"].map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => setSearchQuery(q)}
+                      className="flex items-center gap-2 text-sm text-foreground/80 hover:text-foreground"
+                    >
                       <Search className="w-3 h-3" /> {q}
                     </button>
                   ))}
@@ -228,7 +342,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                         Customers ({searchResults.customers.length})
                       </p>
                       <div className="space-y-1">
-                        {searchResults.customers.map(c => (
+                        {searchResults.customers.map((c) => (
                           <button
                             key={c.id}
                             onMouseDown={() => navigate(`/admin/chat/${c.id}`)}
@@ -236,7 +350,9 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                           >
                             <span className="status-badge bg-accent/10 text-accent text-[10px]">Customer</span>
                             <span className="text-sm font-medium">{c.alias}</span>
-                            <span className="text-xs text-muted-foreground ml-auto">{c.tags.join(", ")} · {c.totalValue}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">
+                              {c.tags.join(", ")} · {c.totalValue}
+                            </span>
                           </button>
                         ))}
                       </div>
@@ -248,7 +364,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                         Orders ({searchResults.orders.length})
                       </p>
                       <div className="space-y-1">
-                        {searchResults.orders.map(o => (
+                        {searchResults.orders.map((o) => (
                           <button
                             key={o.id}
                             onMouseDown={() => navigate("/admin/orders")}
@@ -256,7 +372,9 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                           >
                             <span className="status-badge bg-primary/10 text-primary text-[10px]">Order</span>
                             <span className="text-sm font-medium">{o.id}</span>
-                            <span className="text-xs text-muted-foreground ml-auto">{o.status.replace("_", " ")} · {o.cardType}</span>
+                            <span className="text-xs text-muted-foreground ml-auto">
+                              {o.status.replace("_", " ")} · {o.cardType}
+                            </span>
                           </button>
                         ))}
                       </div>
@@ -268,7 +386,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                         Card Rates ({searchResults.rates.length})
                       </p>
                       <div className="space-y-1">
-                        {searchResults.rates.map(r => (
+                        {searchResults.rates.map((r) => (
                           <button
                             key={r.id}
                             onMouseDown={() => navigate("/admin/card-rates")}
@@ -276,7 +394,10 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                           >
                             <span className="status-badge bg-warning/10 text-warning text-[10px]">Rate</span>
                             <span className="text-sm font-medium">{r.cardType}</span>
-                            <span className="text-xs text-muted-foreground ml-auto inline-flex items-center gap-1">{r.cardFormat} · <Coins className="w-3 h-3" />{r.sellRate}</span>
+                            <span className="text-xs text-muted-foreground ml-auto inline-flex items-center gap-1">
+                              {r.cardFormat} · <Coins className="w-3 h-3" />
+                              {r.sellRate}
+                            </span>
                           </button>
                         ))}
                       </div>
