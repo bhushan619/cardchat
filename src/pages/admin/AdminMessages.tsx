@@ -2694,11 +2694,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
               {/* Wallet balance card */}
               {(() => {
-                const credits = selectedConvo
-                  ? completedOrders
-                      .filter((o) => o.conversationId === selectedConvo.id && o.status === "success")
-                      .reduce((s, o) => s + (o.payout || 0), 0)
-                  : 0;
+                const credits = transferEligibleOrders
+                  .filter((o) => o.status === "success")
+                  .reduce((s, o) => s + (o.payout || 0), 0);
                 const priorTransfers = selectedConvo
                   ? (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
                       .reduce((s, t) => s + (t.amount || 0), 0)
@@ -3092,8 +3090,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
                   if (!selectedConvo) return true;
-                  const credits = completedOrders
-                    .filter((o) => o.conversationId === selectedConvo.id && o.status === "success")
+                  const credits = transferEligibleOrders
+                    .filter((o) => o.status === "success")
                     .reduce((s, o) => s + (o.payout || 0), 0);
                   const priorTransfers = (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
                     .reduce((s, t) => s + (t.amount || 0), 0);
