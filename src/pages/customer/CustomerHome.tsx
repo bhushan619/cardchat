@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 // Unique card types and currencies from rates data
 const uniqueCardTypes = [...new Set(cardRates.map(r => r.cardType))];
 const uniqueCurrencies = [...new Set(cardRates.map(r => r.currency))];
-const denominations = [25, 50, 100, 200, 500];
+
 
 export default function CustomerHome() {
   const [cardTypeSearch, setCardTypeSearch] = useState("");
@@ -44,6 +44,7 @@ export default function CustomerHome() {
     r => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat
   );
   const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
+  const calcDenominations = calcRate?.denominations || [];
 
   const coreActions = [
     { icon: Gift, label: "Sell Cards", desc: "Best rates", onClick: () => navigate("/customer/contacts") },
@@ -157,9 +158,9 @@ export default function CustomerHome() {
                           {rate.currency} · {rate.lastUpdated}
                         </span>
                       </div>
-                      <span className="inline-block mt-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-foreground/80 tabular-nums">
-                        {symbol}{rate.denomination}
-                      </span>
+                      <p className="mt-1 text-[10px] text-muted-foreground tabular-nums">
+                        {rate.denominations.map(d => `${symbol}${d}`).join(", ")}
+                      </p>
                     </div>
                     <div className="text-right shrink-0">
                       <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
@@ -275,9 +276,9 @@ export default function CustomerHome() {
               <div>
                 <label className="text-xs text-muted-foreground font-medium">Denomination</label>
                 <Select value={calcDenom} onValueChange={setCalcDenom}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Select denomination" /></SelectTrigger>
+                  <SelectTrigger className="mt-1"><SelectValue placeholder={calcRate ? "Select denomination" : "Select card type, format & currency first"} /></SelectTrigger>
                   <SelectContent>
-                    {denominations.map(d => (
+                    {calcDenominations.map(d => (
                       <SelectItem key={d} value={String(d)}>${d}</SelectItem>
                     ))}
                   </SelectContent>
