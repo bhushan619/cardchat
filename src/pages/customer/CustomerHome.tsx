@@ -1,17 +1,36 @@
 import Logo from "@/components/Logo";
 import { useState, useMemo } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
-import { cardRates, walletBalance, tradingBalance, rewardsBalance, expandDenominations, formatDenominations } from "@/data/mock";
-import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet, TrendingUp, TrendingDown } from "lucide-react";
+import {
+  cardRates,
+  walletBalance,
+  tradingBalance,
+  rewardsBalance,
+  expandDenominations,
+  formatDenominations,
+} from "@/data/mock";
+import {
+  Search,
+  Gift,
+  Trophy,
+  Calculator,
+  Star,
+  ArrowRight,
+  X,
+  Eye,
+  EyeOff,
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 
 // Unique card types and currencies from rates data
-const uniqueCardTypes = [...new Set(cardRates.map(r => r.cardType))];
-const uniqueCurrencies = [...new Set(cardRates.map(r => r.currency))];
-
+const uniqueCardTypes = [...new Set(cardRates.map((r) => r.cardType))];
+const uniqueCurrencies = [...new Set(cardRates.map((r) => r.currency))];
 
 export default function CustomerHome() {
   const [cardTypeSearch, setCardTypeSearch] = useState("");
@@ -33,7 +52,7 @@ export default function CustomerHome() {
   };
 
   // Filter rates by both searches
-  const filteredRates = cardRates.filter(r => {
+  const filteredRates = cardRates.filter((r) => {
     const matchCard = !cardTypeSearch || r.cardType.toLowerCase().includes(cardTypeSearch.toLowerCase());
     const matchCurrency = !currencySearch || r.currency.toLowerCase().includes(currencySearch.toLowerCase());
     return matchCard && matchCurrency;
@@ -41,7 +60,7 @@ export default function CustomerHome() {
 
   // Calculator logic
   const calcRate = cardRates.find(
-    r => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat
+    (r) => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat,
   );
   const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
   const calcDenominations = calcRate ? expandDenominations(calcRate.denominationSpec) : [];
@@ -67,7 +86,7 @@ export default function CustomerHome() {
 
         {/* Core Actions — iOS Modular Grid */}
         <div className="grid grid-cols-4 gap-3">
-          {coreActions.map(a => (
+          {coreActions.map((a) => (
             <button
               key={a.label}
               onClick={a.onClick}
@@ -91,7 +110,10 @@ export default function CustomerHome() {
               <Wallet className="w-4 h-4 opacity-70" />
               <p className="text-xs opacity-80">Wallet Balance</p>
             </div>
-            <button onClick={() => setBalanceVisible(!balanceVisible)} className="opacity-70 hover:opacity-100 transition-opacity">
+            <button
+              onClick={() => setBalanceVisible(!balanceVisible)}
+              className="opacity-70 hover:opacity-100 transition-opacity"
+            >
               {balanceVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
             </button>
           </div>
@@ -128,7 +150,7 @@ export default function CustomerHome() {
                 placeholder="Card Type"
                 className="pl-8 bg-muted border-0 text-xs h-9"
                 value={cardTypeSearch}
-                onChange={e => setCardTypeSearch(e.target.value)}
+                onChange={(e) => setCardTypeSearch(e.target.value)}
               />
             </div>
             <div className="relative">
@@ -137,16 +159,20 @@ export default function CustomerHome() {
                 placeholder="Currency"
                 className="pl-8 bg-muted border-0 text-xs h-9"
                 value={currencySearch}
-                onChange={e => setCurrencySearch(e.target.value)}
+                onChange={(e) => setCurrencySearch(e.target.value)}
               />
             </div>
           </div>
 
           <div className="space-y-2">
-            {filteredRates.slice(0, 5).map(rate => {
-              const symbol = rate.currency === "USD" ? "$" : rate.currency === "GBP" ? "£" : rate.currency === "EUR" ? "€" : "";
+            {filteredRates.slice(0, 5).map((rate) => {
+              const symbol =
+                rate.currency === "USD" ? "$" : rate.currency === "GBP" ? "£" : rate.currency === "EUR" ? "€" : "";
               return (
-                <div key={rate.id} className="bg-card border border-border/50 rounded-xl p-3 hover:border-accent/40 transition-colors">
+                <div
+                  key={rate.id}
+                  className="bg-card border border-border/50 rounded-xl p-3 hover:border-accent/40 transition-colors"
+                >
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-1.5 flex-wrap">
@@ -164,24 +190,30 @@ export default function CustomerHome() {
                           if (spec.kind === "list") {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
-                                {spec.values.map(d => `${symbol}${d}`).join(", ")}
+                                {spec.values.map((d) => `${symbol}${d}`).join(", ")}
                               </p>
                             );
                           }
                           if (spec.kind === "range") {
                             return (
                               <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-primary/10 text-primary tabular-nums">
-                                Range · {symbol}{spec.min} – {symbol}{spec.max}
+                                {symbol}
+                                {spec.min} – {symbol}
+                                {spec.max}
                               </span>
                             );
                           }
                           if (spec.kind === "multiples") {
                             return (
                               <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded-md bg-warning/15 text-warning tabular-nums">
-                                Multiples of {symbol}{spec.of}
+                                {symbol}
+                                {spec.of}
                                 {(spec.min || spec.max) && (
                                   <span className="opacity-70">
-                                    {" "}({symbol}{spec.min ?? spec.of}{spec.max ? `–${symbol}${spec.max}` : "+"})
+                                    {" "}
+                                    ({symbol}
+                                    {spec.min ?? spec.of}
+                                    {spec.max ? `–${symbol}${spec.max}` : "+"})
                                   </span>
                                 )}
                               </span>
@@ -200,13 +232,20 @@ export default function CustomerHome() {
                       {(() => {
                         // Deterministic pseudo-change per rate id: range -1.5% .. +1.5%
                         const seed = (rate.id * 9301 + 49297) % 233280;
-                        const pct = ((seed / 233280) * 3 - 1.5);
+                        const pct = (seed / 233280) * 3 - 1.5;
                         const up = pct >= 0;
                         const Icon = up ? TrendingUp : TrendingDown;
                         return (
-                          <div className={`inline-flex items-center gap-1 mt-0.5 text-[10px] font-medium ${up ? "text-success" : "text-destructive"}`}>
-                            <span className="tabular-nums">{up ? "+" : ""}{pct.toFixed(1)}%</span>
-                            <span className={`inline-flex items-center justify-center w-4 h-4 rounded ${up ? "bg-success/15" : "bg-destructive/15"}`}>
+                          <div
+                            className={`inline-flex items-center gap-1 mt-0.5 text-[10px] font-medium ${up ? "text-success" : "text-destructive"}`}
+                          >
+                            <span className="tabular-nums">
+                              {up ? "+" : ""}
+                              {pct.toFixed(1)}%
+                            </span>
+                            <span
+                              className={`inline-flex items-center justify-center w-4 h-4 rounded ${up ? "bg-success/15" : "bg-destructive/15"}`}
+                            >
                               <Icon className="w-2.5 h-2.5" />
                             </span>
                           </div>
@@ -225,7 +264,10 @@ export default function CustomerHome() {
                       </p>
                       {rate.remarks.length > 90 && (
                         <button
-                          onClick={e => { e.stopPropagation(); toggleRemark(rate.id); }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            toggleRemark(rate.id);
+                          }}
                           className="text-[10px] text-accent font-medium mt-1"
                         >
                           {expandedRemarks.has(rate.id) ? "Show less" : "Read more"}
@@ -249,22 +291,42 @@ export default function CustomerHome() {
 
         {/* Rate Calculator Floating Modal */}
         {showCalculator && (
-          <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowCalculator(false)}>
-            <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 animate-slide-up" onClick={e => e.stopPropagation()}>
+          <div
+            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50"
+            onClick={() => setShowCalculator(false)}
+          >
+            <div
+              className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-4 animate-slide-up"
+              onClick={(e) => e.stopPropagation()}
+            >
               <div className="flex items-center justify-between">
                 <h3 className="font-heading font-semibold text-lg">Rate Calculator</h3>
-                <button onClick={() => setShowCalculator(false)} className="text-muted-foreground hover:text-foreground">
+                <button
+                  onClick={() => setShowCalculator(false)}
+                  className="text-muted-foreground hover:text-foreground"
+                >
                   <X className="w-5 h-5" />
                 </button>
               </div>
 
               <div>
                 <label className="text-xs text-muted-foreground font-medium">Card Type</label>
-                <Select value={calcCardType} onValueChange={v => { setCalcCardType(v); setCalcCurrency(""); setCalcDenom(""); }}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Select card type" /></SelectTrigger>
+                <Select
+                  value={calcCardType}
+                  onValueChange={(v) => {
+                    setCalcCardType(v);
+                    setCalcCurrency("");
+                    setCalcDenom("");
+                  }}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select card type" />
+                  </SelectTrigger>
                   <SelectContent>
-                    {uniqueCardTypes.map(ct => (
-                      <SelectItem key={ct} value={ct}>{ct}</SelectItem>
+                    {uniqueCardTypes.map((ct) => (
+                      <SelectItem key={ct} value={ct}>
+                        {ct}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -273,7 +335,7 @@ export default function CustomerHome() {
               <div>
                 <label className="text-xs text-muted-foreground font-medium">Card Format</label>
                 <div className="mt-1 grid grid-cols-2 gap-2">
-                  {(["Physical", "E-Code"] as const).map(f => (
+                  {(["Physical", "E-Code"] as const).map((f) => (
                     <label
                       key={f}
                       className={`flex items-center gap-2 rounded-lg border px-3 py-2 cursor-pointer transition-colors ${
@@ -296,11 +358,21 @@ export default function CustomerHome() {
 
               <div>
                 <label className="text-xs text-muted-foreground font-medium">Currency</label>
-                <Select value={calcCurrency} onValueChange={v => { setCalcCurrency(v); setCalcDenom(""); }}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder="Select currency" /></SelectTrigger>
+                <Select
+                  value={calcCurrency}
+                  onValueChange={(v) => {
+                    setCalcCurrency(v);
+                    setCalcDenom("");
+                  }}
+                >
+                  <SelectTrigger className="mt-1">
+                    <SelectValue placeholder="Select currency" />
+                  </SelectTrigger>
                   <SelectContent>
-                    {uniqueCurrencies.map(c => (
-                      <SelectItem key={c} value={c}>{c}</SelectItem>
+                    {uniqueCurrencies.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -309,17 +381,25 @@ export default function CustomerHome() {
               <div>
                 <label className="text-xs text-muted-foreground font-medium">Denomination</label>
                 <Select value={calcDenom} onValueChange={setCalcDenom}>
-                  <SelectTrigger className="mt-1"><SelectValue placeholder={calcRate ? "Select denomination" : "Select card type, format & currency first"} /></SelectTrigger>
+                  <SelectTrigger className="mt-1">
+                    <SelectValue
+                      placeholder={calcRate ? "Select denomination" : "Select card type, format & currency first"}
+                    />
+                  </SelectTrigger>
                   <SelectContent>
-                    {calcDenominations.map(d => (
-                      <SelectItem key={d} value={String(d)}>${d}</SelectItem>
+                    {calcDenominations.map((d) => (
+                      <SelectItem key={d} value={String(d)}>
+                        ${d}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
 
               {/* Result */}
-              <div className={`rounded-xl p-4 text-center transition-all ${calcResult ? "bg-accent/10 border border-accent/30" : "bg-muted/50"}`}>
+              <div
+                className={`rounded-xl p-4 text-center transition-all ${calcResult ? "bg-accent/10 border border-accent/30" : "bg-muted/50"}`}
+              >
                 {calcResult ? (
                   <>
                     <p className="text-xs text-muted-foreground mb-1">You will receive</p>
@@ -332,7 +412,10 @@ export default function CustomerHome() {
 
               <Button
                 className="w-full bg-accent text-accent-foreground hover:bg-accent/90"
-                onClick={() => { setShowCalculator(false); navigate("/customer/contacts"); }}
+                onClick={() => {
+                  setShowCalculator(false);
+                  navigate("/customer/contacts");
+                }}
               >
                 Start Trading
               </Button>
