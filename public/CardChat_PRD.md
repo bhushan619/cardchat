@@ -239,13 +239,18 @@ A minimalist, iOS-inspired layout:
 
 #### Live Rates Section
 - Section header: "Live Rates" with "Auto-refresh 60s" indicator
-- Shows first 5 card rates from mock data (filtered by search)
+- Shows first 5 card rates from mock data (filtered by dual Card Type / Currency search)
 - Each rate card shows:
   - Card type name (e.g., "iTunes US")
   - Format badge: "Physical" or "E-Code" (small accent pill)
-  - Currency indicator (e.g., "USD")
-  - Buy rate per $1 in Naira (e.g., "₦680/$1")
-  - Last updated timestamp
+  - Currency + last-updated timestamp on the same line as the card title
+  - **Denomination variant** rendered according to the rate's `denominationSpec`:
+    - **List** — comma-separated values (e.g., "10, 25, 50, 100, 200, 500")
+    - **Range** — "10 – 500"
+    - **Multiples** — "Multiples of 5 (10–500)" or "Multiples of 10+" when unbounded
+    - **Any** — "Any denomination" pill
+  - **Trend indicator** — percent change (+/-) with up/down arrow badge in success/destructive tones, replacing the previous "per $1" line
+  - **Note / Remarks** — agent-facing instruction line shown below the rate; long remarks clamp to two lines with a "Read more / Show less" toggle
 - "View all rates →" link when more than 5 rates exist (navigates to full list)
 
 #### Quick Start CTA
