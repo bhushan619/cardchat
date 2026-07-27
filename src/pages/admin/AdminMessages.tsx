@@ -2694,7 +2694,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
 
-          <div className="grid grid-cols-[minmax(0,0.8fr)_504px] flex-1 min-h-0">
+          <div className="grid grid-cols-[minmax(0,0.88fr)_504px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
             <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
               {/* Wallet balance card */}
@@ -3025,7 +3025,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     )}
 
                     {/* Transfer records */}
-                    <div className="px-4 py-3 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
+                    <div className="px-4 py-2.5 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
                       <div className="text-sm font-semibold">Transfer Records</div>
                       <div className="text-[11px] text-muted-foreground mt-0.5">
                         Recent transactions {selectedConvo && `· ${selectedConvo.alias}`}
@@ -3034,9 +3034,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     {rows.length === 0 ? (
                       <div className="text-xs text-muted-foreground text-center py-10">No transfer records</div>
                     ) : (
-                      <div className="divide-y">
+                      <div className="bg-background">
                         {/* column headers */}
-                        <div className="grid grid-cols-[125px_1fr_100px_70px] gap-3 px-4 py-2 bg-muted/40 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        <div className="grid grid-cols-[140px_1fr_120px_90px] gap-4 px-4 py-2 bg-muted/40 border-b text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                           <div>Time / Order No.</div>
                           <div>Info</div>
                           <div className="text-right">Amount</div>
@@ -3045,7 +3045,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         {rows.map((r, i) => (
                           <div
                             key={i}
-                            className="grid grid-cols-[125px_1fr_100px_70px] gap-3 px-4 py-3 hover:bg-muted/30 transition-colors items-start"
+                            className="grid grid-cols-[140px_1fr_120px_90px] gap-4 px-4 py-3 hover:bg-muted/30 transition-colors items-start border-b last:border-b-0"
                           >
                             <div className="min-w-0">
                               <div className="text-xs font-semibold">{r.method}</div>
