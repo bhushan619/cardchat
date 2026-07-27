@@ -8,8 +8,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import WhatsAppGatewayCard from "@/components/admin/WhatsAppGatewayCard";
 import WarmupAntiBanCard from "@/components/admin/WarmupAntiBanCard";
-import LangToggle from "@/components/admin/LangToggle";
-import { usePageLang, makeT } from "@/lib/pageTranslations";
+import { useAdminLang } from "@/contexts/AdminLangContext";
+import { makeT } from "@/lib/pageTranslations";
+
 
 const T = {
   en: {
