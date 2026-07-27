@@ -186,7 +186,7 @@ export default function AdminWhatsAppSessions() {
   };
 
   return (
-    <AdminLayout>
+    <AdminLayout topRight={<LangToggle lang={lang} onChange={setLang} />}>
       <div className="p-6 max-w-6xl">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
@@ -194,7 +194,6 @@ export default function AdminWhatsAppSessions() {
             <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
           </div>
           <div className="flex items-center gap-2">
-            <LangToggle lang={lang} onChange={setLang} />
             {canManage && (
               <Button
                 className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
