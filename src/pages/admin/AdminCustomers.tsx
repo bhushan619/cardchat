@@ -13,6 +13,7 @@ import ChannelBadge from "@/components/admin/ChannelBadge";
 import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { listBankAccounts, addBankAccount, removeBankAccount, onBankAccountsChange, mockVerifyAccount, NIGERIAN_BANKS, type CustomerBankAccount } from "@/lib/customerBankAccounts";
 import { toast } from "sonner";
+import { maskName } from "@/lib/utils";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
