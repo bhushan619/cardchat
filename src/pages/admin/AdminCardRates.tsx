@@ -239,7 +239,7 @@ export default function AdminCardRates() {
             {popularRates.map(r => (
               <div key={r.id} className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {r.cardType} <span className="text-muted-foreground text-xs">({r.denominations.join(", ")} {r.currency} · {r.cardFormat})</span>
+                  {r.cardType} <span className="text-muted-foreground text-xs">({formatDenominations(r.denominationSpec, "")} {r.currency} · {r.cardFormat})</span>
                 </span>
                 <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
                   Points price: <strong className="text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{r.sellRate}</strong>
