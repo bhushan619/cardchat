@@ -1463,7 +1463,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && selectedConvo && selectedConvo.channel !== "whatsapp" && (
+                        {canAdjustFunds && selectedConvo && (
                           <Button
                             size="sm"
                             variant="outline"
