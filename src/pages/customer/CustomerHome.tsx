@@ -197,7 +197,6 @@ export default function CustomerHome() {
                           if (spec.kind === "range") {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
-                                {symbol}
                                 {spec.min} – {symbol}
                                 {spec.max}
                               </p>
@@ -207,7 +206,6 @@ export default function CustomerHome() {
                             return (
                               <p className="text-[10px] text-muted-foreground tabular-nums">
                                 {" "}
-                                {symbol}
                                 {spec.min ?? spec.of}
                                 {spec.max ? `–${symbol}${spec.max}` : "+"}
                               </p>
