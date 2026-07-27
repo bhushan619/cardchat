@@ -375,3 +375,140 @@ export default function AdminCustomers() {
     </AdminLayout>
   );
 }
+
+function BankAccountsTab({ alias }: { alias: string }) {
+  const [accounts, setAccounts] = useState<CustomerBankAccount[]>(() => listBankAccounts(alias));
+  const [adding, setAdding] = useState(false);
+  const [bankName, setBankName] = useState(NIGERIAN_BANKS[0]);
+  const [accountNumber, setAccountNumber] = useState("");
+  const [holderName, setHolderName] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [verified, setVerified] = useState(false);
+  const [confirmDel, setConfirmDel] = useState<CustomerBankAccount | null>(null);
+
+  useEffect(() => onBankAccountsChange(() => setAccounts(listBankAccounts(alias))), [alias]);
+  useEffect(() => { setAccounts(listBankAccounts(alias)); }, [alias]);
+
+  const reset = () => { setAccountNumber(""); setHolderName(""); setVerified(false); setBankName(NIGERIAN_BANKS[0]); };
+
+  const doVerify = async () => {
+    if (accountNumber.length !== 10) { toast.error("Account number must be 10 digits"); return; }
+    setVerifying(true);
+    try {
+      const name = await mockVerifyAccount(accountNumber, bankName);
+      setHolderName(name);
+      setVerified(true);
+      toast.success("Account verified");
+    } finally { setVerifying(false); }
+  };
+
+  const doSave = () => {
+    if (!verified) { toast.error("Please verify the account first"); return; }
+    addBankAccount(alias, { bankName, accountNumber, holderName });
+    toast.success("Bank account added");
+    setAdding(false); reset();
+  };
+
+  const doDelete = () => {
+    if (!confirmDel) return;
+    removeBankAccount(alias, confirmDel.id);
+    toast.success("Bank account removed");
+    setConfirmDel(null);
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex items-center justify-between">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Saved beneficiaries · {accounts.length}
+        </p>
+        <Button size="sm" className="gap-1.5 h-7 text-xs" onClick={() => setAdding(true)}>
+          <Plus className="w-3 h-3" /> Add Account
+        </Button>
+      </div>
+      <div className="border rounded-lg overflow-hidden">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-muted/40">
+              <TableHead className="text-[10px] h-8">Bank</TableHead>
+              <TableHead className="text-[10px] h-8">Account No.</TableHead>
+              <TableHead className="text-[10px] h-8">Holder</TableHead>
+              <TableHead className="text-[10px] h-8">Added</TableHead>
+              <TableHead className="text-[10px] h-8 text-right"></TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {accounts.map((a) => (
+              <TableRow key={a.id}>
+                <TableCell className="text-xs font-medium">{a.bankName}</TableCell>
+                <TableCell className="text-xs font-mono">{a.accountNumber}</TableCell>
+                <TableCell className="text-xs">{a.holderName}</TableCell>
+                <TableCell className="text-[10px] text-muted-foreground">{new Date(a.addedAt).toLocaleDateString()}</TableCell>
+                <TableCell className="text-right">
+                  <button onClick={() => setConfirmDel(a)} className="text-muted-foreground hover:text-destructive">
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+            {accounts.length === 0 && (
+              <TableRow><TableCell colSpan={5} className="text-center text-xs text-muted-foreground py-4">No bank accounts saved</TableCell></TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Add dialog */}
+      <Dialog open={adding} onOpenChange={(o) => { if (!o) { setAdding(false); reset(); } }}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2"><Landmark className="w-4 h-4" /> Add Bank Account</DialogTitle>
+            <DialogDescription>Verify the account before saving.</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Bank</label>
+              <Select value={bankName} onValueChange={(v) => { setBankName(v); setVerified(false); setHolderName(""); }}>
+                <SelectTrigger className="mt-1"><SelectValue /></SelectTrigger>
+                <SelectContent>{NIGERIAN_BANKS.map((b) => <SelectItem key={b} value={b}>{b}</SelectItem>)}</SelectContent>
+              </Select>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Account Number</label>
+              <div className="flex gap-2 mt-1">
+                <Input value={accountNumber} onChange={(e) => { setAccountNumber(e.target.value.replace(/\D/g, "").slice(0, 10)); setVerified(false); setHolderName(""); }} placeholder="10 digits" maxLength={10} className="font-mono" />
+                <Button size="sm" variant="outline" onClick={doVerify} disabled={verifying || accountNumber.length !== 10}>
+                  {verifying ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : verified ? <CheckCircle2 className="w-3.5 h-3.5 text-success" /> : "Verify"}
+                </Button>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">Account Holder Name</label>
+              <Input value={holderName} readOnly placeholder="Auto-filled after verification" className="mt-1 bg-muted/40" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => { setAdding(false); reset(); }}>Cancel</Button>
+            <Button onClick={doSave} disabled={!verified} className="bg-accent text-accent-foreground hover:bg-accent/90">Save</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirm */}
+      <Dialog open={!!confirmDel} onOpenChange={(o) => !o && setConfirmDel(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Remove bank account?</DialogTitle>
+            <DialogDescription>
+              Remove <b>{confirmDel?.holderName}</b>'s <b>{confirmDel?.bankName}</b> account ending in <b>{confirmDel?.accountNumber.slice(-4)}</b>? This cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirmDel(null)}>Cancel</Button>
+            <Button variant="destructive" onClick={doDelete}>Delete</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
