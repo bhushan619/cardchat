@@ -35,7 +35,7 @@ const navItems = [
   { id: "guide", label: "Admin Guide", icon: BookOpen, path: "/admin/guide", roles: ["super_admin", "team_lead"] },
 ];
 
-export default function AdminLayout({ children }: { children: ReactNode }) {
+export default function AdminLayout({ children, topRight }: { children: ReactNode; topRight?: ReactNode }) {
   const navigate = useNavigate();
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
