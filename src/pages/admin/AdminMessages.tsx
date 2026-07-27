@@ -718,20 +718,15 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             colorClass: "text-destructive",
           };
         case "success": {
-          const isWa = selectedConvo?.channel === "whatsapp";
           const transferred = currentOrderId ? transferCompletedOrders.has(currentOrderId) : false;
           return {
             icon: "✅",
-            title: isWa
-              ? transferred
-                ? "Trade Successful — Transfer Recorded"
-                : "Trade Successful — Awaiting Transfer"
+            title: transferred
+              ? "Trade Successful — Wallet Credited & Transferred"
               : "Trade Successful — Wallet Credited",
-            desc: isWa
-              ? transferred
-                ? "A bank transfer has been recorded against this order."
-                : "Record a bank transfer against this order to complete payout."
-              : "Funds have been credited to the customer's wallet.",
+            desc: transferred
+              ? "Funds credited and a PalmPay transfer was recorded against this order."
+              : "Funds credited to the customer's wallet. Process a PalmPay transfer when they request payout.",
             colorClass: "text-success",
           };
         }
