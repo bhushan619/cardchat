@@ -1,22 +1,74 @@
 // Mock data for Cardchat interactive prototypes
 
-const baseRates = [
-  { cardType: "iTunes US", currency: "USD", cardFormat: "Physical" as const, sellRate: 720, denominations: [10, 25, 50, 100, 200, 500], lastUpdated: "2 min ago" },
-  { cardType: "iTunes US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 740, denominations: [10, 15, 25, 50, 100, 200, 500], lastUpdated: "2 min ago" },
-  { cardType: "Amazon US", currency: "USD", cardFormat: "Physical" as const, sellRate: 660, denominations: [25, 50, 100, 200, 500, 1000], lastUpdated: "2 min ago" },
-  { cardType: "Amazon US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 680, denominations: [10, 25, 50, 100, 200, 500], lastUpdated: "2 min ago" },
-  { cardType: "Steam US", currency: "USD", cardFormat: "Physical" as const, sellRate: 640, denominations: [20, 50, 100], lastUpdated: "3 min ago" },
-  { cardType: "Steam US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 660, denominations: [10, 20, 50, 100], lastUpdated: "3 min ago" },
-  { cardType: "Google Play US", currency: "USD", cardFormat: "Physical" as const, sellRate: 630, denominations: [10, 25, 50, 100], lastUpdated: "2 min ago" },
-  { cardType: "iTunes UK", currency: "GBP", cardFormat: "Physical" as const, sellRate: 900, denominations: [10, 25, 50, 100, 200], lastUpdated: "5 min ago" },
-  { cardType: "Amazon UK", currency: "GBP", cardFormat: "Physical" as const, sellRate: 830, denominations: [25, 50, 100, 200], lastUpdated: "3 min ago" },
-  { cardType: "Vanilla Visa", currency: "USD", cardFormat: "Physical" as const, sellRate: 590, denominations: [50, 100, 200, 500], lastUpdated: "1 min ago" },
-  { cardType: "eBay US", currency: "USD", cardFormat: "E-Code" as const, sellRate: 610, denominations: [10, 25, 50, 100], lastUpdated: "4 min ago" },
-  { cardType: "Razer Gold", currency: "USD", cardFormat: "E-Code" as const, sellRate: 700, denominations: [10, 25, 50, 100, 200], lastUpdated: "1 min ago" },
-  { cardType: "Sephora", currency: "USD", cardFormat: "Physical" as const, sellRate: 520, denominations: [25, 50, 100, 200, 500], lastUpdated: "6 min ago" },
-  { cardType: "Walmart", currency: "USD", cardFormat: "Physical" as const, sellRate: 560, denominations: [25, 50, 100, 200, 500], lastUpdated: "4 min ago" },
-  { cardType: "Nordstrom", currency: "USD", cardFormat: "E-Code" as const, sellRate: 540, denominations: [25, 50, 100, 200], lastUpdated: "7 min ago" },
+// denominationSpec: describes how denominations are offered for a rate.
+//  - { kind: "list", values }   → discrete list, e.g. $10, $25, $50
+//  - { kind: "range", min, max }→ any face value between min and max
+//  - { kind: "multiples", of, min?, max? } → any multiple of N (optionally bounded)
+//  - { kind: "any" }            → any denomination accepted (empty / unrestricted)
+export type DenominationSpec =
+  | { kind: "list"; values: number[] }
+  | { kind: "range"; min: number; max: number }
+  | { kind: "multiples"; of: number; min?: number; max?: number }
+  | { kind: "any" };
+
+const baseRates: Array<{
+  cardType: string;
+  currency: string;
+  cardFormat: "Physical" | "E-Code";
+  sellRate: number;
+  denominationSpec: DenominationSpec;
+  lastUpdated: string;
+}> = [
+  { cardType: "iTunes US", currency: "USD", cardFormat: "Physical", sellRate: 720, denominationSpec: { kind: "list", values: [10, 25, 50, 100, 200, 500] }, lastUpdated: "2 min ago" },
+  { cardType: "iTunes US", currency: "USD", cardFormat: "E-Code", sellRate: 740, denominationSpec: { kind: "range", min: 10, max: 500 }, lastUpdated: "2 min ago" },
+  { cardType: "Amazon US", currency: "USD", cardFormat: "Physical", sellRate: 660, denominationSpec: { kind: "list", values: [25, 50, 100, 200, 500, 1000] }, lastUpdated: "2 min ago" },
+  { cardType: "Amazon US", currency: "USD", cardFormat: "E-Code", sellRate: 680, denominationSpec: { kind: "multiples", of: 5, min: 10, max: 500 }, lastUpdated: "2 min ago" },
+  { cardType: "Steam US", currency: "USD", cardFormat: "Physical", sellRate: 640, denominationSpec: { kind: "list", values: [20, 50, 100] }, lastUpdated: "3 min ago" },
+  { cardType: "Steam US", currency: "USD", cardFormat: "E-Code", sellRate: 660, denominationSpec: { kind: "multiples", of: 10 }, lastUpdated: "3 min ago" },
+  { cardType: "Google Play US", currency: "USD", cardFormat: "Physical", sellRate: 630, denominationSpec: { kind: "list", values: [10, 25, 50, 100] }, lastUpdated: "2 min ago" },
+  { cardType: "iTunes UK", currency: "GBP", cardFormat: "Physical", sellRate: 900, denominationSpec: { kind: "range", min: 10, max: 200 }, lastUpdated: "5 min ago" },
+  { cardType: "Amazon UK", currency: "GBP", cardFormat: "Physical", sellRate: 830, denominationSpec: { kind: "list", values: [25, 50, 100, 200] }, lastUpdated: "3 min ago" },
+  { cardType: "Vanilla Visa", currency: "USD", cardFormat: "Physical", sellRate: 590, denominationSpec: { kind: "any" }, lastUpdated: "1 min ago" },
+  { cardType: "eBay US", currency: "USD", cardFormat: "E-Code", sellRate: 610, denominationSpec: { kind: "list", values: [10, 25, 50, 100] }, lastUpdated: "4 min ago" },
+  { cardType: "Razer Gold", currency: "USD", cardFormat: "E-Code", sellRate: 700, denominationSpec: { kind: "multiples", of: 5, min: 10, max: 200 }, lastUpdated: "1 min ago" },
+  { cardType: "Sephora", currency: "USD", cardFormat: "Physical", sellRate: 520, denominationSpec: { kind: "list", values: [25, 50, 100, 200, 500] }, lastUpdated: "6 min ago" },
+  { cardType: "Walmart", currency: "USD", cardFormat: "Physical", sellRate: 560, denominationSpec: { kind: "range", min: 25, max: 500 }, lastUpdated: "4 min ago" },
+  { cardType: "Nordstrom", currency: "USD", cardFormat: "E-Code", sellRate: 540, denominationSpec: { kind: "any" }, lastUpdated: "7 min ago" },
 ];
+
+// Expand a DenominationSpec into a concrete list of denominations for pickers.
+export function expandDenominations(spec: DenominationSpec): number[] {
+  if (spec.kind === "list") return spec.values;
+  if (spec.kind === "range") {
+    const step = spec.min >= 100 ? 50 : spec.min >= 25 ? 25 : 5;
+    const out: number[] = [];
+    for (let v = spec.min; v <= spec.max; v += step) out.push(v);
+    return out;
+  }
+  if (spec.kind === "multiples") {
+    const min = spec.min ?? spec.of;
+    const max = spec.max ?? spec.of * 20;
+    const out: number[] = [];
+    for (let v = min; v <= max; v += spec.of) out.push(v);
+    return out;
+  }
+  // "any" — provide a sensible default ladder
+  return [10, 25, 50, 100, 200, 500];
+}
+
+// Format a DenominationSpec as a compact display string.
+export function formatDenominations(spec: DenominationSpec, symbol = "$"): string {
+  if (spec.kind === "list") return spec.values.map(v => `${symbol}${v}`).join(", ");
+  if (spec.kind === "range") return `${symbol}${spec.min} – ${symbol}${spec.max}`;
+  if (spec.kind === "multiples") {
+    const bounds =
+      spec.min || spec.max
+        ? ` (${symbol}${spec.min ?? spec.of}${spec.max ? `–${symbol}${spec.max}` : "+"})`
+        : "";
+    return `Multiples of ${symbol}${spec.of}${bounds}`;
+  }
+  return "Any denomination";
+}
 
 const remarksByFormat: Record<string, string[]> = {
   Physical: [
