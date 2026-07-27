@@ -3034,9 +3034,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     {rows.length === 0 ? (
                       <div className="text-xs text-muted-foreground text-center py-10">No transfer records</div>
                     ) : (
-                      <div className="border rounded-md m-3 bg-background">
+                      <div className="bg-background">
                         {/* column headers */}
-                        <div className="grid grid-cols-[130px_1fr_110px_80px] gap-4 px-3 py-2 bg-muted/40 border-b text-[10px] font-semibold uppercase tracking-wide text-muted-foreground rounded-t-md">
+                        <div className="grid grid-cols-[140px_1fr_120px_90px] gap-4 px-4 py-2 bg-muted/40 border-b text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                           <div>Time / Order No.</div>
                           <div>Info</div>
                           <div className="text-right">Amount</div>
@@ -3045,7 +3045,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         {rows.map((r, i) => (
                           <div
                             key={i}
-                            className="grid grid-cols-[130px_1fr_110px_80px] gap-4 px-3 py-2.5 hover:bg-muted/30 transition-colors items-start last:rounded-b-md"
+                            className="grid grid-cols-[140px_1fr_120px_90px] gap-4 px-4 py-3 hover:bg-muted/30 transition-colors items-start border-b last:border-b-0"
                           >
                             <div className="min-w-0">
                               <div className="text-xs font-semibold">{r.method}</div>
