@@ -1,5 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { cardRates, systemPriceControl } from "@/data/mock";
+import { cardRates, systemPriceControl, formatDenominations, expandDenominations } from "@/data/mock";
 import { RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send, Coins, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
@@ -30,7 +30,10 @@ export default function AdminCardRates() {
   const canPush = role === "super_admin" || role === "team_lead";
 
   const ratesWithFormula = useMemo(
-    () => cardRates.map(r => ({ ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: Math.min(...r.denominations) })),
+    () => cardRates.map(r => {
+      const list = expandDenominations(r.denominationSpec);
+      return { ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: list[0] ?? 0 };
+    }),
     []
   );
 
@@ -201,7 +204,7 @@ export default function AdminCardRates() {
                 <tr key={r.id} className="border-b last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3 text-sm font-medium">{r.cardType}</td>
                   <td className="px-4 py-3 text-sm text-right font-medium">
-                    {r.denominations.map(d => `${r.currency === "USD" ? "$" : r.currency === "GBP" ? "£" : r.currency === "EUR" ? "€" : ""}${d}`).join(", ")}
+                    {formatDenominations(r.denominationSpec, r.currency === "USD" ? "$" : r.currency === "GBP" ? "£" : r.currency === "EUR" ? "€" : "")}
                   </td>
                   <td className="px-4 py-3 text-sm">
                     <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${r.cardFormat === "E-Code" ? "bg-primary/10 text-primary" : "bg-muted text-muted-foreground"}`}>
@@ -236,7 +239,7 @@ export default function AdminCardRates() {
             {popularRates.map(r => (
               <div key={r.id} className="flex items-center justify-between text-sm">
                 <span className="font-medium">
-                  {r.cardType} <span className="text-muted-foreground text-xs">({r.denominations.join(", ")} {r.currency} · {r.cardFormat})</span>
+                  {r.cardType} <span className="text-muted-foreground text-xs">({formatDenominations(r.denominationSpec, "")} {r.currency} · {r.cardFormat})</span>
                 </span>
                 <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
                   Points price: <strong className="text-foreground inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{r.sellRate}</strong>
