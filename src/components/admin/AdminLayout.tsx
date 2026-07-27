@@ -175,6 +175,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                 )}
               </div>
             )}
+            {topRight}
             <button
               onClick={toggleTheme}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
