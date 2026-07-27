@@ -68,7 +68,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "emerald",
     warmupDay: null, dailyMsgCount: 187, dailyConvCount: 34, replyRatio: 0.71,
     memoryMB: 412, sessionStartedAt: daysAgo(6), lastSeenAt: now(),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: ["Mike Agent", "Tunde Agent"],
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: "Mike Agent", assignedAgents: ["Mike Agent"],
     auditLog: [
       { ts: daysAgo(30), event: "created", actor: "Admin One" },
       { ts: daysAgo(30), event: "linked", actor: "Admin One", note: "QR scanned from Main Sales handset" },
@@ -79,7 +79,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "sky",
     warmupDay: 9, dailyMsgCount: 63, dailyConvCount: 11, replyRatio: 0.64,
     memoryMB: 386, sessionStartedAt: daysAgo(2), lastSeenAt: now(),
-    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: ["Mike Agent"],
+    proxyRegion: "NG-Abuja-Residential", assignedAgent: "Tunde Agent", assignedAgents: ["Tunde Agent"],
     auditLog: [
       { ts: daysAgo(9), event: "created", actor: "Admin One" },
       { ts: daysAgo(9), event: "linked", actor: "Admin One" },
@@ -248,15 +248,22 @@ export function setAssignedAgents(id: string, agents: string[], actor = "Admin O
   const idx = list.findIndex((x) => x.id === id);
   if (idx < 0) return;
   const prev = list[idx].assignedAgents || [];
+  // Single-agent model: only first agent is kept (assignedAgent is source of truth)
+  const single = agents.slice(0, 1);
   list[idx] = {
     ...list[idx],
-    assignedAgents: agents,
+    assignedAgents: single,
+    assignedAgent: single[0] ?? null,
     auditLog: [
-      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agents: ${agents.join(", ") || "(none)"} (was: ${prev.join(", ") || "(none)"})` },
+      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agent: ${single[0] || "(unassigned)"} (was: ${prev.join(", ") || "(none)"})` },
       ...list[idx].auditLog,
     ].slice(0, 50),
   };
   write(list);
+}
+
+export function setAssignedAgent(id: string, agent: string | null, actor = "Admin One") {
+  setAssignedAgents(id, agent ? [agent] : [], actor);
 }
 
 

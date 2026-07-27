@@ -23,6 +23,7 @@ type Transfer = {
   orderId: string;
   alias: string;
   amount: number;
+  pointsRate: number;
   bankName: string;
   accountNumber: string;
   accountName: string;
@@ -48,6 +49,7 @@ const seed: Transfer[] = customerWallets.flatMap((w, i) => {
       orderId: orderPool[idx % orderPool.length],
       alias: w.alias,
       amount: Math.round((w.totalWithdrawals / count) * (0.5 + (j * 0.2))),
+      pointsRate: 280 + ((idx * 7) % 41),
       bankName: banks[(idx + 3) % banks.length],
       accountNumber: `****${String(2000 + idx * 211).slice(-4)}`,
       accountName: `Customer ${w.alias}`,
@@ -101,8 +103,8 @@ export default function AdminTransfers() {
   }, [filtered]);
 
   const exportCsv = () => {
-    const headers = ["ID", "Order ID", "Alias", "Amount", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
-    const rows = filtered.map(w => [w.id, w.orderId, w.alias, w.amount, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
+    const headers = ["ID", "Order ID", "Alias", "Amount", "Pts Rate", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
+    const rows = filtered.map(w => [w.id, w.orderId, w.alias, w.amount, w.pointsRate, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -180,6 +182,7 @@ export default function AdminTransfers() {
                 <TableHead className="text-xs font-semibold">Order ID</TableHead>
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Pts Rate</TableHead>
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
@@ -204,6 +207,7 @@ export default function AdminTransfers() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right text-sm font-semibold"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{w.amount.toLocaleString()}</span></TableCell>
+                    <TableCell className="text-right text-xs font-mono text-muted-foreground">{w.pointsRate}</TableCell>
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
                       <p className="text-muted-foreground">{w.accountNumber}</p>
@@ -225,7 +229,7 @@ export default function AdminTransfers() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
                     No transfers match your filters
                   </TableCell>
                 </TableRow>
@@ -249,6 +253,7 @@ export default function AdminTransfers() {
                 ["Customer", selected.alias],
                 ["Order ID", selected.orderId],
                 ["Amount", <span key="amt" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selected.amount.toLocaleString()}</span>],
+                ["Pts Rate", selected.pointsRate],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],

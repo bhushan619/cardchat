@@ -10,26 +10,74 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
+import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
   Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
   listWaNumbers, upsertWaNumber, removeWaNumber, setStatus, completeLink,
-  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgents,
+  onWaNumbersChange, appendAudit, gatewayHealth, setAssignedAgent,
   type WaBusinessNumber, type WaSessionStatus,
 } from "@/lib/waBusinessNumbers";
 import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import LangToggle from "@/components/admin/LangToggle";
+import { usePageLang, makeT } from "@/lib/pageTranslations";
 
-const statusMeta: Record<WaSessionStatus, { label: string; cls: string; Icon: any }> = {
-  connected:    { label: "Connected",    cls: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30", Icon: Wifi },
-  linking:      { label: "Awaiting QR",  cls: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",         Icon: QrCode },
-  initializing: { label: "Booting",      cls: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",                 Icon: RotateCw },
-  paused:       { label: "Paused",       cls: "bg-muted text-muted-foreground border-border",                                    Icon: Pause },
-  disconnected: { label: "Disconnected", cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
-  banned:       { label: "Banned",       cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
-};
+const T = {
+  en: {
+    title: "WhatsApp Sessions",
+    subtitle: "Shared pool of wwebjs numbers powering customer chat. Inbound conversations auto-route to assigned agents.",
+    linkBtn: "Link WhatsApp Number",
+    active: "Active", uptime: "Uptime", ram: "RAM", alerts: "Alerts",
+    hNumber: "Number", hStatus: "Status", hAgent: "Assigned Agent", hWarmup: "Warmup",
+    hToday: "Today", hReply: "Reply ratio", hRam: "RAM", hSeen: "Last seen",
+    unassigned: "Unassigned", warmedUp: "Warmed up", pause: "Pause", resume: "Resume",
+    relink: "Re-link (new QR)", advance: "Advance warmup", assign: "Assign Agent", remove: "Remove",
+    emptyRow: `No sessions yet. Click "Link WhatsApp Number" to add one.`,
+    footNote: "Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.",
+    assignTitle: "Assign agent to",
+    assignDesc: "Choose one agent to handle conversations on this WhatsApp number. Only one agent can be assigned at a time.",
+    change: "Change", removeAgent: "Remove agent",
+    warn: "is currently assigned to", reassign: "Reassign?",
+    cancel: "Cancel", save: "Save",
+    connected: "Connected", linking: "Awaiting QR", initializing: "Booting",
+    paused: "Paused", disconnected: "Disconnected", banned: "Banned",
+  },
+  zh: {
+    title: "WhatsApp 会话",
+    subtitle: "由 wwebjs 号码组成的共享池,支持客户聊天。入站会话自动路由至指定坐席。",
+    linkBtn: "绑定 WhatsApp 号码",
+    active: "活跃", uptime: "运行时间", ram: "内存", alerts: "告警",
+    hNumber: "号码", hStatus: "状态", hAgent: "指定坐席", hWarmup: "预热",
+    hToday: "今日", hReply: "回复率", hRam: "内存", hSeen: "最近在线",
+    unassigned: "未分配", warmedUp: "已预热", pause: "暂停", resume: "恢复",
+    relink: "重新绑定 (新二维码)", advance: "推进预热", assign: "分配坐席", remove: "移除",
+    emptyRow: "暂无会话。点击 " + `"绑定 WhatsApp 号码"` + " 添加。",
+    footNote: "每个号码作为一个 Puppeteer 实例运行。若手机离线,网关将尝试自动重连 (10 秒 → 30 秒 → 60 秒) 并通知团队群。",
+    assignTitle: "为以下号码分配坐席:",
+    assignDesc: "选择一位坐席处理此 WhatsApp 号码的会话。同一时间仅能分配一位坐席。",
+    change: "更改", removeAgent: "移除坐席",
+    warn: "当前已被分配至", reassign: "重新分配?",
+    cancel: "取消", save: "保存",
+    connected: "已连接", linking: "等待扫码", initializing: "启动中",
+    paused: "已暂停", disconnected: "已断开", banned: "已封禁",
+  },
+} as const;
+
+type TKey = keyof typeof T["en"];
+
+const buildStatusMeta = (t: (k: TKey) => string): Record<WaSessionStatus, { label: string; cls: string; Icon: any }> => ({
+  connected:    { label: t("connected"),    cls: "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30", Icon: Wifi },
+  linking:      { label: t("linking"),      cls: "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30",         Icon: QrCode },
+  initializing: { label: t("initializing"), cls: "bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30",                 Icon: RotateCw },
+  paused:       { label: t("paused"),       cls: "bg-muted text-muted-foreground border-border",                                    Icon: Pause },
+  disconnected: { label: t("disconnected"), cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
+  banned:       { label: t("banned"),       cls: "bg-destructive/15 text-destructive border-destructive/30",                        Icon: WifiOff },
+});
 
 const maskPhone = (p: string) => {
   const clean = p.replace(/\D/g, "");
@@ -86,7 +134,12 @@ export default function AdminWhatsAppSessions() {
   const [confirmDelete, setConfirmDelete] = useState<WaBusinessNumber | null>(null);
   const [selected, setSelected] = useState<WaBusinessNumber | null>(null);
   const [assignFor, setAssignFor] = useState<WaBusinessNumber | null>(null);
-  const [assignDraft, setAssignDraft] = useState<string[]>([]);
+  const [assignDraft, setAssignDraft] = useState<string>("");
+  const [reassignConfirm, setReassignConfirm] = useState<{ agent: string; conflict: WaBusinessNumber } | null>(null);
+
+  const [lang, setLang] = usePageLang("lang_wa_sessions");
+  const t = makeT(T, lang);
+  const statusMeta = useMemo(() => buildStatusMeta(t), [lang]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const agentUsers = useMemo(() => adminUsers.filter((u) => u.role === "agent"), []);
 
@@ -137,28 +190,29 @@ export default function AdminWhatsAppSessions() {
       <div className="p-6 max-w-6xl">
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
-            <h1 className="font-heading text-xl font-bold mb-1">WhatsApp Sessions</h1>
-            <p className="text-sm text-muted-foreground">
-              Shared pool of wwebjs numbers powering customer chat. Inbound conversations auto-route to available agents.
-            </p>
+            <h1 className="font-heading text-xl font-bold mb-1">{t("title")}</h1>
+            <p className="text-sm text-muted-foreground">{t("subtitle")}</p>
           </div>
-          {canManage && (
-            <Button
-              className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
-              onClick={() => setAddForm({ label: "", phone: "" })}
-            >
-              <Plus className="w-4 h-4" /> Link WhatsApp Number
-            </Button>
-          )}
+          <div className="flex items-center gap-2">
+            <LangToggle lang={lang} onChange={setLang} />
+            {canManage && (
+              <Button
+                className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={() => setAddForm({ label: "", phone: "" })}
+              >
+                <Plus className="w-4 h-4" /> {t("linkBtn")}
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Health strip */}
         <div className="grid grid-cols-4 gap-3 mb-6">
           {[
-            { label: "Active",   value: `${health.activeSessions}/${health.totalSessions}`, Icon: Wifi,          tint: "emerald" },
-            { label: "Uptime",   value: `${health.uptimeHours.toFixed(1)}h`,                Icon: Timer,         tint: "sky" },
-            { label: "RAM",      value: `${health.totalMemoryMB} MB`,                       Icon: Users,         tint: "violet" },
-            { label: "Alerts",   value: `${health.disconnectAlerts}`,                       Icon: Shield,        tint: health.disconnectAlerts > 0 ? "rose" : "muted" },
+            { label: t("active"),   value: `${health.activeSessions}/${health.totalSessions}`, Icon: Wifi,          tint: "emerald" },
+            { label: t("uptime"),   value: `${health.uptimeHours.toFixed(1)}h`,                Icon: Timer,         tint: "sky" },
+            { label: t("ram"),      value: `${health.totalMemoryMB} MB`,                       Icon: Users,         tint: "violet" },
+            { label: t("alerts"),   value: `${health.disconnectAlerts}`,                       Icon: Shield,        tint: health.disconnectAlerts > 0 ? "rose" : "muted" },
           ].map((s) => (
             <div key={s.label} className="bg-card border rounded-xl p-4 flex items-center gap-3">
               <div className={`w-9 h-9 rounded-lg flex items-center justify-center bg-${s.tint === "muted" ? "muted" : `${s.tint}-500/10`}`}>
@@ -177,14 +231,14 @@ export default function AdminWhatsAppSessions() {
           <table className="w-full text-sm">
             <thead className="bg-muted/40 text-muted-foreground text-xs">
               <tr>
-                <th className="text-left px-4 py-3 font-medium">Number</th>
-                <th className="text-left px-4 py-3 font-medium">Status</th>
-                <th className="text-left px-4 py-3 font-medium">Assigned agents</th>
-                <th className="text-left px-4 py-3 font-medium">Warmup</th>
-                <th className="text-left px-4 py-3 font-medium">Today</th>
-                <th className="text-left px-4 py-3 font-medium">Reply ratio</th>
-                <th className="text-left px-4 py-3 font-medium">RAM</th>
-                <th className="text-left px-4 py-3 font-medium">Last seen</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hNumber")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hStatus")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hAgent")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hWarmup")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hToday")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hReply")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hRam")}</th>
+                <th className="text-left px-4 py-3 font-medium">{t("hSeen")}</th>
                 <th className="w-10"></th>
               </tr>
             </thead>
@@ -214,19 +268,12 @@ export default function AdminWhatsAppSessions() {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-xs">
-                      {s.assignedAgents && s.assignedAgents.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 max-w-[180px]">
-                          {s.assignedAgents.slice(0, 3).map((a) => (
-                            <span key={a} className="inline-flex items-center gap-1 bg-primary/10 text-primary px-1.5 py-0.5 rounded-md text-[10px] font-medium">
-                              {a}
-                            </span>
-                          ))}
-                          {s.assignedAgents.length > 3 && (
-                            <span className="text-[10px] text-muted-foreground">+{s.assignedAgents.length - 3}</span>
-                          )}
-                        </div>
+                      {s.assignedAgent ? (
+                        <span className="inline-flex items-center gap-1 bg-primary/10 text-primary px-2 py-0.5 rounded-md text-[11px] font-medium">
+                          {s.assignedAgent}
+                        </span>
                       ) : (
-                        <span className="text-muted-foreground italic">Shared pool</span>
+                        <span className="text-muted-foreground">{t("unassigned")}</span>
                       )}
                     </td>
                     <td className="px-4 py-3 text-xs">
@@ -263,25 +310,25 @@ export default function AdminWhatsAppSessions() {
                           <DropdownMenuContent align="end" className="w-44">
                             {s.status === "paused" || s.status === "disconnected" ? (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "connected", "Resumed from admin panel"); toast.success(`${s.label} resumed`); }}>
-                                <Play className="w-3.5 h-3.5 mr-2" /> Resume
+                                <Play className="w-3.5 h-3.5 mr-2" /> {t("resume")}
                               </DropdownMenuItem>
                             ) : (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "paused", "Paused from admin panel"); toast.success(`${s.label} paused`); }}>
-                                <Pause className="w-3.5 h-3.5 mr-2" /> Pause
+                                <Pause className="w-3.5 h-3.5 mr-2" /> {t("pause")}
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem onClick={() => { setStatus(s.id, "linking", "Re-link requested"); setLinking(s); }}>
-                              <LinkIcon className="w-3.5 h-3.5 mr-2" /> Re-link (new QR)
+                              <LinkIcon className="w-3.5 h-3.5 mr-2" /> {t("relink")}
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { appendAudit(s.id, { ts: new Date().toISOString(), event: "warmup_advanced", actor: "Admin One", note: "Manually advanced warmup day" }); toast.success("Warmup day advanced"); }}>
-                              <RotateCw className="w-3.5 h-3.5 mr-2" /> Advance warmup
+                              <RotateCw className="w-3.5 h-3.5 mr-2" /> {t("advance")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgents || []); }}>
-                              <UserPlus className="w-3.5 h-3.5 mr-2" /> Assign agents
+                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
+                              <UserPlus className="w-3.5 h-3.5 mr-2" /> {t("assign")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(s)}>
-                              <Trash2 className="w-3.5 h-3.5 mr-2" /> Remove
+                              <Trash2 className="w-3.5 h-3.5 mr-2" /> {t("remove")}
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
@@ -291,15 +338,13 @@ export default function AdminWhatsAppSessions() {
                 );
               })}
               {sessions.length === 0 && (
-                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">No sessions yet. Click "Link WhatsApp Number" to add one.</td></tr>
+                <tr><td colSpan={9} className="p-8 text-center text-sm text-muted-foreground">{t("emptyRow")}</td></tr>
               )}
             </tbody>
           </table>
         </div>
 
-        <p className="text-[11px] text-muted-foreground mt-3">
-          Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.
-        </p>
+        <p className="text-[11px] text-muted-foreground mt-3">{t("footNote")}</p>
       </div>
 
       {/* Add-session dialog */}
@@ -410,67 +455,80 @@ export default function AdminWhatsAppSessions() {
         </DialogContent>
       </Dialog>
 
-      {/* Assign agents dialog */}
+      {/* Assign agent dialog — single-agent model */}
       <Dialog open={!!assignFor} onOpenChange={(o) => !o && setAssignFor(null)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="w-4 h-4" /> Assign agents to {assignFor?.label}
+              <UserPlus className="w-4 h-4" /> {t("assignTitle")} {assignFor?.label}
             </DialogTitle>
-            <DialogDescription>
-              Select agents who can handle conversations on <span className="font-mono">{assignFor?.phone}</span>. One agent can be assigned to multiple numbers. Leave empty to keep this number in the shared pool.
-            </DialogDescription>
+            <DialogDescription>{t("assignDesc")}</DialogDescription>
           </DialogHeader>
-          <div className="space-y-1 max-h-72 overflow-y-auto -mx-1 px-1">
-            {agentUsers.map((agent) => {
-              const checked = assignDraft.includes(agent.name);
-              return (
-                <label
-                  key={agent.id}
-                  className={`flex items-center gap-3 p-2.5 rounded-lg border cursor-pointer transition-colors ${
-                    checked ? "bg-primary/5 border-primary/40" : "hover:bg-muted border-transparent"
-                  }`}
-                >
-                  <input
-                    type="checkbox"
-                    className="w-4 h-4 accent-primary"
-                    checked={checked}
-                    onChange={(e) => {
-                      setAssignDraft((d) =>
-                        e.target.checked ? [...d, agent.name] : d.filter((n) => n !== agent.name)
-                      );
-                    }}
-                  />
-                  <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-                    {agent.name[0]}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">{agent.name}</p>
-                    <p className="text-[11px] text-muted-foreground truncate">{agent.email} · {agent.status}</p>
-                  </div>
-                </label>
-              );
-            })}
-            {agentUsers.length === 0 && (
-              <p className="text-sm text-muted-foreground text-center py-6">No agents available.</p>
+          <div className="space-y-3">
+            <Select value={assignDraft || "__none__"} onValueChange={(v) => setAssignDraft(v === "__none__" ? "" : v)}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">{t("unassigned")}</SelectItem>
+                {agentUsers.map((a) => (
+                  <SelectItem key={a.id} value={a.name}>{a.name} · {a.status}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {assignFor?.assignedAgent && (
+              <div className="text-[11px] text-muted-foreground">
+                Currently assigned: <span className="font-medium text-foreground">{assignFor.assignedAgent}</span>
+              </div>
             )}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAssignFor(null)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAssignFor(null)}>{t("cancel")}</Button>
             <Button
               className="bg-accent text-accent-foreground hover:bg-accent/90"
               onClick={() => {
                 if (!assignFor) return;
-                setAssignedAgents(assignFor.id, assignDraft);
-                toast.success(
-                  assignDraft.length === 0
-                    ? `${assignFor.label} moved back to the shared pool`
-                    : `${assignFor.label} assigned to ${assignDraft.length} agent${assignDraft.length === 1 ? "" : "s"}`
-                );
+                const agent = assignDraft || null;
+                // Detect conflict: agent already assigned to another number
+                if (agent) {
+                  const conflict = sessions.find((x) => x.id !== assignFor.id && x.assignedAgent === agent);
+                  if (conflict) {
+                    setReassignConfirm({ agent, conflict });
+                    return;
+                  }
+                }
+                setAssignedAgent(assignFor.id, agent);
+                toast.success(agent ? `${assignFor.label} assigned to ${agent}` : `${assignFor.label} unassigned`);
                 setAssignFor(null);
               }}
             >
-              Save assignment
+              {t("save")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassign confirmation */}
+      <Dialog open={!!reassignConfirm} onOpenChange={(o) => !o && setReassignConfirm(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>{t("reassign")}</DialogTitle>
+            <DialogDescription>
+              <span className="font-medium">{reassignConfirm?.agent}</span> {t("warn")}{" "}
+              <span className="font-medium">{reassignConfirm?.conflict.label}</span>.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setReassignConfirm(null)}>{t("cancel")}</Button>
+            <Button
+              onClick={() => {
+                if (!reassignConfirm || !assignFor) return;
+                setAssignedAgent(reassignConfirm.conflict.id, null);
+                setAssignedAgent(assignFor.id, reassignConfirm.agent);
+                toast.success(`${reassignConfirm.agent} reassigned to ${assignFor.label}`);
+                setReassignConfirm(null);
+                setAssignFor(null);
+              }}
+            >
+              {t("save")}
             </Button>
           </DialogFooter>
         </DialogContent>

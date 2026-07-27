@@ -241,6 +241,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     setSelectedId(null);
   }, [channelFilter]);
 
+  // Mock: current agent identity for prototype filtering. In production this comes from auth.
+  const currentAgentName = "Mike Agent";
+
   const filteredConversations = useMemo(() => {
     return conversationsWithTabs.filter((c) => {
       const matchesTab = c.dynamicTab === activeTab;
@@ -248,9 +251,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         !customerSearch ||
         c.alias.toLowerCase().includes(customerSearch.toLowerCase()) ||
         c.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
-      return matchesTab && matchesSearch;
+      // Agent-scoped visibility: for regular agents, WhatsApp conversations are only
+      // visible when the routed number is assigned to that agent. SA/TL see all.
+      let matchesAgentScope = true;
+      if (channelFilter === "whatsapp" && role === "agent") {
+        const line = pickBusinessNumberFor(c.id);
+        matchesAgentScope = line.assignedAgent === currentAgentName;
+      }
+      return matchesTab && matchesSearch && matchesAgentScope;
     });
-  }, [conversationsWithTabs, activeTab, customerSearch]);
+  }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
@@ -292,15 +302,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       if (newCustomerStatus !== prevCustomerStatus) {
         addSystemMessage(`📌 Order status: ${customerStatusLabels[newCustomerStatus]}`);
       }
-      // When success: WhatsApp orders record a transfer against the order (no wallet);
-      // in-app orders auto-credit the customer's wallet.
+      // On success: always credit the customer's wallet (WhatsApp + in-app both have wallets).
+      // Actual bank disbursement happens via the PalmPay Transfer flow, which debits the wallet.
       if (newStatus === "success" && payoutAmount) {
-        const isWhatsApp = rawConversations.find((c) => c.id === conversationId)?.channel === "whatsapp";
-        if (isWhatsApp) {
-          addSystemMessage(`📌 💸 Record a bank transfer of ₦${payoutAmount.toLocaleString()} against this order`);
-        } else {
-          addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points released to customer's account`);
-        }
+        addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points credited to customer's wallet`);
       }
     }
   };
@@ -713,20 +718,15 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             colorClass: "text-destructive",
           };
         case "success": {
-          const isWa = selectedConvo?.channel === "whatsapp";
           const transferred = currentOrderId ? transferCompletedOrders.has(currentOrderId) : false;
           return {
             icon: "✅",
-            title: isWa
-              ? transferred
-                ? "Trade Successful — Transfer Recorded"
-                : "Trade Successful — Awaiting Transfer"
+            title: transferred
+              ? "Trade Successful — Wallet Credited & Transferred"
               : "Trade Successful — Wallet Credited",
-            desc: isWa
-              ? transferred
-                ? "A bank transfer has been recorded against this order."
-                : "Record a bank transfer against this order to complete payout."
-              : "Funds have been credited to the customer's wallet.",
+            desc: transferred
+              ? "Funds credited and a PalmPay transfer was recorded against this order."
+              : "Funds credited to the customer's wallet. Process a PalmPay transfer when they request payout.",
             colorClass: "text-success",
           };
         }
@@ -766,10 +766,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     setConfirmAction({
                       type: "good_card",
                       title: "Confirm Successful Trade",
-                      desc:
-                        selectedConvo?.channel === "whatsapp"
-                          ? `This will mark the order as successful. A bank transfer of ₦${statusOrder?.payout.toLocaleString() || "0"} must then be recorded against this order.`
-                          : `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
+                      desc: `This will mark the order as successful and credit Pts ${statusOrder?.payout.toLocaleString() || "0"} to the customer's wallet.`,
                       onConfirm: () => {
                         handleStatusTransition(selectedId, "success", statusOrder?.payout);
                         setConfirmAction(null);
@@ -1055,6 +1052,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {c.channel === "whatsapp" && (role === "super_admin" || role === "team_lead") && (() => {
+                          const line = pickBusinessNumberFor(c.id);
+                          return (
+                            <p className="text-[9px] text-muted-foreground mt-0.5">
+                              Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
+                            </p>
+                          );
+                        })()}
                       </div>
                       {c.unread > 0 && (
                         <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
@@ -1466,7 +1471,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && selectedConvo && selectedConvo.channel !== "whatsapp" && (
+                        {canAdjustFunds && selectedConvo && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1690,35 +1695,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                     ))}
                                   </div>
 
-                                  {/* Payout indicator — wallet for in-app, transfer for WhatsApp */}
-                                  {currentOrderStatus === "success" &&
-                                    (selectedConvo.channel === "whatsapp" ? (
-                                      transferCompletedOrders.has(o.id) ? (
-                                        <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                                          <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                          <p className="text-xs font-medium text-success">Transfer Recorded</p>
-                                          <p className="text-[10px] text-muted-foreground">
-                                            ₦{o.payout.toLocaleString()} transferred against this order
-                                          </p>
-                                        </div>
-                                      ) : (
-                                        <div className="mt-2 bg-warning/10 border border-warning/30 rounded-lg p-2.5 text-center">
-                                          <ArrowRightLeft className="w-4 h-4 text-warning mx-auto mb-1" />
-                                          <p className="text-xs font-medium text-warning">Awaiting Transfer</p>
-                                          <p className="text-[10px] text-muted-foreground">
-                                            Record ₦{o.payout.toLocaleString()} bank transfer against this order
-                                          </p>
-                                        </div>
-                                      )
-                                    ) : (
-                                      <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
-                                        <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
-                                        <p className="text-xs font-medium text-success">Wallet Credited</p>
-                                        <p className="text-[10px] text-muted-foreground">
-                                          Pts {o.payout.toLocaleString()} added to customer's wallet
-                                        </p>
-                                      </div>
-                                    ))}
+                                  {/* Payout indicator — wallet is credited for all customers */}
+                                  {currentOrderStatus === "success" && (
+                                    <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
+                                      <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
+                                      <p className="text-xs font-medium text-success">
+                                        {transferCompletedOrders.has(o.id) ? "Wallet Credited · Transferred" : "Wallet Credited"}
+                                      </p>
+                                      <p className="text-[10px] text-muted-foreground">
+                                        Pts {o.payout.toLocaleString()} added to customer's wallet
+                                      </p>
+                                    </div>
+                                  )}
                                 </div>
                               )}
                             </div>
