@@ -624,18 +624,22 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     if (currentOrderId && !map.has(currentOrderId)) {
       const current = allOrders.find((o) => o.id === currentOrderId);
       if (current) {
+        // Prefer the live status from the order state machine so that
+        // wallet credits become available as soon as the order is marked
+        // "success" (rather than reflecting the stale snapshot status).
+        const liveStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
         map.set(currentOrderId, {
           id: currentOrderId,
           amount: current.amount,
           payout: current.payout,
           cardType: current.cardType,
-          status: current.status,
+          status: liveStatus || current.status,
           customer: selectedConvo.alias,
         });
       }
     }
     return Array.from(map.values());
-  }, [selectedConvo, currentOrderId, allOrders]);
+  }, [selectedConvo, selectedId, currentOrderId, currentOrderStatus, allOrders]);
 
   // Pre-select the current linked order when the transfer modal opens
   useEffect(() => {
