@@ -68,7 +68,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "emerald",
     warmupDay: null, dailyMsgCount: 187, dailyConvCount: 34, replyRatio: 0.71,
     memoryMB: 412, sessionStartedAt: daysAgo(6), lastSeenAt: now(),
-    proxyRegion: "NG-Lagos-Residential", assignedAgent: null, assignedAgents: ["Mike Agent", "Tunde Agent"],
+    proxyRegion: "NG-Lagos-Residential", assignedAgent: "Mike Agent", assignedAgents: ["Mike Agent"],
     auditLog: [
       { ts: daysAgo(30), event: "created", actor: "Admin One" },
       { ts: daysAgo(30), event: "linked", actor: "Admin One", note: "QR scanned from Main Sales handset" },
@@ -79,7 +79,7 @@ const DEFAULTS: WaBusinessNumber[] = [
     status: "connected", active: true, color: "sky",
     warmupDay: 9, dailyMsgCount: 63, dailyConvCount: 11, replyRatio: 0.64,
     memoryMB: 386, sessionStartedAt: daysAgo(2), lastSeenAt: now(),
-    proxyRegion: "NG-Abuja-Residential", assignedAgent: null, assignedAgents: ["Mike Agent"],
+    proxyRegion: "NG-Abuja-Residential", assignedAgent: "Tunde Agent", assignedAgents: ["Tunde Agent"],
     auditLog: [
       { ts: daysAgo(9), event: "created", actor: "Admin One" },
       { ts: daysAgo(9), event: "linked", actor: "Admin One" },
