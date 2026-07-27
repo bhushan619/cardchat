@@ -3056,7 +3056,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <div className="min-w-0">
                               <div className="text-[10px] uppercase text-muted-foreground truncate">{r.bank}</div>
                               <div className="text-xs font-mono font-semibold truncate">{r.account}</div>
-                              <div className="text-[11px] text-muted-foreground truncate">{r.recipient}</div>
+                              <div className="text-[11px] text-muted-foreground truncate" title={maskName(r.recipient)}>{maskName(r.recipient)}</div>
                             </div>
                             <div className="text-right text-xs font-semibold whitespace-nowrap">
                               Pts {r.amount.toLocaleString()}
