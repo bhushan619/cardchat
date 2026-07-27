@@ -24,8 +24,9 @@ import {
 } from "@/lib/waBusinessNumbers";
 import { adminUsers } from "@/data/mock";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
-import LangToggle from "@/components/admin/LangToggle";
-import { usePageLang, makeT } from "@/lib/pageTranslations";
+import { useAdminLang } from "@/contexts/AdminLangContext";
+import { makeT } from "@/lib/pageTranslations";
+
 
 const T = {
   en: {
@@ -137,9 +138,10 @@ export default function AdminWhatsAppSessions() {
   const [assignDraft, setAssignDraft] = useState<string>("");
   const [reassignConfirm, setReassignConfirm] = useState<{ agent: string; conflict: WaBusinessNumber } | null>(null);
 
-  const [lang, setLang] = usePageLang("lang_wa_sessions");
+  const lang = useAdminLang();
   const t = makeT(T, lang);
   const statusMeta = useMemo(() => buildStatusMeta(t), [lang]); // eslint-disable-line react-hooks/exhaustive-deps
+
 
   const agentUsers = useMemo(() => adminUsers.filter((u) => u.role === "agent"), []);
 
@@ -186,8 +188,9 @@ export default function AdminWhatsAppSessions() {
   };
 
   return (
-    <AdminLayout topRight={<LangToggle lang={lang} onChange={setLang} />}>
+    <AdminLayout>
       <div className="p-6 max-w-6xl">
+
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold mb-1">{t("title")}</h1>

@@ -8,8 +8,9 @@ import { useState } from "react";
 import { toast } from "sonner";
 import WhatsAppGatewayCard from "@/components/admin/WhatsAppGatewayCard";
 import WarmupAntiBanCard from "@/components/admin/WarmupAntiBanCard";
-import LangToggle from "@/components/admin/LangToggle";
-import { usePageLang, makeT } from "@/lib/pageTranslations";
+import { useAdminLang } from "@/contexts/AdminLangContext";
+import { makeT } from "@/lib/pageTranslations";
+
 
 const T = {
   en: {
@@ -66,8 +67,9 @@ export default function AdminApiConfig() {
   const [disableReason, setDisableReason] = useState(
     sessionStorage.getItem("cc_withdrawals_reason") || "Withdrawals are temporarily paused for system maintenance. Please try again later."
   );
-  const [lang, setLang] = usePageLang("lang_api_config");
+  const lang = useAdminLang();
   const t = makeT(T, lang);
+
 
   const toggleWithdrawals = (next: boolean) => {
     setWithdrawalsDisabled(next);
@@ -82,8 +84,9 @@ export default function AdminApiConfig() {
   };
 
   return (
-    <AdminLayout topRight={<LangToggle lang={lang} onChange={setLang} />}>
+    <AdminLayout>
       <div className="p-6 max-w-3xl">
+
         <div className="flex items-start justify-between gap-4 mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold mb-1">{t("title")}</h1>

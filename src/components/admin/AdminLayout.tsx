@@ -8,8 +8,11 @@ import {
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { useAdminLang, useSetAdminLang } from "@/contexts/AdminLangContext";
 import { conversations, orders, cardRates, systemNairaRate, systemPriceControl } from "@/data/mock";
 import { useTheme } from "@/hooks/use-theme";
+import LangToggle from "@/components/admin/LangToggle";
+
 
 const navItems = [
   { id: "messages", label: "App Messages", icon: MessageSquare, path: "/admin", roles: ["super_admin", "team_lead", "agent"], badge: 5 },
@@ -42,6 +45,9 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   const [searchQuery, setSearchQuery] = useState("");
   const { role, setRole } = useAdminRole();
   const { theme, toggleTheme } = useTheme();
+  const lang = useAdminLang();
+  const setLang = useSetAdminLang();
+
 
   // Login is not required to browse the admin panel in prototype mode.
 
@@ -176,6 +182,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
               </div>
             )}
             {topRight}
+            <LangToggle lang={lang} onChange={setLang} />
             <button
               onClick={toggleTheme}
               className="w-8 h-8 rounded-lg bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
@@ -193,6 +200,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
             </div>
           </div>
         </header>
+
 
         {/* Search overlay */}
         {searchOpen && (
