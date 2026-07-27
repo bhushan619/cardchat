@@ -134,23 +134,36 @@ export default function CustomerHome() {
           </div>
 
           <div className="space-y-2">
-            {filteredRates.slice(0, 5).map(rate => (
-              <div key={rate.id} className="bg-card border border-border/50 rounded-xl p-3 flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <p className="text-sm font-medium">{rate.cardType}</p>
-                    <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-accent/10 text-accent">
-                      {rate.cardFormat}
-                    </span>
+            {filteredRates.slice(0, 5).map(rate => {
+              const symbol = rate.currency === "USD" ? "$" : rate.currency === "GBP" ? "£" : rate.currency === "EUR" ? "€" : "";
+              return (
+                <div key={rate.id} className="bg-card border border-border/50 rounded-xl p-3 hover:border-accent/40 transition-colors">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-1.5 flex-wrap">
+                        <p className="text-sm font-medium truncate">{rate.cardType}</p>
+                        <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-accent/10 text-accent">
+                          {rate.cardFormat}
+                        </span>
+                        <span className="text-[9px] font-semibold px-1.5 py-0.5 rounded-md bg-muted text-foreground/80 tabular-nums">
+                          {symbol}{rate.denomination}
+                        </span>
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-0.5">{rate.currency} · {rate.lastUpdated}</p>
+                    </div>
+                    <div className="text-right shrink-0">
+                      <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
+                      <p className="text-[9px] text-muted-foreground">per {symbol || rate.currency}1</p>
+                    </div>
                   </div>
-                  <p className="text-[10px] text-muted-foreground">{rate.currency} · {rate.lastUpdated}</p>
+                  {rate.remarks && (
+                    <p className="text-[10px] text-muted-foreground mt-2 pt-2 border-t border-border/40 leading-relaxed">
+                      <span className="font-medium text-foreground/70">Note:</span> {rate.remarks}
+                    </p>
+                  )}
                 </div>
-                <div className="text-right">
-                  <p className="text-sm font-semibold text-accent">₦{rate.buyRate}</p>
-                  <p className="text-[9px] text-muted-foreground">per $1</p>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           {filteredRates.length > 5 && (
             <button className="w-full mt-2 text-xs text-accent font-medium flex items-center justify-center gap-1 py-2">

@@ -26,13 +26,31 @@ const denomsByCurrency: Record<string, number[]> = {
   AUD: [25, 50, 100],
 };
 
+const remarksByFormat: Record<string, string[]> = {
+  Physical: [
+    "Fast card · Horizontal cards only · Clear picture required",
+    "Single card only · Clear picture required",
+    "Accepts multiples · Horizontal cards only",
+    "Face value only · Clear picture required",
+  ],
+  "E-Code": [
+    "Fast card · Accepts multiples of 5",
+    "E-codes only · Instant processing",
+    "Accepts multiples of 10 · No screenshots",
+  ],
+};
+
 export const cardRates = baseRates.flatMap((r, i) =>
-  (denomsByCurrency[r.currency] || [50, 100]).map((d, j) => ({
-    id: i * 100 + j + 1,
-    ...r,
-    denomination: d,
-    buyRate: Math.round(r.sellRate * 0.94),
-  }))
+  (denomsByCurrency[r.currency] || [50, 100]).map((d, j) => {
+    const pool = remarksByFormat[r.cardFormat] || [""];
+    return {
+      id: i * 100 + j + 1,
+      ...r,
+      denomination: d,
+      buyRate: Math.round(r.sellRate * 0.94),
+      remarks: pool[(i + j) % pool.length],
+    };
+  })
 );
 
 export const systemNairaRate = 289;
