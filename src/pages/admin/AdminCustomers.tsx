@@ -1,16 +1,18 @@
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
-import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins, Phone } from "lucide-react";
+import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins, Phone, Landmark, Plus, Trash2, Loader2, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ChannelBadge from "@/components/admin/ChannelBadge";
 import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
+import { listBankAccounts, addBankAccount, removeBankAccount, onBankAccountsChange, mockVerifyAccount, NIGERIAN_BANKS, type CustomerBankAccount } from "@/lib/customerBankAccounts";
+import { toast } from "sonner";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
@@ -261,6 +263,9 @@ export default function AdminCustomers() {
                 </TabsTrigger>
                 <TabsTrigger value="wallet" className="flex-1 text-xs">
                   Points account
+                </TabsTrigger>
+                <TabsTrigger value="banks" className="flex-1 text-xs">
+                  Bank Accounts
                 </TabsTrigger>
               </TabsList>
 
