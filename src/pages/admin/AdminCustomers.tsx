@@ -442,7 +442,7 @@ function BankAccountsTab({ alias }: { alias: string }) {
               <TableRow key={a.id}>
                 <TableCell className="text-xs font-medium">{a.bankName}</TableCell>
                 <TableCell className="text-xs font-mono">{a.accountNumber}</TableCell>
-                <TableCell className="text-xs">{a.holderName}</TableCell>
+                <TableCell className="text-xs font-mono" title="Name masked for privacy">{maskName(a.holderName)}</TableCell>
                 <TableCell className="text-[10px] text-muted-foreground">{new Date(a.addedAt).toLocaleDateString()}</TableCell>
                 <TableCell className="text-right">
                   <button onClick={() => setConfirmDel(a)} className="text-muted-foreground hover:text-destructive">
