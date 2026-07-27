@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { cardRates, walletBalance, tradingBalance, rewardsBalance } from "@/data/mock";
 import { Search, Gift, Trophy, Calculator, Star, ArrowRight, X, Eye, EyeOff, Wallet } from "lucide-react";
