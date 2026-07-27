@@ -209,12 +209,12 @@ export default function CustomerHome() {
                                 {symbol}
                                 {spec.of}
                                 {(spec.min || spec.max) && (
-                                   
+                                  <p>
                                     {" "}
                                     ({symbol}
                                     {spec.min ?? spec.of}
                                     {spec.max ? `–${symbol}${spec.max}` : "+"})
-                                   
+                                  </p>
                                 )}
                               </p>
                             );
