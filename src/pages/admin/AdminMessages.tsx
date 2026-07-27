@@ -2692,60 +2692,45 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           <div className="grid grid-cols-[minmax(0,1fr)_480px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
             <div className="overflow-y-auto px-6 py-5 space-y-5 border-r">
-              {/* Order selector card */}
-              <section className="rounded-xl border bg-card">
-                <header className="px-4 py-2.5 border-b">
-                  <h3 className="text-sm font-semibold">Linked Order</h3>
-                </header>
-                <div className="p-4 space-y-1.5">
-                  <Label className="text-xs">
-                    <span className="text-destructive">*</span> Select Order
-                  </Label>
-                  <Select
-                    value={transferOrderId}
-                    onValueChange={(id) => {
-                      setTransferOrderId(id);
-                      const order = transferEligibleOrders.find((o) => o.id === id);
-                      if (order) setTransferAmount(String(Math.round(order.payout)));
-                    }}
-                  >
-                    <SelectTrigger className="h-10">
-                      <SelectValue placeholder="Choose an order to transfer against" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {transferEligibleOrders.length === 0 && (
-                        <SelectItem value="none" disabled>
-                          No eligible orders for this customer
-                        </SelectItem>
+              {/* Wallet balance card */}
+              {(() => {
+                const credits = transferEligibleOrders
+                  .filter((o) => o.status === "success")
+                  .reduce((s, o) => s + (o.payout || 0), 0);
+                const priorTransfers = selectedConvo
+                  ? (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
+                      .reduce((s, t) => s + (t.amount || 0), 0)
+                  : 0;
+                const balance = Math.max(0, credits - priorTransfers);
+                const amt = Number(transferAmount || 0);
+                const insufficient = amt > 0 && amt > balance;
+                return (
+                  <section className="rounded-xl border bg-card">
+                    <header className="px-4 py-2.5 border-b">
+                      <h3 className="text-sm font-semibold">Wallet Balance</h3>
+                    </header>
+                    <div className="p-4">
+                      <div className="flex items-end justify-between gap-4">
+                        <div>
+                          <p className="text-[11px] text-muted-foreground">Available for transfer</p>
+                          <p className="font-heading text-2xl font-bold mt-0.5">
+                            Pts {balance.toLocaleString()}
+                          </p>
+                        </div>
+                        <div className="text-right text-[11px] text-muted-foreground space-y-0.5">
+                          <p>Credited: <span className="text-emerald-600 font-medium">Pts {credits.toLocaleString()}</span></p>
+                          <p>Transferred: <span className="text-foreground font-medium">Pts {priorTransfers.toLocaleString()}</span></p>
+                        </div>
+                      </div>
+                      {insufficient && (
+                        <p className="mt-2 text-[11px] text-destructive">
+                          Transfer amount exceeds available wallet balance.
+                        </p>
                       )}
-                      {transferEligibleOrders.map((o) => {
-                        const completed = transferCompletedOrders.has(o.id);
-                        return (
-                          <SelectItem key={o.id} value={o.id}>
-                            <div className="flex items-center justify-between w-full gap-4">
-                              <span className="font-mono text-xs">#{o.id}</span>
-                              <span className="text-[11px] text-muted-foreground">
-                                {o.cardType} · Pts {Math.round(o.payout).toLocaleString()}
-                              </span>
-                              <span
-                                className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
-                                  completed ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600"
-                                }`}
-                              >
-                                {completed ? "Transferred" : "Pending"}
-                              </span>
-                            </div>
-                          </SelectItem>
-                        );
-                      })}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-[10px] text-muted-foreground">
-                    Shows orders for this customer and whether their payout has already been transferred. Selecting an
-                    order auto-fills the transfer amount.
-                  </p>
-                </div>
-              </section>
+                    </div>
+                  </section>
+                );
+              })()}
 
               {/* Recipient card */}
               <section className="rounded-xl border bg-card">
@@ -3101,14 +3086,17 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 Cancel
               </Button>
               <Button
-                disabled={
-                  !transferOrderId ||
-                  !transferBank ||
-                  !transferVerified ||
-                  !transferAmount ||
-                  !transferRate ||
-                  transferCompletedOrders.has(transferOrderId)
-                }
+                disabled={(() => {
+                  if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
+                  const amt = Number(transferAmount || 0);
+                  if (!selectedConvo) return true;
+                  const credits = transferEligibleOrders
+                    .filter((o) => o.status === "success")
+                    .reduce((s, o) => s + (o.payout || 0), 0);
+                  const priorTransfers = (JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{ amount: number }>)
+                    .reduce((s, t) => s + (t.amount || 0), 0);
+                  return amt > Math.max(0, credits - priorTransfers);
+                })()}
                 onClick={() => {
                   const amt = Number(transferAmount || 0);
                   if (selectedConvo) {
@@ -3123,9 +3111,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       at: Date.now(),
                     });
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
-                  }
-                  if (transferOrderId) {
-                    setTransferCompletedOrders((prev) => new Set(prev).add(transferOrderId));
                   }
                   addSystemMessage(
                     `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
