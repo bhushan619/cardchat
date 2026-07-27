@@ -44,7 +44,7 @@ export default function CustomerHome() {
     r => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat
   );
   const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
-  const calcDenominations = calcRate?.denominations || [];
+  const calcDenominations = calcRate ? expandDenominations(calcRate.denominationSpec) : [];
 
   const coreActions = [
     { icon: Gift, label: "Sell Cards", desc: "Best rates", onClick: () => navigate("/customer/contacts") },
