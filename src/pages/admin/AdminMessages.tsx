@@ -3075,7 +3075,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </div>
 
           {/* Sticky footer */}
-          <div className="px-6 py-3 border-t bg-background flex items-center justify-between shrink-0">
+          <div className="px-5 py-2.5 border-t bg-background flex items-center justify-between shrink-0">
             <div className="text-[11px] text-muted-foreground">
               {transferAmount && transferRate && Number(transferRate) > 0 ? (
                 <>
@@ -3088,10 +3088,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               )}
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={() => setTransferOpen(false)}>
+              <Button variant="outline" size="sm" onClick={() => setTransferOpen(false)}>
                 Cancel
               </Button>
               <Button
+                size="sm"
                 disabled={(() => {
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
