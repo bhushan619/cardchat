@@ -832,18 +832,57 @@ export default function AdminAppVersions() {
 
             <TabsContent value="mandatory" className="pt-4">
               <PhoneFrame tint="green">
-                <div className="pt-14 px-6 flex flex-col h-full">
-                  <div className="mx-auto w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center mb-4">
-                    <MessageSquare className="w-7 h-7 text-white" />
+                <div className="pt-12 px-6 flex flex-col h-full">
+                  {/* Decorative sparkles */}
+                  <div className="absolute top-16 left-8 text-emerald-400/60 animate-pulse">
+                    <Sparkles className="w-4 h-4" />
                   </div>
-                  <h3 className="text-xl font-heading font-bold text-center">{t("updateRequired")}</h3>
-                  <p className="text-sm text-muted-foreground text-center mt-2">{t("updateRequiredDesc")}</p>
-                  <div className="mt-4 flex-1 bg-muted/50 rounded-lg p-3 overflow-y-auto text-xs whitespace-pre-line">
-                    {lang === "zh" ? changelogZh : changelogEn}
+                  <div className="absolute top-24 right-10 text-emerald-400/50 animate-pulse" style={{ animationDelay: "0.3s" }}>
+                    <Sparkles className="w-3 h-3" />
                   </div>
-                  <Button className="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white">
+
+                  <div className="mx-auto relative mt-2 mb-5">
+                    <div className="absolute inset-0 bg-emerald-500/40 blur-2xl rounded-full" />
+                    <div className="relative w-20 h-20 rounded-3xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-xl shadow-emerald-500/40">
+                      <Rocket className="w-10 h-10 text-white" strokeWidth={2.2} />
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-center gap-1.5 mb-2">
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-muted text-muted-foreground line-through">
+                      v{android.minVersion}
+                    </span>
+                    <ArrowRight className="w-3 h-3 text-emerald-500" />
+                    <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-semibold">
+                      v{android.latest}
+                    </span>
+                  </div>
+
+                  <h3 className="text-[22px] leading-tight font-heading font-bold text-center">
+                    {t("updateRequired")}
+                  </h3>
+                  <p className="text-[13px] text-muted-foreground text-center mt-2 px-2">
+                    {t("updateRequiredDesc")}
+                  </p>
+
+                  <div className="mt-4 flex-1 bg-card/80 backdrop-blur border border-emerald-500/20 rounded-2xl p-3.5 overflow-y-auto">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-emerald-600 mb-2 flex items-center gap-1">
+                      <Sparkles className="w-3 h-3" /> What's new
+                    </p>
+                    <ul className="space-y-1.5">
+                      {changelogEn.split("\n").filter(Boolean).map((line, i) => (
+                        <li key={i} className="flex items-start gap-2 text-xs">
+                          <span className="mt-1 w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                          <span>{line.replace(/^[•\-*]\s*/, "")}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <button className="w-full mt-4 mb-4 h-12 rounded-2xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white font-semibold text-sm shadow-lg shadow-emerald-500/40 flex items-center justify-center gap-2 hover:shadow-emerald-500/50 transition-shadow">
+                    <Download className="w-4 h-4" />
                     {t("updateNow")}
-                  </Button>
+                  </button>
                 </div>
               </PhoneFrame>
             </TabsContent>
@@ -851,28 +890,62 @@ export default function AdminAppVersions() {
             <TabsContent value="optional" className="pt-4">
               <PhoneFrame tint="none">
                 <div className="pt-10 flex flex-col h-full relative">
-                  <div className="px-4 py-3 border-b">
+                  {/* App chrome */}
+                  <div className="px-4 py-3 border-b flex items-center justify-between bg-background/80 backdrop-blur">
                     <p className="text-sm font-heading font-bold">CardChat</p>
+                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600" />
                   </div>
-                  <div className="p-4 space-y-3 flex-1 opacity-60">
-                    <div className="h-20 rounded-lg bg-muted" />
-                    <div className="h-20 rounded-lg bg-muted" />
-                    <div className="h-20 rounded-lg bg-muted" />
+                  <div className="p-3 space-y-2 flex-1 opacity-40">
+                    {[0, 1, 2, 3].map((i) => (
+                      <div key={i} className="flex items-center gap-3 p-2">
+                        <div className="w-10 h-10 rounded-full bg-muted" />
+                        <div className="flex-1 space-y-1.5">
+                          <div className="h-2.5 w-24 rounded bg-muted" />
+                          <div className="h-2 w-40 rounded bg-muted/70" />
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                  <div className="absolute bottom-0 left-0 right-0 bg-background border-t rounded-t-2xl p-4 shadow-2xl">
-                    <div className="mx-auto w-10 h-1 rounded-full bg-muted-foreground/30 mb-3" />
-                    <p className="font-heading font-semibold text-sm">{t("updateAvailable")}</p>
-                    <p className="text-xs text-muted-foreground mt-1">{t("versionReady")}</p>
-                    <div className="mt-2 bg-muted/50 rounded-lg p-2 text-xs whitespace-pre-line max-h-20 overflow-y-auto">
-                      {lang === "zh" ? changelogZh : changelogEn}
+
+                  {/* Bottom sheet */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-card border-t rounded-t-3xl p-5 shadow-[0_-20px_60px_-15px_rgba(0,0,0,0.3)]">
+                    <div className="mx-auto w-10 h-1 rounded-full bg-muted-foreground/30 mb-4" />
+
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-emerald-500/30 blur-lg rounded-2xl" />
+                        <div className="relative w-11 h-11 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 flex items-center justify-center shadow-md">
+                          <Sparkles className="w-5 h-5 text-white" />
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-heading font-bold text-sm">{t("updateAvailable")}</p>
+                        <p className="text-[11px] text-muted-foreground">{t("versionReady")}</p>
+                      </div>
+                      <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 font-semibold">
+                        v{android.latest}
+                      </span>
                     </div>
-                    <div className="flex gap-2 mt-3">
-                      <Button variant="outline" className="flex-1">
+
+                    <div className="bg-muted/40 rounded-xl p-3 max-h-24 overflow-y-auto mb-3">
+                      <ul className="space-y-1">
+                        {changelogEn.split("\n").filter(Boolean).slice(0, 3).map((line, i) => (
+                          <li key={i} className="flex items-start gap-2 text-[11px]">
+                            <span className="mt-1 w-1 h-1 rounded-full bg-emerald-500 shrink-0" />
+                            <span className="truncate">{line.replace(/^[•\-*]\s*/, "")}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button className="flex-1 h-10 rounded-xl border border-border text-sm font-medium hover:bg-muted transition-colors">
                         {t("later")}
-                      </Button>
-                      <Button className="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white">
+                      </button>
+                      <button className="flex-1 h-10 rounded-xl bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-sm font-semibold shadow-md shadow-emerald-500/30 flex items-center justify-center gap-1.5">
+                        <Download className="w-3.5 h-3.5" />
                         {t("updateNow")}
-                      </Button>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -882,21 +955,38 @@ export default function AdminAppVersions() {
             <TabsContent value="maintenance" className="pt-4">
               <PhoneFrame tint="amber">
                 <div className="pt-14 px-6 flex flex-col h-full items-center text-center">
-                  <div className="w-14 h-14 rounded-2xl bg-emerald-500 flex items-center justify-center mb-4">
-                    <MessageSquare className="w-7 h-7 text-white" />
+                  <div className="relative mt-4 mb-6">
+                    <div className="absolute inset-0 bg-amber-500/40 blur-3xl rounded-full" />
+                    <div className="relative w-24 h-24 rounded-full bg-gradient-to-br from-amber-300 to-amber-500 flex items-center justify-center shadow-xl shadow-amber-500/40">
+                      <Wrench className="w-11 h-11 text-white animate-[spin_6s_linear_infinite]" strokeWidth={2.2} />
+                    </div>
+                    {/* Orbit dot */}
+                    <div className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-400 shadow-md flex items-center justify-center">
+                      <ShieldCheck className="w-2.5 h-2.5 text-white" />
+                    </div>
                   </div>
-                  <Wrench className="w-16 h-16 text-warning mb-4" />
-                  <h3 className="text-xl font-heading font-bold">{t("underMaintenance")}</h3>
-                  <p className="text-sm text-muted-foreground mt-2">
-                    {lang === "zh" ? maintMsgZh : maintMsgEn}
+
+                  <span className="text-[10px] uppercase tracking-widest font-semibold text-amber-600 mb-1">
+                    System notice
+                  </span>
+                  <h3 className="text-2xl font-heading font-bold">{t("underMaintenance")}</h3>
+                  <p className="text-[13px] text-muted-foreground mt-3 px-2 leading-relaxed">
+                    {maintMsgEn}
                   </p>
-                  <div className="mt-4 px-4 py-2 rounded-lg bg-warning/15 text-warning text-sm font-medium">
-                    {t("estReturn")}: {estReturnLabel}
+
+                  <div className="mt-6 w-full bg-card/80 backdrop-blur border border-amber-500/30 rounded-2xl p-4">
+                    <div className="flex items-center justify-center gap-2 text-[11px] uppercase tracking-wider font-semibold text-amber-600 mb-2">
+                      <Clock className="w-3.5 h-3.5" />
+                      {t("estReturn")}
+                    </div>
+                    <p className="text-2xl font-heading font-bold tabular-nums">{estReturnLabel}</p>
                   </div>
+
                   <div className="flex-1" />
-                  <Button variant="outline" className="w-full mb-4">
+                  <button className="w-full mb-4 h-12 rounded-2xl bg-foreground text-background font-semibold text-sm shadow-lg flex items-center justify-center gap-2">
+                    <RotateCcw className="w-4 h-4" />
                     {t("tryAgain")}
-                  </Button>
+                  </button>
                 </div>
               </PhoneFrame>
             </TabsContent>
