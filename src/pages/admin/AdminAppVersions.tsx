@@ -487,27 +487,15 @@ export default function AdminAppVersions() {
                 storePh="https://apps.apple.com/app/..."
               />
             </div>
-            <div className="grid md:grid-cols-2 gap-4 pt-2 border-t">
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">{t("changelogEn")}</label>
-                <Textarea
-                  rows={3}
-                  value={changelogEn}
-                  onChange={(e) => setChangelogEn(e.target.value)}
-                  placeholder={t("changelogPh")}
-                  className="mt-1 text-sm"
-                />
-              </div>
-              <div>
-                <label className="text-xs font-medium text-muted-foreground">{t("changelogZh")}</label>
-                <Textarea
-                  rows={3}
-                  value={changelogZh}
-                  onChange={(e) => setChangelogZh(e.target.value)}
-                  placeholder={t("changelogZhPh")}
-                  className="mt-1 text-sm"
-                />
-              </div>
+            <div className="pt-2 border-t">
+              <label className="text-xs font-medium text-muted-foreground">{t("changelogEn")}</label>
+              <Textarea
+                rows={3}
+                value={changelogEn}
+                onChange={(e) => setChangelogEn(e.target.value)}
+                placeholder={t("changelogPh")}
+                className="mt-1 text-sm"
+              />
             </div>
             <div className="flex justify-end">
               <Button className="bg-success text-success-foreground hover:bg-success/90" onClick={() => setSaveOpen(true)}>
