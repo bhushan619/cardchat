@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { formatDate } from "@/lib/utils";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -270,7 +271,7 @@ export default function CardlightPanel({
         bankAccount: "",
         holderName: "",
         transferAmount: "0",
-        timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        timestamp: `${formatDate(new Date())} · ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
         status: "processing",
         cardCurrency: cardCurrency,
         cardNumbers: cards.map((c) => c.cardNo).filter(Boolean),

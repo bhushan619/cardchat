@@ -21,9 +21,9 @@ const STATUS_ORDER: CustomerVisibleStatus[] = [
 ];
 
 const TIMELINE_STEPS: { event: string; time: string }[] = [
-  { event: "Order created",    time: "10:37 AM" },
-  { event: "Order processing", time: "10:38 AM" },
-  { event: "Success",          time: "10:40 AM" },
+  { event: "Order created",    time: "18/03/2026 · 10:37 AM" },
+  { event: "Order processing", time: "18/03/2026 · 10:38 AM" },
+  { event: "Success",          time: "18/03/2026 · 10:40 AM" },
 ];
 
 type PinnedOrder = {
