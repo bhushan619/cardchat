@@ -27,6 +27,7 @@ import {
   ArrowDownToLine,
   Coins,
   Phone,
+  Download,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -112,6 +113,13 @@ const navItems = [
     label: "WhatsApp Sessions",
     icon: Phone,
     path: "/admin/whatsapp-sessions",
+    roles: ["super_admin"],
+  },
+  {
+    id: "app-versions",
+    label: "App Versions",
+    icon: Download,
+    path: "/admin/app-versions",
     roles: ["super_admin"],
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
