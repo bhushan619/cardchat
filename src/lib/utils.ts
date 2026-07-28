@@ -22,3 +22,17 @@ export function maskName(name: string | null | undefined): string {
     })
     .join(" ");
 }
+
+/**
+ * Format a date value as dd/mm/yyyy.
+ * Accepts Date objects or ISO/date strings.
+ */
+export function formatDate(value: Date | string | number | null | undefined): string {
+  if (!value) return "";
+  const d = typeof value === "object" ? value : new Date(value);
+  if (isNaN(d.getTime())) return String(value);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const year = d.getFullYear();
+  return `${day}/${month}/${year}`;
+}

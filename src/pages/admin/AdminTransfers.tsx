@@ -54,7 +54,7 @@ const seed: Transfer[] = customerWallets.flatMap((w, i) => {
       bankName: banks[(idx + 3) % banks.length],
       accountNumber: `****${String(2000 + idx * 211).slice(-4)}`,
       accountName: `Customer ${w.alias}`,
-      requestedAt: `Mar ${11 + ((idx) % 8)}, 2026 · ${String(9 + (j % 8)).padStart(2, "0")}:${String((idx * 11) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
+      requestedAt: `${String(11 + ((idx) % 8)).padStart(2, "0")}/03/2026 · ${String(9 + (j % 8)).padStart(2, "0")}:${String((idx * 11) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
       status: statuses[(idx + 1) % statuses.length],
       reference: `TRF${(idx * 8317).toString(36).toUpperCase()}`,
       channel: channels[(idx) % channels.length],

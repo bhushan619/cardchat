@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 import {
   Upload,
   Copy,
@@ -252,11 +253,11 @@ const initialIos: PlatformCfg = {
 };
 
 const initialHistory: HistoryRow[] = [
-  { date: "Jul 28, 2026", platform: "Android", version: "1.2.0", minReq: "1.1.0", by: "Bhushan", canRestore: true },
-  { date: "Jul 20, 2026", platform: "Android", version: "1.1.0", minReq: "1.0.0", by: "Bhushan", canRestore: true },
-  { date: "Jul 15, 2026", platform: "iOS", version: "1.2.0", minReq: "1.1.0", by: "Bhushan", canRestore: true },
-  { date: "Jul 10, 2026", platform: "Android", version: "1.1.0", minReq: "1.0.0", by: "Bhushan", canRestore: true },
-  { date: "Jul 1, 2026", platform: "Android", version: "1.0.0", minReq: "1.0.0", by: "Bhushan", canRestore: false },
+  { date: "28/07/2026", platform: "Android", version: "1.2.0", minReq: "1.1.0", by: "Bhushan", canRestore: true },
+  { date: "20/07/2026", platform: "Android", version: "1.1.0", minReq: "1.0.0", by: "Bhushan", canRestore: true },
+  { date: "15/07/2026", platform: "iOS", version: "1.2.0", minReq: "1.1.0", by: "Bhushan", canRestore: true },
+  { date: "10/07/2026", platform: "Android", version: "1.1.0", minReq: "1.0.0", by: "Bhushan", canRestore: true },
+  { date: "01/07/2026", platform: "Android", version: "1.0.0", minReq: "1.0.0", by: "Bhushan", canRestore: false },
 ];
 
 const initialPreviousApks: ApkRow[] = [
@@ -455,7 +456,7 @@ export default function AdminAppVersions() {
   };
 
   const estReturnLabel = maintEnd
-    ? new Date(maintEnd).toLocaleString(undefined, { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" })
+    ? `${formatDate(new Date(maintEnd))} · ${new Date(maintEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
     : "3:00 PM";
 
   return (

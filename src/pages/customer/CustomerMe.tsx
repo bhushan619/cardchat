@@ -14,6 +14,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { toast } from "sonner";
 import { hashPin, verifyPin } from "@/lib/securePin";
 import { generateBase32Secret, buildOtpAuthUri, renderQrDataUrl } from "@/lib/totpDemo";
+import { formatDate } from "@/lib/utils";
 
 const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 const TOTP_SECRET_KEY = "cc_customer_totp_secret";
@@ -47,10 +48,10 @@ const TIMELINE_STEPS = [
 ];
 
 const customerOrders: CustomerOrder[] = [
-  { id: "ORD-20260318-001", cardType: "iTunes US", totalFaceValue: "$200", rate: "₦680", totalPayout: "₦215,200", status: "success", date: "Mar 18, 2026", bank: "First Bank ****1234" },
-  { id: "ORD-20260317-005", cardType: "Amazon US", totalFaceValue: "$150", rate: "₦620", totalPayout: "₦93,000", status: "success", date: "Mar 17, 2026", bank: "GTBank ****5678" },
-  { id: "ORD-20260316-003", cardType: "Steam US", totalFaceValue: "$200", rate: "₦600", totalPayout: "₦120,000", status: "failed", date: "Mar 16, 2026", bank: "Access Bank ****9012" },
-  { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", totalPayout: "₦85,000", status: "order_processing", date: "Mar 15, 2026", bank: "First Bank ****1234" },
+  { id: "ORD-20260318-001", cardType: "iTunes US", totalFaceValue: "$200", rate: "₦680", totalPayout: "₦215,200", status: "success", date: "18/03/2026", bank: "First Bank ****1234" },
+  { id: "ORD-20260317-005", cardType: "Amazon US", totalFaceValue: "$150", rate: "₦620", totalPayout: "₦93,000", status: "success", date: "17/03/2026", bank: "GTBank ****5678" },
+  { id: "ORD-20260316-003", cardType: "Steam US", totalFaceValue: "$200", rate: "₦600", totalPayout: "₦120,000", status: "failed", date: "16/03/2026", bank: "Access Bank ****9012" },
+  { id: "ORD-20260315-008", cardType: "iTunes UK", totalFaceValue: "$100", rate: "₦850", totalPayout: "₦85,000", status: "order_processing", date: "15/03/2026", bank: "First Bank ****1234" },
 ];
 
 function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: string; defaultOn: boolean }) {
@@ -290,7 +291,7 @@ export default function CustomerMe() {
           id: `PW-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
           amount: Number(withdrawAmount),
           bank: bank ? `${bank.bankName} ${bank.accountNumber}` : withdrawBank,
-          date: now.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+          date: formatDate(now),
           time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
         },
       ]);

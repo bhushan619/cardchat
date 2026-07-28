@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { maskName } from "@/lib/utils";
+import { maskName, formatDate } from "@/lib/utils";
 import {
   conversations as rawConversations,
   chatMessages,
@@ -1874,7 +1874,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const viewStatus = viewStatusMap[viewStatusRaw] || viewStatusRaw;
                   const rawCreateTime = (detailOrder as any).createTime;
                   const createTime = rawCreateTime
-                    ? new Date(Number(rawCreateTime)).toLocaleString()
+                    ? formatDate(new Date(Number(rawCreateTime)))
                     : detailOrder.createdAt || detailOrder.timestamp;
                   const cardFaceValue = detailOrder.amount;
                   const purchaseFaceValue = detailOrder.amount;
@@ -2592,7 +2592,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       amount,
                       reason: fundAdjustReason,
                       performedBy: roleNames[role] || role,
-                      timestamp: new Date().toLocaleString(),
+                      timestamp: formatDate(new Date()),
                     };
                     setFundAdjustments((prev) => [adjustment, ...prev]);
                     addSystemMessage(
