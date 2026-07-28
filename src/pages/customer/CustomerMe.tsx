@@ -14,6 +14,7 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp
 import { toast } from "sonner";
 import { hashPin, verifyPin } from "@/lib/securePin";
 import { generateBase32Secret, buildOtpAuthUri, renderQrDataUrl } from "@/lib/totpDemo";
+import { formatDate } from "@/lib/utils";
 
 const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 const TOTP_SECRET_KEY = "cc_customer_totp_secret";

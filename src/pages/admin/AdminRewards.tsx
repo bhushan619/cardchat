@@ -1,5 +1,6 @@
 import { useState, useMemo } from "react";
 import { parse } from "date-fns";
+import { formatDate } from "@/lib/utils";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";

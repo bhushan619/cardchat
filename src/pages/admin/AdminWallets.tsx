@@ -17,6 +17,7 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import { parse } from "date-fns";
+import { formatDate } from "@/lib/utils";
 
 type PlatformRecord = {
   id: string;
