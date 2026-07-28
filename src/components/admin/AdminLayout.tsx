@@ -115,6 +115,13 @@ const navItems = [
     path: "/admin/whatsapp-sessions",
     roles: ["super_admin"],
   },
+  {
+    id: "app-versions",
+    label: "App Versions",
+    icon: Download,
+    path: "/admin/app-versions",
+    roles: ["super_admin"],
+  },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   {
     id: "ranking",
