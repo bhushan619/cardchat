@@ -168,9 +168,9 @@ export const adminUsers = [
 ];
 
 export const nairaRateHistory = [
-  { timestamp: "Mar 18, 10:00 AM", oldRate: 270, newRate: 289, changedBy: "Admin One", reason: "Market adjustment" },
-  { timestamp: "Mar 17, 02:30 PM", oldRate: 255, newRate: 270, changedBy: "Admin One", reason: "Daily update" },
-  { timestamp: "Mar 16, 09:00 AM", oldRate: 240, newRate: 255, changedBy: "Admin One", reason: "Weekly review" },
+  { timestamp: "18/03/2026 · 10:00 AM", oldRate: 270, newRate: 289, changedBy: "Admin One", reason: "Market adjustment" },
+  { timestamp: "17/03/2026 · 02:30 PM", oldRate: 255, newRate: 270, changedBy: "Admin One", reason: "Daily update" },
+  { timestamp: "16/03/2026 · 09:00 AM", oldRate: 240, newRate: 255, changedBy: "Admin One", reason: "Weekly review" },
 ];
 
 export const promoBanners = [
