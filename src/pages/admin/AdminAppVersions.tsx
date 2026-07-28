@@ -19,6 +19,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { toast } from "sonner";
+import { formatDate } from "@/lib/utils";
 import {
   Upload,
   Copy,
@@ -455,7 +456,7 @@ export default function AdminAppVersions() {
   };
 
   const estReturnLabel = maintEnd
-    ? new Date(maintEnd).toLocaleString(undefined, { hour: "2-digit", minute: "2-digit", month: "short", day: "numeric" })
+    ? `${formatDate(new Date(maintEnd))} · ${new Date(maintEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
     : "3:00 PM";
 
   return (
