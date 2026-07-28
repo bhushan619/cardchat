@@ -31,10 +31,10 @@ type RewardRecord = {
 
 // Previously distributed rewards (referral auto, ranking manual)
 const rewardRecords: RewardRecord[] = [
-  { id: "RW-006", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited K9M2BL", date: "Mar 20, 2026", time: "02:15 PM" },
-  { id: "RW-007", alias: "R4P8TN", type: "referral", amount: 500, description: "Referral bonus — invited B5N1QW", date: "Mar 18, 2026", time: "09:30 AM" },
-  { id: "RW-010", alias: "W8T4FJ", type: "referral", amount: 500, description: "Referral bonus — invited H2L6YD", date: "Mar 15, 2026", time: "11:00 AM" },
-  { id: "RW-011", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited D3F9RX", date: "Mar 10, 2026", time: "04:45 PM" },
+  { id: "RW-006", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited K9M2BL", date: "20/03/2026", time: "02:15 PM" },
+  { id: "RW-007", alias: "R4P8TN", type: "referral", amount: 500, description: "Referral bonus — invited B5N1QW", date: "18/03/2026", time: "09:30 AM" },
+  { id: "RW-010", alias: "W8T4FJ", type: "referral", amount: 500, description: "Referral bonus — invited H2L6YD", date: "15/03/2026", time: "11:00 AM" },
+  { id: "RW-011", alias: "A7X3KP", type: "referral", amount: 500, description: "Referral bonus — invited D3F9RX", date: "10/03/2026", time: "04:45 PM" },
 ];
 
 // Mock: which periods have had ranking rewards distributed
@@ -84,7 +84,7 @@ export default function AdminRewards() {
     const matchType = typeFilter === "all" || r.type === typeFilter;
     let matchDate = true;
     if (dateFrom || dateTo) {
-      const recordDate = parse(`${r.date} ${r.time}`, "MMM dd, yyyy hh:mm aa", new Date());
+      const recordDate = parse(`${r.date} ${r.time}`, "dd/MM/yyyy hh:mm aa", new Date());
       if (dateFrom && recordDate < dateFrom) matchDate = false;
       if (dateTo && recordDate > dateTo) matchDate = false;
     }
@@ -119,7 +119,7 @@ export default function AdminRewards() {
         type: "ranking" as const,
         amount: u.reward,
         description: `Bi-weekly ranking reward — Rank #${u.rank} (${activePeriod?.label || selectedPeriod})`,
-        date: activePeriod ? new Intl.DateTimeFormat("en-US", { month: "short", day: "2-digit", year: "numeric" }).format(activePeriod.end) : "—",
+        date: activePeriod ? formatDate(activePeriod.end) : "—",
         time: "12:00 AM",
       }));
       setAllRecords(prev => [...newRecords, ...prev]);

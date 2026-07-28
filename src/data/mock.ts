@@ -152,10 +152,10 @@ export const bankAccounts = [
 ];
 
 export const transactions = [
-  { id: "TXN-001", orderId: "ORD-20260318-001", amount: "₦215,200", status: "success" as const, date: "Mar 18, 2026", bank: "First Bank ****1234" },
-  { id: "TXN-002", orderId: "ORD-20260317-005", amount: "₦93,000", status: "success" as const, date: "Mar 17, 2026", bank: "GTBank ****5678" },
-  { id: "TXN-003", orderId: "ORD-20260316-003", amount: "₦186,000", status: "failed" as const, date: "Mar 16, 2026", bank: "Access Bank ****9012" },
-  { id: "TXN-004", orderId: "ORD-20260315-008", amount: "₦62,000", status: "success" as const, date: "Mar 15, 2026", bank: "First Bank ****1234" },
+  { id: "TXN-001", orderId: "ORD-20260318-001", amount: "₦215,200", status: "success" as const, date: "18/03/2026", bank: "First Bank ****1234" },
+  { id: "TXN-002", orderId: "ORD-20260317-005", amount: "₦93,000", status: "success" as const, date: "17/03/2026", bank: "GTBank ****5678" },
+  { id: "TXN-003", orderId: "ORD-20260316-003", amount: "₦186,000", status: "failed" as const, date: "16/03/2026", bank: "Access Bank ****9012" },
+  { id: "TXN-004", orderId: "ORD-20260315-008", amount: "₦62,000", status: "success" as const, date: "15/03/2026", bank: "First Bank ****1234" },
 ];
 
 export const adminUsers = [
@@ -192,13 +192,13 @@ export const rewardsBalance = 6200;
 export const walletBalance = tradingBalance + rewardsBalance;
 
 export const walletTransactions = [
-  { id: "WT-001", type: "credit" as const, amount: 215200, description: "Order #ORD-20260318-001 — iTunes US", date: "Mar 18, 2026", time: "10:42 AM" },
-  { id: "WT-002", type: "withdrawal" as const, amount: 150000, description: "Withdrawal to First Bank ****1234", date: "Mar 18, 2026", time: "11:15 AM" },
-  { id: "WT-003", type: "credit" as const, amount: 93000, description: "Order #ORD-20260317-005 — Amazon US", date: "Mar 17, 2026", time: "03:20 PM" },
-  { id: "WT-004", type: "withdrawal" as const, amount: 80000, description: "Withdrawal to GTBank ****5678", date: "Mar 17, 2026", time: "04:00 PM" },
-  { id: "WT-005", type: "credit" as const, amount: 62000, description: "Order #ORD-20260315-008 — iTunes UK", date: "Mar 15, 2026", time: "02:10 PM" },
-  { id: "WT-006", type: "credit" as const, amount: 186000, description: "Order #ORD-20260316-003 — Steam US", date: "Mar 16, 2026", time: "09:30 AM" },
-  { id: "WT-007", type: "withdrawal" as const, amount: 50000, description: "Withdrawal to Access Bank ****9012", date: "Mar 15, 2026", time: "05:45 PM" },
+  { id: "WT-001", type: "credit" as const, amount: 215200, description: "Order #ORD-20260318-001 — iTunes US", date: "18/03/2026", time: "10:42 AM" },
+  { id: "WT-002", type: "withdrawal" as const, amount: 150000, description: "Withdrawal to First Bank ****1234", date: "18/03/2026", time: "11:15 AM" },
+  { id: "WT-003", type: "credit" as const, amount: 93000, description: "Order #ORD-20260317-005 — Amazon US", date: "17/03/2026", time: "03:20 PM" },
+  { id: "WT-004", type: "withdrawal" as const, amount: 80000, description: "Withdrawal to GTBank ****5678", date: "17/03/2026", time: "04:00 PM" },
+  { id: "WT-005", type: "credit" as const, amount: 62000, description: "Order #ORD-20260315-008 — iTunes UK", date: "15/03/2026", time: "02:10 PM" },
+  { id: "WT-006", type: "credit" as const, amount: 186000, description: "Order #ORD-20260316-003 — Steam US", date: "16/03/2026", time: "09:30 AM" },
+  { id: "WT-007", type: "withdrawal" as const, amount: 50000, description: "Withdrawal to Access Bank ****9012", date: "15/03/2026", time: "05:45 PM" },
 ];
 
 // Customer wallet data for admin view

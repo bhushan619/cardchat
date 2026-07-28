@@ -49,7 +49,7 @@ const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
       bankName: banks[idx % banks.length],
       accountNumber: `****${String(1000 + idx * 137).slice(-4)}`,
       accountName: `Customer ${w.alias}`,
-      requestedAt: `Mar ${10 + (idx % 9)}, 2026 · ${String(8 + (j % 9)).padStart(2, "0")}:${String((idx * 7) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
+      requestedAt: `${String(10 + (idx % 9)).padStart(2, "0")}/03/2026 · ${String(8 + (j % 9)).padStart(2, "0")}:${String((idx * 7) % 60).padStart(2, "0")} ${j % 2 ? "PM" : "AM"}`,
       status: statuses[idx % statuses.length],
       reference: `REF${(idx * 9173).toString(36).toUpperCase()}`,
       channel: channels[idx % channels.length],
