@@ -632,16 +632,6 @@ export default function AdminAppVersions() {
                 />
               </div>
               <div>
-                <label className="text-xs font-medium text-muted-foreground">{t("maintMsgZh")}</label>
-                <Textarea
-                  rows={3}
-                  value={maintMsgZh}
-                  onChange={(e) => setMaintMsgZh(e.target.value)}
-                  placeholder={t("changelogZhPh")}
-                  className="mt-1 text-sm"
-                />
-              </div>
-              <div>
                 <label className="text-xs font-medium text-muted-foreground">{t("endTime")}</label>
                 <Input
                   type="datetime-local"
