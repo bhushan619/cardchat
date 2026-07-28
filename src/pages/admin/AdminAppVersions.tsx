@@ -345,14 +345,26 @@ function PlatformCard({
 function PhoneFrame({ children, tint }: { children: React.ReactNode; tint?: "green" | "amber" | "none" }) {
   const grad =
     tint === "green"
-      ? "bg-gradient-to-b from-emerald-500/15 via-background to-background"
+      ? "bg-gradient-to-br from-emerald-500/20 via-background to-emerald-500/5"
       : tint === "amber"
-      ? "bg-gradient-to-b from-amber-500/15 via-background to-background"
-      : "bg-background";
+      ? "bg-gradient-to-br from-amber-500/25 via-background to-amber-500/5"
+      : "bg-gradient-to-b from-muted/40 to-background";
   return (
     <div className="mx-auto" style={{ width: 375 }}>
-      <div className="relative rounded-[42px] border-[10px] border-foreground/80 shadow-2xl overflow-hidden bg-background" style={{ height: 667 }}>
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-foreground/80 rounded-b-2xl z-10" />
+      <div
+        className="relative rounded-[42px] border-[10px] border-foreground/85 shadow-2xl overflow-hidden bg-background"
+        style={{ height: 667 }}
+      >
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-32 h-6 bg-foreground/85 rounded-b-2xl z-20" />
+        {/* Status bar */}
+        <div className="absolute top-0 left-0 right-0 h-8 flex items-center justify-between px-6 pt-1 text-[10px] font-semibold text-foreground/80 z-10">
+          <span>9:41</span>
+          <span className="flex items-center gap-1">
+            <Signal className="w-3 h-3" />
+            <Wifi className="w-3 h-3" />
+            <Battery className="w-3.5 h-3.5" />
+          </span>
+        </div>
         <div className={`w-full h-full ${grad} flex flex-col`}>{children}</div>
       </div>
     </div>
