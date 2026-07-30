@@ -1,9 +1,28 @@
 import { useState } from "react";
-import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, UserCheck, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import itunesCardSample from "@/assets/itunes-card-sample.jpg";
+
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
@@ -41,12 +60,77 @@ const PINNED_ORDERS: PinnedOrder[] = [
   { id: "ORD-20260318-003", cardType: "Steam US",   amount: "$100", rate: "₦600", payout: "₦60,000",  status: "order_created" },
 ];
 
+
+const REPORT_REASONS = [
+  { value: "abusive", label: "Abusive or offensive language" },
+  { value: "scam", label: "Scam or fraud attempt" },
+  { value: "off_platform", label: "Asking to trade off-platform" },
+  { value: "personal_info", label: "Requesting personal / banking details" },
+  { value: "spam", label: "Spam or unwanted content" },
+  { value: "other", label: "Something else" },
+];
+
+const REPLACEMENT_AGENTS = ["Agent Mike", "Agent Grace", "Agent Tunde", "Agent Ada"];
+
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string>(PINNED_ORDERS[0].id);
   const [expanded, setExpanded] = useState(true);
+
+  // Safety: report / block / reassign
+  const [agentName, setAgentName] = useState("CardChat Support");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportMessageId, setReportMessageId] = useState<string | null>(null);
+  const [reportedIds, setReportedIds] = useState<string[]>([]);
+  const [reason, setReason] = useState(REPORT_REASONS[0].value);
+  const [details, setDetails] = useState("");
+  const [alsoBlock, setAlsoBlock] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [reassigning, setReassigning] = useState(false);
+  const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
+
+  const reportedMessage = chatMessages.find(m => String(m.id) === reportMessageId);
+
+  const openReport = (messageId?: string) => {
+    setReportMessageId(messageId ? String(messageId) : null);
+    setReason(REPORT_REASONS[0].value);
+    setDetails("");
+    setAlsoBlock(false);
+    setReportOpen(true);
+  };
+
+  const reassignAgent = (previous: string) => {
+    setReassigning(true);
+    const next = REPLACEMENT_AGENTS.find(a => a !== previous) ?? "Agent Mike";
+    window.setTimeout(() => {
+      setAgentName(next);
+      setReassigning(false);
+      setBlockedNotice(`You blocked ${previous}. You're now chatting with ${next}.`);
+      toast.success(`Reassigned to ${next}`, {
+        description: "Your active orders were moved to the new agent.",
+      });
+    }, 1200);
+  };
+
+  const submitReport = () => {
+    const label = REPORT_REASONS.find(r => r.value === reason)?.label ?? "Report";
+    if (reportMessageId) setReportedIds(ids => [...ids, reportMessageId]);
+    setReportOpen(false);
+    toast.success("Report submitted", {
+      description: `${label} — our safety team will review this within 24 hours.`,
+    });
+    if (alsoBlock) {
+      const previous = agentName;
+      reassignAgent(previous);
+    }
+  };
+
+  const confirmBlock = () => {
+    setBlockOpen(false);
+    reassignAgent(agentName);
+  };
 
   const selectedOrder = PINNED_ORDERS.find(o => o.id === selectedOrderId) ?? PINNED_ORDERS[0];
   const orderStatus = selectedOrder.status;
@@ -57,15 +141,47 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
-        <button onClick={onBack}><ArrowLeft className="w-5 h-5" /></button>
+        <button onClick={onBack} aria-label="Back"><ArrowLeft className="w-5 h-5" /></button>
         <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
-          <span className="text-accent font-bold text-sm">L</span>
+          <span className="text-accent font-bold text-sm">{agentName[0]}</span>
         </div>
-        <div>
-          <p className="text-sm font-semibold">CardChat Support</p>
-          <p className="text-[10px] text-accent">Online</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold truncate">{agentName}</p>
+          <p className="text-[10px] text-accent">{reassigning ? "Connecting…" : "Online"}</p>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              aria-label="Chat options"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={() => openReport()}>
+              <Flag className="w-4 h-4 mr-2" />
+              Report inappropriate content
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setBlockOpen(true)}
+            >
+              <ShieldBan className="w-4 h-4 mr-2" />
+              Block agent & reassign
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
+
+      {blockedNotice && (
+        <div className="flex items-start gap-2 px-4 py-2 bg-success/10 border-b border-success/20 shrink-0">
+          <UserCheck className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
+          <p className="text-[11px] text-success flex-1">{blockedNotice}</p>
+          <button onClick={() => setBlockedNotice(null)} className="text-[11px] text-muted-foreground">✕</button>
+        </div>
+      )}
+
 
       {/* Pinned Orders (sticky, multi) */}
       <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b px-3 pt-2 pb-2 shrink-0">
@@ -143,32 +259,54 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             );
           }
+          const isAgent = msg.sender !== "customer";
+          const isReported = reportedIds.includes(String(msg.id));
           return (
             <div key={msg.id} className={msg.sender === "customer" ? "flex justify-end" : "flex justify-start"}>
-              <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
-                {msg.image ? (
+              <div className="group flex items-center gap-1 max-w-[85%]">
+                <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
+                  {msg.image ? (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewImage(itunesCardSample)}
+                      className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                    >
+                      <img
+                        src={itunesCardSample}
+                        alt="Customer-sent gift card"
+                        loading="lazy"
+                        width={1024}
+                        height={1024}
+                        className="w-56 h-40 object-cover"
+                      />
+                    </button>
+                  ) : (
+                    <p>{msg.text}</p>
+                  )}
+                  <div className="flex items-center justify-end gap-1 mt-1">
+                    {isReported && (
+                      <span className="inline-flex items-center gap-1 text-[9px] text-destructive">
+                        <ShieldAlert className="w-2.5 h-2.5" /> Reported
+                      </span>
+                    )}
+                    <p className="text-[10px] text-muted-foreground text-right">{msg.time}</p>
+                  </div>
+                </div>
+                {isAgent && !isReported && (
                   <button
                     type="button"
-                    onClick={() => setPreviewImage(itunesCardSample)}
-                    className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                    aria-label="Report this message"
+                    onClick={() => openReport(String(msg.id))}
+                    className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-opacity"
                   >
-                    <img
-                      src={itunesCardSample}
-                      alt="Customer-sent gift card"
-                      loading="lazy"
-                      width={1024}
-                      height={1024}
-                      className="w-56 h-40 object-cover"
-                    />
+                    <Flag className="w-3 h-3" />
                   </button>
-                ) : (
-                  <p>{msg.text}</p>
                 )}
-                <p className="text-[10px] text-muted-foreground mt-1 text-right">{msg.time}</p>
               </div>
             </div>
           );
         })}
+
 
         {(currentIdx >= 2) && (
           <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center">
@@ -254,6 +392,101 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           </div>
         </div>
       )}
+
+      {/* Report Dialog */}
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Flag className="w-4 h-4 text-destructive" />
+              Report inappropriate content
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Reports are confidential and reviewed by the CardChat safety team.
+            </DialogDescription>
+          </DialogHeader>
+
+          {reportedMessage && (
+            <div className="rounded-lg border bg-muted/50 p-2.5">
+              <p className="text-[10px] text-muted-foreground mb-1">Reported message · {reportedMessage.time}</p>
+              <p className="text-xs line-clamp-3">
+                {reportedMessage.image ? "📷 Image attachment" : reportedMessage.text}
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold">Why are you reporting this?</p>
+            <RadioGroup value={reason} onValueChange={setReason} className="space-y-1.5">
+              {REPORT_REASONS.map(r => (
+                <div key={r.value} className="flex items-center gap-2">
+                  <RadioGroupItem value={r.value} id={`reason-${r.value}`} />
+                  <Label htmlFor={`reason-${r.value}`} className="text-xs font-normal cursor-pointer">
+                    {r.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <Textarea
+            placeholder="Add more details (optional)"
+            value={details}
+            onChange={e => setDetails(e.target.value.slice(0, 500))}
+            maxLength={500}
+            className="text-xs min-h-[70px]"
+          />
+
+          <label className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={alsoBlock}
+              onChange={e => setAlsoBlock(e.target.checked)}
+              className="mt-0.5 accent-current"
+            />
+            <span className="text-[11px]">
+              Also block <strong>{agentName}</strong> and reassign me to a new agent
+            </span>
+          </label>
+
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button className="w-full" onClick={submitReport}>Submit report</Button>
+            <Button variant="ghost" className="w-full" onClick={() => setReportOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Block & Reassign Dialog */}
+      <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <ShieldBan className="w-4 h-4 text-destructive" />
+              Block {agentName}?
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              You will no longer be matched with this agent. Your active orders
+              ({PINNED_ORDERS.length}) will be transferred to a new agent automatically.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button variant="destructive" className="w-full" onClick={confirmBlock}>
+              Block & reassign me
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => setBlockOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassigning overlay */}
+      {reassigning && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-[60] gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-accent" />
+          <p className="text-xs text-muted-foreground">Finding you a new agent…</p>
+        </div>
+      )}
+
+
 
       {/* Chat Input */}
       <div className="border-t bg-card shrink-0">
