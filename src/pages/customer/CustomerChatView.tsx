@@ -60,12 +60,77 @@ const PINNED_ORDERS: PinnedOrder[] = [
   { id: "ORD-20260318-003", cardType: "Steam US",   amount: "$100", rate: "₦600", payout: "₦60,000",  status: "order_created" },
 ];
 
+
+const REPORT_REASONS = [
+  { value: "abusive", label: "Abusive or offensive language" },
+  { value: "scam", label: "Scam or fraud attempt" },
+  { value: "off_platform", label: "Asking to trade off-platform" },
+  { value: "personal_info", label: "Requesting personal / banking details" },
+  { value: "spam", label: "Spam or unwanted content" },
+  { value: "other", label: "Something else" },
+];
+
+const REPLACEMENT_AGENTS = ["Agent Mike", "Agent Grace", "Agent Tunde", "Agent Ada"];
+
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string>(PINNED_ORDERS[0].id);
   const [expanded, setExpanded] = useState(true);
+
+  // Safety: report / block / reassign
+  const [agentName, setAgentName] = useState("CardChat Support");
+  const [reportOpen, setReportOpen] = useState(false);
+  const [reportMessageId, setReportMessageId] = useState<string | null>(null);
+  const [reportedIds, setReportedIds] = useState<string[]>([]);
+  const [reason, setReason] = useState(REPORT_REASONS[0].value);
+  const [details, setDetails] = useState("");
+  const [alsoBlock, setAlsoBlock] = useState(false);
+  const [blockOpen, setBlockOpen] = useState(false);
+  const [reassigning, setReassigning] = useState(false);
+  const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
+
+  const reportedMessage = chatMessages.find(m => String(m.id) === reportMessageId);
+
+  const openReport = (messageId?: string) => {
+    setReportMessageId(messageId ? String(messageId) : null);
+    setReason(REPORT_REASONS[0].value);
+    setDetails("");
+    setAlsoBlock(false);
+    setReportOpen(true);
+  };
+
+  const reassignAgent = (previous: string) => {
+    setReassigning(true);
+    const next = REPLACEMENT_AGENTS.find(a => a !== previous) ?? "Agent Mike";
+    window.setTimeout(() => {
+      setAgentName(next);
+      setReassigning(false);
+      setBlockedNotice(`You blocked ${previous}. You're now chatting with ${next}.`);
+      toast.success(`Reassigned to ${next}`, {
+        description: "Your active orders were moved to the new agent.",
+      });
+    }, 1200);
+  };
+
+  const submitReport = () => {
+    const label = REPORT_REASONS.find(r => r.value === reason)?.label ?? "Report";
+    if (reportMessageId) setReportedIds(ids => [...ids, reportMessageId]);
+    setReportOpen(false);
+    toast.success("Report submitted", {
+      description: `${label} — our safety team will review this within 24 hours.`,
+    });
+    if (alsoBlock) {
+      const previous = agentName;
+      reassignAgent(previous);
+    }
+  };
+
+  const confirmBlock = () => {
+    setBlockOpen(false);
+    reassignAgent(agentName);
+  };
 
   const selectedOrder = PINNED_ORDERS.find(o => o.id === selectedOrderId) ?? PINNED_ORDERS[0];
   const orderStatus = selectedOrder.status;
@@ -76,15 +141,47 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
-        <button onClick={onBack}><ArrowLeft className="w-5 h-5" /></button>
+        <button onClick={onBack} aria-label="Back"><ArrowLeft className="w-5 h-5" /></button>
         <div className="w-9 h-9 rounded-full bg-accent/10 flex items-center justify-center">
-          <span className="text-accent font-bold text-sm">L</span>
+          <span className="text-accent font-bold text-sm">{agentName[0]}</span>
         </div>
-        <div>
-          <p className="text-sm font-semibold">CardChat Support</p>
-          <p className="text-[10px] text-accent">Online</p>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold truncate">{agentName}</p>
+          <p className="text-[10px] text-accent">{reassigning ? "Connecting…" : "Online"}</p>
         </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              aria-label="Chat options"
+              className="w-8 h-8 flex items-center justify-center rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+            >
+              <MoreVertical className="w-4 h-4" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem onClick={() => openReport()}>
+              <Flag className="w-4 h-4 mr-2" />
+              Report inappropriate content
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="text-destructive focus:text-destructive"
+              onClick={() => setBlockOpen(true)}
+            >
+              <ShieldBan className="w-4 h-4 mr-2" />
+              Block agent & reassign
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
+
+      {blockedNotice && (
+        <div className="flex items-start gap-2 px-4 py-2 bg-success/10 border-b border-success/20 shrink-0">
+          <UserCheck className="w-3.5 h-3.5 text-success mt-0.5 shrink-0" />
+          <p className="text-[11px] text-success flex-1">{blockedNotice}</p>
+          <button onClick={() => setBlockedNotice(null)} className="text-[11px] text-muted-foreground">✕</button>
+        </div>
+      )}
+
 
       {/* Pinned Orders (sticky, multi) */}
       <div className="sticky top-0 z-20 bg-background/95 backdrop-blur border-b px-3 pt-2 pb-2 shrink-0">
