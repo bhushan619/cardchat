@@ -101,6 +101,24 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
     setReportOpen(true);
   };
 
+  // Long-press (touch devices) to report a message
+  const longPressTimer = useRef<number | null>(null);
+  const cancelLongPress = () => {
+    if (longPressTimer.current) {
+      window.clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+  const startLongPress = (messageId: string) => {
+    cancelLongPress();
+    longPressTimer.current = window.setTimeout(() => {
+      if (navigator.vibrate) navigator.vibrate(15);
+      openReport(messageId);
+    }, 500);
+  };
+
+
+
   const reassignAgent = (previous: string) => {
     setReassigning(true);
     const next = REPLACEMENT_AGENTS.find(a => a !== previous) ?? "Agent Mike";
