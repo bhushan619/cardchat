@@ -393,6 +393,101 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
       )}
 
+      {/* Report Dialog */}
+      <Dialog open={reportOpen} onOpenChange={setReportOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Flag className="w-4 h-4 text-destructive" />
+              Report inappropriate content
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Reports are confidential and reviewed by the CardChat safety team.
+            </DialogDescription>
+          </DialogHeader>
+
+          {reportedMessage && (
+            <div className="rounded-lg border bg-muted/50 p-2.5">
+              <p className="text-[10px] text-muted-foreground mb-1">Reported message · {reportedMessage.time}</p>
+              <p className="text-xs line-clamp-3">
+                {reportedMessage.image ? "📷 Image attachment" : reportedMessage.text}
+              </p>
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <p className="text-xs font-semibold">Why are you reporting this?</p>
+            <RadioGroup value={reason} onValueChange={setReason} className="space-y-1.5">
+              {REPORT_REASONS.map(r => (
+                <div key={r.value} className="flex items-center gap-2">
+                  <RadioGroupItem value={r.value} id={`reason-${r.value}`} />
+                  <Label htmlFor={`reason-${r.value}`} className="text-xs font-normal cursor-pointer">
+                    {r.label}
+                  </Label>
+                </div>
+              ))}
+            </RadioGroup>
+          </div>
+
+          <Textarea
+            placeholder="Add more details (optional)"
+            value={details}
+            onChange={e => setDetails(e.target.value.slice(0, 500))}
+            maxLength={500}
+            className="text-xs min-h-[70px]"
+          />
+
+          <label className="flex items-start gap-2 rounded-lg border border-destructive/30 bg-destructive/5 p-2.5 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={alsoBlock}
+              onChange={e => setAlsoBlock(e.target.checked)}
+              className="mt-0.5 accent-current"
+            />
+            <span className="text-[11px]">
+              Also block <strong>{agentName}</strong> and reassign me to a new agent
+            </span>
+          </label>
+
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button className="w-full" onClick={submitReport}>Submit report</Button>
+            <Button variant="ghost" className="w-full" onClick={() => setReportOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Block & Reassign Dialog */}
+      <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <ShieldBan className="w-4 h-4 text-destructive" />
+              Block {agentName}?
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              You will no longer be matched with this agent. Your active orders
+              ({PINNED_ORDERS.length}) will be transferred to a new agent automatically.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-col gap-2 sm:flex-col">
+            <Button variant="destructive" className="w-full" onClick={confirmBlock}>
+              Block & reassign me
+            </Button>
+            <Button variant="ghost" className="w-full" onClick={() => setBlockOpen(false)}>Cancel</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Reassigning overlay */}
+      {reassigning && (
+        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-[60] gap-3">
+          <Loader2 className="w-6 h-6 animate-spin text-accent" />
+          <p className="text-xs text-muted-foreground">Finding you a new agent…</p>
+        </div>
+      )}
+
+
+
       {/* Chat Input */}
       <div className="border-t bg-card shrink-0">
         <div className="flex items-center gap-2 px-3 py-3">
