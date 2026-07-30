@@ -322,9 +322,10 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                     type="button"
                     aria-label="Report this message"
                     onClick={() => openReport(String(msg.id))}
-                    className="shrink-0 w-8 h-8 md:w-6 md:h-6 rounded-full flex items-center justify-center text-muted-foreground opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                    className="shrink-0 w-7 h-7 rounded-full border border-border bg-card flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/40 hover:bg-destructive/10 active:scale-95 transition-colors"
                   >
-                    <Flag className="w-3.5 h-3.5 md:w-3 md:h-3" />
+                    <Flag className="w-3.5 h-3.5" />
+
                   </button>
                 )}
               </div>
