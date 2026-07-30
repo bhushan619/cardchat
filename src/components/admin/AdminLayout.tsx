@@ -27,6 +27,7 @@ import {
   ArrowDownToLine,
   Coins,
   Phone,
+  Flag,
   Download,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -105,6 +106,13 @@ const navItems = [
     label: "Sensitive Words",
     icon: ShieldAlert,
     path: "/admin/sensitive-words",
+    roles: ["super_admin"],
+  },
+  {
+    id: "content-reports",
+    label: "Content Reports",
+    icon: Flag,
+    path: "/admin/content-reports",
     roles: ["super_admin"],
   },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },

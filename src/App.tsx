@@ -55,6 +55,7 @@ import AdminRewards from "./pages/admin/AdminRewards";
 import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
 import AdminWhatsAppSessions from "./pages/admin/AdminWhatsAppSessions";
 import AdminAppVersions from "./pages/admin/AdminAppVersions";
+import AdminContentReports from "./pages/admin/AdminContentReports";
 
 const queryClient = new QueryClient();
 
@@ -116,6 +117,8 @@ const App = () => (
               <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
               <Route path="/admin/screens" element={<AdminScreensGallery />} />
               <Route path="/admin/app-versions" element={<AdminRoleProvider><AdminAppVersions /></AdminRoleProvider>} />
+              <Route path="/admin/content-reports" element={<AdminRoleProvider><AdminContentReports /></AdminRoleProvider>} />
+
 
               <Route path="*" element={<NotFound />} />
             </Routes>
