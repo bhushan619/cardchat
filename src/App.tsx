@@ -55,6 +55,7 @@ import AdminRewards from "./pages/admin/AdminRewards";
 import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
 import AdminWhatsAppSessions from "./pages/admin/AdminWhatsAppSessions";
 import AdminAppVersions from "./pages/admin/AdminAppVersions";
+import AdminContentReports from "./pages/admin/AdminContentReports";
 
 const queryClient = new QueryClient();
 
