@@ -1,9 +1,28 @@
 import { useState } from "react";
-import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, UserCheck, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { toast } from "sonner";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
 import itunesCardSample from "@/assets/itunes-card-sample.jpg";
+
 
 type CustomerVisibleStatus = "order_created" | "order_processing" | "success" | "failed";
 
