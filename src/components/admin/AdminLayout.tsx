@@ -107,6 +107,13 @@ const navItems = [
     path: "/admin/sensitive-words",
     roles: ["super_admin"],
   },
+  {
+    id: "content-reports",
+    label: "Content Reports",
+    icon: Flag,
+    path: "/admin/content-reports",
+    roles: ["super_admin"],
+  },
   { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
   {
     id: "whatsapp-sessions",
