@@ -259,32 +259,54 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             );
           }
+          const isAgent = msg.sender !== "customer";
+          const isReported = reportedIds.includes(String(msg.id));
           return (
             <div key={msg.id} className={msg.sender === "customer" ? "flex justify-end" : "flex justify-start"}>
-              <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
-                {msg.image ? (
+              <div className="group flex items-center gap-1 max-w-[85%]">
+                <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
+                  {msg.image ? (
+                    <button
+                      type="button"
+                      onClick={() => setPreviewImage(itunesCardSample)}
+                      className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                    >
+                      <img
+                        src={itunesCardSample}
+                        alt="Customer-sent gift card"
+                        loading="lazy"
+                        width={1024}
+                        height={1024}
+                        className="w-56 h-40 object-cover"
+                      />
+                    </button>
+                  ) : (
+                    <p>{msg.text}</p>
+                  )}
+                  <div className="flex items-center justify-end gap-1 mt-1">
+                    {isReported && (
+                      <span className="inline-flex items-center gap-1 text-[9px] text-destructive">
+                        <ShieldAlert className="w-2.5 h-2.5" /> Reported
+                      </span>
+                    )}
+                    <p className="text-[10px] text-muted-foreground text-right">{msg.time}</p>
+                  </div>
+                </div>
+                {isAgent && !isReported && (
                   <button
                     type="button"
-                    onClick={() => setPreviewImage(itunesCardSample)}
-                    className="block rounded-lg overflow-hidden bg-muted focus:outline-none focus:ring-2 focus:ring-accent"
+                    aria-label="Report this message"
+                    onClick={() => openReport(String(msg.id))}
+                    className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-opacity"
                   >
-                    <img
-                      src={itunesCardSample}
-                      alt="Customer-sent gift card"
-                      loading="lazy"
-                      width={1024}
-                      height={1024}
-                      className="w-56 h-40 object-cover"
-                    />
+                    <Flag className="w-3 h-3" />
                   </button>
-                ) : (
-                  <p>{msg.text}</p>
                 )}
-                <p className="text-[10px] text-muted-foreground mt-1 text-right">{msg.time}</p>
               </div>
             </div>
           );
         })}
+
 
         {(currentIdx >= 2) && (
           <div className="bg-success/10 border border-success/30 rounded-lg p-3 text-center">
