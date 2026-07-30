@@ -117,6 +117,8 @@ const App = () => (
               <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
               <Route path="/admin/screens" element={<AdminScreensGallery />} />
               <Route path="/admin/app-versions" element={<AdminRoleProvider><AdminAppVersions /></AdminRoleProvider>} />
+              <Route path="/admin/content-reports" element={<AdminRoleProvider><AdminContentReports /></AdminRoleProvider>} />
+
 
               <Route path="*" element={<NotFound />} />
             </Routes>
