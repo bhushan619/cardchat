@@ -312,9 +312,6 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               </div>
             </div>
           );
-
-            </div>
-          );
         })}
 
 
