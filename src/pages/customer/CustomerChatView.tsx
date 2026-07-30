@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, UserCheck, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
@@ -261,10 +261,17 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
           }
           const isAgent = msg.sender !== "customer";
           const isReported = reportedIds.includes(String(msg.id));
+          const canReport = isAgent && !isReported;
           return (
             <div key={msg.id} className={msg.sender === "customer" ? "flex justify-end" : "flex justify-start"}>
               <div className="group flex items-center gap-1 max-w-[85%]">
-                <div className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}>
+                <div
+                  className={msg.sender === "customer" ? "chat-bubble-self" : "chat-bubble-other"}
+                  onTouchStart={canReport ? () => startLongPress(String(msg.id)) : undefined}
+                  onTouchEnd={canReport ? cancelLongPress : undefined}
+                  onTouchMove={canReport ? cancelLongPress : undefined}
+                  onContextMenu={canReport ? (e) => { e.preventDefault(); openReport(String(msg.id)); } : undefined}
+                >
                   {msg.image ? (
                     <button
                       type="button"
@@ -292,17 +299,20 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                     <p className="text-[10px] text-muted-foreground text-right">{msg.time}</p>
                   </div>
                 </div>
-                {isAgent && !isReported && (
+                {canReport && (
                   <button
                     type="button"
                     aria-label="Report this message"
                     onClick={() => openReport(String(msg.id))}
-                    className="shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground opacity-0 group-hover:opacity-100 focus:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-opacity"
+                    className="shrink-0 w-8 h-8 md:w-6 md:h-6 rounded-full flex items-center justify-center text-muted-foreground opacity-70 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100 hover:text-destructive hover:bg-destructive/10 transition-opacity"
                   >
-                    <Flag className="w-3 h-3" />
+                    <Flag className="w-3.5 h-3.5 md:w-3 md:h-3" />
                   </button>
                 )}
               </div>
+            </div>
+          );
+
             </div>
           );
         })}
