@@ -506,13 +506,6 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </DialogContent>
       </Dialog>
 
-      {/* Reassigning overlay */}
-      {reassigning && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-[60] gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-accent" />
-          <p className="text-xs text-muted-foreground">Finding you a new agent…</p>
-        </div>
-      )}
 
 
 
