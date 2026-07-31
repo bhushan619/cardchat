@@ -1,5 +1,7 @@
 import { useRef, useState } from "react";
-import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, UserCheck, ShieldAlert } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { blockAgent, unblockAgent, useBlockedAgents } from "@/lib/blockedAgents";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, ShieldCheck, UserCheck, ShieldAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
@@ -73,13 +75,15 @@ const REPORT_REASONS = [
 const REPLACEMENT_AGENTS = ["Agent Mike", "Agent Grace", "Agent Tunde", "Agent Ada"];
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
+  const navigate = useNavigate();
+  const { isBlocked } = useBlockedAgents();
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string>(PINNED_ORDERS[0].id);
   const [expanded, setExpanded] = useState(true);
 
-  // Safety: report / block / reassign
+  // Safety: report / block / unblock
   const [agentName, setAgentName] = useState("CardChat Support");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportMessageId, setReportMessageId] = useState<string | null>(null);
@@ -88,8 +92,8 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [details, setDetails] = useState("");
   const [alsoBlock, setAlsoBlock] = useState(false);
   const [blockOpen, setBlockOpen] = useState(false);
-  const [reassigning, setReassigning] = useState(false);
   const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
+  const agentBlocked = isBlocked(agentName);
 
   const reportedMessage = chatMessages.find(m => String(m.id) === reportMessageId);
 
@@ -119,17 +123,17 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
 
 
-  const reassignAgent = (previous: string) => {
-    setReassigning(true);
-    const next = REPLACEMENT_AGENTS.find(a => a !== previous) ?? "Agent Mike";
-    window.setTimeout(() => {
-      setAgentName(next);
-      setReassigning(false);
-      setBlockedNotice(`You blocked ${previous}. You're now chatting with ${next}.`);
-      toast.success(`Reassigned to ${next}`, {
-        description: "Your active orders were moved to the new agent.",
-      });
-    }, 1200);
+  const doBlock = (name: string) => {
+    blockAgent(name);
+    toast.success(`${name} blocked`, {
+      description: "Pick another agent to continue trading.",
+    });
+    navigate("/customer/contacts");
+  };
+
+  const doUnblock = (name: string) => {
+    unblockAgent(name);
+    toast.success(`${name} unblocked`);
   };
 
   const submitReport = () => {
@@ -139,16 +143,14 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
     toast.success("Report submitted", {
       description: `${label} — our safety team will review this within 24 hours.`,
     });
-    if (alsoBlock) {
-      const previous = agentName;
-      reassignAgent(previous);
-    }
+    if (alsoBlock) doBlock(agentName);
   };
 
   const confirmBlock = () => {
     setBlockOpen(false);
-    reassignAgent(agentName);
+    doBlock(agentName);
   };
+
 
   const selectedOrder = PINNED_ORDERS.find(o => o.id === selectedOrderId) ?? PINNED_ORDERS[0];
   const orderStatus = selectedOrder.status;
@@ -165,7 +167,9 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate">{agentName}</p>
-          <p className="text-[10px] text-accent">{reassigning ? "Connecting…" : "Online"}</p>
+          <p className={`text-[10px] ${agentBlocked ? "text-destructive" : "text-accent"}`}>
+            {agentBlocked ? "Blocked" : "Online"}
+          </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -181,15 +185,27 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <Flag className="w-4 h-4 mr-2" />
               Report inappropriate content
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => setBlockOpen(true)}
-            >
-              <ShieldBan className="w-4 h-4 mr-2" />
-              Block agent & reassign
+            {agentBlocked ? (
+              <DropdownMenuItem onClick={() => doUnblock(agentName)}>
+                <ShieldCheck className="w-4 h-4 mr-2 text-success" />
+                Unblock agent
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => setBlockOpen(true)}
+              >
+                <ShieldBan className="w-4 h-4 mr-2" />
+                Block agent
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onClick={() => navigate("/customer/contacts")}>
+              <UserCheck className="w-4 h-4 mr-2" />
+              Choose another agent
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
       </header>
 
       {blockedNotice && (
@@ -471,7 +487,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               className="mt-0.5 accent-current"
             />
             <span className="text-[11px]">
-              Also block <strong>{agentName}</strong> and reassign me to a new agent
+              Also block <strong>{agentName}</strong> and pick another agent myself
             </span>
           </label>
 
@@ -482,7 +498,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </DialogContent>
       </Dialog>
 
-      {/* Block & Reassign Dialog */}
+      {/* Block Dialog */}
       <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -491,26 +507,21 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               Block {agentName}?
             </DialogTitle>
             <DialogDescription className="text-xs">
-              You will no longer be matched with this agent. Your active orders
-              ({PINNED_ORDERS.length}) will be transferred to a new agent automatically.
+              You won't be able to chat with this agent until you unblock them. We'll take
+              you to the agents list so you can choose who to trade with next. You can
+              unblock this agent anytime from that list.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button variant="destructive" className="w-full" onClick={confirmBlock}>
-              Block & reassign me
+              Block & choose another agent
             </Button>
             <Button variant="ghost" className="w-full" onClick={() => setBlockOpen(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* Reassigning overlay */}
-      {reassigning && (
-        <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center z-[60] gap-3">
-          <Loader2 className="w-6 h-6 animate-spin text-accent" />
-          <p className="text-xs text-muted-foreground">Finding you a new agent…</p>
-        </div>
-      )}
+
 
 
 
