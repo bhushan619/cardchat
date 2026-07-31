@@ -487,7 +487,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               className="mt-0.5 accent-current"
             />
             <span className="text-[11px]">
-              Also block <strong>{agentName}</strong> and reassign me to a new agent
+              Also block <strong>{agentName}</strong> and pick another agent myself
             </span>
           </label>
 
@@ -498,7 +498,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </DialogContent>
       </Dialog>
 
-      {/* Block & Reassign Dialog */}
+      {/* Block Dialog */}
       <Dialog open={blockOpen} onOpenChange={setBlockOpen}>
         <DialogContent className="max-w-sm">
           <DialogHeader>
@@ -507,18 +507,20 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               Block {agentName}?
             </DialogTitle>
             <DialogDescription className="text-xs">
-              You will no longer be matched with this agent. Your active orders
-              ({PINNED_ORDERS.length}) will be transferred to a new agent automatically.
+              You won't be able to chat with this agent until you unblock them. We'll take
+              you to the agents list so you can choose who to trade with next. You can
+              unblock this agent anytime from that list.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter className="flex-col gap-2 sm:flex-col">
             <Button variant="destructive" className="w-full" onClick={confirmBlock}>
-              Block & reassign me
+              Block & choose another agent
             </Button>
             <Button variant="ghost" className="w-full" onClick={() => setBlockOpen(false)}>Cancel</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
 
 
 
