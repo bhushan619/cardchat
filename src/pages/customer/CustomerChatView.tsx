@@ -75,13 +75,15 @@ const REPORT_REASONS = [
 const REPLACEMENT_AGENTS = ["Agent Mike", "Agent Grace", "Agent Tunde", "Agent Ada"];
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
+  const navigate = useNavigate();
+  const { isBlocked } = useBlockedAgents();
   const [message, setMessage] = useState("");
   const [showOrder, setShowOrder] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedOrderId, setSelectedOrderId] = useState<string>(PINNED_ORDERS[0].id);
   const [expanded, setExpanded] = useState(true);
 
-  // Safety: report / block / reassign
+  // Safety: report / block / unblock
   const [agentName, setAgentName] = useState("CardChat Support");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportMessageId, setReportMessageId] = useState<string | null>(null);
@@ -90,8 +92,8 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [details, setDetails] = useState("");
   const [alsoBlock, setAlsoBlock] = useState(false);
   const [blockOpen, setBlockOpen] = useState(false);
-  const [reassigning, setReassigning] = useState(false);
   const [blockedNotice, setBlockedNotice] = useState<string | null>(null);
+  const agentBlocked = isBlocked(agentName);
 
   const reportedMessage = chatMessages.find(m => String(m.id) === reportMessageId);
 
