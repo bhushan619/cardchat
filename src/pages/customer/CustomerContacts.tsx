@@ -239,9 +239,7 @@ export default function CustomerContacts() {
         </DialogContent>
       </Dialog>
 
-          </div>
-        </div>
-      </div>
+
 
       {/* Saturated agent pop-up notice */}
       <Dialog open={!!saturatedAgent} onOpenChange={open => !open && setSaturatedAgent(null)}>
