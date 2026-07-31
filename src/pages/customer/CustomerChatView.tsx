@@ -167,7 +167,9 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-sm font-semibold truncate">{agentName}</p>
-          <p className="text-[10px] text-accent">{reassigning ? "Connecting…" : "Online"}</p>
+          <p className={`text-[10px] ${agentBlocked ? "text-destructive" : "text-accent"}`}>
+            {agentBlocked ? "Blocked" : "Online"}
+          </p>
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -183,15 +185,27 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
               <Flag className="w-4 h-4 mr-2" />
               Report inappropriate content
             </DropdownMenuItem>
-            <DropdownMenuItem
-              className="text-destructive focus:text-destructive"
-              onClick={() => setBlockOpen(true)}
-            >
-              <ShieldBan className="w-4 h-4 mr-2" />
-              Block agent & reassign
+            {agentBlocked ? (
+              <DropdownMenuItem onClick={() => doUnblock(agentName)}>
+                <ShieldCheck className="w-4 h-4 mr-2 text-success" />
+                Unblock agent
+              </DropdownMenuItem>
+            ) : (
+              <DropdownMenuItem
+                className="text-destructive focus:text-destructive"
+                onClick={() => setBlockOpen(true)}
+              >
+                <ShieldBan className="w-4 h-4 mr-2" />
+                Block agent
+              </DropdownMenuItem>
+            )}
+            <DropdownMenuItem onClick={() => navigate("/customer/contacts")}>
+              <UserCheck className="w-4 h-4 mr-2" />
+              Choose another agent
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
       </header>
 
       {blockedNotice && (
