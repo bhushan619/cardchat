@@ -119,17 +119,17 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
 
 
-  const reassignAgent = (previous: string) => {
-    setReassigning(true);
-    const next = REPLACEMENT_AGENTS.find(a => a !== previous) ?? "Agent Mike";
-    window.setTimeout(() => {
-      setAgentName(next);
-      setReassigning(false);
-      setBlockedNotice(`You blocked ${previous}. You're now chatting with ${next}.`);
-      toast.success(`Reassigned to ${next}`, {
-        description: "Your active orders were moved to the new agent.",
-      });
-    }, 1200);
+  const doBlock = (name: string) => {
+    blockAgent(name);
+    toast.success(`${name} blocked`, {
+      description: "Pick another agent to continue trading.",
+    });
+    navigate("/customer/contacts");
+  };
+
+  const doUnblock = (name: string) => {
+    unblockAgent(name);
+    toast.success(`${name} unblocked`);
   };
 
   const submitReport = () => {
@@ -139,16 +139,14 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
     toast.success("Report submitted", {
       description: `${label} — our safety team will review this within 24 hours.`,
     });
-    if (alsoBlock) {
-      const previous = agentName;
-      reassignAgent(previous);
-    }
+    if (alsoBlock) doBlock(agentName);
   };
 
   const confirmBlock = () => {
     setBlockOpen(false);
-    reassignAgent(agentName);
+    doBlock(agentName);
   };
+
 
   const selectedOrder = PINNED_ORDERS.find(o => o.id === selectedOrderId) ?? PINNED_ORDERS[0];
   const orderStatus = selectedOrder.status;
