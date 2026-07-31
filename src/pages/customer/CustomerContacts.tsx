@@ -1,10 +1,12 @@
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { customerContacts } from "@/data/mock";
-import { Search, MessageCircle, Zap, Clock, AlertCircle } from "lucide-react";
+import { Search, MessageCircle, Zap, Clock, AlertCircle, ShieldBan, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import { useBlockedAgents } from "@/lib/blockedAgents";
 import {
   Dialog,
   DialogContent,
