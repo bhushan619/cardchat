@@ -14,6 +14,8 @@ import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { listBankAccounts, addBankAccount, removeBankAccount, onBankAccountsChange, mockVerifyAccount, NIGERIAN_BANKS, type CustomerBankAccount } from "@/lib/customerBankAccounts";
 import { toast } from "sonner";
 import { maskName } from "@/lib/utils";
+import { isVip, setVip, listVipAliases, onVipChange } from "@/lib/vipCustomers";
+import { Crown } from "lucide-react";
 
 const customers = conversations.map((c) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
@@ -63,7 +65,23 @@ export default function AdminCustomers() {
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [lineFilter, setLineFilter] = useState<string>("all");
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
+  const [vipFilter, setVipFilter] = useState<string>("all");
+  const [vipAliases, setVipAliases] = useState<string[]>(() => listVipAliases());
+  const [vipConfirm, setVipConfirm] = useState<{ alias: string; next: boolean } | null>(null);
   const waNumbers = listWaNumbers();
+
+  useEffect(() => onVipChange(() => setVipAliases(listVipAliases())), []);
+
+  const applyVip = () => {
+    if (!vipConfirm) return;
+    setVip(vipConfirm.alias, vipConfirm.next);
+    toast.success(
+      vipConfirm.next
+        ? `${vipConfirm.alias} is now a VIP customer`
+        : `VIP status cancelled for ${vipConfirm.alias}`
+    );
+    setVipConfirm(null);
+  };
 
   const filtered = customers.filter((c) => {
     const matchesSearch =
@@ -74,7 +92,9 @@ export default function AdminCustomers() {
     const matchesStatus = statusFilter === "all" || c.status === statusFilter;
     const matchesChannel = channelFilter === "all" || c.channel === channelFilter;
     const matchesLine = lineFilter === "all" || c.inboundLineId === lineFilter;
-    return matchesSearch && matchesStatus && matchesChannel && matchesLine;
+    const vip = vipAliases.includes(c.alias);
+    const matchesVip = vipFilter === "all" || (vipFilter === "vip" ? vip : !vip);
+    return matchesSearch && matchesStatus && matchesChannel && matchesLine && matchesVip;
   });
 
   // Get transactions for selected customer (mock: show all wallet transactions)
@@ -138,6 +158,16 @@ export default function AdminCustomers() {
               ))}
             </SelectContent>
           </Select>
+          <Select value={vipFilter} onValueChange={setVipFilter}>
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="VIP" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All customers</SelectItem>
+              <SelectItem value="vip">VIP only</SelectItem>
+              <SelectItem value="normal">Non-VIP only</SelectItem>
+            </SelectContent>
+          </Select>
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
             <Search className="w-3.5 h-3.5" /> Search
           </Button>
@@ -148,6 +178,7 @@ export default function AdminCustomers() {
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Alias</TableHead>
+                <TableHead className="text-xs font-semibold text-center">VIP</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Channel</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
@@ -169,7 +200,27 @@ export default function AdminCustomers() {
                         {c.alias.slice(-2)}
                       </div>
                       <span className="text-sm font-medium">{c.alias}</span>
+                      {vipAliases.includes(c.alias) && (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
+                          <Crown className="w-2.5 h-2.5" /> VIP
+                        </span>
+                      )}
                     </div>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Button
+                      size="sm"
+                      variant={vipAliases.includes(c.alias) ? "outline" : "ghost"}
+                      className={`h-7 px-2 text-[11px] gap-1 ${
+                        vipAliases.includes(c.alias)
+                          ? "border-amber-500/40 text-amber-500 hover:bg-amber-500/10"
+                          : "text-muted-foreground hover:text-amber-500"
+                      }`}
+                      onClick={() => setVipConfirm({ alias: c.alias, next: !vipAliases.includes(c.alias) })}
+                    >
+                      <Crown className="w-3 h-3" />
+                      {vipAliases.includes(c.alias) ? "Cancel VIP" : "Set VIP"}
+                    </Button>
                   </TableCell>
                   <TableCell>
                     <span
@@ -234,7 +285,7 @@ export default function AdminCustomers() {
               ))}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={12} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
@@ -271,6 +322,32 @@ export default function AdminCustomers() {
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">VIP status</span>
+                  <div className="flex items-center gap-2">
+                    {vipAliases.includes(selectedCustomer.alias) ? (
+                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
+                        <Crown className="w-3 h-3" /> VIP
+                      </span>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">Standard</span>
+                    )}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 px-2 text-[11px] gap-1 border-amber-500/40 text-amber-500 hover:bg-amber-500/10"
+                      onClick={() =>
+                        setVipConfirm({
+                          alias: selectedCustomer.alias,
+                          next: !vipAliases.includes(selectedCustomer.alias),
+                        })
+                      }
+                    >
+                      <Crown className="w-3 h-3" />
+                      {vipAliases.includes(selectedCustomer.alias) ? "Cancel VIP" : "Set VIP"}
+                    </Button>
+                  </div>
+                </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Active channel</span>
                   <ChannelBadge channel={selectedCustomer.channel} size="sm" />
@@ -373,6 +450,32 @@ export default function AdminCustomers() {
           )}
         </DialogContent>
       </Dialog>
+      {/* VIP confirmation */}
+      <Dialog open={!!vipConfirm} onOpenChange={(o) => !o && setVipConfirm(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-amber-500" />
+              {vipConfirm?.next ? "Set as VIP" : "Cancel VIP status"}
+            </DialogTitle>
+            <DialogDescription>
+              {vipConfirm?.next
+                ? `${vipConfirm?.alias} will receive VIP pricing (VIP price control) on all new orders.`
+                : `${vipConfirm?.alias} will go back to standard pricing on all new orders.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setVipConfirm(null)}>Cancel</Button>
+            <Button
+              className="gap-1.5 bg-amber-500 text-white hover:bg-amber-500/90"
+              onClick={applyVip}
+            >
+              <Crown className="w-3.5 h-3.5" /> Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
     </AdminLayout>
   );
 }
