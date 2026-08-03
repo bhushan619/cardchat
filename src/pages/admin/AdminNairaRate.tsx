@@ -180,6 +180,10 @@ export default function AdminNairaRate() {
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Timestamp</th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Old Rate</th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">New Rate</th>
+                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Price Control</th>
+                  <th className="text-right text-xs font-semibold text-amber-500 px-4 py-3">
+                    <span className="inline-flex items-center gap-1 justify-end"><Crown className="w-3 h-3" /> VIP Price Control</span>
+                  </th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Changed By</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Reason</th>
                 </tr>
@@ -190,6 +194,16 @@ export default function AdminNairaRate() {
                     <td className="px-4 py-3 text-xs">{h.timestamp}</td>
                     <td className="px-4 py-3 text-xs text-right text-muted-foreground"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.oldRate.toLocaleString()}</span></td>
                     <td className="px-4 py-3 text-xs text-right font-medium"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{h.newRate.toLocaleString()}</span></td>
+                    <td className="px-4 py-3 text-xs text-right">
+                      <span className="text-muted-foreground">{h.oldPriceControl.toFixed(2)}%</span>
+                      <span className="text-muted-foreground mx-1">→</span>
+                      <span className="font-medium">{h.newPriceControl.toFixed(2)}%</span>
+                    </td>
+                    <td className="px-4 py-3 text-xs text-right">
+                      <span className="text-muted-foreground">{h.oldVipPriceControl.toFixed(2)}%</span>
+                      <span className="text-muted-foreground mx-1">→</span>
+                      <span className="font-medium text-amber-500">{h.newVipPriceControl.toFixed(2)}%</span>
+                    </td>
                     <td className="px-4 py-3 text-xs">{h.changedBy}</td>
                     <td className="px-4 py-3 text-xs text-muted-foreground">{h.reason}</td>
                   </tr>
@@ -197,6 +211,7 @@ export default function AdminNairaRate() {
               </tbody>
             </table>
           </div>
+
         </div>
       </div>
     </AdminLayout>
