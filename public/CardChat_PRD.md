@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 5.9  
-**Date:** July 27, 2026
+**Version:** 6.0  
+**Date:** August 3, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -658,6 +658,7 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Timestamp
   - Unread count badge
   - Tags: VIP (amber), Repeat (primary), New (accent), Priority (destructive)
+  - **VIP badge** — when the customer is flagged VIP, a solid amber pill with a Crown icon and dark text is rendered directly next to the alias in both the conversation list and the chat header (driven by `src/lib/vipCustomers.ts`)
   - Good Rate percentage
   - Total Value
 - Click to select → loads chat in center panel
