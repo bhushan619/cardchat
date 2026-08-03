@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Shield, Eye, EyeOff, AlertCircle } from "lucide-react";
-import MfaChallenge from "@/components/admin/MfaChallenge";
 
 // Prototype-only credential map. In a production build this MUST be replaced
 // with a server-validated auth call (e.g. Lovable Cloud / Supabase Auth).
@@ -23,7 +22,6 @@ export default function AdminLogin() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [pendingAuth, setPendingAuth] = useState<{ email: string; role: string } | null>(null);
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,20 +36,14 @@ export default function AdminLogin() {
         ? password === stored || (known && password === known.password)
         : known && password === known.password;
       if (known && passwordMatches) {
-        setPendingAuth({ email: lowerEmail, role: known.role });
+        sessionStorage.setItem("adminAuth", JSON.stringify({ email: lowerEmail, role: known.role }));
+        navigate("/admin");
       } else {
         setError("Invalid email or password.");
       }
       setLoading(false);
     }, 600);
   };
-
-  const completeLogin = () => {
-    if (!pendingAuth) return;
-    sessionStorage.setItem("adminAuth", JSON.stringify(pendingAuth));
-    navigate("/admin");
-  };
-
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-primary/[0.03] px-4">
@@ -65,17 +57,7 @@ export default function AdminLogin() {
           <p className="text-sm text-muted-foreground">Sign in to access the admin panel</p>
         </div>
 
-        {pendingAuth ? (
-          <Card className="border-border/60 shadow-lg">
-            <CardContent className="pt-6">
-              <MfaChallenge
-                account={pendingAuth.email}
-                onVerified={completeLogin}
-                onBack={() => setPendingAuth(null)}
-              />
-            </CardContent>
-          </Card>
-        ) : (
+        {/* Login Card */}
         <Card className="border-border/60 shadow-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">Sign In</CardTitle>
@@ -83,7 +65,6 @@ export default function AdminLogin() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
@@ -144,8 +125,6 @@ export default function AdminLogin() {
             </div>
           </CardContent>
         </Card>
-        )}
-
 
         <p className="text-center text-xs text-muted-foreground">
           Prototype only · Enable Lovable Cloud for real authentication
