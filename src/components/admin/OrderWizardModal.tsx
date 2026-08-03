@@ -28,6 +28,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
+import MfaChallenge from "@/components/admin/MfaChallenge";
+
 
 // Card brands with their available currencies
 const cardBrands: { name: string; currencies: string[] }[] = [
@@ -164,6 +166,8 @@ export default function CardlightPanel({
   const [account, setAccount] = useState(() => sessionStorage.getItem("cardlight_account") || "");
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
+  const [mfaRequired, setMfaRequired] = useState(false);
+
 
   // Order form state
   const [cardType, setCardType] = useState("");
@@ -200,12 +204,18 @@ export default function CardlightPanel({
     if (!account.trim() || !password.trim()) return;
     setLoginLoading(true);
     setTimeout(() => {
-      setIsLoggedIn(true);
-      sessionStorage.setItem("cardlight_logged_in", "true");
-      sessionStorage.setItem("cardlight_account", account);
       setLoginLoading(false);
+      setMfaRequired(true);
     }, 800);
   };
+
+  const handleMfaVerified = () => {
+    setMfaRequired(false);
+    setIsLoggedIn(true);
+    sessionStorage.setItem("cardlight_logged_in", "true");
+    sessionStorage.setItem("cardlight_account", account);
+  };
+
 
   // Persist order list changes
   const updateOrderList = (newList: OrderEntry[]) => {
