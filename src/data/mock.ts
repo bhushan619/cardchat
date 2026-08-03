@@ -97,7 +97,8 @@ export const cardRates = baseRates.map((r, i) => {
 
 export const systemNairaRate = 289;
 export const systemDenomination = 100;
-export const systemPriceControl = 85.00; // percentage 1.00% - 100.00%
+export const systemPriceControl = 85.00; // normal price control, percentage 1.00% - 100.00%
+export const systemVipPriceControl = 88.00; // VIP price control, percentage 1.00% - 100.00%
 
 // Fund adjustment records
 export type FundAdjustment = {
