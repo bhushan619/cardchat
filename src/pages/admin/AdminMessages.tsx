@@ -1032,8 +1032,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
                             {isVip(c.alias) && (
-                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 leading-none shrink-0">
-                                <Crown className="w-2.5 h-2.5" /> VIP
+                              <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none shrink-0 border border-amber-600/20">
+                                <Crown className="w-3 h-3" /> VIP
                               </span>
                             )}
                             <ChannelBadge channel={c.channel} size="xs" showLabel={false} />
@@ -1114,7 +1114,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-semibold whitespace-nowrap">{selectedConvo.alias}</p>
                         {isVip(selectedConvo.alias) && (
-                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 leading-none">
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none border border-amber-600/20">
                             <Crown className="w-3 h-3" /> VIP
                           </span>
                         )}
