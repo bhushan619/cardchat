@@ -737,7 +737,20 @@ A multi-phase sales tool embedded in the right sidebar:
 #### Phase 1: Login
 - Account and password fields for Cardlight credentials
 - "Login" button with simulated loading
-- Transition to Phase 2 on success
+- Transition to Phase 1b (MFA) on valid credentials
+
+#### Phase 1b: Multi-Factor Authentication
+**Component:** `src/components/admin/MfaChallenge.tsx`
+
+- After valid account/password, the sales login requires a **6-digit authenticator code** before the sales tools unlock
+- Shield icon header, "MFA Verification" title, and the account being signed in displayed for confirmation
+- Six single-digit inputs with auto-advance, paste support (full code spreads across boxes), backspace-to-previous, and Enter to submit
+- **Verify & Login** button with loading state; inline error when fewer than 6 digits are entered
+- **Refresh verification** link clears the code and restarts the 30-second countdown ("Code refreshes in Ns")
+- **Back to password login** returns to Phase 1
+- Prototype note: any 6-digit code is accepted client-side. Production must verify the TOTP server-side.
+
+
 
 #### Phase 2: Create Sale
 - **Two-level cascading card selector:**
@@ -808,6 +821,7 @@ A fallback chat view accessible via direct URL or search results. Contains the s
     - Pending = blue
   - **Channel** — badge showing whether the customer is on **WhatsApp** (emerald) or **In-app / TRTC** (primary)
   - Tags (VIP, Repeat, New, Priority badges)
+  - **VIP** — amber Crown badge with a toggle action allowing the administrator to **set or cancel** a customer's VIP status. Changes are confirmed via a dialog and persisted in `src/lib/vipCustomers.ts` (sessionStorage, prototype). A **VIP filter** narrows the table to VIP customers only. VIP status drives VIP pricing (see §5.8 / §5.12) and the VIP badge on the Messages page.
   - Good Rate (percentage)
   - Total Value (₦ amount)
   - Last Active (relative time)
@@ -842,7 +856,8 @@ A fallback chat view accessible via direct URL or search results. Contains the s
   - Denomination — full `denominationSpec` rendered as list, range, multiples, or "Any denomination"
   - Format — badge: "E-Code" (primary pill) or "Physical" (muted pill)
   - Currency
-  - Points Price (Coins icon)
+  - Points Price (Coins icon) — derived from the **Normal Price Control**
+  - **VIP Points Price** (Coins icon) — same formula using the **VIP Price Control**; shown for every rate row
   - Last Updated
 
 ### 5.9 Volume Ranking (`/admin/ranking`)
@@ -929,13 +944,14 @@ Admin view of all rewards distributed to customers. Ranking rewards require **ma
 - **Update Form (3 editable fields):**
   - New Rate input (NGN per CNY) — **validated between 99–299**
   - New Denomination input
-  - New Price Control (%) — **validated between 1.00%–100.00%**
+  - **Normal Price Control (%)** — **validated between 1.00%–100.00%** (applies to standard customers)
+  - **VIP Price Control (%)** — separate control applied to customers flagged as VIP; typically set higher than the normal control (e.g. Normal 97.00 / VIP 98.00)
   - Reason for change text input
 - **Broadcasting:** On save, rate is broadcast to all active sessions with real-time status indicator (Broadcasting → All sessions updated)
 - **Warning:** "These values will be broadcast to all active sessions and the Customer App immediately. All new orders will use these values."
 - **Rate History Table:**
   - Timestamp
-  - Old Rate → New Rate
+  - Old Rate → New Rate — the history now also records **Price Control** and **VIP Price Control** transitions, each as its own row with the changed field named
   - Changed By (admin name)
   - Reason
 
