@@ -65,7 +65,17 @@ export default function AdminLogin() {
           <p className="text-sm text-muted-foreground">Sign in to access the admin panel</p>
         </div>
 
-        {/* Login Card */}
+        {pendingAuth ? (
+          <Card className="border-border/60 shadow-lg">
+            <CardContent className="pt-6">
+              <MfaChallenge
+                account={pendingAuth.email}
+                onVerified={completeLogin}
+                onBack={() => setPendingAuth(null)}
+              />
+            </CardContent>
+          </Card>
+        ) : (
         <Card className="border-border/60 shadow-lg">
           <CardHeader className="pb-4">
             <CardTitle className="text-lg">Sign In</CardTitle>
@@ -73,6 +83,7 @@ export default function AdminLogin() {
           </CardHeader>
           <CardContent>
             <form onSubmit={handleLogin} className="space-y-4">
+
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input
