@@ -1730,6 +1730,17 @@ src/
 
 ## 12. Full Changelog
 
+### v5.9 → v6.0 — August 3, 2026
+
+| Change | Description |
+|--------|-------------|
+| **VIP Customer Status** | Administrators can **set or cancel** a customer's VIP status from `/admin/customers` via a VIP column toggle with confirmation dialog, plus a VIP-only filter. State is managed by the new `src/lib/vipCustomers.ts` store (sessionStorage, prototype). |
+| **VIP Price Control** | `/admin/naira-rate` splits price control into **Normal price control** and **VIP price control** inputs (e.g. 97.00 / 98.00), each validated 1.00%–100.00% and broadcast on save. |
+| **VIP Points Price Column** | `/admin/card-rates` adds a **VIP Points Price** column alongside Points Price, computed with the VIP price control. |
+| **Rate Change History Expansion** | The Rate Change History table on `/admin/naira-rate` now logs Price Control and VIP Price Control transitions in addition to points-rate changes, naming the changed field per row. |
+| **VIP Badge on Messages** | `/admin` conversation list and chat header render a prominent solid-amber **VIP** pill with a Crown icon directly next to the customer alias. |
+| **Cardlight Sales Login MFA** | The Cardlight Sales Order login gains a **multi-factor authentication step** (`src/components/admin/MfaChallenge.tsx`) after account/password: 6-digit authenticator code with auto-advancing inputs, paste support, 30-second refresh countdown, "Refresh verification", and "Back to password login". Prototype accepts any 6-digit code; production must verify server-side. |
+
 ### v5.8 → v5.9 — July 27, 2026
 
 | Change | Description |
