@@ -1,3 +1,4 @@
+import { isVip } from "@/lib/vipCustomers";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { maskName, formatDate } from "@/lib/utils";
@@ -1030,6 +1031,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
+                            {isVip(c.alias) && (
+                              <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 leading-none shrink-0">
+                                <Crown className="w-2.5 h-2.5" /> VIP
+                              </span>
+                            )}
                             <ChannelBadge channel={c.channel} size="xs" showLabel={false} />
                             {c.channel === "whatsapp" &&
                               (() => {
@@ -1107,6 +1113,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     <div>
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-semibold whitespace-nowrap">{selectedConvo.alias}</p>
+                        {isVip(selectedConvo.alias) && (
+                          <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500 leading-none">
+                            <Crown className="w-3 h-3" /> VIP
+                          </span>
+                        )}
                         <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
                         {selectedConvo.channel === "whatsapp" &&
                           !isGroupChat &&

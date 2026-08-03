@@ -1,7 +1,7 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl } from "@/data/mock";
-import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent } from "lucide-react";
+import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl, systemVipPriceControl } from "@/data/mock";
+import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent, Crown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/hooks/use-toast";
@@ -13,6 +13,7 @@ export default function AdminNairaRate() {
   const [rate, setRate] = useState(systemNairaRate.toString());
   const [denomination, setDenomination] = useState(systemDenomination.toString());
   const [priceControl, setPriceControl] = useState(systemPriceControl.toFixed(2));
+  const [vipPriceControl, setVipPriceControl] = useState(systemVipPriceControl.toFixed(2));
   const [reason, setReason] = useState("");
   const [broadcasting, setBroadcasting] = useState<"idle" | "broadcasting" | "done">("idle");
 
@@ -41,6 +42,15 @@ export default function AdminNairaRate() {
       toast({
         title: "Invalid Price Control",
         description: "Price control must be between 1.00% and 100.00%.",
+        variant: "destructive",
+      });
+      return;
+    }
+    const vipNum = Number(vipPriceControl);
+    if (isNaN(vipNum) || vipNum < 1 || vipNum > 100) {
+      toast({
+        title: "Invalid VIP Price Control",
+        description: "VIP price control must be between 1.00% and 100.00%.",
         variant: "destructive",
       });
       return;
@@ -100,10 +110,17 @@ export default function AdminNairaRate() {
           </div>
 
           {/* Price Control display */}
-          <div className="flex items-center gap-2 mb-3 pl-[60px]">
-            <Percent className="w-4 h-4 text-muted-foreground" />
-            <p className="text-sm text-muted-foreground">Price Control:</p>
-            <p className="text-lg font-heading font-bold">{systemPriceControl.toFixed(2)}%</p>
+          <div className="flex items-center gap-6 mb-3 pl-[60px]">
+            <div className="flex items-center gap-2">
+              <Percent className="w-4 h-4 text-muted-foreground" />
+              <p className="text-sm text-muted-foreground">Normal price control:</p>
+              <p className="text-lg font-heading font-bold">{systemPriceControl.toFixed(2)}%</p>
+            </div>
+            <div className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-amber-500" />
+              <p className="text-sm text-muted-foreground">VIP price control:</p>
+              <p className="text-lg font-heading font-bold text-amber-500">{systemVipPriceControl.toFixed(2)}%</p>
+            </div>
           </div>
 
           {editing && (
@@ -114,9 +131,14 @@ export default function AdminNairaRate() {
                   <Input value={rate} onChange={e => setRate(e.target.value)} className="mt-1" />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-muted-foreground">New Price Control (%)</label>
+                  <label className="text-xs font-medium text-muted-foreground">Normal Price Control (%)</label>
                   <Input value={priceControl} onChange={e => setPriceControl(e.target.value)} placeholder="e.g. 85.00" className="mt-1" />
                   <p className="text-[10px] text-muted-foreground mt-0.5">Range: 1.00% – 100.00%</p>
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-amber-500 flex items-center gap-1"><Crown className="w-3 h-3" /> VIP Price Control (%)</label>
+                  <Input value={vipPriceControl} onChange={e => setVipPriceControl(e.target.value)} placeholder="e.g. 88.00" className="mt-1" />
+                  <p className="text-[10px] text-muted-foreground mt-0.5">Applied to customers flagged as VIP</p>
                 </div>
                 <div>
                   <label className="text-xs font-medium text-muted-foreground">Reason for Change</label>
