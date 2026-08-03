@@ -1,5 +1,4 @@
 import { isVip } from "@/lib/vipCustomers";
-import { Crown } from "lucide-react";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { maskName, formatDate } from "@/lib/utils";
