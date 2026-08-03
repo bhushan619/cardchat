@@ -144,6 +144,8 @@ export default function AdminLogin() {
             </div>
           </CardContent>
         </Card>
+        )}
+
 
         <p className="text-center text-xs text-muted-foreground">
           Prototype only · Enable Lovable Cloud for real authentication
