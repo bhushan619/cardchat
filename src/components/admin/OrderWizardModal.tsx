@@ -391,8 +391,18 @@ export default function CardlightPanel({
 
       <div className="flex-1 overflow-y-auto">
         {/* Login Screen */}
-        {!isLoggedIn ? (
+        {!isLoggedIn && mfaRequired ? (
+          <div className="p-6">
+            <MfaChallenge
+              account={account}
+              compact
+              onVerified={handleMfaVerified}
+              onBack={() => setMfaRequired(false)}
+            />
+          </div>
+        ) : !isLoggedIn ? (
           <div className="p-6 space-y-6">
+
             <div className="text-center space-y-1">
               <h4 className="font-heading font-bold text-base">Login Sales System</h4>
               <p className="text-xs text-muted-foreground">Connect to Cardlight to create orders</p>
