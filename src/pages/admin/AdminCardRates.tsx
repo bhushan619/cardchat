@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { cardRates, systemPriceControl, formatDenominations, expandDenominations } from "@/data/mock";
-import { RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send, Coins, Search } from "lucide-react";
+import { cardRates, systemPriceControl, systemVipPriceControl, formatDenominations, expandDenominations } from "@/data/mock";
+import { RefreshCw, ArrowUpDown, ArrowUp, ArrowDown, Send, Coins, Search, Crown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useMemo, useState } from "react";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -32,7 +32,7 @@ export default function AdminCardRates() {
   const ratesWithFormula = useMemo(
     () => cardRates.map(r => {
       const list = expandDenominations(r.denominationSpec);
-      return { ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), minDenomination: list[0] ?? 0 };
+      return { ...r, buyRate: Math.round(r.sellRate * (systemPriceControl / 100)), vipRate: Math.round(r.sellRate * (systemVipPriceControl / systemPriceControl)), minDenomination: list[0] ?? 0 };
     }),
     []
   );
@@ -187,6 +187,9 @@ export default function AdminCardRates() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("currency")}>
                   <span className="flex items-center gap-1">Currency <SortIcon col="currency" /></span>
                 </th>
+                <th className="text-right text-xs font-semibold text-amber-500 px-4 py-3">
+                  <span className="flex items-center gap-1 justify-end"><Crown className="w-3 h-3" /> VIP Points Price</span>
+                </th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("sellRate")}>
                   <span className="flex items-center gap-1 justify-end">Points Price <SortIcon col="sellRate" /></span>
                 </th>
@@ -196,7 +199,7 @@ export default function AdminCardRates() {
             <tbody>
               {sorted.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  <td colSpan={7} className="px-4 py-10 text-center text-sm text-muted-foreground">
                     No rates match your filters.
                   </td>
                 </tr>
@@ -212,6 +215,9 @@ export default function AdminCardRates() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">{r.currency}</td>
+                  <td className="px-4 py-3 text-sm text-right font-semibold text-amber-500">
+                    <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5" />{r.vipRate}</span>
+                  </td>
                   <td className="px-4 py-3 text-sm text-right font-semibold rate-value">
                     <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.sellRate}</span>
                   </td>
