@@ -1,7 +1,7 @@
 // Shared VIP customer store (prototype: sessionStorage-backed, volatile).
 // Administrators set / cancel a customer's VIP status from the Customers page.
 
-const KEY = "cardchat_vip_customers";
+const KEY = "cardchat_vip_customers_v2";
 
 type Listener = () => void;
 const listeners = new Set<Listener>();
