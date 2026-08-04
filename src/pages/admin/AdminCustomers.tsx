@@ -367,32 +367,35 @@ export default function AdminCustomers() {
               </TabsList>
 
               <TabsContent value="details" className="space-y-3 py-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">VIP status</span>
-                  <div className="flex items-center gap-2">
-                    {vipAliases.includes(selectedCustomer.alias) ? (
-                      <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
-                        <Crown className="w-3 h-3" /> VIP
-                      </span>
-                    ) : (
-                      <span className="text-xs text-muted-foreground">Standard</span>
-                    )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="h-7 px-2 text-[11px] gap-1 border-amber-500/40 text-amber-500 hover:bg-amber-500/10"
-                      onClick={() =>
-                        setVipConfirm({
-                          alias: selectedCustomer.alias,
-                          next: !vipAliases.includes(selectedCustomer.alias),
-                        })
-                      }
-                    >
-                      <Crown className="w-3 h-3" />
-                      {vipAliases.includes(selectedCustomer.alias) ? "Cancel VIP" : "Set VIP"}
-                    </Button>
+                {selectedCustomer.channel === "trtc" && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">VIP status</span>
+                    <div className="flex items-center gap-2">
+                      {vipAliases.includes(selectedCustomer.alias) ? (
+                        <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
+                          <Crown className="w-3 h-3" /> VIP
+                        </span>
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Standard</span>
+                      )}
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-7 px-2 text-[11px] gap-1 border-amber-500/40 text-amber-500 hover:bg-amber-500/10"
+                        onClick={() =>
+                          setVipConfirm({
+                            alias: selectedCustomer.alias,
+                            next: !vipAliases.includes(selectedCustomer.alias),
+                          })
+                        }
+                      >
+                        <Crown className="w-3 h-3" />
+                        {vipAliases.includes(selectedCustomer.alias) ? "Cancel VIP" : "Set VIP"}
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
+
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Active channel</span>
                   <ChannelBadge channel={selectedCustomer.channel} size="sm" />
