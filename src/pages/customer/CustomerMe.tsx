@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { hashPin, verifyPin } from "@/lib/securePin";
 import { generateBase32Secret, buildOtpAuthUri, renderQrDataUrl } from "@/lib/totpDemo";
 import { formatDate } from "@/lib/utils";
+import { isVip, CURRENT_CUSTOMER_ALIAS } from "@/lib/vipCustomers";
+import { Crown } from "lucide-react";
 
 const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 const TOTP_SECRET_KEY = "cc_customer_totp_secret";
@@ -1342,8 +1344,14 @@ export default function CustomerMe() {
             <div className="flex-1">
               <h2 className="font-heading font-bold text-lg">{savedName}</h2>
               <div className="flex items-center gap-2 mt-0.5">
-                <span className="text-xs font-mono font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md">J4D9KP</span>
+                <span className="text-xs font-mono font-semibold bg-accent/10 text-accent px-2 py-0.5 rounded-md">{CURRENT_CUSTOMER_ALIAS}</span>
+                {isVip(CURRENT_CUSTOMER_ALIAS) && (
+                  <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950">
+                    <Crown className="w-2.5 h-2.5" /> VIP
+                  </span>
+                )}
               </div>
+
               <div className="flex items-center gap-1 mt-0.5">
                 <Mail className="w-3 h-3 text-muted-foreground" />
                 <p className="text-xs text-muted-foreground">{savedEmail}</p>

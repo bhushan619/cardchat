@@ -6,8 +6,11 @@ const KEY = "cardchat_vip_customers";
 type Listener = () => void;
 const listeners = new Set<Listener>();
 
-// Seed: customers already tagged "VIP" in mock data.
-const SEED = ["A7X3KP", "R4P8TN", "W8T4FJ"];
+// Seed: customers already tagged "VIP" in mock data (incl. the demo customer app account).
+const SEED = ["A7X3KP", "R4P8TN", "W8T4FJ", "J4D9KP"];
+
+// Alias of the signed-in customer in the prototype customer app.
+export const CURRENT_CUSTOMER_ALIAS = "J4D9KP";
 
 function read(): string[] {
   try {
