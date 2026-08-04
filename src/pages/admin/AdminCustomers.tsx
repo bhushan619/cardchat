@@ -100,6 +100,22 @@ export default function AdminCustomers() {
     return matchesSearch && matchesStatus && matchesChannel && matchesLine && matchesVip;
   });
 
+  // Bulk VIP selection — VIP applies to in-app (TRTC) customers only.
+  const allSelected = filtered.length > 0 && filtered.every((c) => selectedIds.includes(c.id));
+  const selectableSelected = filtered.filter((c) => selectedIds.includes(c.id) && c.channel === "trtc");
+
+  const applyBulkVip = () => {
+    if (!bulkAction) return;
+    selectableSelected.forEach((c) => setVip(c.alias, bulkAction === "set"));
+    toast.success(
+      bulkAction === "set"
+        ? `${selectableSelected.length} customer(s) set as VIP`
+        : `VIP cancelled for ${selectableSelected.length} customer(s)`
+    );
+    setBulkAction(null);
+    setSelectedIds([]);
+  };
+
   // Get transactions for selected customer (mock: show all wallet transactions)
   const customerTransactions = walletTransactions;
 
