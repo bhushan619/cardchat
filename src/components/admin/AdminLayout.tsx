@@ -304,6 +304,14 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
                     <span className="text-xs font-bold text-foreground">{systemPriceControl.toFixed(2)}%</span>
                   </div>
                 )}
+                {/* Price Control hidden for Agent role */}
+                {role !== "agent" && (
+                  <div className="flex items-center gap-1.5">
+                    <TrendingUp className="w-3.5 h-3.5 text-accent" />
+                    <span className="text-[10px] text-muted-foreground">VIP Price Control</span>
+                    <span className="text-xs font-bold text-foreground">{systemPriceControl.toFixed(2)}%</span>
+                  </div>
+                )}
               </div>
             )}
             {topRight}
