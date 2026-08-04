@@ -2338,7 +2338,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         <DialogContent className="max-w-sm">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Wallet className="w-5 h-5 text-accent" /> Fund Adjustment
+              <Wallet className="w-5 h-5 text-accent" /> Points Adjustment
             </DialogTitle>
           </DialogHeader>
           {(() => {
@@ -2350,7 +2350,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             return (
               <>
                 <p className="text-sm text-muted-foreground">
-                  {fundAdjustType === "addition" ? "Add" : "Deduct"} funds{" "}
+                  {fundAdjustType === "addition" ? "Add" : "Deduct"} points{" "}
                   {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
                 </p>
 
