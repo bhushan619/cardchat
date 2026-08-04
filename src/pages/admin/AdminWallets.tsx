@@ -1,21 +1,26 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Wallet, Plus, ArrowDownLeft, ArrowUpRight, Download, Search, X, Building2, RefreshCw, Coins } from "lucide-react";
+import {
+  Wallet,
+  Plus,
+  ArrowDownLeft,
+  ArrowUpRight,
+  Download,
+  Search,
+  X,
+  Building2,
+  RefreshCw,
+  Coins,
+} from "lucide-react";
 import PointsAmount from "@/components/admin/PointsAmount";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
-} from "@/components/ui/dialog";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { parse } from "date-fns";
 import { formatDate } from "@/lib/utils";
 
@@ -34,12 +39,84 @@ type PlatformRecord = {
 };
 
 const initialRecords: PlatformRecord[] = [
-  { id: "PW-001", transferId: "TRF-001", orderId: "—", customer: "—", type: "deposit", amount: 2000000, nairaRate: 289, description: "Operational funding", date: "18/03/2026", time: "08:00 AM", remark: "Weekly ops funding" },
-  { id: "PW-002", transferId: "TRF-002", orderId: "ORD-20260318-001", customer: "A7X3KP", type: "disbursement", amount: 215200, nairaRate: 289, description: "Auto-credit — iTunes US trade", date: "18/03/2026", time: "10:42 AM", remark: "iTunes US trade" },
-  { id: "PW-003", transferId: "TRF-003", orderId: "ORD-20260317-005", customer: "K9M2BL", type: "disbursement", amount: 93000, nairaRate: 270, description: "Auto-credit — Amazon US trade", date: "17/03/2026", time: "03:20 PM", remark: "Amazon US trade" },
-  { id: "PW-004", transferId: "TRF-004", orderId: "—", customer: "—", type: "deposit", amount: 1500000, nairaRate: 270, description: "Weekly top-up", date: "15/03/2026", time: "09:00 AM", remark: "Scheduled top-up" },
-  { id: "PW-005", transferId: "TRF-005", orderId: "ORD-20260315-008", customer: "B5N1QW", type: "disbursement", amount: 62000, nairaRate: 255, description: "Auto-credit — iTunes UK trade", date: "15/03/2026", time: "02:10 PM", remark: "iTunes UK trade" },
-  { id: "PW-006", transferId: "TRF-006", orderId: "ORD-20260316-003", customer: "R4P8TN", type: "disbursement", amount: 186000, nairaRate: 255, description: "Auto-credit — Steam US trade", date: "16/03/2026", time: "09:30 AM", remark: "Steam US trade" },
+  {
+    id: "PW-001",
+    transferId: "TRF-001",
+    orderId: "—",
+    customer: "—",
+    type: "deposit",
+    amount: 2000000,
+    nairaRate: 289,
+    description: "Operational funding",
+    date: "18/03/2026",
+    time: "08:00 AM",
+    remark: "Weekly ops funding",
+  },
+  {
+    id: "PW-002",
+    transferId: "TRF-002",
+    orderId: "ORD-20260318-001",
+    customer: "A7X3KP",
+    type: "disbursement",
+    amount: 215200,
+    nairaRate: 289,
+    description: "Auto-credit — iTunes US trade",
+    date: "18/03/2026",
+    time: "10:42 AM",
+    remark: "iTunes US trade",
+  },
+  {
+    id: "PW-003",
+    transferId: "TRF-003",
+    orderId: "ORD-20260317-005",
+    customer: "K9M2BL",
+    type: "disbursement",
+    amount: 93000,
+    nairaRate: 270,
+    description: "Auto-credit — Amazon US trade",
+    date: "17/03/2026",
+    time: "03:20 PM",
+    remark: "Amazon US trade",
+  },
+  {
+    id: "PW-004",
+    transferId: "TRF-004",
+    orderId: "—",
+    customer: "—",
+    type: "deposit",
+    amount: 1500000,
+    nairaRate: 270,
+    description: "Weekly top-up",
+    date: "15/03/2026",
+    time: "09:00 AM",
+    remark: "Scheduled top-up",
+  },
+  {
+    id: "PW-005",
+    transferId: "TRF-005",
+    orderId: "ORD-20260315-008",
+    customer: "B5N1QW",
+    type: "disbursement",
+    amount: 62000,
+    nairaRate: 255,
+    description: "Auto-credit — iTunes UK trade",
+    date: "15/03/2026",
+    time: "02:10 PM",
+    remark: "iTunes UK trade",
+  },
+  {
+    id: "PW-006",
+    transferId: "TRF-006",
+    orderId: "ORD-20260316-003",
+    customer: "R4P8TN",
+    type: "disbursement",
+    amount: 186000,
+    nairaRate: 255,
+    description: "Auto-credit — Steam US trade",
+    date: "16/03/2026",
+    time: "09:30 AM",
+    remark: "Steam US trade",
+  },
 ];
 
 function parseRecordDate(r: PlatformRecord): Date {
@@ -50,7 +127,7 @@ function parseRecordDate(r: PlatformRecord): Date {
   }
 }
 
-const uniqueCustomers = [...new Set(initialRecords.map(r => r.customer).filter(c => c !== "—"))];
+const uniqueCustomers = [...new Set(initialRecords.map((r) => r.customer).filter((c) => c !== "—"))];
 
 export default function AdminWallets() {
   const [records, setRecords] = useState<PlatformRecord[]>(initialRecords);
@@ -66,12 +143,13 @@ export default function AdminWallets() {
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
-  const totalDeposits = records.filter(r => r.type === "deposit").reduce((s, r) => s + r.amount, 0);
-  const totalDisbursements = records.filter(r => r.type === "disbursement").reduce((s, r) => s + r.amount, 0);
+  const totalDeposits = records.filter((r) => r.type === "deposit").reduce((s, r) => s + r.amount, 0);
+  const totalDisbursements = records.filter((r) => r.type === "disbursement").reduce((s, r) => s + r.amount, 0);
   const platformBalance = totalDeposits - totalDisbursements;
 
-  const filtered = records.filter(r => {
-    const matchSearch = !search ||
+  const filtered = records.filter((r) => {
+    const matchSearch =
+      !search ||
       r.id.toLowerCase().includes(search.toLowerCase()) ||
       r.transferId.toLowerCase().includes(search.toLowerCase()) ||
       r.orderId.toLowerCase().includes(search.toLowerCase()) ||
@@ -107,7 +185,7 @@ export default function AdminWallets() {
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       remark: depositRemark || "Manual deposit",
     };
-    setRecords(prev => [record, ...prev]);
+    setRecords((prev) => [record, ...prev]);
     toast.success(`${amount.toLocaleString()} points added to platform wallet`);
     setDepositAmount("");
     setDepositDescription("");
@@ -116,8 +194,19 @@ export default function AdminWallets() {
   };
 
   const handleExport = () => {
-    const header = ["Transfer ID", "Order ID", "Customer", "Type", "Description", "Points Rate", "Amount (Points)", "Date", "Time", "Remark"];
-    const rows = filtered.map(r => [
+    const header = [
+      "Transfer ID",
+      "Order ID",
+      "Customer",
+      "Type",
+      "Description",
+      "Points Rate",
+      "Amount (Points)",
+      "Date",
+      "Time",
+      "Remark",
+    ];
+    const rows = filtered.map((r) => [
       r.transferId,
       r.orderId,
       r.customer,
@@ -129,7 +218,7 @@ export default function AdminWallets() {
       r.time,
       `"${r.remark}"`,
     ]);
-    const csv = [header.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const csv = [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
@@ -167,18 +256,27 @@ export default function AdminWallets() {
 
         <div className="grid grid-cols-5 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1"><Coins className="w-5 h-5" />{platformBalance.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1">
+              <Coins className="w-5 h-5" />
+              {platformBalance.toLocaleString()}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">Platform Balance</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-success inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDeposits.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-success inline-flex items-center gap-1">
+              <Coins className="w-5 h-5" />
+              {totalDeposits.toLocaleString()}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">Total Deposits</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
-            <p className="text-2xl font-heading font-bold text-warning inline-flex items-center gap-1"><Coins className="w-5 h-5" />{totalDisbursements.toLocaleString()}</p>
+            <p className="text-2xl font-heading font-bold text-warning inline-flex items-center gap-1">
+              <Coins className="w-5 h-5" />
+              {totalDisbursements.toLocaleString()}
+            </p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
-          {[
+          {/* {[
             { name: "PalmPay 1", account: "****8821", balance: 4820500, lastSync: "2 min ago" },
             { name: "PalmPay 2", account: "****4477", balance: 1265300, lastSync: "5 min ago" },
           ].map((p) => (
@@ -206,7 +304,7 @@ export default function AdminWallets() {
                 <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
               </p>
             </div>
-          ))}
+          ))} */}
         </div>
 
         {/* Filters */}
@@ -214,9 +312,14 @@ export default function AdminWallets() {
         <div className="flex flex-wrap items-end gap-3 mb-4">
           <div className="relative max-w-[200px]">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input placeholder="Search..." className="pl-10 h-9 text-sm" value={search} onChange={e => setSearch(e.target.value)} />
+            <Input
+              placeholder="Search..."
+              className="pl-10 h-9 text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
           </div>
-          <Select value={typeFilter} onValueChange={v => setTypeFilter(v as typeof typeFilter)}>
+          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as typeof typeFilter)}>
             <SelectTrigger className="w-[140px] h-9 text-sm">
               <SelectValue />
             </SelectTrigger>
@@ -232,8 +335,10 @@ export default function AdminWallets() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Customers</SelectItem>
-              {uniqueCustomers.map(c => (
-                <SelectItem key={c} value={c}>{c}</SelectItem>
+              {uniqueCustomers.map((c) => (
+                <SelectItem key={c} value={c}>
+                  {c}
+                </SelectItem>
               ))}
             </SelectContent>
           </Select>
@@ -247,15 +352,32 @@ export default function AdminWallets() {
               <DateTimePicker value={dateTo} onChange={setDateTo} />
             </div>
             {hasActiveFilters && (
-              <Button variant="ghost" size="sm" className="h-9 px-2 text-xs text-muted-foreground" onClick={() => { setSearch(""); setTypeFilter("all"); setCustomerFilter("all"); setDateFrom(undefined); setDateTo(undefined); }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-9 px-2 text-xs text-muted-foreground"
+                onClick={() => {
+                  setSearch("");
+                  setTypeFilter("all");
+                  setCustomerFilter("all");
+                  setDateFrom(undefined);
+                  setDateTo(undefined);
+                }}
+              >
                 <X className="w-3 h-3 mr-1" /> Clear All
               </Button>
             )}
-            <Button size="sm" className="h-9 gap-1.5 text-sm bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
+            <Button
+              size="sm"
+              className="h-9 gap-1.5 text-sm bg-accent text-accent-foreground hover:bg-accent/90"
+              onClick={() => {}}
+            >
               <Search className="w-3.5 h-3.5" /> Search
             </Button>
           </div>
-          <span className="text-xs text-muted-foreground ml-auto">{filtered.length} record{filtered.length !== 1 ? "s" : ""}</span>
+          <span className="text-xs text-muted-foreground ml-auto">
+            {filtered.length} record{filtered.length !== 1 ? "s" : ""}
+          </span>
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
@@ -274,10 +396,16 @@ export default function AdminWallets() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filtered.map(r => (
+              {filtered.map((r) => (
                 <TableRow key={r.id} className="hover:bg-muted/30">
                   <TableCell className="text-xs font-medium text-accent">{r.transferId}</TableCell>
-                  <TableCell className="text-xs font-medium">{r.orderId === "—" ? <span className="text-muted-foreground">—</span> : <span className="text-accent">{r.orderId}</span>}</TableCell>
+                  <TableCell className="text-xs font-medium">
+                    {r.orderId === "—" ? (
+                      <span className="text-muted-foreground">—</span>
+                    ) : (
+                      <span className="text-accent">{r.orderId}</span>
+                    )}
+                  </TableCell>
                   <TableCell>
                     {r.customer === "—" ? (
                       <span className="text-xs text-muted-foreground">—</span>
@@ -297,17 +425,27 @@ export default function AdminWallets() {
                       ) : (
                         <ArrowUpRight className="w-3.5 h-3.5 text-warning" />
                       )}
-                      <span className={`text-xs font-medium capitalize ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
+                      <span
+                        className={`text-xs font-medium capitalize ${r.type === "deposit" ? "text-success" : "text-warning"}`}
+                      >
                         {r.type}
                       </span>
                     </div>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">{r.description}</TableCell>
-                  <TableCell className="text-right text-xs font-medium"><PointsAmount value={r.nairaRate} className="justify-end" /></TableCell>
-                  <TableCell className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}>
+                  <TableCell className="text-xs text-muted-foreground max-w-[200px] truncate">
+                    {r.description}
+                  </TableCell>
+                  <TableCell className="text-right text-xs font-medium">
+                    <PointsAmount value={r.nairaRate} className="justify-end" />
+                  </TableCell>
+                  <TableCell
+                    className={`text-right text-sm font-bold ${r.type === "deposit" ? "text-success" : "text-warning"}`}
+                  >
                     <PointsAmount value={r.amount} className="justify-end" prefix={r.type === "deposit" ? "+" : "-"} />
                   </TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
+                  <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
+                    {r.date} · {r.time}
+                  </TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
                 </TableRow>
               ))}
@@ -334,11 +472,13 @@ export default function AdminWallets() {
           </DialogHeader>
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-xs font-medium flex items-center gap-1">Amount (<Coins className="w-3 h-3" /> Points)</label>
+              <label className="text-xs font-medium flex items-center gap-1">
+                Amount (<Coins className="w-3 h-3" /> Points)
+              </label>
               <Input
                 placeholder="Enter amount..."
                 value={depositAmount}
-                onChange={e => setDepositAmount(e.target.value.replace(/[^0-9,]/g, ""))}
+                onChange={(e) => setDepositAmount(e.target.value.replace(/[^0-9,]/g, ""))}
               />
             </div>
             <div className="space-y-2">
@@ -346,7 +486,7 @@ export default function AdminWallets() {
               <Textarea
                 placeholder="e.g. Weekly operational funding..."
                 value={depositDescription}
-                onChange={e => setDepositDescription(e.target.value)}
+                onChange={(e) => setDepositDescription(e.target.value)}
                 rows={2}
               />
             </div>
@@ -355,7 +495,7 @@ export default function AdminWallets() {
               <Input
                 placeholder="e.g. Scheduled top-up..."
                 value={depositRemark}
-                onChange={e => setDepositRemark(e.target.value)}
+                onChange={(e) => setDepositRemark(e.target.value)}
               />
             </div>
             <Button className="w-full" onClick={handleDeposit}>
