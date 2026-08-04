@@ -401,13 +401,23 @@ export default function CardlightPanel({
         {/* Login Screen */}
         {!isLoggedIn && mfaEnrollRequired ? (
           <div className="p-6">
-            <MfaEnroll
-              account={account}
-              compact
-              onEnrolled={handleMfaVerified}
-              onBack={() => setMfaEnrollRequired(false)}
-            />
+            <div className="max-w-sm mx-auto text-center space-y-4">
+              <div className="w-12 h-12 rounded-full bg-destructive/10 text-destructive flex items-center justify-center mx-auto">
+                <ShieldAlert className="w-6 h-6" />
+              </div>
+              <div className="space-y-1">
+                <h4 className="font-heading font-bold text-base">MFA not set up</h4>
+                <p className="text-xs text-muted-foreground">
+                  This Cardlight account ({account}) has no authenticator bound. Set up MFA in Cardlight
+                  first, then return here to log in with your 6-digit code.
+                </p>
+              </div>
+              <Button variant="outline" className="w-full" onClick={() => setMfaEnrollRequired(false)}>
+                Back to password login
+              </Button>
+            </div>
           </div>
+
         ) : !isLoggedIn && mfaRequired ? (
           <div className="p-6">
             <MfaChallenge
