@@ -431,7 +431,6 @@ export default function AdminCustomers() {
                   ["Last Active", `${selectedCustomer.lastActive} ago`],
                   ["Joined", selectedCustomer.joinedDate],
                   ["Last Message", selectedCustomer.lastMessage],
-                  ["Last Message", selectedCustomer.lastMessage],
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between text-sm">
                     <span className="text-muted-foreground">{label}</span>
