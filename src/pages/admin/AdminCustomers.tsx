@@ -175,11 +175,16 @@ export default function AdminCustomers() {
 
         {selectedIds.length > 0 && (
           <div className="flex items-center gap-3 mb-3 px-3 py-2 rounded-lg border bg-muted/40">
-            <span className="text-xs font-medium">{selectedIds.length} selected</span>
+            <span className="text-xs font-medium">
+              {selectedIds.length} selected
+              {selectableSelected.length !== selectedIds.length && (
+                <span className="text-muted-foreground font-normal"> · {selectableSelected.length} eligible (in-app only)</span>
+              )}
+            </span>
             <Button
               size="sm"
               className="h-7 px-2 text-[11px] gap-1 bg-amber-500 text-amber-950 hover:bg-amber-500/90"
-              onClick={() => setBulkConfirm(true)}
+              onClick={() => setBulkAction("set")}
               disabled={selectableSelected.length === 0}
             >
               <Crown className="w-3 h-3" /> Set VIP
@@ -188,7 +193,7 @@ export default function AdminCustomers() {
               size="sm"
               variant="outline"
               className="h-7 px-2 text-[11px] gap-1"
-              onClick={() => setBulkConfirm(false as unknown as true) || setBulkAction("remove")}
+              onClick={() => setBulkAction("cancel")}
               disabled={selectableSelected.length === 0}
             >
               <Crown className="w-3 h-3" /> Cancel VIP
@@ -198,6 +203,7 @@ export default function AdminCustomers() {
             </button>
           </div>
         )}
+
 
         <div className="bg-card border rounded-xl overflow-hidden">
           <Table>
