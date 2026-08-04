@@ -37,6 +37,8 @@ const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "
 const channels: Withdrawal["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
+const walletByAlias = Object.fromEntries(customerWallets.map((w) => [w.alias, w]));
+
 // Build consolidated withdrawals from customer wallet mock data
 const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
   const count = 2 + (i % 3);
