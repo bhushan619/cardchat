@@ -87,10 +87,13 @@ const remarksByFormat: Record<string, string[]> = {
 
 export const cardRates = baseRates.map((r, i) => {
   const pool = remarksByFormat[r.cardFormat] || [""];
+  const buyRate = Math.round(r.sellRate * 0.94);
   return {
     id: i + 1,
     ...r,
-    buyRate: Math.round(r.sellRate * 0.94),
+    buyRate,
+    // VIP customers get the VIP price control band (88% vs 85%)
+    vipBuyRate: Math.round(buyRate * (88 / 85)),
     remarks: pool[i % pool.length],
   };
 });
