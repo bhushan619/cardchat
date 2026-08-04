@@ -66,7 +66,7 @@ export default function CustomerHome() {
   const calcRate = cardRates.find(
     (r) => r.cardType === calcCardType && r.currency === calcCurrency && r.cardFormat === calcFormat,
   );
-  const calcResult = calcRate && calcDenom ? Number(calcDenom) * calcRate.buyRate : null;
+  const calcResult = calcRate && calcDenom ? Number(calcDenom) * (isVipCustomer ? calcRate.vipBuyRate : calcRate.buyRate) : null;
   const calcDenominations = calcRate ? expandDenominations(calcRate.denominationSpec) : [];
 
   const coreActions = [
