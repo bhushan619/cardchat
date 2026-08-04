@@ -302,7 +302,7 @@ export default function AdminWithdrawals() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
                     No withdrawal requests match your filters
                   </TableCell>
                 </TableRow>
