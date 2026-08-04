@@ -2,7 +2,7 @@ import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
 import { useRef } from "react";
-import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2, MessageCircle } from "lucide-react";
+import { Users, Plus, Search, MoreVertical, Shield, X, Lock, Eye, EyeOff, Check, Mail, Copy, ExternalLink, Send, Camera, Upload, Trash2, MessageCircle, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/select";
 import TrtcGroupsModal from "@/components/admin/TrtcGroupsModal";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { isMfaBound, resetMfa } from "@/lib/mfaEnrollment";
 
 type User = {
   id: number;
@@ -73,6 +74,7 @@ export default function AdminUsers() {
   const [deleteUser, setDeleteUser] = useState<User | null>(null);
   const [suspendUser, setSuspendUser] = useState<User | null>(null);
   const [groupsModalOpen, setGroupsModalOpen] = useState(false);
+  const [mfaResetUser, setMfaResetUser] = useState<User | null>(null);
 
   // Password invite (simulated email)
   const [inviteModal, setInviteModal] = useState<{ user: User; token: string; resent?: boolean } | null>(null);
@@ -234,6 +236,13 @@ export default function AdminUsers() {
 
   const getUserPinStatus = (u: User | null) => !!u && !!localStorage.getItem(`adminPin_${u.role}`);
 
+  const handleResetMfa = () => {
+    if (!mfaResetUser) return;
+    resetMfa(mfaResetUser.email);
+    toast.success(`MFA reset for ${mfaResetUser.name} — authenticator must be bound again at next login`);
+    setMfaResetUser(null);
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -348,6 +357,10 @@ export default function AdminUsers() {
                         <DropdownMenuItem onClick={() => openPinModal(u)}>
                           <Lock className="w-3.5 h-3.5 mr-2" />
                           {getUserPinStatus(u) ? "Update PIN" : "Create PIN"}
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setMfaResetUser(u)}>
+                          <ShieldCheck className="w-3.5 h-3.5 mr-2" />
+                          Reset MFA
                         </DropdownMenuItem>
                         <DropdownMenuItem onClick={() => setSuspendUser(u)}>
                           {u.status === "suspended" ? "Reactivate" : "Suspend"}
@@ -591,6 +604,30 @@ export default function AdminUsers() {
       </Dialog>
 
       {/* Suspend Confirmation */}
+      {/* Reset MFA */}
+      <Dialog open={!!mfaResetUser} onOpenChange={() => setMfaResetUser(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Confirm MFA Reset</DialogTitle>
+            <DialogDescription className="pt-2 leading-relaxed">
+              Reset MFA authentication for {mfaResetUser?.name}?<br />
+              After resetting, the account status will become pending binding and the authenticator
+              must be bound again at the next login.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="rounded-md border border-border/60 bg-muted/40 p-3 text-xs text-muted-foreground">
+            Current status:{" "}
+            <span className="font-medium text-foreground">
+              {mfaResetUser && isMfaBound(mfaResetUser.email) ? "Bound" : "Pending binding"}
+            </span>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setMfaResetUser(null)}>Cancel</Button>
+            <Button onClick={handleResetMfa}>Confirm Reset</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       <Dialog open={!!suspendUser} onOpenChange={() => setSuspendUser(null)}>
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
