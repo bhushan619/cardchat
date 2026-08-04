@@ -70,9 +70,7 @@ export default function MfaChallenge({ account, onVerified, onBack, compact }: M
           <ShieldCheck className="w-5 h-5 text-accent" />
         </div>
         <h4 className="font-heading font-bold text-base">MFA Verification</h4>
-        <p className="text-xs text-muted-foreground">
-          Enter the code from your authenticator app to complete sign in.
-        </p>
+        <p className="text-xs text-muted-foreground">Enter the code from your authenticator app to complete sign in.</p>
         <p className="text-xs text-muted-foreground">
           Account: <span className="font-medium text-foreground">{account}</span>
         </p>
@@ -127,7 +125,7 @@ export default function MfaChallenge({ account, onVerified, onBack, compact }: M
         >
           <RefreshCw className="w-3 h-3" /> Refresh verification
         </button>
-        <p className="text-[10px] text-muted-foreground">Code refreshes in {secondsLeft}s</p>
+
         <button
           type="button"
           onClick={onBack}
