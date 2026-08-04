@@ -288,6 +288,9 @@ export default function AdminWithdrawals() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="text-right text-xs font-semibold">
+                      Pts {(walletByAlias[w.alias]?.balance ?? 0).toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>
