@@ -254,7 +254,7 @@ export default function AdminWallets() {
           </div>
         </div>
 
-        <div className="grid grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1">
               <Coins className="w-5 h-5" />
