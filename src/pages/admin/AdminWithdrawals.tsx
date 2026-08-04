@@ -325,6 +325,7 @@ export default function AdminWithdrawals() {
               {[
                 ["Customer", selected.alias],
                 ["Amount", `Pts ${selected.amount.toLocaleString()}`],
+                ["Current Balance", `Pts ${(walletByAlias[selected.alias]?.balance ?? 0).toLocaleString()}`],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],
