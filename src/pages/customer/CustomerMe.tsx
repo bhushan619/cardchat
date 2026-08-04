@@ -15,6 +15,8 @@ import { toast } from "sonner";
 import { hashPin, verifyPin } from "@/lib/securePin";
 import { generateBase32Secret, buildOtpAuthUri, renderQrDataUrl } from "@/lib/totpDemo";
 import { formatDate } from "@/lib/utils";
+import { isVip, CURRENT_CUSTOMER_ALIAS } from "@/lib/vipCustomers";
+import { Crown } from "lucide-react";
 
 const PIN_STORAGE_KEY = "cc_customer_txn_pin";
 const TOTP_SECRET_KEY = "cc_customer_totp_secret";
