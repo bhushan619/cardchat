@@ -22,7 +22,9 @@ import {
   Wallet,
   TrendingUp,
   TrendingDown,
+  Crown,
 } from "lucide-react";
+import { isVip, CURRENT_CUSTOMER_ALIAS } from "@/lib/vipCustomers";
 import { Input } from "@/components/ui/input";
 import { useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
