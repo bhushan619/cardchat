@@ -219,7 +219,20 @@ export default function CustomerHome() {
                       </div>
                     </div>
                     <div className="text-right shrink-0">
-                      <p className="text-sm font-semibold text-accent tabular-nums">₦{rate.buyRate}</p>
+                      <div className="flex items-center justify-end gap-1.5">
+                        {isVipCustomer && (
+                          <span className="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950">
+                            <Crown className="w-2.5 h-2.5" /> VIP
+                          </span>
+                        )}
+                        <p className="text-sm font-semibold text-accent tabular-nums">
+                          ₦{isVipCustomer ? rate.vipBuyRate : rate.buyRate}
+                        </p>
+                      </div>
+                      {isVipCustomer && (
+                        <p className="text-[9px] text-muted-foreground line-through tabular-nums">₦{rate.buyRate}</p>
+                      )}
+
                       {(() => {
                         // Deterministic pseudo-change per rate id: range -1.5% .. +1.5%
                         const seed = (rate.id * 9301 + 49297) % 233280;
