@@ -173,10 +173,43 @@ export default function AdminCustomers() {
           </Button>
         </div>
 
+        {selectedIds.length > 0 && (
+          <div className="flex items-center gap-3 mb-3 px-3 py-2 rounded-lg border bg-muted/40">
+            <span className="text-xs font-medium">{selectedIds.length} selected</span>
+            <Button
+              size="sm"
+              className="h-7 px-2 text-[11px] gap-1 bg-amber-500 text-amber-950 hover:bg-amber-500/90"
+              onClick={() => setBulkConfirm(true)}
+              disabled={selectableSelected.length === 0}
+            >
+              <Crown className="w-3 h-3" /> Set VIP
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="h-7 px-2 text-[11px] gap-1"
+              onClick={() => setBulkConfirm(false as unknown as true) || setBulkAction("remove")}
+              disabled={selectableSelected.length === 0}
+            >
+              <Crown className="w-3 h-3" /> Cancel VIP
+            </Button>
+            <button className="text-[11px] text-muted-foreground hover:text-foreground ml-auto" onClick={() => setSelectedIds([])}>
+              Clear selection
+            </button>
+          </div>
+        )}
+
         <div className="bg-card border rounded-xl overflow-hidden">
           <Table>
             <TableHeader>
               <TableRow className="bg-muted/50">
+                <TableHead className="w-10">
+                  <Checkbox
+                    checked={allSelected}
+                    onCheckedChange={(v) => setSelectedIds(v ? filtered.map((c) => c.id) : [])}
+                    aria-label="Select all customers"
+                  />
+                </TableHead>
                 <TableHead className="text-xs font-semibold">Alias</TableHead>
                 <TableHead className="text-xs font-semibold text-center">VIP</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
@@ -185,7 +218,6 @@ export default function AdminCustomers() {
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Total points</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Points account</TableHead>
-                <TableHead className="text-xs font-semibold text-center">Tags</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Last Active</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Joined</TableHead>
                 <TableHead className="text-xs font-semibold text-right"></TableHead>
@@ -195,32 +227,34 @@ export default function AdminCustomers() {
               {filtered.map((c) => (
                 <TableRow key={c.id} className="hover:bg-muted/30">
                   <TableCell>
+                    <Checkbox
+                      checked={selectedIds.includes(c.id)}
+                      onCheckedChange={(v) =>
+                        setSelectedIds((prev) => (v ? [...prev, c.id] : prev.filter((id) => id !== c.id)))
+                      }
+                      aria-label={`Select ${c.alias}`}
+                    />
+                  </TableCell>
+                  <TableCell>
                     <div className="flex items-center gap-2">
                       <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
                         {c.alias.slice(-2)}
                       </div>
                       <span className="text-sm font-medium">{c.alias}</span>
-                      {vipAliases.includes(c.alias) && (
-                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500/15 text-amber-500">
-                          <Crown className="w-2.5 h-2.5" /> VIP
-                        </span>
-                      )}
                     </div>
                   </TableCell>
                   <TableCell className="text-center">
-                    <Button
-                      size="sm"
-                      variant={vipAliases.includes(c.alias) ? "outline" : "ghost"}
-                      className={`h-7 px-2 text-[11px] gap-1 ${
-                        vipAliases.includes(c.alias)
-                          ? "border-amber-500/40 text-amber-500 hover:bg-amber-500/10"
-                          : "text-muted-foreground hover:text-amber-500"
-                      }`}
-                      onClick={() => setVipConfirm({ alias: c.alias, next: !vipAliases.includes(c.alias) })}
-                    >
-                      <Crown className="w-3 h-3" />
-                      {vipAliases.includes(c.alias) ? "Cancel VIP" : "Set VIP"}
-                    </Button>
+                    {c.channel === "trtc" ? (
+                      vipAliases.includes(c.alias) ? (
+                        <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-amber-950">
+                          <Crown className="w-2.5 h-2.5" /> VIP
+                        </span>
+                      ) : (
+                        <span className="text-[10px] text-muted-foreground">Normal</span>
+                      )
+                    ) : (
+                      <span className="text-[10px] text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <span
@@ -255,22 +289,6 @@ export default function AdminCustomers() {
                       <Coins className="w-3 h-3 text-accent" />{c.walletBalance.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell className="text-center">
-                    <div className="flex justify-center gap-1">
-                      {c.tags.length > 0 ? (
-                        c.tags.map((t) => (
-                          <span
-                            key={t}
-                            className="text-[10px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium"
-                          >
-                            {t}
-                          </span>
-                        ))
-                      ) : (
-                        <span className="text-[10px] text-muted-foreground">—</span>
-                      )}
-                    </div>
-                  </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">{c.lastActive} ago</TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground">{c.joinedDate}</TableCell>
                   <TableCell className="text-right">
@@ -283,6 +301,7 @@ export default function AdminCustomers() {
                   </TableCell>
                 </TableRow>
               ))}
+
               {filtered.length === 0 && (
                 <TableRow>
                   <TableCell colSpan={12} className="text-center py-8 text-muted-foreground text-sm">
