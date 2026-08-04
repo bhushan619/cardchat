@@ -45,6 +45,8 @@ export default function CustomerHome() {
   const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
   const [balanceVisible, setBalanceVisible] = useState(false);
   const [expandedRemarks, setExpandedRemarks] = useState<Set<number>>(new Set());
+  const isVipCustomer = isVip(CURRENT_CUSTOMER_ALIAS);
+
 
   const toggleRemark = (id: number) => {
     const next = new Set(expandedRemarks);
