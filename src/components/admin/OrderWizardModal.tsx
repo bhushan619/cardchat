@@ -29,6 +29,8 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
 import MfaChallenge from "@/components/admin/MfaChallenge";
+import MfaEnroll from "@/components/admin/MfaEnroll";
+import { isMfaBound } from "@/lib/mfaEnrollment";
 
 
 // Card brands with their available currencies
@@ -167,6 +169,7 @@ export default function CardlightPanel({
   const [password, setPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [mfaRequired, setMfaRequired] = useState(false);
+  const [mfaEnrollRequired, setMfaEnrollRequired] = useState(false);
 
 
   // Order form state
@@ -205,12 +208,17 @@ export default function CardlightPanel({
     setLoginLoading(true);
     setTimeout(() => {
       setLoginLoading(false);
-      setMfaRequired(true);
+      if (isMfaBound(account)) {
+        setMfaRequired(true);
+      } else {
+        setMfaEnrollRequired(true);
+      }
     }, 800);
   };
 
   const handleMfaVerified = () => {
     setMfaRequired(false);
+    setMfaEnrollRequired(false);
     setIsLoggedIn(true);
     sessionStorage.setItem("cardlight_logged_in", "true");
     sessionStorage.setItem("cardlight_account", account);
@@ -391,7 +399,16 @@ export default function CardlightPanel({
 
       <div className="flex-1 overflow-y-auto">
         {/* Login Screen */}
-        {!isLoggedIn && mfaRequired ? (
+        {!isLoggedIn && mfaEnrollRequired ? (
+          <div className="p-6">
+            <MfaEnroll
+              account={account}
+              compact
+              onEnrolled={handleMfaVerified}
+              onBack={() => setMfaEnrollRequired(false)}
+            />
+          </div>
+        ) : !isLoggedIn && mfaRequired ? (
           <div className="p-6">
             <MfaChallenge
               account={account}
