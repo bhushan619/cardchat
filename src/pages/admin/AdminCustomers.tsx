@@ -430,7 +430,7 @@ export default function AdminCustomers() {
                   ["Total points", String(selectedCustomer.totalValue).replace(/₦/g, "")],
                   ["Last Active", `${selectedCustomer.lastActive} ago`],
                   ["Joined", selectedCustomer.joinedDate],
-                  ["Tags", selectedCustomer.tags.join(", ") || "None"],
+                  ["Last Message", selectedCustomer.lastMessage],
                   ["Last Message", selectedCustomer.lastMessage],
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between text-sm">
