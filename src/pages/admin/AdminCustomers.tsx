@@ -523,6 +523,30 @@ export default function AdminCustomers() {
         </DialogContent>
       </Dialog>
 
+      {/* Bulk VIP confirmation */}
+      <Dialog open={!!bulkAction} onOpenChange={(o) => !o && setBulkAction(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Crown className="w-4 h-4 text-amber-500" />
+              {bulkAction === "set" ? "Set VIP for selected" : "Cancel VIP for selected"}
+            </DialogTitle>
+            <DialogDescription>
+              {bulkAction === "set"
+                ? `${selectableSelected.length} in-app customer(s) will receive VIP pricing on all new orders.`
+                : `${selectableSelected.length} in-app customer(s) will go back to standard pricing.`}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setBulkAction(null)}>Cancel</Button>
+            <Button className="gap-1.5 bg-amber-500 text-white hover:bg-amber-500/90" onClick={applyBulkVip}>
+              <Crown className="w-3.5 h-3.5" /> Confirm
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+
     </AdminLayout>
   );
 }
