@@ -68,9 +68,12 @@ export default function AdminCustomers() {
   const [vipFilter, setVipFilter] = useState<string>("all");
   const [vipAliases, setVipAliases] = useState<string[]>(() => listVipAliases());
   const [vipConfirm, setVipConfirm] = useState<{ alias: string; next: boolean } | null>(null);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [bulkAction, setBulkAction] = useState<"set" | "cancel" | null>(null);
   const waNumbers = listWaNumbers();
 
   useEffect(() => onVipChange(() => setVipAliases(listVipAliases())), []);
+
 
   const applyVip = () => {
     if (!vipConfirm) return;
