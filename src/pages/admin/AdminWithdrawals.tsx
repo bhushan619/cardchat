@@ -37,6 +37,8 @@ const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "
 const channels: Withdrawal["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
+const walletByAlias = Object.fromEntries(customerWallets.map((w) => [w.alias, w]));
+
 // Build consolidated withdrawals from customer wallet mock data
 const seed: Withdrawal[] = customerWallets.flatMap((w, i) => {
   const count = 2 + (i % 3);
@@ -249,6 +251,7 @@ export default function AdminWithdrawals() {
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Current Balance</TableHead>
                 <TableHead className="text-xs font-semibold">Requested</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
               </TableRow>
@@ -285,6 +288,9 @@ export default function AdminWithdrawals() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="text-right text-xs font-semibold">
+                      Pts {(walletByAlias[w.alias]?.balance ?? 0).toLocaleString()}
+                    </TableCell>
                     <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>
@@ -296,7 +302,7 @@ export default function AdminWithdrawals() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={8} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
                     No withdrawal requests match your filters
                   </TableCell>
                 </TableRow>
@@ -319,6 +325,7 @@ export default function AdminWithdrawals() {
               {[
                 ["Customer", selected.alias],
                 ["Amount", `Pts ${selected.amount.toLocaleString()}`],
+                ["Current Balance", `Pts ${(walletByAlias[selected.alias]?.balance ?? 0).toLocaleString()}`],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
                 ["Account Name", selected.accountName],
