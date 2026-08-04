@@ -31,7 +31,6 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
 import MfaChallenge from "@/components/admin/MfaChallenge";
-import MfaEnroll from "@/components/admin/MfaEnroll";
 import { isMfaBound } from "@/lib/mfaEnrollment";
 
 
