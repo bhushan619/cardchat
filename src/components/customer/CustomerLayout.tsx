@@ -2,6 +2,8 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BeginnerGuide, { guideSteps } from "./BeginnerGuide";
+import NotificationPermissionBar from "./NotificationPermissionBar";
+
 
 const tabs = [
   { id: "home", label: "Home", icon: Home, path: "/customer" },
@@ -57,7 +59,9 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <NotificationPermissionBar />
       <div className="flex-1 overflow-y-auto">{children}</div>
+
       <nav className="relative z-50 flex items-center justify-around border-t bg-card py-2 px-2 shrink-0">
         {tabs.map(tab => (
           <button
