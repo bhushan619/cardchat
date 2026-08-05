@@ -2,6 +2,8 @@ import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BeginnerGuide, { guideSteps } from "./BeginnerGuide";
+import NotificationPermissionBar from "./NotificationPermissionBar";
+
 
 const tabs = [
   { id: "home", label: "Home", icon: Home, path: "/customer" },

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { rewardsBalance } from "@/data/mock";
+import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 
 type RewardEntry = {
   id: string;
@@ -51,6 +52,7 @@ export default function CustomerRewards() {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <NotificationPermissionBar />
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
         <button onClick={() => navigate("/customer")} className="text-sm text-accent flex items-center gap-1">
           <ArrowLeft className="w-4 h-4" /> Back
