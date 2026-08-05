@@ -2,7 +2,7 @@ import NotificationPermissionBar from "@/components/customer/NotificationPermiss
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { blockAgent, unblockAgent, useBlockedAgents } from "@/lib/blockedAgents";
-import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, ShieldCheck, UserCheck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, ShieldCheck, UserCheck, ShieldAlert, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
@@ -529,24 +529,46 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
       {/* Chat Input */}
       <div className="border-t bg-card shrink-0">
-        <div className="flex items-center gap-2 px-3 py-3">
-          <Input
-            placeholder="Type a message..."
-            value={message}
-            onChange={e => setMessage(e.target.value)}
-            className="flex-1 border-0 bg-muted"
-          />
-          <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
-            <Camera className="w-4 h-4" />
-          </button>
-          <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
-            <Smile className="w-4 h-4" />
-          </button>
-          <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
-            <Send className="w-4 h-4 text-accent-foreground" />
-          </button>
-        </div>
+        {agentBlocked ? (
+          <div className="flex items-center gap-2.5 px-3 py-3">
+            <Ban className="w-4 h-4 text-destructive shrink-0" />
+            <p className="text-[11px] text-muted-foreground flex-1 leading-tight">
+              You blocked <strong className="text-foreground">{agentName}</strong>. Unblock to send messages, or pick another agent.
+            </p>
+            <button
+              onClick={() => doUnblock(agentName)}
+              className="shrink-0 text-[11px] font-semibold px-3 py-1.5 rounded-full bg-muted hover:bg-muted/70 transition-colors"
+            >
+              Unblock
+            </button>
+            <button
+              onClick={() => navigate("/customer/contacts")}
+              className="shrink-0 text-[11px] font-semibold px-3 py-1.5 rounded-full bg-accent text-accent-foreground"
+            >
+              Choose agent
+            </button>
+          </div>
+        ) : (
+          <div className="flex items-center gap-2 px-3 py-3">
+            <Input
+              placeholder="Type a message..."
+              value={message}
+              onChange={e => setMessage(e.target.value)}
+              className="flex-1 border-0 bg-muted"
+            />
+            <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
+              <Camera className="w-4 h-4" />
+            </button>
+            <button className="w-8 h-8 flex items-center justify-center text-muted-foreground hover:text-foreground rounded-md hover:bg-muted transition-colors shrink-0">
+              <Smile className="w-4 h-4" />
+            </button>
+            <button className="w-9 h-9 rounded-full bg-accent flex items-center justify-center shrink-0">
+              <Send className="w-4 h-4 text-accent-foreground" />
+            </button>
+          </div>
+        )}
       </div>
+
     </div>
   );
 }
