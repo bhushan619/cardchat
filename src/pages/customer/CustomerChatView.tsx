@@ -2,7 +2,7 @@ import NotificationPermissionBar from "@/components/customer/NotificationPermiss
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { blockAgent, unblockAgent, useBlockedAgents } from "@/lib/blockedAgents";
-import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, ShieldCheck, UserCheck, ShieldAlert } from "lucide-react";
+import { ArrowLeft, Send, CheckCircle, Clock, Loader2, Smile, Camera, XCircle, MoreVertical, Flag, ShieldBan, ShieldCheck, UserCheck, ShieldAlert, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { chatMessages } from "@/data/mock";
 import { Button } from "@/components/ui/button";
