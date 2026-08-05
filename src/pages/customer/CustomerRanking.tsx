@@ -1,3 +1,4 @@
+import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 import { useRef, useEffect, useState } from "react";
 import { Trophy, ArrowLeft, Medal, Info, ChevronRight, Flame } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -65,6 +66,7 @@ export default function CustomerRanking() {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0 sticky top-0 z-20">
         <div className="flex items-center gap-3">

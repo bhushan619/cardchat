@@ -1,3 +1,4 @@
+import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { blockAgent, unblockAgent, useBlockedAgents } from "@/lib/blockedAgents";
@@ -159,6 +160,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
         <button onClick={onBack} aria-label="Back"><ArrowLeft className="w-5 h-5" /></button>

@@ -1,3 +1,4 @@
+import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 import { useParams, useNavigate } from "react-router-dom";
 import { customerContacts } from "@/data/mock";
 import { ArrowLeft, MessageCircle, Star, Clock, Shield } from "lucide-react";
@@ -22,6 +23,7 @@ export default function AgentProfile() {
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <NotificationPermissionBar />
       {/* Header with gradient backdrop */}
       <div className="relative bg-gradient-to-b from-primary/20 to-background pt-12 pb-8 px-4">
         <button
