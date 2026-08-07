@@ -296,7 +296,7 @@ export default function AdminWallets() {
           <div className="bg-card border rounded-xl p-4 flex flex-col justify-center">
             <p className="text-xs font-medium text-muted-foreground mb-2 text-center">
               Payment Channel{" "}
-              <span className="text-muted-foreground/70 text-xs">(used by all withdrawals &amp; transfers)</span>
+              <span className="text-muted-foreground/70">(used by all withdrawals &amp; transfers)</span>
             </p>
             <div className="flex items-center gap-2">
               <Select value={paymentChannel} onValueChange={(v) => setPaymentChannel(v as PaymentChannelValue)}>
