@@ -135,6 +135,7 @@ export default function AdminWallets() {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositDescription, setDepositDescription] = useState("");
   const [depositRemark, setDepositRemark] = useState("");
+  const [paymentChannel, setPaymentChannel] = useState<string>("palmpay1");
 
   // Filters
   const [search, setSearch] = useState("");
