@@ -284,22 +284,24 @@ export default function AdminWallets() {
             </p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
-          <div className="bg-card border rounded-xl p-4 flex flex-col items-center justify-center">
-            <p className="text-xs font-medium text-muted-foreground mb-2">Payment Channel</p>
-            <Select value={paymentChannel} onValueChange={setPaymentChannel}>
-              <SelectTrigger className="w-full h-9 text-sm">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="palmpay1">PalmPay 1</SelectItem>
-                <SelectItem value="palmpay2">PalmPay 2</SelectItem>
-                <SelectItem value="palmpay3">PalmPay 3</SelectItem>
-                <SelectItem value="palmpay4">PalmPay 4</SelectItem>
-              </SelectContent>
-            </Select>
-            <Button size="sm" className="w-full mt-2 h-8 text-xs" onClick={handleSaveChannel}>
-              Save Selection
-            </Button>
+          <div className="bg-card border rounded-xl p-4 flex flex-col justify-center">
+            <p className="text-xs font-medium text-muted-foreground mb-2 text-center">Payment Channel</p>
+            <div className="flex items-center gap-2">
+              <Select value={paymentChannel} onValueChange={setPaymentChannel}>
+                <SelectTrigger className="flex-1 h-9 text-sm">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="palmpay1">PalmPay 1</SelectItem>
+                  <SelectItem value="palmpay2">PalmPay 2</SelectItem>
+                  <SelectItem value="palmpay3">PalmPay 3</SelectItem>
+                  <SelectItem value="palmpay4">PalmPay 4</SelectItem>
+                </SelectContent>
+              </Select>
+              <Button size="sm" className="h-9 text-xs px-3 shrink-0" onClick={handleSaveChannel}>
+                Save
+              </Button>
+            </div>
           </div>
           {/* {[
             { name: "PalmPay 1", account: "****8821", balance: 4820500, lastSync: "2 min ago" },
