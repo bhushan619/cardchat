@@ -255,7 +255,7 @@ export default function AdminWallets() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-4 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold text-accent inline-flex items-center gap-1">
               <Coins className="w-5 h-5" />
@@ -276,6 +276,20 @@ export default function AdminWallets() {
               {totalDisbursements.toLocaleString()}
             </p>
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
+          </div>
+          <div className="bg-card border rounded-xl p-4 flex flex-col items-center justify-center">
+            <p className="text-xs font-medium text-muted-foreground mb-2">Payment Channel</p>
+            <Select value={paymentChannel} onValueChange={setPaymentChannel}>
+              <SelectTrigger className="w-full h-9 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="palmpay1">PalmPay 1</SelectItem>
+                <SelectItem value="palmpay2">PalmPay 2</SelectItem>
+                <SelectItem value="palmpay3">PalmPay 3</SelectItem>
+                <SelectItem value="palmpay4">PalmPay 4</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           {/* {[
             { name: "PalmPay 1", account: "****8821", balance: 4820500, lastSync: "2 min ago" },
