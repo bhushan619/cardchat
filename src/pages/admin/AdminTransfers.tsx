@@ -13,9 +13,10 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins } from "lucide-react";
+import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins, Radio } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { maskName } from "@/lib/utils";
+import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
@@ -70,6 +71,7 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
 };
 
 export default function AdminTransfers() {
+  const { label: activeChannelLabel } = usePaymentChannel();
   const [items] = useState<Transfer[]>(seed);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -125,9 +127,14 @@ export default function AdminTransfers() {
             </h1>
             <p className="text-sm text-muted-foreground">Consolidated view of all transfers initiated from the chat transfer pop-up</p>
           </div>
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download className="w-4 h-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-accent/30 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent">
+              <Radio className="w-3.5 h-3.5" /> Active channel: {activeChannelLabel}
+            </span>
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="w-4 h-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-4 gap-3 mb-5">

@@ -14,9 +14,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet } from "lucide-react";
+import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Radio } from "lucide-react";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { toast } from "@/hooks/use-toast";
+import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
@@ -157,9 +158,14 @@ export default function AdminWithdrawals() {
             </h1>
             <p className="text-sm text-muted-foreground">Consolidated view of all customer withdrawal transactions</p>
           </div>
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download className="w-4 h-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-accent/30 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent">
+              <Radio className="w-3.5 h-3.5" /> Active channel: {activeChannelLabel}
+            </span>
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="w-4 h-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
         {/* Summary widgets */}
