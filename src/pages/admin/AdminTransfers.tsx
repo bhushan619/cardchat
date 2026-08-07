@@ -31,11 +31,11 @@ type Transfer = {
   requestedAt: string;
   status: Status;
   reference: string;
-  channel: "PalmPay 1" | "PalmPay 2" | "Manual";
+  channel: string;
 };
 
 const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "Kuda"];
-const channels: Transfer["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
+const channels: string[] = [...PAYMENT_CHANNELS.map((c) => c.label), "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
 // Build consolidated transfers (initiated from chat transfer pop-up) from customer wallet mock data
