@@ -14,9 +14,10 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet } from "lucide-react";
+import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Radio } from "lucide-react";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { toast } from "@/hooks/use-toast";
+import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
@@ -30,11 +31,11 @@ type Withdrawal = {
   requestedAt: string;
   status: Status;
   reference: string;
-  channel: "PalmPay 1" | "PalmPay 2" | "Manual";
+  channel: string;
 };
 
 const banks = ["First Bank", "GTBank", "Access Bank", "UBA", "Zenith", "Opay", "Kuda"];
-const channels: Withdrawal["channel"][] = ["PalmPay 1", "PalmPay 2", "Manual"];
+const channels: string[] = [...PAYMENT_CHANNELS.map((c) => c.label), "Manual"];
 const statuses: Status[] = ["pending", "successful", "processing", "failed"];
 
 const walletByAlias = Object.fromEntries(customerWallets.map((w) => [w.alias, w]));
@@ -70,6 +71,7 @@ export default function AdminWithdrawals() {
   const { role } = useAdminRole();
   const canAct = role === "super_admin" || role === "finance";
 
+  const { label: activeChannelLabel } = usePaymentChannel();
   const [items, setItems] = useState<Withdrawal[]>(seed);
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
@@ -110,9 +112,16 @@ export default function AdminWithdrawals() {
   }, [filtered]);
 
   const updateStatus = (id: string, status: Status) => {
-    setItems((prev) => prev.map((w) => (w.id === id ? { ...w, status } : w)));
-    setSelected((s) => (s && s.id === id ? { ...s, status } : s));
-    toast({ title: `Withdrawal ${status}`, description: `${id} marked as ${status}.` });
+    // Payouts are always routed through the active payment channel set on /admin/wallets
+    const routed = status === "pending" ? undefined : activeChannelLabel;
+    setItems((prev) => prev.map((w) => (w.id === id ? { ...w, status, channel: routed ?? w.channel } : w)));
+    setSelected((s) => (s && s.id === id ? { ...s, status, channel: routed ?? s.channel } : s));
+    toast({
+      title: `Withdrawal ${status}`,
+      description: routed
+        ? `${id} marked as ${status} via ${routed}.`
+        : `${id} marked as ${status}.`,
+    });
   };
 
   const exportCsv = () => {
@@ -149,9 +158,14 @@ export default function AdminWithdrawals() {
             </h1>
             <p className="text-sm text-muted-foreground">Consolidated view of all customer withdrawal transactions</p>
           </div>
-          <Button variant="outline" size="sm" onClick={exportCsv}>
-            <Download className="w-4 h-4 mr-2" /> Export CSV
-          </Button>
+          <div className="flex items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-md border border-accent/30 bg-accent/10 px-2.5 py-1.5 text-xs font-medium text-accent">
+              <Radio className="w-3.5 h-3.5" /> Active channel: {activeChannelLabel}
+            </span>
+            <Button variant="outline" size="sm" onClick={exportCsv}>
+              <Download className="w-4 h-4 mr-2" /> Export CSV
+            </Button>
+          </div>
         </div>
 
         {/* Summary widgets */}

@@ -1,6 +1,7 @@
 import { isVip } from "@/lib/vipCustomers";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
 import {
   conversations as rawConversations,
@@ -412,7 +413,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Transfer (WhatsApp payment) state
   const [transferOpen, setTransferOpen] = useState(false);
-  const [transferMethod, setTransferMethod] = useState("PalmPay2");
+  const { label: activePaymentChannel } = usePaymentChannel();
+  const transferMethod = activePaymentChannel;
   const [transferBank, setTransferBank] = useState("");
   const [transferAccount, setTransferAccount] = useState("");
   const [transferRecipient, setTransferRecipient] = useState("");
@@ -423,7 +425,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [transferVerifying, setTransferVerifying] = useState(false);
   const [transferOrderId, setTransferOrderId] = useState<string>("");
 
-  const transferMethods = ["PalmPay2", "OPay", "Moniepoint", "Kuda", "Manual Bank Transfer"];
 
   const nigerianBanks = [
     "Access Bank",
@@ -497,7 +498,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   };
 
   const resetTransferForm = () => {
-    setTransferMethod("PalmPay2");
     setTransferBank("");
     setTransferAccount("");
     setTransferRecipient("");
@@ -2774,18 +2774,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <div className="p-3 grid grid-cols-2 gap-3">
                   <div className="space-y-1">
                     <Label className="text-[11px]">Transfer Method</Label>
-                    <Select value={transferMethod} onValueChange={setTransferMethod}>
-                      <SelectTrigger className="h-9">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {transferMethods.map((m) => (
-                          <SelectItem key={m} value={m}>
-                            {m}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
+                    <div className="h-9 flex items-center justify-between gap-2 rounded-md border bg-muted/40 px-3">
+                      <span className="text-sm font-medium">{transferMethod}</span>
+                      <span className="text-[10px] text-muted-foreground">Active channel</span>
+                    </div>
+                    <p className="text-[10px] text-muted-foreground">Set in Wallets &rsaquo; Payment Channel</p>
                   </div>
                   <div className="space-y-1">
                     <Label className="text-[11px]">

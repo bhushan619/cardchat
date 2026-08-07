@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.0  
-**Date:** August 3, 2026
+**Version:** 6.1  
+**Date:** August 7, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1143,6 +1143,13 @@ A single row combines internal balances with third-party provider balances:
 
 The PalmPay widgets represent live balances pulled from the third-party payment provider used to fund customer disbursements. Refresh button triggers a re-sync (mocked toast in prototype).
 
+#### Payment Channel Selector (v6.1)
+A **Payment Channel** widget sits alongside the summary cards and defines the *single active payout rail* for the whole platform:
+- Dropdown: **PalmPay 1 / PalmPay 2 / PalmPay 3 / PalmPay 4** with an inline **Save** button (dropdown and button on one row)
+- Selection is persisted by `src/lib/paymentChannel.ts` (sessionStorage key `cardchat_payment_channel`, default `PalmPay 1`) and broadcast app-wide via a custom event, so every open admin screen updates without a reload
+- Saving confirms with a toast stating that all withdrawals and transfers will be routed through the chosen channel
+- **Global effect:** the active channel is the channel used by **every withdrawal disbursement and every transfer** across the admin panel — see 5.18b, 5.18c and the in-chat Transfer pop-up
+
 #### Filters
 - **Search:** Free-text search across Transfer ID, Order ID, description, remark
 - **Type filter:** All Types / Deposits / Disbursements
@@ -1182,7 +1189,7 @@ A consolidated ledger of all customer withdrawal requests across the platform, d
 - **Request ID search:** dedicated input matching `id` and `reference`
 - **Customer search:** dedicated input matching `alias` and `accountName`
 - **Status filter:** All / Pending / Processing / Approved / Rejected
-- **Channel filter:** All / PalmPay 1 / PalmPay 2 / Manual
+- **Channel filter:** All / PalmPay 1 / PalmPay 2 / PalmPay 3 / PalmPay 4 / Manual
 - **Points range:** Min/Max numeric inputs
 
 #### Withdrawals Table
@@ -1193,6 +1200,7 @@ A consolidated ledger of all customer withdrawal requests across the platform, d
 - Triggered by the "View" row action
 - Shows: Customer, Amount, Bank, Account Number, Account Name, Channel, Reference, Requested time, Status
 - **Approve / Reject actions** (Super Admin and Finance only) — shown only when the selected withdrawal status is `pending`
+- **Active channel routing (v6.1):** the page header shows an **"Active channel: {PalmPay N}"** badge. Any status change away from `pending` stamps the record's Channel with the active payment channel selected on `/admin/wallets`, and the confirmation toast names the channel used.
 
 #### CSV Export
 - Exports filtered records with all columns
@@ -1211,13 +1219,14 @@ A consolidated ledger of all transfers initiated from the in-chat **Transfer pop
 #### Filters
 - Free-text search (alias, transfer ID, **order ID**, bank, account, reference)
 - Status: All / Pending / Processing / Successful / Failed
-- Channel: All / PalmPay 1 / PalmPay 2 / Manual
+- Channel: All / PalmPay 1 / PalmPay 2 / PalmPay 3 / PalmPay 4 / Manual
 - Bank filter + Min/Max Points range
 
 #### Table
 - Columns: Transfer ID, **Order ID**, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
 - Status pills: Pending=amber, Processing=blue, Successful=emerald, Failed=rose
 - Row "View" opens a Transfer Details dialog
+- **Active channel routing (v6.1):** the page header shows an **"Active channel: {PalmPay N}"** badge; new transfers are executed on that channel and the Channel filter lists all four PalmPay rails plus Manual.
 
 #### Details Dialog
 - Shows: Customer, **Order ID**, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
@@ -1729,6 +1738,15 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.0 → v6.1 — August 7, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Global Payment Channel** | The Payment Channel selected on `/admin/wallets` is now the single active payout rail for the entire platform. Introduced `src/lib/paymentChannel.ts` (channel list, get/set, label helper, and a reactive `usePaymentChannel` hook backed by sessionStorage plus a broadcast event). |
+| **Withdrawals Use Active Channel** | `/admin/withdrawals` shows an "Active channel: {PalmPay N}" badge; approving/processing/failing a request stamps the record's Channel with the active channel and the toast names it. Channel filter now lists PalmPay 1–4 plus Manual. |
+| **Transfers Use Active Channel** | `/admin/transfers` shows the same "Active channel" badge and its Channel filter lists PalmPay 1–4 plus Manual. |
+| **In-Chat Transfer Pop-up** | The Process Transfer modal's **Transfer Method** dropdown is replaced by a read-only field bound to the active payment channel, with the hint "Set in Wallets › Payment Channel". Transfer records and chat confirmations quote that channel. |
 
 ### v5.9 → v6.0 — August 3, 2026
 

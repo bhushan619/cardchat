@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
   Wallet,
@@ -18,6 +18,12 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  PAYMENT_CHANNELS,
+  paymentChannelLabel,
+  usePaymentChannel,
+  type PaymentChannelValue,
+} from "@/lib/paymentChannel";
 import { toast } from "sonner";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -135,13 +141,16 @@ export default function AdminWallets() {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositDescription, setDepositDescription] = useState("");
   const [depositRemark, setDepositRemark] = useState("");
-  const [paymentChannel, setPaymentChannel] = useState<string>(() => {
-    return sessionStorage.getItem("cardchat_payment_channel") || "palmpay1";
-  });
+  const { channel: activeChannel, setChannel } = usePaymentChannel();
+  const [paymentChannel, setPaymentChannel] = useState<PaymentChannelValue>(activeChannel);
+
+  useEffect(() => setPaymentChannel(activeChannel), [activeChannel]);
 
   const handleSaveChannel = () => {
-    sessionStorage.setItem("cardchat_payment_channel", paymentChannel);
-    toast.success(`Payment channel saved: ${paymentChannel.replace("palmpay", "PalmPay ")}`);
+    setChannel(paymentChannel);
+    toast.success(
+      `Payment channel saved: ${paymentChannelLabel(paymentChannel)} — all withdrawals and transfers will now be routed through it.`,
+    );
   };
 
   // Filters
@@ -285,17 +294,20 @@ export default function AdminWallets() {
             <p className="text-xs text-muted-foreground mt-1">Total Disbursements</p>
           </div>
           <div className="bg-card border rounded-xl p-4 flex flex-col justify-center">
-            <p className="text-xs font-medium text-muted-foreground mb-2 text-center">Payment Channel</p>
+            <p className="text-xs font-medium text-muted-foreground mb-2 text-center">
+              Payment Channel <span className="text-muted-foreground/70">(used by all withdrawals &amp; transfers)</span>
+            </p>
             <div className="flex items-center gap-2">
-              <Select value={paymentChannel} onValueChange={setPaymentChannel}>
+              <Select value={paymentChannel} onValueChange={(v) => setPaymentChannel(v as PaymentChannelValue)}>
                 <SelectTrigger className="flex-1 h-9 text-sm">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="palmpay1">PalmPay 1</SelectItem>
-                  <SelectItem value="palmpay2">PalmPay 2</SelectItem>
-                  <SelectItem value="palmpay3">PalmPay 3</SelectItem>
-                  <SelectItem value="palmpay4">PalmPay 4</SelectItem>
+                  {PAYMENT_CHANNELS.map((c) => (
+                    <SelectItem key={c.value} value={c.value}>
+                      {c.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Button size="sm" className="h-9 text-xs px-3 shrink-0" onClick={handleSaveChannel}>
