@@ -297,6 +297,9 @@ export default function AdminWallets() {
                 <SelectItem value="palmpay4">PalmPay 4</SelectItem>
               </SelectContent>
             </Select>
+            <Button size="sm" className="w-full mt-2 h-8 text-xs" onClick={handleSaveChannel}>
+              Save Selection
+            </Button>
           </div>
           {/* {[
             { name: "PalmPay 1", account: "****8821", balance: 4820500, lastSync: "2 min ago" },
