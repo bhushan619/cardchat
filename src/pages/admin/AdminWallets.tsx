@@ -135,7 +135,14 @@ export default function AdminWallets() {
   const [depositAmount, setDepositAmount] = useState("");
   const [depositDescription, setDepositDescription] = useState("");
   const [depositRemark, setDepositRemark] = useState("");
-  const [paymentChannel, setPaymentChannel] = useState<string>("palmpay1");
+  const [paymentChannel, setPaymentChannel] = useState<string>(() => {
+    return sessionStorage.getItem("cardchat_payment_channel") || "palmpay1";
+  });
+
+  const handleSaveChannel = () => {
+    sessionStorage.setItem("cardchat_payment_channel", paymentChannel);
+    toast.success(`Payment channel saved: ${paymentChannel.replace("palmpay", "PalmPay ")}`);
+  };
 
   // Filters
   const [search, setSearch] = useState("");
