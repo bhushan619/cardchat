@@ -3027,7 +3027,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 setTransferAccount(h.account);
                                 setTransferRecipient(h.recipient);
                                 setTransferVerified(true);
-                                setTransferMethod(h.method);
+                                
                                 toast.success("Beneficiary loaded");
                               }}
                               className="group text-left rounded-md border bg-background hover:border-accent hover:bg-accent/5 transition-colors px-2.5 py-1.5 max-w-[220px]"

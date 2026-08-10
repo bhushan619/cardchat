@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -50,7 +50,6 @@ import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminTransfers from "./pages/admin/AdminTransfers";
 import AdminTeamChat from "./pages/admin/AdminTeamChat";
 import AdminProfile from "./pages/admin/AdminProfile";
-import AdminRanking from "./pages/admin/AdminRanking";
 import AdminRewards from "./pages/admin/AdminRewards";
 import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
 import AdminWhatsAppSessions from "./pages/admin/AdminWhatsAppSessions";
@@ -113,7 +112,7 @@ const App = () => (
               <Route path="/admin/transfers" element={<AdminRoleProvider><AdminTransfers /></AdminRoleProvider>} />
               <Route path="/admin/team-chat" element={<AdminRoleProvider><AdminTeamChat /></AdminRoleProvider>} />
               <Route path="/admin/profile" element={<AdminRoleProvider><AdminProfile /></AdminRoleProvider>} />
-              <Route path="/admin/ranking" element={<AdminRoleProvider><AdminRanking /></AdminRoleProvider>} />
+              <Route path="/admin/ranking" element={<Navigate to="/admin/rewards" replace />} />
               <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
               <Route path="/admin/screens" element={<AdminScreensGallery />} />
               <Route path="/admin/app-versions" element={<AdminRoleProvider><AdminAppVersions /></AdminRoleProvider>} />

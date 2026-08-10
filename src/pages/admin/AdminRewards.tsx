@@ -3,21 +3,24 @@ import { parse } from "date-fns";
 import { formatDate } from "@/lib/utils";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
-import { Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2, ExternalLink } from "lucide-react";
+import {
+  Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2,
+  Medal, Award, Download,
+} from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Button } from "@/components/ui/button";
 import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
-import { getBiWeeklyPeriods } from "@/data/rankingMock";
-import { rankingList } from "@/data/rankingMock";
+import { getBiWeeklyPeriods, rankingList, rankingTiers } from "@/data/rankingMock";
 import { toast } from "sonner";
 
 type RewardRecord = {
@@ -50,6 +53,12 @@ const mockPendingOrders: Record<string, { id: string; customer: string; status: 
   ],
 };
 
+const medalIcons: Record<number, JSX.Element> = {
+  1: <Trophy className="w-4 h-4 text-yellow-500" />,
+  2: <Medal className="w-4 h-4 text-gray-400" />,
+  3: <Award className="w-4 h-4 text-amber-600" />,
+};
+
 function getPeriodOptions() {
   const options: { value: string; label: string; start: Date; end: Date }[] = [];
   for (let month = 0; month < 12; month++) {
@@ -65,20 +74,29 @@ const periodOptions = getPeriodOptions();
 export default function AdminRewards() {
   const { role } = useAdminRole();
   const isSuperAdmin = role === "super_admin";
+
+  // Shared period
+  const [selectedPeriod, setSelectedPeriod] = useState("2-h1");
+  const activePeriod = periodOptions.find(p => p.value === selectedPeriod);
+
+  // Records tab
   const [search, setSearch] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "ranking" | "referral">("all");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
+  const [allRecords, setAllRecords] = useState<RewardRecord[]>(rewardRecords);
+
+  // Leaderboard tab
+  const [rankSearch, setRankSearch] = useState("");
+
+  // Distribution dialog
   const [distributeOpen, setDistributeOpen] = useState(false);
-  const [selectedPeriod, setSelectedPeriod] = useState("2-h1");
   const [checking, setChecking] = useState(false);
   const [checkResult, setCheckResult] = useState<"ready" | "blocked" | null>(null);
   const [distributing, setDistributing] = useState(false);
-  const [allRecords, setAllRecords] = useState<RewardRecord[]>(rewardRecords);
 
   const pendingOrders = mockPendingOrders[selectedPeriod] || [];
   const isDistributed = distributedPeriods.has(selectedPeriod);
-  const activePeriod = periodOptions.find(p => p.value === selectedPeriod);
 
   const filtered = allRecords.filter(r => {
     const matchSearch = !search || r.alias.toLowerCase().includes(search.toLowerCase());
@@ -92,28 +110,41 @@ export default function AdminRewards() {
     return matchSearch && matchType && matchDate;
   });
 
+  const filteredRanking = useMemo(() => {
+    if (!rankSearch.trim()) return rankingList;
+    return rankingList.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+  }, [rankSearch]);
+
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
   const totalRanking = allRecords.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
   const totalReferral = allRecords.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
+  const projectedPayout = rankingList.reduce((s, u) => s + u.reward, 0);
+
+  const handleExportRanking = () => {
+    const headers = ["Rank", "Alias", "Volume", "Reward (Pts)"];
+    const rows = filteredRanking.map(u => [u.rank, u.alias, u.volume, u.reward]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `ranking_${selectedPeriod}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
 
   const handleCheckAndDistribute = () => {
     setChecking(true);
     setCheckResult(null);
-    // Simulate checking orders
     setTimeout(() => {
       setChecking(false);
-      if (pendingOrders.length > 0) {
-        setCheckResult("blocked");
-      } else {
-        setCheckResult("ready");
-      }
+      setCheckResult(pendingOrders.length > 0 ? "blocked" : "ready");
     }, 1200);
   };
 
   const handleDistribute = () => {
     setDistributing(true);
     setTimeout(() => {
-      // Generate ranking reward records from the ranking list
       const newRecords: RewardRecord[] = rankingList.map((u, i) => ({
         id: `RW-${String(allRecords.length + i + 1).padStart(3, "0")}`,
         alias: u.alias,
@@ -142,28 +173,43 @@ export default function AdminRewards() {
   return (
     <AdminLayout>
       <div className="p-6">
-        <div className="flex items-center justify-between mb-6">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 flex-wrap mb-6">
           <div>
             <h1 className="font-heading text-xl font-bold flex items-center gap-2">
-              <Gift className="w-5 h-5 text-accent" /> Rewards Management
+              <Trophy className="w-5 h-5 text-accent" /> Ranking &amp; Rewards
             </h1>
             <p className="text-sm text-muted-foreground">
-              Track all rewards distributed to customers. Referral rewards are automatic; ranking rewards require manual distribution.
+              Bi-weekly trading volume leaderboard and all rewards distributed to customers. Referral rewards are automatic; ranking rewards require manual distribution.
             </p>
           </div>
-          {isSuperAdmin && (
-            <Button onClick={handleOpenDistribute} className="gap-2">
-              <Trophy className="w-4 h-4" />
-              Distribute Ranking Rewards
-            </Button>
-          )}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Select value={selectedPeriod} onValueChange={v => { setSelectedPeriod(v); setCheckResult(null); }}>
+              <SelectTrigger className="w-60 h-9 text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="max-h-60">
+                {periodOptions.map(p => (
+                  <SelectItem key={p.value} value={p.value} className="text-xs">
+                    {p.label}{distributedPeriods.has(p.value) && " ✓"}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {isSuperAdmin && (
+              <Button onClick={handleOpenDistribute} className="gap-2 h-9">
+                <Gift className="w-4 h-4" />
+                Distribute Ranking Rewards
+              </Button>
+            )}
+          </div>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold text-accent">Pts {totalRewards.toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground mt-1">Total Rewards</p>
+            <p className="text-xs text-muted-foreground mt-1">Total Rewards Paid</p>
           </div>
           <div className="bg-card border rounded-xl p-4 text-center">
             <p className="text-2xl font-heading font-bold text-success">Pts {totalRanking.toLocaleString()}</p>
@@ -173,91 +219,176 @@ export default function AdminRewards() {
             <p className="text-2xl font-heading font-bold text-warning">Pts {totalReferral.toLocaleString()}</p>
             <p className="text-xs text-muted-foreground mt-1">Referral Rewards</p>
           </div>
-        </div>
-
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="relative flex-1 max-w-xs">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-            <Input
-              placeholder="Search alias..."
-              className="pl-8 text-xs h-9"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+          <div className="bg-card border rounded-xl p-4 text-center">
+            <p className="text-2xl font-heading font-bold">Pts {projectedPayout.toLocaleString()}</p>
+            <p className="text-xs text-muted-foreground mt-1">
+              Projected — {activePeriod?.label || "current period"}
+            </p>
           </div>
-          <Select value={typeFilter} onValueChange={v => setTypeFilter(v as any)}>
-            <SelectTrigger className="w-[140px] h-9 text-xs">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Types</SelectItem>
-              <SelectItem value="ranking">Ranking</SelectItem>
-              <SelectItem value="referral">Referral</SelectItem>
-            </SelectContent>
-          </Select>
-          <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From" />
-          <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To" />
-          {(dateFrom || dateTo) && (
-            <button
-              onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
-              className="text-xs text-muted-foreground hover:text-foreground underline"
-            >
-              Clear dates
-            </button>
-          )}
-          <Button size="sm" className="h-9 gap-1.5 text-xs bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
-            <Search className="w-3.5 h-3.5" /> Search
-          </Button>
         </div>
 
-        {/* Table */}
-        <div className="bg-card border rounded-xl overflow-hidden">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="text-xs font-semibold">ID</TableHead>
-                <TableHead className="text-xs font-semibold">Alias</TableHead>
-                <TableHead className="text-xs font-semibold">Type</TableHead>
-                <TableHead className="text-xs font-semibold">Description</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
-                <TableHead className="text-xs font-semibold text-right">Date</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filtered.map(r => (
-                <TableRow key={r.id} className="hover:bg-muted/30">
-                  <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
-                  <TableCell className="text-xs font-bold">{r.alias}</TableCell>
-                  <TableCell>
-                    <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${
-                      r.type === "ranking"
-                        ? "bg-success/10 text-success"
-                        : "bg-warning/10 text-warning"
-                    }`}>
-                      {r.type}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate">{r.description}</TableCell>
-                  <TableCell className="text-right text-sm font-bold text-success">
-                    <span className="flex items-center justify-end gap-1">
-                      <ArrowDownLeft className="w-3 h-3" />
-                      Pts {r.amount.toLocaleString()}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
-                </TableRow>
-              ))}
-              {filtered.length === 0 && (
-                <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
-                    No rewards found
-                  </TableCell>
-                </TableRow>
+        <Tabs defaultValue="leaderboard">
+          <TabsList className="mb-4">
+            <TabsTrigger value="leaderboard" className="text-xs gap-1.5">
+              <Trophy className="w-3.5 h-3.5" /> Volume Leaderboard
+            </TabsTrigger>
+            <TabsTrigger value="records" className="text-xs gap-1.5">
+              <Gift className="w-3.5 h-3.5" /> Reward Records
+            </TabsTrigger>
+          </TabsList>
+
+          {/* ---------- Leaderboard ---------- */}
+          <TabsContent value="leaderboard" className="mt-0">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Reward Tiers */}
+              <div className="bg-card border rounded-xl p-5 h-fit">
+                <h2 className="text-sm font-semibold mb-4">Reward Tiers</h2>
+                <div className="space-y-2">
+                  {rankingTiers.map(t => (
+                    <div key={t.threshold} className="flex items-center justify-between text-sm py-1.5 px-3 rounded-lg bg-muted/50">
+                      <span className="text-muted-foreground">≥ {t.threshold.toLocaleString()}</span>
+                      <span className="font-semibold text-accent">Pts {t.reward.toLocaleString()}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Leaderboard table */}
+              <div className="lg:col-span-2 bg-card border rounded-xl p-5">
+                <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
+                  <h2 className="text-sm font-semibold">Leaderboard ({filteredRanking.length} users)</h2>
+                  <div className="flex items-center gap-2">
+                    <div className="relative w-48">
+                      <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                      <Input
+                        placeholder="Search alias..."
+                        value={rankSearch}
+                        onChange={e => setRankSearch(e.target.value)}
+                        className="h-8 pl-8 text-xs"
+                      />
+                    </div>
+                    <Button variant="outline" size="sm" className="h-8 gap-1.5 text-xs" onClick={handleExportRanking}>
+                      <Download className="w-3.5 h-3.5" /> Export CSV
+                    </Button>
+                  </div>
+                </div>
+                <div className="overflow-auto max-h-[500px]">
+                  <table className="w-full text-sm">
+                    <thead className="sticky top-0 bg-card">
+                      <tr className="text-xs text-muted-foreground border-b">
+                        <th className="text-left py-2 pl-3 w-16">Rank</th>
+                        <th className="text-left py-2">Alias</th>
+                        <th className="text-right py-2">Volume</th>
+                        <th className="text-right py-2 pr-3">Reward</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredRanking.map(u => (
+                        <tr key={u.rank} className="border-b border-border/50 hover:bg-muted/30">
+                          <td className="py-2.5 pl-3">
+                            <span className="flex items-center gap-1.5">
+                              {medalIcons[u.rank] || <span className="text-muted-foreground">{u.rank}</span>}
+                            </span>
+                          </td>
+                          <td className="py-2.5 font-mono text-xs">{u.alias}</td>
+                          <td className="py-2.5 text-right">{u.volume.toLocaleString()}</td>
+                          <td className="py-2.5 text-right pr-3 font-semibold text-accent">Pts {u.reward.toLocaleString()}</td>
+                        </tr>
+                      ))}
+                      {filteredRanking.length === 0 && (
+                        <tr>
+                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No users found</td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </TabsContent>
+
+          {/* ---------- Reward Records ---------- */}
+          <TabsContent value="records" className="mt-0">
+            <div className="flex flex-wrap items-center gap-3 mb-4">
+              <div className="relative flex-1 max-w-xs">
+                <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                <Input
+                  placeholder="Search alias..."
+                  className="pl-8 text-xs h-9"
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                />
+              </div>
+              <Select value={typeFilter} onValueChange={v => setTypeFilter(v as any)}>
+                <SelectTrigger className="w-[140px] h-9 text-xs">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="ranking">Ranking</SelectItem>
+                  <SelectItem value="referral">Referral</SelectItem>
+                </SelectContent>
+              </Select>
+              <DateTimePicker value={dateFrom} onChange={setDateFrom} placeholder="From" />
+              <DateTimePicker value={dateTo} onChange={setDateTo} placeholder="To" />
+              {(dateFrom || dateTo) && (
+                <button
+                  onClick={() => { setDateFrom(undefined); setDateTo(undefined); }}
+                  className="text-xs text-muted-foreground hover:text-foreground underline"
+                >
+                  Clear dates
+                </button>
               )}
-            </TableBody>
-          </Table>
-        </div>
+            </div>
+
+            <div className="bg-card border rounded-xl overflow-hidden">
+              <Table>
+                <TableHeader>
+                  <TableRow className="bg-muted/50">
+                    <TableHead className="text-xs font-semibold">ID</TableHead>
+                    <TableHead className="text-xs font-semibold">Alias</TableHead>
+                    <TableHead className="text-xs font-semibold">Type</TableHead>
+                    <TableHead className="text-xs font-semibold">Description</TableHead>
+                    <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                    <TableHead className="text-xs font-semibold text-right">Date</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filtered.map(r => (
+                    <TableRow key={r.id} className="hover:bg-muted/30">
+                      <TableCell className="text-xs font-medium text-accent">{r.id}</TableCell>
+                      <TableCell className="text-xs font-bold">{r.alias}</TableCell>
+                      <TableCell>
+                        <span className={`inline-block text-[10px] font-medium px-2 py-0.5 rounded-full capitalize ${
+                          r.type === "ranking"
+                            ? "bg-success/10 text-success"
+                            : "bg-warning/10 text-warning"
+                        }`}>
+                          {r.type}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground max-w-[300px] truncate">{r.description}</TableCell>
+                      <TableCell className="text-right text-sm font-bold text-success">
+                        <span className="flex items-center justify-end gap-1">
+                          <ArrowDownLeft className="w-3 h-3" />
+                          Pts {r.amount.toLocaleString()}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground">{r.date} · {r.time}</TableCell>
+                    </TableRow>
+                  ))}
+                  {filtered.length === 0 && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="text-center py-8 text-muted-foreground text-sm">
+                        No rewards found
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
 
       {/* Distribute Ranking Rewards Dialog */}
@@ -274,7 +405,6 @@ export default function AdminRewards() {
           </DialogHeader>
 
           <div className="space-y-4">
-            {/* Period selector */}
             <div>
               <label className="text-xs font-medium text-muted-foreground mb-1.5 block">Bi-Weekly Period</label>
               <Select value={selectedPeriod} onValueChange={v => { setSelectedPeriod(v); setCheckResult(null); }}>
@@ -292,7 +422,6 @@ export default function AdminRewards() {
               </Select>
             </div>
 
-            {/* Already distributed notice */}
             {isDistributed && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-success/10 border border-success/20">
                 <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
@@ -303,7 +432,6 @@ export default function AdminRewards() {
               </div>
             )}
 
-            {/* Check result: blocked */}
             {checkResult === "blocked" && (
               <div className="space-y-3">
                 <div className="flex items-start gap-2 p-3 rounded-lg bg-destructive/10 border border-destructive/20">
@@ -316,7 +444,6 @@ export default function AdminRewards() {
                   </div>
                 </div>
 
-                {/* Pending orders list */}
                 <div className="bg-muted/50 rounded-lg border overflow-hidden">
                   <Table>
                     <TableHeader>
@@ -346,14 +473,13 @@ export default function AdminRewards() {
               </div>
             )}
 
-            {/* Check result: ready */}
             {checkResult === "ready" && !isDistributed && (
               <div className="flex items-start gap-2 p-3 rounded-lg bg-success/10 border border-success/20">
                 <CheckCircle2 className="w-4 h-4 text-success mt-0.5 shrink-0" />
                 <div className="text-xs">
                   <p className="font-semibold text-success">All Orders Settled</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling Pts {rankingList.reduce((s, u) => s + u.reward, 0).toLocaleString()}.
+                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling Pts {projectedPayout.toLocaleString()}.
                   </p>
                 </div>
               </div>
