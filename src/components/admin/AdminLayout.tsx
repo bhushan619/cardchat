@@ -132,13 +132,12 @@ const navItems = [
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   {
-    id: "ranking",
-    label: "Volume Ranking",
-    icon: TrendingUp,
-    path: "/admin/ranking",
+    id: "rewards",
+    label: "Ranking & Rewards",
+    icon: Trophy,
+    path: "/admin/rewards",
     roles: ["super_admin", "team_lead", "agent"],
   },
-  { id: "rewards", label: "Rewards", icon: Gift, path: "/admin/rewards", roles: ["super_admin", "team_lead", "agent"] },
   {
     id: "customer-guide",
     label: "Customer Guide",
