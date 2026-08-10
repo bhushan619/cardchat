@@ -113,7 +113,7 @@ const App = () => (
               <Route path="/admin/transfers" element={<AdminRoleProvider><AdminTransfers /></AdminRoleProvider>} />
               <Route path="/admin/team-chat" element={<AdminRoleProvider><AdminTeamChat /></AdminRoleProvider>} />
               <Route path="/admin/profile" element={<AdminRoleProvider><AdminProfile /></AdminRoleProvider>} />
-              <Route path="/admin/ranking" element={<AdminRoleProvider><AdminRanking /></AdminRoleProvider>} />
+              <Route path="/admin/ranking" element={<Navigate to="/admin/rewards" replace />} />
               <Route path="/admin/rewards" element={<AdminRoleProvider><AdminRewards /></AdminRoleProvider>} />
               <Route path="/admin/screens" element={<AdminScreensGallery />} />
               <Route path="/admin/app-versions" element={<AdminRoleProvider><AdminAppVersions /></AdminRoleProvider>} />
