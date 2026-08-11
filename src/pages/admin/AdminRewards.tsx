@@ -220,11 +220,18 @@ export default function AdminRewards() {
               </SelectContent>
             </Select>
             {isSuperAdmin && (
+              <Button variant="outline" onClick={openReferral} className="gap-2 h-9">
+                <Settings2 className="w-4 h-4" />
+                Referral Bonus Settings
+              </Button>
+            )}
+            {isSuperAdmin && (
               <Button onClick={handleOpenDistribute} className="gap-2 h-9">
                 <Gift className="w-4 h-4" />
                 Distribute Ranking Rewards
               </Button>
             )}
+
           </div>
         </div>
 
