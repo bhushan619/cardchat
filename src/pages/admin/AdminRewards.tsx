@@ -100,6 +100,24 @@ export default function AdminRewards() {
   const [checkResult, setCheckResult] = useState<"ready" | "blocked" | null>(null);
   const [distributing, setDistributing] = useState(false);
 
+  // Referral bonus settings dialog
+  const [referralOpen, setReferralOpen] = useState(false);
+  const [referralCfg, setReferralCfg] = useState<ReferralBonusSettings>(() => getReferralBonus());
+  const [referralDraft, setReferralDraft] = useState<ReferralBonusSettings>(referralCfg);
+
+  const openReferral = () => {
+    setReferralDraft(getReferralBonus());
+    setReferralOpen(true);
+  };
+
+  const saveReferral = () => {
+    setReferralBonus(referralDraft);
+    setReferralCfg(referralDraft);
+    setReferralOpen(false);
+    toast.success("Referral bonus settings saved");
+  };
+
+
   const pendingOrders = mockPendingOrders[selectedPeriod] || [];
   const isDistributed = distributedPeriods.has(selectedPeriod);
 
