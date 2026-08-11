@@ -5,8 +5,9 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import {
   Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2,
-  Medal, Award, Download,
+  Medal, Award, Download, Users, Settings2,
 } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Button } from "@/components/ui/button";
@@ -21,7 +22,11 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
 import { getBiWeeklyPeriods, rankingList, rankingTiers } from "@/data/rankingMock";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { getReferralBonus, setReferralBonus, type ReferralBonusSettings } from "@/lib/referralBonus";
 import { toast } from "sonner";
+
 
 type RewardRecord = {
   id: string;
@@ -94,6 +99,24 @@ export default function AdminRewards() {
   const [checking, setChecking] = useState(false);
   const [checkResult, setCheckResult] = useState<"ready" | "blocked" | null>(null);
   const [distributing, setDistributing] = useState(false);
+
+  // Referral bonus settings dialog
+  const [referralOpen, setReferralOpen] = useState(false);
+  const [referralCfg, setReferralCfg] = useState<ReferralBonusSettings>(() => getReferralBonus());
+  const [referralDraft, setReferralDraft] = useState<ReferralBonusSettings>(referralCfg);
+
+  const openReferral = () => {
+    setReferralDraft(getReferralBonus());
+    setReferralOpen(true);
+  };
+
+  const saveReferral = () => {
+    setReferralBonus(referralDraft);
+    setReferralCfg(referralDraft);
+    setReferralOpen(false);
+    toast.success("Referral bonus settings saved");
+  };
+
 
   const pendingOrders = mockPendingOrders[selectedPeriod] || [];
   const isDistributed = distributedPeriods.has(selectedPeriod);
@@ -197,11 +220,18 @@ export default function AdminRewards() {
               </SelectContent>
             </Select>
             {isSuperAdmin && (
+              <Button variant="outline" onClick={openReferral} className="gap-2 h-9">
+                <Settings2 className="w-4 h-4" />
+                Referral Bonus Settings
+              </Button>
+            )}
+            {isSuperAdmin && (
               <Button onClick={handleOpenDistribute} className="gap-2 h-9">
                 <Gift className="w-4 h-4" />
                 Distribute Ranking Rewards
               </Button>
             )}
+
           </div>
         </div>
 
@@ -507,6 +537,118 @@ export default function AdminRewards() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Referral Bonus Settings */}
+      <Dialog open={referralOpen} onOpenChange={setReferralOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <Users className="w-4 h-4 text-accent" /> Referral Bonus Settings
+            </DialogTitle>
+            <DialogDescription className="text-xs">
+              Configure the bonus that is automatically credited when a referral qualifies. No manual distribution is required.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            {/* Settings */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border p-3">
+                <div>
+                  <Label className="text-xs font-semibold">Auto-credit referral bonus</Label>
+                  <p className="text-[11px] text-muted-foreground">Turn off to pause all referral payouts</p>
+                </div>
+                <Switch
+                  checked={referralDraft.enabled}
+                  onCheckedChange={v => setReferralDraft(d => ({ ...d, enabled: v }))}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1">
+                  <Label className="text-[11px]">Inviter bonus (Pts)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.inviterBonus}
+                    onChange={e => setReferralDraft(d => ({ ...d, inviterBonus: Number(e.target.value) || 0 }))}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[11px]">Invitee bonus (Pts)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.inviteeBonus}
+                    onChange={e => setReferralDraft(d => ({ ...d, inviteeBonus: Number(e.target.value) || 0 }))}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[11px]">Min. first order value (Pts)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.minFirstOrderValue}
+                    onChange={e => setReferralDraft(d => ({ ...d, minFirstOrderValue: Number(e.target.value) || 0 }))}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-[11px]">Max referrals / user (0 = ∞)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.maxReferralsPerUser}
+                    onChange={e => setReferralDraft(d => ({ ...d, maxReferralsPerUser: Number(e.target.value) || 0 }))}
+                  />
+                </div>
+                <div className="space-y-1 col-span-2">
+                  <Label className="text-[11px]">Payout delay after qualifying order (hours)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.payoutDelayHours}
+                    onChange={e => setReferralDraft(d => ({ ...d, payoutDelayHours: Number(e.target.value) || 0 }))}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Rules */}
+            <div className="rounded-lg border bg-muted/40 p-3">
+              <p className="text-xs font-semibold mb-2 flex items-center gap-1.5">
+                <AlertTriangle className="w-3.5 h-3.5 text-warning" /> Referral Rules
+              </p>
+              <ul className="space-y-2 text-[11px] text-muted-foreground list-disc pl-4">
+                <li>Each customer gets a unique invite code; the invitee must enter it during registration.</li>
+                <li>
+                  The bonus triggers only after the invitee completes their first successful order of at least{" "}
+                  <span className="font-semibold text-foreground">Pts {referralDraft.minFirstOrderValue.toLocaleString()}</span>.
+                </li>
+                <li>
+                  Inviter receives <span className="font-semibold text-foreground">Pts {referralDraft.inviterBonus.toLocaleString()}</span>;
+                  invitee receives <span className="font-semibold text-foreground">Pts {referralDraft.inviteeBonus.toLocaleString()}</span>.
+                </li>
+                <li>Bonuses are credited automatically to the rewards balance{referralDraft.payoutDelayHours > 0 ? ` after ${referralDraft.payoutDelayHours}h` : " immediately"} — no admin action needed.</li>
+                <li>
+                  {referralDraft.maxReferralsPerUser > 0
+                    ? `A user can earn the bonus for a maximum of ${referralDraft.maxReferralsPerUser} referrals.`
+                    : "There is no cap on the number of referrals a user can earn from."}
+                </li>
+                <li>Cancelled or reversed first orders void the bonus; self-referral and duplicate devices are rejected.</li>
+                <li>Referral rewards are separate from ranking rewards and do not affect leaderboard volume.</li>
+              </ul>
+              {!referralDraft.enabled && (
+                <p className="mt-2 text-[11px] text-destructive font-medium">
+                  Auto-credit is currently disabled — no referral bonuses will be paid.
+                </p>
+              )}
+            </div>
+          </div>
+
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={() => setReferralOpen(false)}>Cancel</Button>
+            <Button onClick={saveReferral} className="gap-2">
+              <CheckCircle2 className="w-4 h-4" /> Save Settings
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </AdminLayout>
+
   );
 }
