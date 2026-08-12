@@ -26,6 +26,8 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getReferralBonus, setReferralBonus, type ReferralBonusSettings } from "@/lib/referralBonus";
 import { toast } from "sonner";
+import PointsAmount from "@/components/admin/PointsAmount";
+
 
 
 type RewardRecord = {
