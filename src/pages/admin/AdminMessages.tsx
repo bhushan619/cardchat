@@ -97,7 +97,34 @@ const columns = [
   },
 ];
 
-const escalatableUsers = adminUsers.filter((u) => u.role === "super_admin" || u.role === "team_lead");
+type EscalationUser = {
+  id: number;
+  name: string;
+  role: "super_admin" | "team_lead";
+  status: "online" | "offline";
+};
+
+// Mock escalation candidates (upward only — Team Leads & Super Admins)
+const escalatableUsers: EscalationUser[] = [
+  { id: 9001, name: "Sarah Lead", role: "team_lead", status: "online" },
+  { id: 9002, name: "Admin One", role: "super_admin", status: "online" },
+  { id: 9003, name: "Boss Admin", role: "super_admin", status: "offline" },
+];
+
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+// Bubble/name color palette per added participant (in join order)
+const MEMBER_STYLES = [
+  { name: "text-orange-500", bubble: "bg-orange-50 dark:bg-orange-500/10 border-l-4 border-orange-500", avatar: "bg-orange-500" },
+  { name: "text-emerald-500", bubble: "bg-emerald-50 dark:bg-emerald-500/10 border-l-4 border-emerald-500", avatar: "bg-emerald-500" },
+  { name: "text-violet-500", bubble: "bg-violet-50 dark:bg-violet-500/10 border-l-4 border-violet-500", avatar: "bg-violet-500" },
+];
 
 const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
   super_admin: { label: "Super Admin", icon: Crown },
@@ -113,6 +140,8 @@ type ChatMessage = {
   image?: boolean;
   imageUrl?: string;
   isOrder?: boolean;
+  isSystemNote?: boolean;
+
 };
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
