@@ -1499,12 +1499,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             }
                           >
                             {showName && (
-                            <p
-                              className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
+                              <p
+                                className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
+                              >
+                                {msg.senderName}
+                              </p>
+                            )}
 
-                            >
-                              {msg.senderName}
-                            </p>
                             {msg.image ? (
                               msg.imageUrl ? (
                                 <button
