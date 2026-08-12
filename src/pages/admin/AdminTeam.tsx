@@ -1,4 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
+import { Link } from "react-router-dom";
 import { BarChart3, Users, MessageSquare, TrendingUp, Clock } from "lucide-react";
 
 const agents = [
@@ -6,6 +7,12 @@ const agents = [
   { name: "Tunde Agent", chats: 9, orders: 5, settled: 4, pending: 1, avgTime: "12 min" },
   { name: "Joy Agent", chats: 6, orders: 3, settled: 3, pending: 0, avgTime: "10 min" },
 ];
+
+const escalations = [
+  { agent: "Mike Agent", customer: "B5N1QW", participants: ["Sarah Lead"], duration: "12 min ago" },
+  { agent: "Tunde Agent", customer: "K9M2BL", participants: ["Sarah Lead", "Admin One"], duration: "34 min ago" },
+];
+
 
 export default function AdminTeam() {
   return (
