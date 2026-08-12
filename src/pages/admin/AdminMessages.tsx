@@ -170,8 +170,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }
   });
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
+  const [groupMembers, setGroupMembers] = useState<EscalationUser[]>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const [escalateSelected, setEscalateSelected] = useState<number[]>([]);
+
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
