@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
+import { useAdminT } from "@/contexts/AdminLangContext";
 import {
   conversations as rawConversations,
   chatMessages,
@@ -173,6 +174,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [groupMembers, setGroupMembers] = useState<EscalationUser[]>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [escalateSelected, setEscalateSelected] = useState<number[]>([]);
+  const t = useAdminT();
 
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
@@ -393,7 +395,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       id: Date.now() + i,
       sender: "system",
       senderName: "System",
-      text: `${u.name} (${ROLE_META[u.role]?.label || u.role}) has joined the chat`,
+      text: `${u.name} (${ROLE_META[u.role]?.label || u.role}) ${t("has joined the chat")}`,
       time: now,
       isSystemNote: true,
     }));
@@ -424,8 +426,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     if (!user) return;
     const remaining = groupMembers.filter((m) => m.id !== userId);
     setGroupMembers(remaining);
-    addEscalationNote(`${user.name} has left the chat`);
-    if (remaining.length === 0) setTimeout(() => addEscalationNote("Escalation ended"), 0);
+    addEscalationNote(`${user.name} ${t("has left the chat")}`);
+    if (remaining.length === 0) setTimeout(() => addEscalationNote(t("Escalation ended")), 0);
   };
 
 
@@ -1337,7 +1339,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <TooltipTrigger asChild>
                               <PopoverTrigger asChild>
                                 <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-                                  <Users className="w-3.5 h-3.5" /> Escalate
+                                  <Users className="w-3.5 h-3.5" /> {t("Escalate")}
                                 </button>
                               </PopoverTrigger>
                             </TooltipTrigger>
@@ -1414,7 +1416,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                               disabled={escalateSelected.length === 0}
                               onClick={addSelectedToGroup}
                             >
-                              Add to Chat
+                              {t("Add to Chat")}
                             </Button>
                           </div>
                         </PopoverContent>

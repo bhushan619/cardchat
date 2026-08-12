@@ -1,5 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Link } from "react-router-dom";
+import { useAdminT } from "@/contexts/AdminLangContext";
 import { BarChart3, Users, MessageSquare, TrendingUp, Clock } from "lucide-react";
 
 const agents = [
@@ -15,6 +16,7 @@ const escalations = [
 
 
 export default function AdminTeam() {
+  const t = useAdminT();
   return (
     <AdminLayout>
       <div className="p-6">
@@ -74,10 +76,10 @@ export default function AdminTeam() {
         {/* Active Escalations */}
         <div className="mt-6 bg-card border rounded-xl p-4">
           <h2 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
-            <Users className="w-4 h-4 text-muted-foreground" /> Active Escalations
+            <Users className="w-4 h-4 text-muted-foreground" /> {t("Active Escalations")}
           </h2>
           {escalations.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">No active escalations</p>
+            <p className="text-sm text-muted-foreground py-4 text-center">{t("No active escalations")}</p>
           ) : (
             <table className="w-full">
               <thead>
