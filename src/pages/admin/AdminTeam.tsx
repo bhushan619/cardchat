@@ -1,4 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
+import { Link } from "react-router-dom";
+import { useAdminT } from "@/contexts/AdminLangContext";
 import { BarChart3, Users, MessageSquare, TrendingUp, Clock } from "lucide-react";
 
 const agents = [
@@ -7,7 +9,14 @@ const agents = [
   { name: "Joy Agent", chats: 6, orders: 3, settled: 3, pending: 0, avgTime: "10 min" },
 ];
 
+const escalations = [
+  { agent: "Mike Agent", customer: "B5N1QW", participants: ["Sarah Lead"], duration: "12 min ago" },
+  { agent: "Tunde Agent", customer: "K9M2BL", participants: ["Sarah Lead", "Admin One"], duration: "34 min ago" },
+];
+
+
 export default function AdminTeam() {
+  const t = useAdminT();
   return (
     <AdminLayout>
       <div className="p-6">
@@ -64,22 +73,47 @@ export default function AdminTeam() {
           </table>
         </div>
 
-        {/* Escalation Section */}
+        {/* Active Escalations */}
         <div className="mt-6 bg-card border rounded-xl p-4">
-          <h2 className="font-heading font-semibold text-sm mb-3">Active Escalations</h2>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 rounded-lg bg-warning/5 border border-warning/20">
-              <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-full bg-warning/10 flex items-center justify-center text-xs font-bold text-warning">MA</div>
-                <div>
-                  <p className="text-sm font-medium">Mike Agent → You</p>
-                  <p className="text-xs text-muted-foreground">K9M2BL · Card validation issue</p>
-                </div>
-              </div>
-              <span className="status-badge bg-warning/10 text-warning text-[10px]">Active</span>
-            </div>
-          </div>
+          <h2 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
+            <Users className="w-4 h-4 text-muted-foreground" /> {t("Active Escalations")}
+          </h2>
+          {escalations.length === 0 ? (
+            <p className="text-sm text-muted-foreground py-4 text-center">{t("No active escalations")}</p>
+          ) : (
+            <table className="w-full">
+              <thead>
+                <tr className="border-b">
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Agent</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Customer</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Participants</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Duration</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
+                  <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {escalations.map((e) => (
+                  <tr key={e.customer} className="border-b last:border-0 hover:bg-muted/30">
+                    <td className="px-4 py-3 text-sm font-medium">{e.agent}</td>
+                    <td className="px-4 py-3 text-sm font-mono">{e.customer}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">{e.participants.join(", ")}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">{e.duration}</td>
+                    <td className="px-4 py-3">
+                      <span className="status-badge bg-success/10 text-success text-[10px]">Active</span>
+                    </td>
+                    <td className="px-4 py-3 text-right">
+                      <Link to="/admin" className="text-xs text-primary hover:underline">
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </div>
+
       </div>
     </AdminLayout>
   );

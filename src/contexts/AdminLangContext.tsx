@@ -46,3 +46,31 @@ export function useSetAdminLang(): (l: AdminLang) => void {
   if (!ctx) throw new Error("useSetAdminLang must be used within AdminLangProvider");
   return ctx.setLang;
 }
+
+// Shared admin translations (escalation / group chat)
+export const adminTranslations: Record<AdminLang, Record<string, string>> = {
+  en: {
+    Escalate: "Escalate",
+    "Add to Chat": "Add to Chat",
+    "has joined the chat": "has joined the chat",
+    "has left the chat": "has left the chat",
+    "Escalation ended": "Escalation ended",
+    "Active Escalations": "Active Escalations",
+    "No active escalations": "No active escalations",
+  },
+  zh: {
+    Escalate: "升级",
+    "Add to Chat": "添加到聊天",
+    "has joined the chat": "已加入聊天",
+    "has left the chat": "已离开聊天",
+    "Escalation ended": "升级已结束",
+    "Active Escalations": "活跃升级",
+    "No active escalations": "没有活跃的升级",
+  },
+};
+
+export function useAdminT() {
+  const lang = useAdminLang();
+  return (key: string) => adminTranslations[lang][key] ?? adminTranslations.en[key] ?? key;
+}
+

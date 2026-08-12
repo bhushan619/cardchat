@@ -3,6 +3,7 @@ import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
+import { useAdminT } from "@/contexts/AdminLangContext";
 import {
   conversations as rawConversations,
   chatMessages,
@@ -97,7 +98,34 @@ const columns = [
   },
 ];
 
-const escalatableUsers = adminUsers.filter((u) => u.role === "super_admin" || u.role === "team_lead");
+type EscalationUser = {
+  id: number;
+  name: string;
+  role: "super_admin" | "team_lead";
+  status: "online" | "offline";
+};
+
+// Mock escalation candidates (upward only — Team Leads & Super Admins)
+const escalatableUsers: EscalationUser[] = [
+  { id: 9001, name: "Sarah Lead", role: "team_lead", status: "online" },
+  { id: 9002, name: "Admin One", role: "super_admin", status: "online" },
+  { id: 9003, name: "Boss Admin", role: "super_admin", status: "offline" },
+];
+
+const initials = (name: string) =>
+  name
+    .split(" ")
+    .map((p) => p[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
+
+// Bubble/name color palette per added participant (in join order)
+const MEMBER_STYLES = [
+  { name: "text-orange-500", bubble: "bg-orange-50 dark:bg-orange-500/10 border-l-4 border-orange-500", avatar: "bg-orange-500" },
+  { name: "text-emerald-500", bubble: "bg-emerald-50 dark:bg-emerald-500/10 border-l-4 border-emerald-500", avatar: "bg-emerald-500" },
+  { name: "text-violet-500", bubble: "bg-violet-50 dark:bg-violet-500/10 border-l-4 border-violet-500", avatar: "bg-violet-500" },
+];
 
 const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
   super_admin: { label: "Super Admin", icon: Crown },
@@ -113,6 +141,8 @@ type ChatMessage = {
   image?: boolean;
   imageUrl?: string;
   isOrder?: boolean;
+  isSystemNote?: boolean;
+
 };
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
@@ -141,8 +171,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }
   });
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null);
-  const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
+  const [groupMembers, setGroupMembers] = useState<EscalationUser[]>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
+  const [escalateSelected, setEscalateSelected] = useState<number[]>([]);
+  const t = useAdminT();
+
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
@@ -337,19 +370,66 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }
   };
 
-  const addToGroup = (user: (typeof adminUsers)[0]) => {
-    if (groupMembers.find((m) => m.id === user.id)) return;
-    setGroupMembers((prev) => [...prev, user]);
-    addSystemMessage(`${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`);
+  const addEscalationNote = (text: string) => {
+    setLocalMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        sender: "system",
+        senderName: "System",
+        text,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        isSystemNote: true,
+      },
+    ]);
+  };
+
+  const addSelectedToGroup = () => {
+    const toAdd = escalatableUsers.filter(
+      (u) => escalateSelected.includes(u.id) && !groupMembers.some((m) => m.id === u.id),
+    );
+    if (toAdd.length === 0) return;
+    setGroupMembers((prev) => [...prev, ...toAdd]);
+    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const notes: ChatMessage[] = toAdd.map((u, i) => ({
+      id: Date.now() + i,
+      sender: "system",
+      senderName: "System",
+      text: `${u.name} (${ROLE_META[u.role]?.label || u.role}) ${t("has joined the chat")}`,
+      time: now,
+      isSystemNote: true,
+    }));
+    // Simulate a couple of messages from the newly added members
+    const mock: ChatMessage[] = toAdd.flatMap((u, i) => [
+      {
+        id: Date.now() + 100 + i * 2,
+        sender: "admin_member",
+        senderName: u.name,
+        text: "Thanks for the escalation — reviewing the order details now.",
+        time: now,
+      },
+      {
+        id: Date.now() + 101 + i * 2,
+        sender: "admin_member",
+        senderName: u.name,
+        text: "Please hold the payout until I confirm the card value.",
+        time: now,
+      },
+    ]);
+    setLocalMessages((prev) => [...prev, ...notes, ...mock]);
+    setEscalateSelected([]);
     setEscalateOpen(false);
   };
 
   const removeFromGroup = (userId: number) => {
     const user = groupMembers.find((m) => m.id === userId);
     if (!user) return;
-    setGroupMembers((prev) => prev.filter((m) => m.id !== userId));
-    addSystemMessage(`${user.name} has left the chat`);
+    const remaining = groupMembers.filter((m) => m.id !== userId);
+    setGroupMembers(remaining);
+    addEscalationNote(`${user.name} ${t("has left the chat")}`);
+    if (remaining.length === 0) setTimeout(() => addEscalationNote(t("Escalation ended")), 0);
   };
+
 
   const handleReassign = () => {
     if (!reassignTarget) return;
@@ -1254,49 +1334,90 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
                     {channelFilter !== "whatsapp" && (
                       <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
-                        <PopoverTrigger asChild>
-                          <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
-                            <Users className="w-3.5 h-3.5" /> Escalate
-                          </button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 p-0" align="end">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger asChild>
+                              <PopoverTrigger asChild>
+                                <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
+                                  <Users className="w-3.5 h-3.5" /> {t("Escalate")}
+                                </button>
+                              </PopoverTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent side="bottom">
+                              Escalate — add Team Lead or Super Admin to this chat
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                        <PopoverContent className="w-72 p-0" align="end">
                           <div className="p-3 border-b">
-                            <p className="text-xs font-semibold">Add to Group Chat</p>
+                            <p className="text-xs font-semibold">Escalate this chat</p>
                             <p className="text-[10px] text-muted-foreground mt-0.5">
-                              Select a team lead or super admin
+                              Add a Team Lead or Super Admin
                             </p>
                           </div>
                           <div className="p-1.5 space-y-0.5">
-                            {escalatableUsers.map((user) => {
-                              const alreadyAdded = groupMembers.some((m) => m.id === user.id);
-                              const roleMeta = ROLE_META[user.role];
-                              const RoleIcon = roleMeta?.icon || Shield;
-                              return (
-                                <button
-                                  key={user.id}
-                                  onClick={() => !alreadyAdded && addToGroup(user)}
-                                  disabled={alreadyAdded}
-                                  className={`w-full flex items-center gap-2.5 p-2 rounded-md text-left transition-colors ${
-                                    alreadyAdded ? "opacity-50 cursor-not-allowed" : "hover:bg-muted"
-                                  }`}
-                                >
-                                  <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                                    <RoleIcon className="w-3.5 h-3.5 text-primary" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-medium truncate">{user.name}</p>
-                                    <p className="text-[10px] text-muted-foreground">
-                                      {roleMeta?.label} · {user.status}
-                                    </p>
-                                  </div>
-                                  {alreadyAdded ? (
-                                    <span className="text-[9px] text-muted-foreground">Added</span>
-                                  ) : (
-                                    <span className="text-[9px] text-primary font-medium">+ Add</span>
-                                  )}
-                                </button>
-                              );
-                            })}
+                            {escalatableUsers
+                              .filter((u) => !groupMembers.some((m) => m.id === u.id))
+                              .map((user) => {
+                                const roleMeta = ROLE_META[user.role];
+                                const checked = escalateSelected.includes(user.id);
+                                return (
+                                  <button
+                                    key={user.id}
+                                    onClick={() =>
+                                      setEscalateSelected((prev) =>
+                                        checked ? prev.filter((id) => id !== user.id) : [...prev, user.id],
+                                      )
+                                    }
+                                    className="w-full flex items-center gap-2.5 p-2 rounded-md text-left hover:bg-muted transition-colors"
+                                  >
+                                    <span
+                                      className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 ${
+                                        checked ? "bg-primary border-primary" : "border-muted-foreground/40"
+                                      }`}
+                                    >
+                                      {checked && <CheckCheck className="w-3 h-3 text-primary-foreground" />}
+                                    </span>
+                                    <div className="relative shrink-0">
+                                      <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
+                                        {initials(user.name)}
+                                      </div>
+                                      <span
+                                        className={`absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full border-2 border-background ${
+                                          user.status === "online" ? "bg-emerald-500" : "bg-muted-foreground/50"
+                                        }`}
+                                      />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-xs font-medium truncate">{user.name}</p>
+                                      <span
+                                        className={`inline-block mt-0.5 text-[9px] font-medium px-1.5 py-0.5 rounded-full ${
+                                          user.role === "team_lead"
+                                            ? "bg-emerald-500/15 text-emerald-600 dark:text-emerald-400"
+                                            : "bg-blue-500/15 text-blue-600 dark:text-blue-400"
+                                        }`}
+                                      >
+                                        {roleMeta?.label}
+                                      </span>
+                                    </div>
+                                  </button>
+                                );
+                              })}
+                            {escalatableUsers.every((u) => groupMembers.some((m) => m.id === u.id)) && (
+                              <p className="text-[10px] text-muted-foreground text-center py-3">
+                                Everyone is already in this chat
+                              </p>
+                            )}
+                          </div>
+                          <div className="p-2 border-t">
+                            <Button
+                              size="sm"
+                              className="w-full h-8 text-xs"
+                              disabled={escalateSelected.length === 0}
+                              onClick={addSelectedToGroup}
+                            >
+                              {t("Add to Chat")}
+                            </Button>
                           </div>
                         </PopoverContent>
                       </Popover>
@@ -1306,25 +1427,53 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
                 {/* Group members bar */}
                 {isGroupChat && (
-                  <div className="flex items-center gap-1.5 px-5 py-2 border-b bg-muted/30 shrink-0 overflow-x-auto">
-                    <span className="text-[10px] text-muted-foreground shrink-0">Members:</span>
-                    {groupMembers.map((m) => (
-                      <span
-                        key={m.id}
-                        className="inline-flex items-center gap-1 text-[10px] font-medium bg-primary/10 text-primary px-2 py-0.5 rounded-full shrink-0"
-                      >
-                        {m.name}
-                        <button onClick={() => removeFromGroup(m.id)} className="hover:text-destructive">
-                          <X className="w-2.5 h-2.5" />
-                        </button>
+                  <div className="flex items-center gap-2 px-5 py-2 border-b bg-muted/40 shrink-0 overflow-x-auto">
+                    <span className="text-[10px] text-muted-foreground shrink-0">In chat:</span>
+                    <span className="inline-flex items-center gap-1.5 shrink-0">
+                      <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
+                        ME
                       </span>
-                    ))}
+                      <span className="text-[10px] font-medium">You (Agent)</span>
+                    </span>
+                    {groupMembers.map((m, i) => {
+                      const style = MEMBER_STYLES[i % MEMBER_STYLES.length];
+                      return (
+                        <span key={m.id} className="inline-flex items-center gap-1.5 shrink-0">
+                          <span className="relative">
+                            <span
+                              className={`w-6 h-6 rounded-full text-white text-[9px] font-bold flex items-center justify-center ${style.avatar}`}
+                            >
+                              {initials(m.name)}
+                            </span>
+                            <button
+                              onClick={() => removeFromGroup(m.id)}
+                              title={`Remove ${m.name}`}
+                              className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-background border flex items-center justify-center text-muted-foreground hover:text-destructive"
+                            >
+                              <X className="w-2 h-2" />
+                            </button>
+                          </span>
+                          <span className={`text-[10px] font-medium ${style.name}`}>{m.name}</span>
+                        </span>
+                      );
+                    })}
                   </div>
                 )}
 
                 {/* Messages */}
                 <div className="flex-1 overflow-y-auto p-5 space-y-3">
-                  {localMessages.map((msg) => {
+                  {localMessages.map((msg, msgIdx) => {
+                    if (msg.isSystemNote) {
+                      return (
+                        <div key={msg.id} className="flex items-center gap-2 my-2">
+                          <span className="flex-1 h-px bg-border" />
+                          <span className="text-xs text-muted-foreground bg-muted/50 px-2.5 py-0.5 rounded-full">
+                            {msg.text}
+                          </span>
+                          <span className="flex-1 h-px bg-border" />
+                        </div>
+                      );
+                    }
                     if (msg.isOrder) {
                       return (
                         <div key={msg.id} className="pinned-order animate-slide-up">
@@ -1334,15 +1483,31 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       );
                     }
                     const isCustomer = msg.sender === "customer";
+                    const memberIdx = groupMembers.findIndex((m) => m.name === msg.senderName);
+                    const memberStyle = memberIdx >= 0 ? MEMBER_STYLES[memberIdx % MEMBER_STYLES.length] : null;
+                    const prev = localMessages[msgIdx - 1];
+                    const showName =
+                      isCustomer || !prev || prev.senderName !== msg.senderName || prev.isSystemNote || prev.isOrder;
                     return (
                       <Fragment key={msg.id}>
                         <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
-                          <div className={isCustomer ? "chat-bubble-other" : "chat-bubble-self"}>
-                            <p
-                              className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
-                            >
-                              {msg.senderName}
-                            </p>
+                          <div
+                            className={
+                              isCustomer
+                                ? "chat-bubble-other"
+                                : memberStyle
+                                  ? `chat-bubble-self ${memberStyle.bubble} text-foreground`
+                                  : "chat-bubble-self"
+                            }
+                          >
+                            {showName && (
+                              <p
+                                className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
+                              >
+                                {msg.senderName}
+                              </p>
+                            )}
+
                             {msg.image ? (
                               msg.imageUrl ? (
                                 <button
