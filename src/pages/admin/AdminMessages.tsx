@@ -366,19 +366,66 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }
   };
 
-  const addToGroup = (user: (typeof adminUsers)[0]) => {
-    if (groupMembers.find((m) => m.id === user.id)) return;
-    setGroupMembers((prev) => [...prev, user]);
-    addSystemMessage(`${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`);
+  const addEscalationNote = (text: string) => {
+    setLocalMessages((prev) => [
+      ...prev,
+      {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        sender: "system",
+        senderName: "System",
+        text,
+        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        isSystemNote: true,
+      },
+    ]);
+  };
+
+  const addSelectedToGroup = () => {
+    const toAdd = escalatableUsers.filter(
+      (u) => escalateSelected.includes(u.id) && !groupMembers.some((m) => m.id === u.id),
+    );
+    if (toAdd.length === 0) return;
+    setGroupMembers((prev) => [...prev, ...toAdd]);
+    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const notes: ChatMessage[] = toAdd.map((u, i) => ({
+      id: Date.now() + i,
+      sender: "system",
+      senderName: "System",
+      text: `${u.name} (${ROLE_META[u.role]?.label || u.role}) has joined the chat`,
+      time: now,
+      isSystemNote: true,
+    }));
+    // Simulate a couple of messages from the newly added members
+    const mock: ChatMessage[] = toAdd.flatMap((u, i) => [
+      {
+        id: Date.now() + 100 + i * 2,
+        sender: "admin_member",
+        senderName: u.name,
+        text: "Thanks for the escalation — reviewing the order details now.",
+        time: now,
+      },
+      {
+        id: Date.now() + 101 + i * 2,
+        sender: "admin_member",
+        senderName: u.name,
+        text: "Please hold the payout until I confirm the card value.",
+        time: now,
+      },
+    ]);
+    setLocalMessages((prev) => [...prev, ...notes, ...mock]);
+    setEscalateSelected([]);
     setEscalateOpen(false);
   };
 
   const removeFromGroup = (userId: number) => {
     const user = groupMembers.find((m) => m.id === userId);
     if (!user) return;
-    setGroupMembers((prev) => prev.filter((m) => m.id !== userId));
-    addSystemMessage(`${user.name} has left the chat`);
+    const remaining = groupMembers.filter((m) => m.id !== userId);
+    setGroupMembers(remaining);
+    addEscalationNote(`${user.name} has left the chat`);
+    if (remaining.length === 0) setTimeout(() => addEscalationNote("Escalation ended"), 0);
   };
+
 
   const handleReassign = () => {
     if (!reassignTarget) return;
