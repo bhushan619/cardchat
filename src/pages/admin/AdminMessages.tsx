@@ -2059,9 +2059,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   </>
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
-                    <p className="text-xs text-center">Select a conversation to view orders</p>
+                    <p className="text-xs text-center">
+                      {selectedGroup
+                        ? "Select a customer in the Sales Order tab to view their orders"
+                        : "Select a conversation to view orders"}
+                    </p>
                   </div>
                 )}
+
               </TabsContent>
 
               <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
