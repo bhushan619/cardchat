@@ -55,6 +55,7 @@ import AdminScreensGallery from "./pages/admin/AdminScreensGallery";
 import AdminWhatsAppSessions from "./pages/admin/AdminWhatsAppSessions";
 import AdminAppVersions from "./pages/admin/AdminAppVersions";
 import AdminContentReports from "./pages/admin/AdminContentReports";
+import AdminEventTracking from "./pages/admin/AdminEventTracking";
 
 const queryClient = new QueryClient();
 
@@ -117,6 +118,7 @@ const App = () => (
               <Route path="/admin/screens" element={<AdminScreensGallery />} />
               <Route path="/admin/app-versions" element={<AdminRoleProvider><AdminAppVersions /></AdminRoleProvider>} />
               <Route path="/admin/content-reports" element={<AdminRoleProvider><AdminContentReports /></AdminRoleProvider>} />
+              <Route path="/admin/event-tracking" element={<AdminRoleProvider><AdminEventTracking /></AdminRoleProvider>} />
 
 
               <Route path="*" element={<NotFound />} />

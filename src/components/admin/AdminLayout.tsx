@@ -30,6 +30,7 @@ import {
   Flag,
   Download,
   Trophy,
+  Activity,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -132,6 +133,13 @@ const navItems = [
     roles: ["super_admin"],
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
+  {
+    id: "event-tracking",
+    label: "Event Tracking",
+    icon: Activity,
+    path: "/admin/event-tracking",
+    roles: ["super_admin"],
+  },
   {
     id: "rewards",
     label: "Ranking & Rewards",
