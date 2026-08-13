@@ -1168,7 +1168,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                           <p className="text-[10px] text-muted-foreground truncate">{g.lastMessage}</p>
                           <p className="text-[9px] text-muted-foreground mt-0.5">
-                            {g.participants.length} participants
+                            {g.participants.length} members
                           </p>
                         </div>
                         {g.unread > 0 && (
