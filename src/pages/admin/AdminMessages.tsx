@@ -71,6 +71,7 @@ import CardlightPanel, {
   type CardlightResult,
 } from "@/components/admin/OrderWizardModal";
 import ChannelBadge from "@/components/admin/ChannelBadge";
+import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
@@ -3040,9 +3041,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <ArrowRightLeft className="w-3.5 h-3.5 text-accent" />
               </div>
               <span>Process Transfer</span>
-              {selectedConvo && (
+              {txConvo && (
                 <span className="ml-2 text-xs font-normal text-muted-foreground">
-                  · Sending to <span className="font-semibold text-foreground">{selectedConvo.alias}</span> via WhatsApp
+                  · Sending to <span className="font-semibold text-foreground">{txConvo.alias}</span> via WhatsApp
                 </span>
               )}
             </DialogTitle>
@@ -3056,9 +3057,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 const credits = transferEligibleOrders
                   .filter((o) => o.status === "success")
                   .reduce((s, o) => s + (o.payout || 0), 0);
-                const priorTransfers = selectedConvo
+                const priorTransfers = txConvo
                   ? (
-                      JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                      JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
                         amount: number;
                       }>
                     ).reduce((s, t) => s + (t.amount || 0), 0)
@@ -3165,7 +3166,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         onClick={() => {
                           setTransferVerifying(true);
                           setTimeout(() => {
-                            const mockName = (selectedConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
+                            const mockName = (txConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
                             setTransferRecipient(mockName);
                             setTransferVerified(true);
                             setTransferVerifying(false);
@@ -3266,7 +3267,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             {/* ============== RIGHT PANEL: Beneficiaries + Records ============== */}
             <div className="overflow-y-auto bg-muted/10">
               {(() => {
-                const key = `cc.transfers.${selectedConvo?.id || ""}`;
+                const key = `cc.transfers.${txConvo?.id || ""}`;
                 const saved: Array<{
                   bank: string;
                   account: string;
@@ -3274,7 +3275,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   method: string;
                   amount: number;
                   at: number;
-                }> = selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
+                }> = txConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
 
                 // Saved beneficiaries — dedupe by bank+account
                 const seen = new Set<string>();
@@ -3285,7 +3286,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   return true;
                 });
 
-                const mock = selectedConvo
+                const mock = txConvo
                   ? [
                       {
                         method: "PalmPay3",
@@ -3335,7 +3336,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     account: s.account,
                     recipient: s.recipient,
                     amount: s.amount,
-                    nickname: selectedConvo?.alias || "/",
+                    nickname: txConvo?.alias || "/",
                     status: "Success" as const,
                   })),
                   ...mock,
@@ -3384,7 +3385,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     <div className="px-4 py-2.5 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
                       <div className="text-sm font-semibold">Transfer Records</div>
                       <div className="text-[11px] text-muted-foreground mt-0.5">
-                        Recent transactions {selectedConvo && `· ${selectedConvo.alias}`}
+                        Recent transactions {txConvo && `· ${txConvo.alias}`}
                       </div>
                     </div>
                     {rows.length === 0 ? (
@@ -3454,12 +3455,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 disabled={(() => {
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
-                  if (!selectedConvo) return true;
+                  if (!txConvo) return true;
                   const credits = transferEligibleOrders
                     .filter((o) => o.status === "success")
                     .reduce((s, o) => s + (o.payout || 0), 0);
                   const priorTransfers = (
-                    JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                    JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
                       amount: number;
                     }>
                   ).reduce((s, t) => s + (t.amount || 0), 0);
@@ -3467,8 +3468,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 })()}
                 onClick={() => {
                   const amt = Number(transferAmount || 0);
-                  if (selectedConvo) {
-                    const key = `cc.transfers.${selectedConvo.id}`;
+                  if (txConvo) {
+                    const key = `cc.transfers.${txConvo.id}`;
                     const prev = JSON.parse(sessionStorage.getItem(key) || "[]");
                     prev.unshift({
                       bank: transferBank,
