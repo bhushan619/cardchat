@@ -11,8 +11,11 @@ import {
   adminUsers,
   customerWallets,
   walletTransactions,
+  whatsappGroups,
+  groupMessages,
   type FundAdjustment,
 } from "@/data/mock";
+import { GroupThread, GroupInfoPanel, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
 import {
   MessageCircle,
   Star,
@@ -256,6 +259,17 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   };
 
   const selectedConvo = rawConversations.find((c) => c.id === selectedId);
+  // WhatsApp GROUP conversations (multi-participant, read-only right panel)
+  const selectedGroup =
+    channelFilter === "whatsapp" ? whatsappGroups.find((g) => g.id === selectedId) ?? null : null;
+  const selectedGroupMessages = selectedGroup ? groupMessages[selectedGroup.id] ?? [] : [];
+  const [activeParticipantId, setActiveParticipantId] = useState<string | null>(null);
+  const [highlightMsgId, setHighlightMsgId] = useState<number | null>(null);
+  const handleSelectParticipant = (participantId: string) => {
+    setActiveParticipantId(participantId);
+    const last = [...selectedGroupMessages].reverse().find((m) => m.participantId === participantId);
+    setHighlightMsgId(last ? last.id : null);
+  };
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
 
@@ -297,6 +311,33 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       return matchesTab && matchesSearch && matchesAgentScope;
     });
   }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
+
+  const filteredGroups = useMemo(() => {
+    if (channelFilter !== "whatsapp") return [];
+    return whatsappGroups.filter((g) => {
+      const matchesTab = g.tab === activeTab;
+      const matchesSearch =
+        !customerSearch ||
+        g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
+        g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
+      return matchesTab && matchesSearch;
+    });
+  }, [channelFilter, activeTab, customerSearch]);
+
+  // Interleave group rows with the 1:1 conversation rows
+  const listItems = useMemo(() => {
+    const out: Array<
+      | { kind: "dm"; data: (typeof filteredConversations)[number] }
+      | { kind: "group"; data: (typeof filteredGroups)[number] }
+    > = [];
+    const queue = [...filteredGroups];
+    filteredConversations.forEach((c, i) => {
+      out.push({ kind: "dm", data: c });
+      if (i % 2 === 1 && queue.length) out.push({ kind: "group", data: queue.shift()! });
+    });
+    queue.forEach((g) => out.push({ kind: "group", data: g }));
+    return out;
+  }, [filteredConversations, filteredGroups]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
@@ -1081,7 +1122,49 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {filteredConversations.map((c) => {
+              {listItems.map((item) => {
+                if (item.kind === "group") {
+                  const g = item.data;
+                  const gActive = selectedId === g.id;
+                  return (
+                    <button
+                      key={g.id}
+                      onClick={() => {
+                        setSelectedId(g.id);
+                        setActiveParticipantId(null);
+                        setHighlightMsgId(null);
+                      }}
+                      className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
+                        gActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <GroupAvatar className="w-8 h-8 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className="text-xs font-semibold truncate">{g.groupName}</span>
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium leading-none whitespace-nowrap">
+                                Group
+                              </span>
+                            </div>
+                            <span className="text-[10px] text-muted-foreground shrink-0">{g.time}</span>
+                          </div>
+                          <p className="text-[10px] text-muted-foreground truncate">{g.lastMessage}</p>
+                          <p className="text-[9px] text-muted-foreground mt-0.5">
+                            {g.participants.length} participants
+                          </p>
+                        </div>
+                        {g.unread > 0 && (
+                          <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
+                            {g.unread}
+                          </span>
+                        )}
+                      </div>
+                    </button>
+                  );
+                }
+                const c = item.data;
                 const isActive = selectedId === c.id;
                 const isStarred = starred.has(c.id);
                 const cStatus = orderStatus.getStatus(c.id);
@@ -1173,7 +1256,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   </button>
                 );
               })}
-              {filteredConversations.length === 0 && (
+              {listItems.length === 0 && (
                 <div className="flex items-center justify-center h-32 text-xs text-muted-foreground">
                   No conversations
                 </div>
@@ -1183,7 +1266,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
           {/* Middle: Chat window */}
           <div className="flex-1 flex flex-col min-w-0">
-            {selectedId && selectedConvo ? (
+            {selectedGroup ? (
+              <GroupThread
+                group={selectedGroup}
+                messages={selectedGroupMessages}
+                highlightId={highlightMsgId}
+              />
+            ) : selectedId && selectedConvo ? (
               <>
                 <header className="flex items-center justify-between px-5 border-b bg-card shrink-0 h-12">
                   <div className="flex items-center gap-3">
@@ -1725,6 +1814,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
           {/* Right panel: Tabbed Orders & Sales Order */}
           <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
+            {selectedGroup ? (
+              <GroupInfoPanel
+                group={selectedGroup}
+                messages={selectedGroupMessages}
+                onSelectParticipant={handleSelectParticipant}
+                activeParticipantId={activeParticipantId}
+              />
+            ) : (
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
                 <TabsTrigger
@@ -1970,6 +2067,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 />
               </TabsContent>
             </Tabs>
+            )}
           </div>
         </div>
       </div>
