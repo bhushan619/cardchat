@@ -3,7 +3,7 @@ import { Check, ChevronsUpDown, Search, X, User } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { maskName } from "@/lib/utils";
+
 import { customerDirectory, type DirectoryCustomer } from "@/data/mock";
 
 /**
@@ -28,14 +28,8 @@ export default function CustomerAliasSelector({
 
   const selected: DirectoryCustomer | undefined = customerDirectory.find((c) => c.alias === value);
   const q = query.trim().toLowerCase();
-  const results = q
-    ? customerDirectory.filter(
-        (c) =>
-          c.alias.toLowerCase().includes(q) ||
-          c.name.toLowerCase().includes(q) ||
-          c.phone.replace(/\s/g, "").includes(q.replace(/\s/g, "")),
-      )
-    : customerDirectory;
+  const results = q ? customerDirectory.filter((c) => c.alias.toLowerCase().includes(q)) : customerDirectory;
+
 
   return (
     <div className={`space-y-1 ${className}`}>
@@ -55,9 +49,6 @@ export default function CustomerAliasSelector({
               <X className="w-3 h-3" />
             </button>
           </span>
-          <span className="text-[11px] text-muted-foreground truncate">
-            {maskName(selected.name)} · {selected.phone}
-          </span>
         </div>
       ) : (
         <Popover open={open} onOpenChange={setOpen}>
@@ -66,7 +57,7 @@ export default function CustomerAliasSelector({
               type="button"
               className="h-9 w-full flex items-center justify-between gap-2 rounded-md border bg-background px-3 text-left text-sm text-muted-foreground hover:border-accent transition-colors"
             >
-              <span className="truncate text-[13px]">Search customer by alias, name, or phone...</span>
+              <span className="truncate text-[13px]">Search customer by alias...</span>
               <ChevronsUpDown className="w-3.5 h-3.5 shrink-0 opacity-60" />
             </button>
           </PopoverTrigger>
@@ -77,7 +68,7 @@ export default function CustomerAliasSelector({
                 autoFocus
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search customer by alias, name, or phone..."
+                placeholder="Search customer by alias..."
                 className="h-9 border-0 px-0 shadow-none focus-visible:ring-0 text-[13px]"
               />
             </div>
@@ -99,13 +90,7 @@ export default function CustomerAliasSelector({
                   <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                     <User className="w-3.5 h-3.5 text-primary" />
                   </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-1.5">
-                      <span className="text-xs font-bold">{c.alias}</span>
-                      <span className="text-[11px] text-muted-foreground truncate">{maskName(c.name)}</span>
-                    </div>
-                    <p className="text-[10px] font-mono text-muted-foreground truncate">{c.phone}</p>
-                  </div>
+                  <span className="text-xs font-bold flex-1 min-w-0 truncate">{c.alias}</span>
                   {value === c.alias && <Check className="w-3.5 h-3.5 text-accent shrink-0" />}
                 </button>
               ))}
