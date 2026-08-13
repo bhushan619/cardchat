@@ -98,11 +98,6 @@ export default function CustomerAliasSelector({
           </PopoverContent>
         </Popover>
       )}
-
-            </div>
-          </PopoverContent>
-        </Popover>
-      )}
     </div>
   );
 }
