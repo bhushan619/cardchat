@@ -71,6 +71,7 @@ import CardlightPanel, {
   type CardlightResult,
 } from "@/components/admin/OrderWizardModal";
 import ChannelBadge from "@/components/admin/ChannelBadge";
+import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
@@ -270,6 +271,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const last = [...selectedGroupMessages].reverse().find((m) => m.participantId === participantId);
     setHighlightMsgId(last ? last.id : null);
   };
+
+  // Group chats: the customer behind an order/transfer must be selected manually.
+  const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
+  const [groupRightTab, setGroupRightTab] = useState("info");
+  useEffect(() => {
+    setGroupCustomerAlias(null);
+    setGroupRightTab("info");
+  }, [selectedId]);
+  const groupCustomerConvo = groupCustomerAlias
+    ? rawConversations.find((c) => c.alias === groupCustomerAlias) ?? null
+    : null;
+  // Conversation the transfer modal acts on: auto-resolved in 1:1, manually picked in groups.
+  const txConvo = selectedGroup ? groupCustomerConvo : selectedConvo;
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
 
@@ -1154,7 +1168,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                           <p className="text-[10px] text-muted-foreground truncate">{g.lastMessage}</p>
                           <p className="text-[9px] text-muted-foreground mt-0.5">
-                            {g.participants.length} participants
+                            {g.participants.length} members
                           </p>
                         </div>
                         {g.unread > 0 && (
@@ -1817,12 +1831,71 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           {/* Right panel: Tabbed Orders & Sales Order */}
           <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
             {selectedGroup ? (
-              <GroupInfoPanel
-                group={selectedGroup}
-                messages={selectedGroupMessages}
-                onSelectParticipant={handleSelectParticipant}
-                activeParticipantId={activeParticipantId}
-              />
+              <Tabs value={groupRightTab} onValueChange={setGroupRightTab} className="flex flex-col h-full">
+                <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
+                  <TabsTrigger
+                    value="info"
+                    className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent"
+                  >
+                    Group Info
+                  </TabsTrigger>
+                  <TabsTrigger
+                    value="sales"
+                    className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent"
+                  >
+                    Sales Order
+                  </TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="info" className="flex-1 overflow-hidden mt-0">
+                  <GroupInfoPanel
+                    group={selectedGroup}
+                    messages={selectedGroupMessages}
+                    onSelectParticipant={handleSelectParticipant}
+                    activeParticipantId={activeParticipantId}
+                  />
+                </TabsContent>
+
+                <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
+                  <div className="p-3 border-b space-y-2 shrink-0">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
+                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                      Group chats have multiple customers — select who this order or transfer belongs to.
+                    </p>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="w-full h-8 text-xs"
+                      disabled={!groupCustomerAlias}
+                      onClick={() => {
+                        resetTransferForm();
+                        setTransferOpen(true);
+                      }}
+                    >
+                      <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" /> Process Transfer
+                    </Button>
+                  </div>
+                  {groupCustomerAlias ? (
+                    <div className="flex-1 overflow-hidden">
+                      <CardlightPanel
+                        key={groupCustomerAlias}
+                        open={groupRightTab === "sales"}
+                        onClose={() => setGroupRightTab("info")}
+                        onComplete={handleOrderComplete}
+                        customerAlias={groupCustomerAlias}
+                        embedded
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex-1 flex items-center justify-center p-6 text-center">
+                      <p className="text-xs text-muted-foreground">
+                        Select a customer to create an order for this group conversation.
+                      </p>
+                    </div>
+                  )}
+                </TabsContent>
+              </Tabs>
             ) : (
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
@@ -2968,9 +3041,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 <ArrowRightLeft className="w-3.5 h-3.5 text-accent" />
               </div>
               <span>Process Transfer</span>
-              {selectedConvo && (
+              {txConvo && (
                 <span className="ml-2 text-xs font-normal text-muted-foreground">
-                  · Sending to <span className="font-semibold text-foreground">{selectedConvo.alias}</span> via WhatsApp
+                  · Sending to <span className="font-semibold text-foreground">{txConvo.alias}</span> via WhatsApp
                 </span>
               )}
             </DialogTitle>
@@ -2978,15 +3051,31 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
           <div className="grid grid-cols-[minmax(0,0.88fr)_504px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
-            <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
+            <div className="overflow-y-auto px-5 py-4 space-y-3 border-r flex flex-col justify-between">
+              {/* Group chats: pick the customer this transfer belongs to */}
+              {selectedGroup && (
+                <section className="rounded-lg border bg-card">
+                  <header className="px-3 py-2 border-b flex items-center justify-between">
+                    <h3 className="text-xs font-semibold">Customer</h3>
+                    <span className="text-[10px] text-muted-foreground">{selectedGroup.groupName}</span>
+                  </header>
+                  <div className="p-3">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} label="Customer" />
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Required for group conversations — beneficiaries and records update to this customer.
+                    </p>
+                  </div>
+                </section>
+              )}
+
               {/* Wallet balance card */}
               {(() => {
                 const credits = transferEligibleOrders
                   .filter((o) => o.status === "success")
                   .reduce((s, o) => s + (o.payout || 0), 0);
-                const priorTransfers = selectedConvo
+                const priorTransfers = txConvo
                   ? (
-                      JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                      JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
                         amount: number;
                       }>
                     ).reduce((s, t) => s + (t.amount || 0), 0)
@@ -3093,7 +3182,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         onClick={() => {
                           setTransferVerifying(true);
                           setTimeout(() => {
-                            const mockName = (selectedConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
+                            const mockName = (txConvo?.alias || "CUSTOMER").toUpperCase() + " ADEBAYO";
                             setTransferRecipient(mockName);
                             setTransferVerified(true);
                             setTransferVerifying(false);
@@ -3194,7 +3283,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             {/* ============== RIGHT PANEL: Beneficiaries + Records ============== */}
             <div className="overflow-y-auto bg-muted/10">
               {(() => {
-                const key = `cc.transfers.${selectedConvo?.id || ""}`;
+                const key = `cc.transfers.${txConvo?.id || ""}`;
                 const saved: Array<{
                   bank: string;
                   account: string;
@@ -3202,7 +3291,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   method: string;
                   amount: number;
                   at: number;
-                }> = selectedConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
+                }> = txConvo ? JSON.parse(sessionStorage.getItem(key) || "[]") : [];
 
                 // Saved beneficiaries — dedupe by bank+account
                 const seen = new Set<string>();
@@ -3213,7 +3302,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   return true;
                 });
 
-                const mock = selectedConvo
+                const mock = txConvo
                   ? [
                       {
                         method: "PalmPay3",
@@ -3263,7 +3352,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     account: s.account,
                     recipient: s.recipient,
                     amount: s.amount,
-                    nickname: selectedConvo?.alias || "/",
+                    nickname: txConvo?.alias || "/",
                     status: "Success" as const,
                   })),
                   ...mock,
@@ -3312,7 +3401,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     <div className="px-4 py-2.5 border-b sticky top-0 bg-background/95 backdrop-blur z-10">
                       <div className="text-sm font-semibold">Transfer Records</div>
                       <div className="text-[11px] text-muted-foreground mt-0.5">
-                        Recent transactions {selectedConvo && `· ${selectedConvo.alias}`}
+                        Recent transactions {txConvo && `· ${txConvo.alias}`}
                       </div>
                     </div>
                     {rows.length === 0 ? (
@@ -3382,12 +3471,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 disabled={(() => {
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
-                  if (!selectedConvo) return true;
+                  if (!txConvo) return true;
                   const credits = transferEligibleOrders
                     .filter((o) => o.status === "success")
                     .reduce((s, o) => s + (o.payout || 0), 0);
                   const priorTransfers = (
-                    JSON.parse(sessionStorage.getItem(`cc.transfers.${selectedConvo.id}`) || "[]") as Array<{
+                    JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
                       amount: number;
                     }>
                   ).reduce((s, t) => s + (t.amount || 0), 0);
@@ -3395,8 +3484,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 })()}
                 onClick={() => {
                   const amt = Number(transferAmount || 0);
-                  if (selectedConvo) {
-                    const key = `cc.transfers.${selectedConvo.id}`;
+                  if (txConvo) {
+                    const key = `cc.transfers.${txConvo.id}`;
                     const prev = JSON.parse(sessionStorage.getItem(key) || "[]");
                     prev.unshift({
                       bank: transferBank,

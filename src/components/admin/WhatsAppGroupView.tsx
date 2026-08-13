@@ -80,11 +80,11 @@ export function GroupThread({
                 WhatsApp Group
               </span>
             </div>
-            <p className="text-[10px] text-muted-foreground">{group.participants.length} participants</p>
+            <p className="text-[10px] text-muted-foreground">{group.participants.length} members</p>
           </div>
         </div>
         <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-          <Info className="w-3 h-3" /> Group chats are informational — no order actions
+          <Info className="w-3 h-3" /> Select a customer in the right panel to raise orders or transfers
         </span>
       </header>
 
@@ -206,14 +206,14 @@ export function GroupInfoPanel({
           <div className="min-w-0">
             <p className="text-sm font-semibold truncate">{group.groupName}</p>
             <p className="text-[10px] text-muted-foreground">
-              {group.participants.length} participants · {matched} matched customers
+              {group.participants.length} members · {matched} matched customers
             </p>
           </div>
         </div>
         <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed flex items-start gap-1.5">
           <Info className="w-3 h-3 mt-0.5 shrink-0" />
-          Wallet, orders and transfers are unavailable for group conversations. Open a participant's 1:1 chat to take
-          action.
+          Group chats contain multiple customers — use the Sales Order tab to pick a customer before creating an order or
+          transfer.
         </p>
       </div>
 
