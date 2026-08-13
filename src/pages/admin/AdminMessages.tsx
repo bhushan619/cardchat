@@ -1760,7 +1760,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && selectedConvo && (
+                        {canAdjustFunds && (selectedConvo || selectedGroup) && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1775,7 +1775,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <Wallet className="w-3.5 h-3.5" /> Points +/-
                           </Button>
                         )}
-                        {selectedConvo?.channel === "whatsapp" && (
+                        {(selectedConvo?.channel === "whatsapp" || !!selectedGroup) && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1795,6 +1795,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
                           </Button>
                         )}
+
                         <button
                           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
                           onClick={() => {
@@ -2639,17 +2640,31 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
           {(() => {
-            const cw = selectedConvo ? customerWallets.find((w) => w.alias === selectedConvo.alias) : null;
-            const custTxns = selectedConvo ? walletTransactions.slice(0, 5) : [];
-            const custAdjustments = selectedConvo
-              ? fundAdjustments.filter((a) => a.customerAlias === selectedConvo.alias)
+            const cw = txConvo ? customerWallets.find((w) => w.alias === txConvo.alias) : null;
+            const custTxns = txConvo ? walletTransactions.slice(0, 5) : [];
+            const custAdjustments = txConvo
+              ? fundAdjustments.filter((a) => a.customerAlias === txConvo.alias)
               : [];
             return (
               <>
+                {selectedGroup && (
+                  <div className="rounded-lg border bg-muted/30 p-2.5 space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">{selectedGroup.groupName}</span>
+                    </div>
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} label="Customer" />
+                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
+                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                      Group chats have multiple customers — select whose wallet to adjust.
+                    </p>
+                  </div>
+                )}
                 <p className="text-sm text-muted-foreground">
                   {fundAdjustType === "addition" ? "Add" : "Deduct"} points{" "}
-                  {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
+                  {fundAdjustType === "addition" ? "to" : "from"} <strong>{txConvo?.alias ?? "—"}</strong>'s wallet.
                 </p>
+
 
                 {/* Wallet Balance Card */}
                 {cw && (
@@ -2716,7 +2731,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <SelectContent>
                         <SelectItem value="none">No related order</SelectItem>
                         {orders
-                          .filter((o) => (selectedConvo ? o.customer === selectedConvo.alias : true))
+                          .filter((o) => (txConvo ? o.customer === txConvo.alias : true))
                           .map((o) => (
                             <SelectItem key={o.id} value={o.id}>
                               <span className="font-medium">{o.id}</span>
@@ -2820,7 +2835,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </Button>
               <Button
                 className="flex-1"
-                disabled={!fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
+                disabled={!txConvo || !fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
                 onClick={() => {
                   const storedPin = localStorage.getItem(`adminPin_${role}`);
                   if (!storedPin) {
@@ -2891,11 +2906,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       return;
                     }
                     const amount = Number(fundAdjustAmount);
-                    if (!selectedConvo || !amount || amount <= 0 || !fundAdjustReason) return;
+                    if (!txConvo || !amount || amount <= 0 || !fundAdjustReason) return;
                     const roleNames: Record<string, string> = { super_admin: "Admin One", team_lead: "Sarah Lead" };
                     const adjustment: FundAdjustment = {
                       id: `FA-${Date.now().toString(36).toUpperCase()}`,
-                      customerAlias: selectedConvo.alias,
+                      customerAlias: txConvo.alias,
                       type: fundAdjustType,
                       amount,
                       reason: fundAdjustReason,
