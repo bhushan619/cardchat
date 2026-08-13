@@ -20,10 +20,10 @@ export function ParticipantBadge({ alias }: { alias: string | null }) {
 }
 
 /** Two overlapping circles — group avatar. */
-export function GroupAvatar({ size = 8 }: { size?: number }) {
+export function GroupAvatar({ className = "w-8 h-8" }: { className?: string }) {
   return (
     <div
-      className={`w-${size} h-${size} rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400`}
+      className={`${className} rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400`}
     >
       <Users className="w-4 h-4" />
     </div>
