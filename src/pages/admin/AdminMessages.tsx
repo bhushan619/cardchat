@@ -1760,7 +1760,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && selectedConvo && (
+                        {canAdjustFunds && (selectedConvo || selectedGroup) && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1775,7 +1775,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <Wallet className="w-3.5 h-3.5" /> Points +/-
                           </Button>
                         )}
-                        {selectedConvo?.channel === "whatsapp" && (
+                        {(selectedConvo?.channel === "whatsapp" || !!selectedGroup) && (
                           <Button
                             size="sm"
                             variant="outline"
@@ -1795,6 +1795,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
                           </Button>
                         )}
+
                         <button
                           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
                           onClick={() => {
