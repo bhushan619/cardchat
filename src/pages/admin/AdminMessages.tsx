@@ -2640,17 +2640,31 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
             </DialogTitle>
           </DialogHeader>
           {(() => {
-            const cw = selectedConvo ? customerWallets.find((w) => w.alias === selectedConvo.alias) : null;
-            const custTxns = selectedConvo ? walletTransactions.slice(0, 5) : [];
-            const custAdjustments = selectedConvo
-              ? fundAdjustments.filter((a) => a.customerAlias === selectedConvo.alias)
+            const cw = txConvo ? customerWallets.find((w) => w.alias === txConvo.alias) : null;
+            const custTxns = txConvo ? walletTransactions.slice(0, 5) : [];
+            const custAdjustments = txConvo
+              ? fundAdjustments.filter((a) => a.customerAlias === txConvo.alias)
               : [];
             return (
               <>
+                {selectedGroup && (
+                  <div className="rounded-lg border bg-muted/30 p-2.5 space-y-1.5">
+                    <div className="flex items-center gap-1.5">
+                      <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                      <span className="text-[10px] text-muted-foreground">{selectedGroup.groupName}</span>
+                    </div>
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} label="Customer" />
+                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
+                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                      Group chats have multiple customers — select whose wallet to adjust.
+                    </p>
+                  </div>
+                )}
                 <p className="text-sm text-muted-foreground">
                   {fundAdjustType === "addition" ? "Add" : "Deduct"} points{" "}
-                  {fundAdjustType === "addition" ? "to" : "from"} <strong>{selectedConvo?.alias}</strong>'s wallet.
+                  {fundAdjustType === "addition" ? "to" : "from"} <strong>{txConvo?.alias ?? "—"}</strong>'s wallet.
                 </p>
+
 
                 {/* Wallet Balance Card */}
                 {cw && (
