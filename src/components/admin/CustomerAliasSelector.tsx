@@ -3,7 +3,7 @@ import { Check, ChevronsUpDown, Search, X, User } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { maskName } from "@/lib/utils";
+
 import { customerDirectory, type DirectoryCustomer } from "@/data/mock";
 
 /**
