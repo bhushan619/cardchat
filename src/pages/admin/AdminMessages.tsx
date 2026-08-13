@@ -2086,15 +2086,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </div>
                   </>
-                ) : (
-                  <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
-                    <p className="text-xs text-center">
-                      {selectedGroup
-                        ? "Select a customer in the Sales Order tab to view their orders"
-                        : "Select a conversation to view orders"}
+                ) : selectedGroup ? (
+                  <div className="p-3 space-y-2">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                    <p className="text-[11px] text-muted-foreground">
+                      Select a customer to view their orders in this group chat.
                     </p>
                   </div>
+                ) : (
+                  <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
+                    <p className="text-xs text-center">Select a conversation to view orders</p>
+                  </div>
                 )}
+
 
               </TabsContent>
 
