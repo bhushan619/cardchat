@@ -314,6 +314,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const filteredGroups = useMemo(() => {
     if (channelFilter !== "whatsapp") return [];
+    // Group conversations never appear in the Processing (trading) tab
+    if (activeTab === "trading") return [];
     return whatsappGroups.filter((g) => {
       const matchesTab = g.tab === activeTab;
       const matchesSearch =
