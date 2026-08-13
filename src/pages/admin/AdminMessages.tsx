@@ -274,11 +274,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Group chats: the customer behind an order/transfer must be selected manually.
   const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
-  const [groupRightTab, setGroupRightTab] = useState("info");
   useEffect(() => {
     setGroupCustomerAlias(null);
-    setGroupRightTab("info");
   }, [selectedId]);
+
   const groupCustomerConvo = groupCustomerAlias
     ? rawConversations.find((c) => c.alias === groupCustomerAlias) ?? null
     : null;
