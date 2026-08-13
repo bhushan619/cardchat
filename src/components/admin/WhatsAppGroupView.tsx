@@ -97,7 +97,6 @@ export function GroupThread({
 
       {/* Messages */}
       <div ref={containerRef} className="flex-1 overflow-y-auto p-5 space-y-3">
-        {systemMessages.length > 0 && null}
         {localMessages.map((msg) => {
           const isAgent = msg.sender === "agent";
           const p = group.participants.find((x) => x.id === msg.participantId);
