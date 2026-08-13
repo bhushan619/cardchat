@@ -2067,6 +2067,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 />
               </TabsContent>
             </Tabs>
+            )}
           </div>
         </div>
       </div>
