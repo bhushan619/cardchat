@@ -103,6 +103,8 @@ interface CardlightPanelProps {
   customerAlias?: string;
   embedded?: boolean;
   onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
+  /** Optional customer selector rendered at the top of the form once logged in (group chats). */
+  groupSelector?: React.ReactNode;
 }
 
 const makeCard = (): CardEntry => ({
@@ -163,6 +165,7 @@ export default function CardlightPanel({
   customerAlias,
   embedded,
   onBuyerSelected,
+  groupSelector,
 }: CardlightPanelProps) {
   // Login state - persisted in sessionStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("cardlight_logged_in") === "true");
@@ -481,6 +484,7 @@ export default function CardlightPanel({
           </div>
         ) : (
           <div className="space-y-0">
+            {groupSelector}
             {/* Order Creation Form */}
             <div className="p-4 border-b space-y-3">
               {/* Row 1: Card Type + Card Source */}

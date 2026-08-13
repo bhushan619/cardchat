@@ -2013,7 +2013,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="space-y-2 text-xs">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Alias</span>
-                          <span className="font-medium">{selectedConvo.alias}</span>
+                          <span className="font-medium">{panelConvo.alias}</span>
                         </div>
                         {role === "super_admin" && (
                           <div className="border rounded-lg p-2.5 space-y-2">
@@ -2044,11 +2044,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         )}
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Good Rate</span>
-                          <span className="font-medium">{selectedConvo.goodRate}%</span>
+                          <span className="font-medium">{panelConvo.goodRate}%</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Monthly Value</span>
-                          <span className="font-medium">{selectedConvo.totalValue}</span>
+                          <span className="font-medium">{panelConvo.totalValue}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Tags</span>
@@ -2070,37 +2070,32 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TabsContent>
 
               <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
-                {selectedGroup && (
-                  <div className="p-3 border-b shrink-0 space-y-1.5">
-                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
-                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
-                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
-                      Group chats have multiple customers — select who this order belongs to.
-                    </p>
-                  </div>
-                )}
-                {selectedGroup && !groupCustomerAlias ? (
-                  <div className="flex-1 flex items-center justify-center p-6 text-center">
-                    <p className="text-xs text-muted-foreground">
-                      Select a customer to create an order for this group conversation.
-                    </p>
-                  </div>
-                ) : (
-                  <div className="flex-1 overflow-hidden">
-                    <CardlightPanel
-                      key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
-                      open={rightTab === "sales"}
-                      onClose={() => setRightTab("orders")}
-                      onComplete={handleOrderComplete}
-                      customerAlias={selectedGroup ? groupCustomerAlias ?? undefined : selectedConvo?.alias}
-                      embedded
-                      onBuyerSelected={
-                        selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined
-                      }
-                    />
-                  </div>
-                )}
+                <div className="flex-1 overflow-hidden">
+                  <CardlightPanel
+                    key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
+                    open={rightTab === "sales"}
+                    onClose={() => setRightTab("orders")}
+                    onComplete={handleOrderComplete}
+                    customerAlias={selectedGroup ? groupCustomerAlias ?? undefined : selectedConvo?.alias}
+                    embedded
+                    groupSelector={
+                      selectedGroup ? (
+                        <div className="p-3 border-b shrink-0 space-y-1.5">
+                          <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                          <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
+                            <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                            Group chats have multiple customers — select who this order belongs to.
+                          </p>
+                        </div>
+                      ) : undefined
+                    }
+                    onBuyerSelected={
+                      selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined
+                    }
+                  />
+                </div>
               </TabsContent>
+
             </Tabs>
 
           </div>
