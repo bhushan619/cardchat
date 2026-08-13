@@ -216,3 +216,116 @@ export const customerWallets = [
   { alias: "W8T4FJ", balance: 620000, totalCredits: 1500000, totalWithdrawals: 880000 },
   { alias: "D3F9RX", balance: 15000, totalCredits: 45000, totalWithdrawals: 30000 },
 ];
+
+// ---------------------------------------------------------------------------
+// WhatsApp GROUP conversations (prototype mock)
+// Groups have many participants; some are known customers (matched alias),
+// others are unknown WhatsApp contacts.
+// ---------------------------------------------------------------------------
+export type GroupParticipant = {
+  id: string;
+  waName: string;
+  phone: string;
+  alias: string | null; // matched customer alias, null = not a customer
+};
+
+export type WhatsAppGroup = {
+  id: string;
+  isGroup: true;
+  groupName: string;
+  participants: GroupParticipant[];
+  lastMessage: string;
+  time: string;
+  unread: number;
+  tab: "consulting" | "trading";
+  channel: MessagingChannel;
+};
+
+export type GroupMessage = {
+  id: number;
+  sender: "participant" | "agent";
+  participantId?: string;
+  text: string;
+  time: string;
+};
+
+export const whatsappGroups: WhatsAppGroup[] = [
+  {
+    id: "g1",
+    isGroup: true,
+    groupName: "Lagos Traders Circle",
+    channel: "whatsapp",
+    lastMessage: "Amara: Rates for iTunes today?",
+    time: "3m",
+    unread: 4,
+    tab: "consulting",
+    participants: [
+      { id: "g1p1", waName: "Amara", phone: "+234 803 111 2222", alias: "A7X3KP" },
+      { id: "g1p2", waName: "Tobi Bello", phone: "+234 805 444 7788", alias: "K9M2BL" },
+      { id: "g1p3", waName: "Chidi O.", phone: "+234 811 233 9080", alias: null },
+      { id: "g1p4", waName: "Mama Nkechi", phone: "+234 802 556 1177", alias: "B5N1QW" },
+      { id: "g1p5", waName: "Segun", phone: "+234 809 771 6644", alias: null },
+      { id: "g1p6", waName: "Ifeanyi Cards", phone: "+234 813 900 2211", alias: "H2L6YD" },
+      { id: "g1p7", waName: "Blessing A.", phone: "+234 806 122 8890", alias: null },
+      { id: "g1p8", waName: "Kola", phone: "+234 814 665 3300", alias: null },
+    ],
+  },
+  {
+    id: "g2",
+    isGroup: true,
+    groupName: "Abuja Card Hub",
+    channel: "whatsapp",
+    lastMessage: "Segun: Sent the Steam codes ✅",
+    time: "22m",
+    unread: 0,
+    tab: "trading",
+    participants: [
+      { id: "g2p1", waName: "Segun", phone: "+234 809 771 6644", alias: "R4P8TN" },
+      { id: "g2p2", waName: "Hauwa", phone: "+234 807 330 4455", alias: null },
+      { id: "g2p3", waName: "Emeka Ent.", phone: "+234 812 998 5566", alias: "W8T4FJ" },
+      { id: "g2p4", waName: "Deji", phone: "+234 815 220 7788", alias: null },
+      { id: "g2p5", waName: "Grace", phone: "+234 803 909 1212", alias: "D3F9RX" },
+    ],
+  },
+  {
+    id: "g3",
+    isGroup: true,
+    groupName: "VIP Resellers 🇳🇬",
+    channel: "whatsapp",
+    lastMessage: "Hauwa: Any Amazon buyers today?",
+    time: "1h",
+    unread: 2,
+    tab: "consulting",
+    participants: [
+      { id: "g3p1", waName: "Hauwa", phone: "+234 807 330 4455", alias: null },
+      { id: "g3p2", waName: "Amara", phone: "+234 803 111 2222", alias: "A7X3KP" },
+      { id: "g3p3", waName: "Bayo Trades", phone: "+234 810 445 2233", alias: null },
+      { id: "g3p4", waName: "Uche", phone: "+234 816 700 1199", alias: "K9M2BL" },
+    ],
+  },
+];
+
+export const groupMessages: Record<string, GroupMessage[]> = {
+  g1: [
+    { id: 1, sender: "participant", participantId: "g1p1", text: "Good morning all 👋 Rates for iTunes today?", time: "09:02 AM" },
+    { id: 2, sender: "agent", text: "Morning! iTunes US physical is 720 today.", time: "09:04 AM" },
+    { id: 3, sender: "participant", participantId: "g1p3", text: "What about Steam e-code?", time: "09:06 AM" },
+    { id: 4, sender: "participant", participantId: "g1p4", text: "I have 3x $100 Amazon to move.", time: "09:08 AM" },
+    { id: 5, sender: "agent", text: "Steam e-code is 660. Amara, please DM me for the Amazon batch.", time: "09:10 AM" },
+    { id: 6, sender: "participant", participantId: "g1p7", text: "Is the rate fixed for the whole day?", time: "09:14 AM" },
+    { id: 7, sender: "participant", participantId: "g1p6", text: "Rates were solid yesterday, paid within 5 mins 🙏", time: "09:18 AM" },
+    { id: 8, sender: "participant", participantId: "g1p1", text: "Sending pictures shortly.", time: "09:21 AM" },
+  ],
+  g2: [
+    { id: 1, sender: "participant", participantId: "g2p2", text: "Anyone trading Razer Gold here?", time: "08:31 AM" },
+    { id: 2, sender: "agent", text: "Yes, Razer Gold e-code at 700.", time: "08:33 AM" },
+    { id: 3, sender: "participant", participantId: "g2p3", text: "Noted. I'll send mine after lunch.", time: "08:40 AM" },
+    { id: 4, sender: "participant", participantId: "g2p1", text: "Sent the Steam codes ✅", time: "08:52 AM" },
+  ],
+  g3: [
+    { id: 1, sender: "participant", participantId: "g3p3", text: "Group is quiet today 😅", time: "07:45 AM" },
+    { id: 2, sender: "participant", participantId: "g3p2", text: "I just cashed out, smooth as usual.", time: "07:50 AM" },
+    { id: 3, sender: "agent", text: "Glad to hear it! VIP rates are live all day.", time: "07:52 AM" },
+    { id: 4, sender: "participant", participantId: "g3p1", text: "Any Amazon buyers today?", time: "08:05 AM" },
+  ],
+};
