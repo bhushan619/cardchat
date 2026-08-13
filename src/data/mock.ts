@@ -278,7 +278,7 @@ export const whatsappGroups: WhatsAppGroup[] = [
     lastMessage: "Segun: Sent the Steam codes ✅",
     time: "22m",
     unread: 0,
-    tab: "trading",
+    tab: "consulting",
     participants: [
       { id: "g2p1", waName: "Segun", phone: "+234 809 771 6644", alias: "R4P8TN" },
       { id: "g2p2", waName: "Hauwa", phone: "+234 807 330 4455", alias: null },
