@@ -1878,8 +1878,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TabsList>
 
               <TabsContent value="orders" className="flex-1 overflow-y-auto mt-0">
+                {selectedGroup && (
+                  <div className="p-3 border-b">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                  </div>
+                )}
                 {selectedId && panelConvo ? (
                   <>
+
                     {/* Status action buttons */}
                     {currentOrderStatus && (
                       <div className="p-4 border-b">
