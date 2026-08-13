@@ -1878,8 +1878,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TabsList>
 
               <TabsContent value="orders" className="flex-1 overflow-y-auto mt-0">
+                {selectedGroup && (
+                  <div className="p-3 border-b">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                  </div>
+                )}
                 {selectedId && panelConvo ? (
                   <>
+
                     {/* Status action buttons */}
                     {currentOrderStatus && (
                       <div className="p-4 border-b">
@@ -2087,12 +2093,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                   </>
                 ) : selectedGroup ? (
-                  <div className="p-3 space-y-2">
-                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
-                    <p className="text-[11px] text-muted-foreground">
-                      Select a customer to view their orders in this group chat.
-                    </p>
-                  </div>
+                  <p className="p-3 text-[11px] text-muted-foreground">
+                    Select a customer to view their orders in this group chat.
+                  </p>
+
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
                     <p className="text-xs text-center">Select a conversation to view orders</p>
