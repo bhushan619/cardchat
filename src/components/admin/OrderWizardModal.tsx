@@ -413,9 +413,15 @@ export default function CardlightPanel({
                   first, then return here to log in with your 6-digit code.
                 </p>
               </div>
-              <Button variant="outline" className="w-full" onClick={() => setMfaEnrollRequired(false)}>
-                Back to password login
-              </Button>
+              <div className="space-y-2">
+                <Button className="w-full" onClick={handleMfaVerified}>
+                  Bypass MFA (prototype)
+                </Button>
+                <Button variant="outline" className="w-full" onClick={() => setMfaEnrollRequired(false)}>
+                  Back to password login
+                </Button>
+              </div>
+
             </div>
           </div>
 
