@@ -2069,8 +2069,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
               </TabsContent>
 
-              <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
+              <TabsContent
+                value="sales"
+                className="flex-1 overflow-hidden mt-0 data-[state=active]:flex flex-col data-[state=inactive]:hidden"
+              >
                 <div className="flex-1 overflow-hidden">
+
                   <CardlightPanel
                     key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
                     open={rightTab === "sales"}
