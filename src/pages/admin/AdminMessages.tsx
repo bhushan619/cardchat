@@ -281,6 +281,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const groupCustomerConvo = groupCustomerAlias
     ? rawConversations.find((c) => c.alias === groupCustomerAlias) ?? null
     : null;
+  // Conversation the right panel acts on: auto-resolved in 1:1, manually picked in groups.
+  const panelConvo = selectedConvo ?? groupCustomerConvo;
   // Conversation the transfer modal acts on: auto-resolved in 1:1, manually picked in groups.
   const txConvo = selectedGroup ? groupCustomerConvo : selectedConvo;
   const isGroupChat = groupMembers.length > 0;
@@ -1296,7 +1298,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     </div>
                     <div>
                       <div className="flex items-center gap-1.5">
-                        <p className="text-sm font-semibold whitespace-nowrap">{selectedConvo.alias}</p>
+                        <p className="text-sm font-semibold whitespace-nowrap">{panelConvo.alias}</p>
                         {channelFilter !== "whatsapp" && isVip(selectedConvo.alias) && (
                           <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none border border-amber-600/20">
                             <Crown className="w-3 h-3" /> VIP
@@ -1322,7 +1324,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <p className="text-[10px] text-muted-foreground">
                         {isGroupChat
                           ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
-                          : `${selectedConvo.goodRate}% rate · ${selectedConvo.totalValue} total`}
+                          : `${panelConvo.goodRate}% rate · ${panelConvo.totalValue} total`}
                       </p>
                     </div>
                   </div>
@@ -1847,7 +1849,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TabsList>
 
               <TabsContent value="orders" className="flex-1 overflow-y-auto mt-0">
-                {selectedId && selectedConvo ? (
+                {selectedId && panelConvo ? (
                   <>
                     {/* Status action buttons */}
                     {currentOrderStatus && (
@@ -2050,16 +2052,21 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Tags</span>
-                          <span className="font-medium">{selectedConvo.tags.join(", ") || "None"}</span>
+                          <span className="font-medium">{panelConvo.tags.join(", ") || "None"}</span>
                         </div>
                       </div>
                     </div>
                   </>
                 ) : (
                   <div className="flex-1 flex items-center justify-center text-muted-foreground p-4">
-                    <p className="text-xs text-center">Select a conversation to view orders</p>
+                    <p className="text-xs text-center">
+                      {selectedGroup
+                        ? "Select a customer in the Sales Order tab to view their orders"
+                        : "Select a conversation to view orders"}
+                    </p>
                   </div>
                 )}
+
               </TabsContent>
 
               <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
