@@ -90,9 +90,6 @@ export function GroupThread({
             <p className="text-[10px] text-muted-foreground">{group.participants.length} members</p>
           </div>
         </div>
-        <span className="inline-flex items-center gap-1 text-[10px] text-muted-foreground">
-          <Info className="w-3 h-3" /> Select a customer in the right panel to raise orders or transfers
-        </span>
       </header>
 
       {/* Messages */}
