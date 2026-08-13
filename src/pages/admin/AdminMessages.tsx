@@ -274,6 +274,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Group chats: the customer behind an order/transfer must be selected manually.
   const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
+  // System notices shown inside group threads (order created, transfer executed, ...)
+  const [groupSystemMsgs, setGroupSystemMsgs] = useState<Record<string, { id: number; text: string; time: string }[]>>(
+    () => {
+      try {
+        return JSON.parse(sessionStorage.getItem("cc.groupSystemMsgs") || "{}");
+      } catch {
+        return {};
+      }
+    },
+  );
   useEffect(() => {
     setGroupCustomerAlias(null);
   }, [selectedId]);
@@ -374,6 +384,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Helper: add system message
   const addSystemMessage = (text: string) => {
+    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    if (selectedGroup) {
+      const gid = selectedGroup.id;
+      setGroupSystemMsgs((prev) => {
+        const next = { ...prev, [gid]: [...(prev[gid] ?? []), { id: Date.now(), text, time }] };
+        sessionStorage.setItem("cc.groupSystemMsgs", JSON.stringify(next));
+        return next;
+      });
+      return;
+    }
     const newMsg: ChatMessage = {
       id: Date.now(),
       sender: "system",
