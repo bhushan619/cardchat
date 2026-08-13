@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import type { ReactNode } from "react";
 import { Users, Send, Smile, Paperclip, Info } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
@@ -34,10 +35,16 @@ export function GroupThread({
   group,
   messages,
   highlightId,
+  systemMessages = [],
+  actions,
 }: {
   group: WhatsAppGroup;
   messages: GroupMessage[];
   highlightId: number | null;
+  /** System notices (order created, transfer executed, ...) appended to the thread. */
+  systemMessages?: { id: number; text: string; time: string }[];
+  /** Action buttons rendered in the composer (Points +/-, Transfer). */
+  actions?: ReactNode;
 }) {
   const [message, setMessage] = useState("");
   const [localMessages, setLocalMessages] = useState<GroupMessage[]>(messages);
@@ -90,6 +97,7 @@ export function GroupThread({
 
       {/* Messages */}
       <div ref={containerRef} className="flex-1 overflow-y-auto p-5 space-y-3">
+        {systemMessages.length > 0 && null}
         {localMessages.map((msg) => {
           const isAgent = msg.sender === "agent";
           const p = group.participants.find((x) => x.id === msg.participantId);
@@ -113,6 +121,13 @@ export function GroupThread({
             </div>
           );
         })}
+        {systemMessages.map((m) => (
+          <div key={`sys-${m.id}`} className="flex justify-center">
+            <div className="max-w-[80%] text-center text-[11px] px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
+              {m.text} <span className="opacity-60 ml-1">{m.time}</span>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Chat input */}
@@ -166,12 +181,15 @@ export function GroupThread({
                 </PopoverContent>
               </Popover>
             </div>
-            <button
+            <div className="flex items-center gap-2">
+              {actions}
+              <button
               className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
               onClick={send}
             >
               <Send className="w-4 h-4 text-accent-foreground" />
-            </button>
+              </button>
+            </div>
           </div>
         </div>
       </div>
