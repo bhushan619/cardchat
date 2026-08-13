@@ -329,3 +329,69 @@ export const groupMessages: Record<string, GroupMessage[]> = {
     { id: 4, sender: "participant", participantId: "g3p1", text: "Any Amazon buyers today?", time: "08:05 AM" },
   ],
 };
+
+// ---------------------------------------------------------------------------
+// Customer directory — used by the group-chat Customer selector (alias / name / phone)
+// ---------------------------------------------------------------------------
+export type DirectoryCustomer = { alias: string; name: string; phone: string };
+
+export const customerDirectory: DirectoryCustomer[] = [
+  { alias: "A7X3KP", name: "Amara Okafor", phone: "+234 803 111 2222" },
+  { alias: "K9M2BL", name: "Tobi Bello", phone: "+234 805 444 7788" },
+  { alias: "R4P8TN", name: "Segun Adeyemi", phone: "+234 809 222 3344" },
+  { alias: "B5N1QW", name: "Nkechi Eze", phone: "+234 802 556 1177" },
+  { alias: "H2L6YD", name: "Ifeanyi Nwosu", phone: "+234 807 661 2233" },
+  { alias: "W8T4FJ", name: "Emeka Obi", phone: "+234 812 998 5566" },
+  { alias: "D3F9RX", name: "Grace Johnson", phone: "+234 803 909 1212" },
+];
+
+// Additional WhatsApp groups requested for order/transfer handling in groups
+whatsappGroups.push(
+  {
+    id: "g4",
+    isGroup: true,
+    groupName: "VIP Trading Group",
+    channel: "whatsapp",
+    lastMessage: "Amara: Ready to sell 5x iTunes $100",
+    time: "6m",
+    unread: 3,
+    tab: "consulting",
+    participants: [
+      { id: "g4p1", waName: "Amara", phone: "+234 803 111 2222", alias: "A7X3KP" },
+      { id: "g4p2", waName: "Segun", phone: "+234 809 222 3344", alias: "R4P8TN" },
+      { id: "g4p3", waName: "Emeka Ent.", phone: "+234 812 998 5566", alias: "W8T4FJ" },
+      { id: "g4p4", waName: "Zainab", phone: "+234 810 220 4411", alias: null },
+      { id: "g4p5", waName: "Ifeanyi Cards", phone: "+234 807 661 2233", alias: "H2L6YD" },
+    ],
+  },
+  {
+    id: "g5",
+    isGroup: true,
+    groupName: "Card Sellers Group",
+    channel: "whatsapp",
+    lastMessage: "Tobi: Amazon $50 x3 available",
+    time: "35m",
+    unread: 1,
+    tab: "consulting",
+    participants: [
+      { id: "g5p1", waName: "Tobi Bello", phone: "+234 805 444 7788", alias: "K9M2BL" },
+      { id: "g5p2", waName: "Mama Nkechi", phone: "+234 802 556 1177", alias: "B5N1QW" },
+      { id: "g5p3", waName: "Grace", phone: "+234 803 909 1212", alias: "D3F9RX" },
+      { id: "g5p4", waName: "Kola", phone: "+234 814 665 3300", alias: null },
+    ],
+  },
+);
+
+groupMessages.g4 = [
+  { id: 1, sender: "participant", participantId: "g4p1", text: "Ready to sell 5x iTunes $100 today", time: "10:02 AM" },
+  { id: 2, sender: "agent", text: "Noted Amara — send the images here and I'll raise the order.", time: "10:03 AM" },
+  { id: 3, sender: "participant", participantId: "g4p3", text: "I also have Razer Gold $200.", time: "10:07 AM" },
+  { id: 4, sender: "participant", participantId: "g4p4", text: "What's the VIP rate right now?", time: "10:11 AM" },
+];
+
+groupMessages.g5 = [
+  { id: 1, sender: "participant", participantId: "g5p1", text: "Amazon $50 x3 available", time: "09:20 AM" },
+  { id: 2, sender: "participant", participantId: "g5p2", text: "Please pay my Opay account when done 🙏", time: "09:24 AM" },
+  { id: 3, sender: "agent", text: "Sure — creating the order now.", time: "09:26 AM" },
+  { id: 4, sender: "participant", participantId: "g5p3", text: "Steam codes coming after lunch.", time: "09:31 AM" },
+];
