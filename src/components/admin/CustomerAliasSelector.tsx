@@ -28,14 +28,8 @@ export default function CustomerAliasSelector({
 
   const selected: DirectoryCustomer | undefined = customerDirectory.find((c) => c.alias === value);
   const q = query.trim().toLowerCase();
-  const results = q
-    ? customerDirectory.filter(
-        (c) =>
-          c.alias.toLowerCase().includes(q) ||
-          c.name.toLowerCase().includes(q) ||
-          c.phone.replace(/\s/g, "").includes(q.replace(/\s/g, "")),
-      )
-    : customerDirectory;
+  const results = q ? customerDirectory.filter((c) => c.alias.toLowerCase().includes(q)) : customerDirectory;
+
 
   return (
     <div className={`space-y-1 ${className}`}>
