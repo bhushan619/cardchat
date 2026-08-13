@@ -15,7 +15,7 @@ import {
   groupMessages,
   type FundAdjustment,
 } from "@/data/mock";
-import { GroupThread, GroupInfoPanel, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
+import { GroupThread, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
 import {
   MessageCircle,
   Star,
@@ -274,11 +274,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Group chats: the customer behind an order/transfer must be selected manually.
   const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
-  const [groupRightTab, setGroupRightTab] = useState("info");
   useEffect(() => {
     setGroupCustomerAlias(null);
-    setGroupRightTab("info");
   }, [selectedId]);
+
   const groupCustomerConvo = groupCustomerAlias
     ? rawConversations.find((c) => c.alias === groupCustomerAlias) ?? null
     : null;
@@ -1830,74 +1829,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
           {/* Right panel: Tabbed Orders & Sales Order */}
           <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
-            {selectedGroup ? (
-              <Tabs value={groupRightTab} onValueChange={setGroupRightTab} className="flex flex-col h-full">
-                <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
-                  <TabsTrigger
-                    value="info"
-                    className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent"
-                  >
-                    Group Info
-                  </TabsTrigger>
-                  <TabsTrigger
-                    value="sales"
-                    className="flex-1 rounded-none h-full text-xs data-[state=active]:shadow-none data-[state=active]:border-b-2 data-[state=active]:border-accent"
-                  >
-                    Sales Order
-                  </TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="info" className="flex-1 overflow-hidden mt-0">
-                  <GroupInfoPanel
-                    group={selectedGroup}
-                    messages={selectedGroupMessages}
-                    onSelectParticipant={handleSelectParticipant}
-                    activeParticipantId={activeParticipantId}
-                  />
-                </TabsContent>
-
-                <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
-                  <div className="p-3 border-b space-y-2 shrink-0">
-                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
-                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
-                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
-                      Group chats have multiple customers — select who this order or transfer belongs to.
-                    </p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="w-full h-8 text-xs"
-                      disabled={!groupCustomerAlias}
-                      onClick={() => {
-                        resetTransferForm();
-                        setTransferOpen(true);
-                      }}
-                    >
-                      <ArrowRightLeft className="w-3.5 h-3.5 mr-1.5" /> Process Transfer
-                    </Button>
-                  </div>
-                  {groupCustomerAlias ? (
-                    <div className="flex-1 overflow-hidden">
-                      <CardlightPanel
-                        key={groupCustomerAlias}
-                        open={groupRightTab === "sales"}
-                        onClose={() => setGroupRightTab("info")}
-                        onComplete={handleOrderComplete}
-                        customerAlias={groupCustomerAlias}
-                        embedded
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex-1 flex items-center justify-center p-6 text-center">
-                      <p className="text-xs text-muted-foreground">
-                        Select a customer to create an order for this group conversation.
-                      </p>
-                    </div>
-                  )}
-                </TabsContent>
-              </Tabs>
-            ) : (
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
+
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
                 <TabsTrigger
                   value="orders"
@@ -2129,20 +2062,40 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 )}
               </TabsContent>
 
-              <TabsContent value="sales" className="flex-1 overflow-hidden mt-0">
-                <CardlightPanel
-                  open={rightTab === "sales"}
-                  onClose={() => setRightTab("orders")}
-                  onComplete={handleOrderComplete}
-                  customerAlias={selectedConvo?.alias}
-                  embedded
-                  onBuyerSelected={
-                    selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined
-                  }
-                />
+              <TabsContent value="sales" className="flex-1 overflow-hidden mt-0 flex flex-col">
+                {selectedGroup && (
+                  <div className="p-3 border-b shrink-0 space-y-1.5">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
+                    <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
+                      <Info className="w-3 h-3 mt-0.5 shrink-0" />
+                      Group chats have multiple customers — select who this order belongs to.
+                    </p>
+                  </div>
+                )}
+                {selectedGroup && !groupCustomerAlias ? (
+                  <div className="flex-1 flex items-center justify-center p-6 text-center">
+                    <p className="text-xs text-muted-foreground">
+                      Select a customer to create an order for this group conversation.
+                    </p>
+                  </div>
+                ) : (
+                  <div className="flex-1 overflow-hidden">
+                    <CardlightPanel
+                      key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
+                      open={rightTab === "sales"}
+                      onClose={() => setRightTab("orders")}
+                      onComplete={handleOrderComplete}
+                      customerAlias={selectedGroup ? groupCustomerAlias ?? undefined : selectedConvo?.alias}
+                      embedded
+                      onBuyerSelected={
+                        selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined
+                      }
+                    />
+                  </div>
+                )}
               </TabsContent>
             </Tabs>
-            )}
+
           </div>
         </div>
       </div>
