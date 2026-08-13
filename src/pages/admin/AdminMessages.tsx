@@ -270,6 +270,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const last = [...selectedGroupMessages].reverse().find((m) => m.participantId === participantId);
     setHighlightMsgId(last ? last.id : null);
   };
+
+  // Group chats: the customer behind an order/transfer must be selected manually.
+  const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
+  const [groupRightTab, setGroupRightTab] = useState("info");
+  useEffect(() => {
+    setGroupCustomerAlias(null);
+    setGroupRightTab("info");
+  }, [selectedId]);
+  const groupCustomerConvo = groupCustomerAlias
+    ? rawConversations.find((c) => c.alias === groupCustomerAlias) ?? null
+    : null;
+  // Conversation the transfer modal acts on: auto-resolved in 1:1, manually picked in groups.
+  const txConvo = selectedGroup ? groupCustomerConvo : selectedConvo;
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
 
