@@ -2013,7 +2013,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="space-y-2 text-xs">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Alias</span>
-                          <span className="font-medium">{selectedConvo.alias}</span>
+                          <span className="font-medium">{panelConvo.alias}</span>
                         </div>
                         {role === "super_admin" && (
                           <div className="border rounded-lg p-2.5 space-y-2">
@@ -2044,11 +2044,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         )}
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Good Rate</span>
-                          <span className="font-medium">{selectedConvo.goodRate}%</span>
+                          <span className="font-medium">{panelConvo.goodRate}%</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Monthly Value</span>
-                          <span className="font-medium">{selectedConvo.totalValue}</span>
+                          <span className="font-medium">{panelConvo.totalValue}</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Tags</span>
