@@ -11,8 +11,11 @@ import {
   adminUsers,
   customerWallets,
   walletTransactions,
+  whatsappGroups,
+  groupMessages,
   type FundAdjustment,
 } from "@/data/mock";
+import { GroupThread, GroupInfoPanel, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
 import {
   MessageCircle,
   Star,
@@ -256,6 +259,17 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   };
 
   const selectedConvo = rawConversations.find((c) => c.id === selectedId);
+  // WhatsApp GROUP conversations (multi-participant, read-only right panel)
+  const selectedGroup =
+    channelFilter === "whatsapp" ? whatsappGroups.find((g) => g.id === selectedId) ?? null : null;
+  const selectedGroupMessages = selectedGroup ? groupMessages[selectedGroup.id] ?? [] : [];
+  const [activeParticipantId, setActiveParticipantId] = useState<string | null>(null);
+  const [highlightMsgId, setHighlightMsgId] = useState<number | null>(null);
+  const handleSelectParticipant = (participantId: string) => {
+    setActiveParticipantId(participantId);
+    const last = [...selectedGroupMessages].reverse().find((m) => m.participantId === participantId);
+    setHighlightMsgId(last ? last.id : null);
+  };
   const isGroupChat = groupMembers.length > 0;
   const canReassign = role === "super_admin" || role === "team_lead";
 
@@ -297,6 +311,33 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       return matchesTab && matchesSearch && matchesAgentScope;
     });
   }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
+
+  const filteredGroups = useMemo(() => {
+    if (channelFilter !== "whatsapp") return [];
+    return whatsappGroups.filter((g) => {
+      const matchesTab = g.tab === activeTab;
+      const matchesSearch =
+        !customerSearch ||
+        g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
+        g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
+      return matchesTab && matchesSearch;
+    });
+  }, [channelFilter, activeTab, customerSearch]);
+
+  // Interleave group rows with the 1:1 conversation rows
+  const listItems = useMemo(() => {
+    const out: Array<
+      | { kind: "dm"; data: (typeof filteredConversations)[number] }
+      | { kind: "group"; data: (typeof filteredGroups)[number] }
+    > = [];
+    const queue = [...filteredGroups];
+    filteredConversations.forEach((c, i) => {
+      out.push({ kind: "dm", data: c });
+      if (i % 2 === 1 && queue.length) out.push({ kind: "group", data: queue.shift()! });
+    });
+    queue.forEach((g) => out.push({ kind: "group", data: g }));
+    return out;
+  }, [filteredConversations, filteredGroups]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
