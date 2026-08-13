@@ -15,7 +15,7 @@ import {
   groupMessages,
   type FundAdjustment,
 } from "@/data/mock";
-import { GroupThread, GroupInfoPanel, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
+import { GroupThread, GroupAvatar } from "@/components/admin/WhatsAppGroupView";
 import {
   MessageCircle,
   Star,
