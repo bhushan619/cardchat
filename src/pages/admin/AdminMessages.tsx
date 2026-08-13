@@ -382,6 +382,47 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return counts;
   }, [conversationsWithTabs]);
 
+  // Points +/- and Transfer buttons — shared by 1:1 and group composers
+  const renderComposerActions = () => (
+    <>
+                    {canAdjustFunds && (selectedConvo || selectedGroup) && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setFundAdjustType("addition");
+                          setFundAdjustAmount("");
+                          setFundAdjustReason("");
+                          setFundAdjustOpen(true);
+                        }}
+                        className="h-8 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10"
+                      >
+                        <Wallet className="w-3.5 h-3.5" /> Points +/-
+                      </Button>
+                    )}
+                    {(selectedConvo?.channel === "whatsapp" || !!selectedGroup) && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={
+                          !(
+                            currentOrderStatus === "success" ||
+                            (currentOrderId && !!negotiationData[currentOrderId])
+                          )
+                        }
+                        onClick={() => {
+                          resetTransferForm();
+                          setTransferOpen(true);
+                        }}
+                        title="Transfer is only available once the order is successful or a negotiation is confirmed"
+                        className="h-8 text-xs gap-1 text-accent border-accent/30 bg-transparent hover:bg-accent/10 hover:text-accent hover:border-accent/50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
+                      </Button>
+                    )}
+    </>
+  );
+
   // Helper: add system message
   const addSystemMessage = (text: string) => {
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
@@ -1308,6 +1349,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 group={selectedGroup}
                 messages={selectedGroupMessages}
                 highlightId={highlightMsgId}
+                systemMessages={groupSystemMsgs[selectedGroup.id] ?? []}
+                actions={renderComposerActions()}
               />
             ) : selectedId && selectedConvo ? (
               <>
@@ -1780,42 +1823,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </Popover>
                       </div>
                       <div className="flex items-center gap-2">
-                        {canAdjustFunds && (selectedConvo || selectedGroup) && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => {
-                              setFundAdjustType("addition");
-                              setFundAdjustAmount("");
-                              setFundAdjustReason("");
-                              setFundAdjustOpen(true);
-                            }}
-                            className="h-8 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10"
-                          >
-                            <Wallet className="w-3.5 h-3.5" /> Points +/-
-                          </Button>
-                        )}
-                        {(selectedConvo?.channel === "whatsapp" || !!selectedGroup) && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            disabled={
-                              !(
-                                currentOrderStatus === "success" ||
-                                (currentOrderId && !!negotiationData[currentOrderId])
-                              )
-                            }
-                            onClick={() => {
-                              resetTransferForm();
-                              setTransferOpen(true);
-                            }}
-                            title="Transfer is only available once the order is successful or a negotiation is confirmed"
-                            className="h-8 text-xs gap-1 text-accent border-accent/30 bg-transparent hover:bg-accent/10 hover:text-accent hover:border-accent/50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <ArrowRightLeft className="w-3.5 h-3.5" /> Transfer
-                          </Button>
-                        )}
-
+                        {renderComposerActions()}
                         <button
                           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
                           onClick={() => {
