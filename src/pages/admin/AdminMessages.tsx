@@ -3051,7 +3051,23 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
           <div className="grid grid-cols-[minmax(0,0.88fr)_504px] flex-1 min-h-0">
             {/* ============== FORM ============== */}
-            <div className="overflow-hidden px-5 py-4 space-y-3 border-r flex flex-col justify-between">
+            <div className="overflow-y-auto px-5 py-4 space-y-3 border-r flex flex-col justify-between">
+              {/* Group chats: pick the customer this transfer belongs to */}
+              {selectedGroup && (
+                <section className="rounded-lg border bg-card">
+                  <header className="px-3 py-2 border-b flex items-center justify-between">
+                    <h3 className="text-xs font-semibold">Customer</h3>
+                    <span className="text-[10px] text-muted-foreground">{selectedGroup.groupName}</span>
+                  </header>
+                  <div className="p-3">
+                    <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} label="Customer" />
+                    <p className="mt-1 text-[10px] text-muted-foreground">
+                      Required for group conversations — beneficiaries and records update to this customer.
+                    </p>
+                  </div>
+                </section>
+              )}
+
               {/* Wallet balance card */}
               {(() => {
                 const credits = transferEligibleOrders
