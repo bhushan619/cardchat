@@ -2731,7 +2731,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <SelectContent>
                         <SelectItem value="none">No related order</SelectItem>
                         {orders
-                          .filter((o) => (selectedConvo ? o.customer === selectedConvo.alias : true))
+                          .filter((o) => (txConvo ? o.customer === txConvo.alias : true))
                           .map((o) => (
                             <SelectItem key={o.id} value={o.id}>
                               <span className="font-medium">{o.id}</span>
@@ -2835,7 +2835,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </Button>
               <Button
                 className="flex-1"
-                disabled={!fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
+                disabled={!txConvo || !fundAdjustAmount || Number(fundAdjustAmount) <= 0 || !fundAdjustReason}
                 onClick={() => {
                   const storedPin = localStorage.getItem(`adminPin_${role}`);
                   if (!storedPin) {
@@ -2906,11 +2906,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       return;
                     }
                     const amount = Number(fundAdjustAmount);
-                    if (!selectedConvo || !amount || amount <= 0 || !fundAdjustReason) return;
+                    if (!txConvo || !amount || amount <= 0 || !fundAdjustReason) return;
                     const roleNames: Record<string, string> = { super_admin: "Admin One", team_lead: "Sarah Lead" };
                     const adjustment: FundAdjustment = {
                       id: `FA-${Date.now().toString(36).toUpperCase()}`,
-                      customerAlias: selectedConvo.alias,
+                      customerAlias: txConvo.alias,
                       type: fundAdjustType,
                       amount,
                       reason: fundAdjustReason,
