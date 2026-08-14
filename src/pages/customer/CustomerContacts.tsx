@@ -1,6 +1,6 @@
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { customerContacts } from "@/data/mock";
-import { Search, MessageCircle, Zap, Clock, AlertCircle, ShieldBan, ShieldCheck } from "lucide-react";
+import { Search, Zap, Clock, AlertCircle, ShieldBan, ShieldCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";

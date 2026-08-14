@@ -1,5 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Globe, Eye, EyeOff, RefreshCw, CheckCircle, AlertTriangle, Ban } from "lucide-react";
+import { Eye, EyeOff, RefreshCw, CheckCircle, AlertTriangle, Ban } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";

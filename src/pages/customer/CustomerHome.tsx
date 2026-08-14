@@ -1,5 +1,5 @@
 import Logo from "@/components/Logo";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import {
   cardRates,
@@ -7,7 +7,6 @@ import {
   tradingBalance,
   rewardsBalance,
   expandDenominations,
-  formatDenominations,
 } from "@/data/mock";
 import {
   Search,
