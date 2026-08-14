@@ -1254,6 +1254,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 ~{c.waNickname}
                               </span>
                             )}
+                            {c.channel === "whatsapp" && c.whatsappNumber && (
+                              <span
+                                className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono leading-none whitespace-nowrap shrink-0"
+                                title={`WhatsApp number: ${c.whatsappNumber}`}
+                              >
+                                {c.whatsappNumber.slice(-4)}
+                              </span>
+                            )}
                             {channelFilter !== "whatsapp" && isVip(c.alias) && (
                               <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none shrink-0 border border-amber-600/20">
                                 <Crown className="w-3 h-3" /> VIP
@@ -1350,6 +1358,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             title="WhatsApp nickname"
                           >
                             ~{selectedConvo.waNickname}
+                          </span>
+                        )}
+                        {selectedConvo.channel === "whatsapp" && selectedConvo.whatsappNumber && (
+                          <span
+                            className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono leading-none whitespace-nowrap"
+                            title="WhatsApp number"
+                          >
+                            {selectedConvo.whatsappNumber}
                           </span>
                         )}
                         {channelFilter !== "whatsapp" && isVip(selectedConvo.alias) && (
