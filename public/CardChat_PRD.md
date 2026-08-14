@@ -1772,7 +1772,7 @@ src/
 
 | Change | Description |
 |--------|-------------|
-| **Transfer Receipt in Chat** | On a successful transfer, a **Transaction Details** receipt card (`src/components/admin/TransferReceiptCard.tsx`) is posted into the customer's chat thread: transfer-to-bank header, amount, fee, Success status, bank name, account number, account name, balance, and transaction number. The "Paid with" field is intentionally excluded. |
+| **Transfer Receipt in Chat** | On a successful transfer, a **Transaction Details** receipt card (`src/components/admin/TransferReceiptCard.tsx`) is posted into the customer's chat thread: transfer-to-bank header, amount, fee, Success status, bank name, account number, account name, balance, and transaction number. The "Paid with" field is intentionally excluded. Specced in §5.4 "Transaction Receipt". |
 | **WhatsApp Group Colour Coding** | WhatsApp **group** conversations use a violet accent (avatar, badges, active sidebar state) so they are visually distinct from emerald 1:1 WhatsApp threads. |
 | **WhatsApp Nickname Display** | The customer's WhatsApp nickname (`waNickname`) is displayed as `~Nickname` next to the system alias in the conversation list and chat header. |
 | **Secondary Alias (Alias 2)** | A second 6-char alphanumeric identifier (`alias2`) is shown as a monospace chip next to the nickname for WhatsApp customers. This replaces the previously proposed masked phone-number chip — no phone digits are exposed in the UI. |
