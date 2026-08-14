@@ -2141,7 +2141,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
                           <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
                             <Info className="w-3 h-3 mt-0.5 shrink-0" />
-                            Group chats have multiple customers — select who this order belongs to.
+                            Group chats have multiple customers — select who this order belongs to, or drag a card
+                            image from the chat onto this panel to auto-fill the sender's alias.
                           </p>
                         </div>
                       ) : undefined
