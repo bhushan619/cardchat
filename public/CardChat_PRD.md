@@ -711,6 +711,21 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - Clicking a status button triggers the transition and adds a system message (if customer-facing)
   - Payment flow: selecting "Pending Payment" enables a payment mode with bank selection and amount input
 
+#### WhatsApp Group Conversations (`/admin/whatsapp`)
+Group threads live in the same WhatsApp inbox as 1:1 chats and behave identically, with the additions below.
+
+- **Visual distinction:** Groups use a **violet** accent (avatar, badges, active sidebar state) versus emerald for 1:1 WhatsApp threads. The conversation card shows the group name, participant count, and per-message sender labels.
+- **Participants:** Each group member is rendered with their WhatsApp nickname and **Alias 2** chip; message bubbles are color-coded per sender (`WhatsAppGroupView.tsx`).
+- **Customer selection (required in groups):** Because a group contains several customers, the agent must pick which customer an action belongs to via `CustomerAliasSelector` (dropdown lists **aliases only** — no other details). The selector appears in exactly three places:
+  1. **Sales Order tab** — shown after "Login Sales System" succeeds
+  2. **Orders tab** — replaces the empty-state; selecting an alias loads that customer's orders
+  3. **Process Transfer modal**
+  Selection is shared between the Sales Order flow and the Orders tab (`panelConvo`), so the Orders tab always follows the currently selected customer.
+- **Points +/- and Transfer:** Both actions are available in group chats; each opens with the alias selector and routes the resulting system message and record to the selected customer.
+- **Drag image → Sales Order:** Card images in a group are draggable. Dropping one onto the Sales Order panel auto-selects the sending customer's alias. A hint line on the panel explains this.
+- **Thread routing:** When an active order exists for any customer in a group, the group thread moves from Consulting to the **Processing / Trading** column.
+- **Not applicable to groups:** Escalation and Reassign remain App-Messages-only features.
+
 #### Transfer Pop-up (WhatsApp / In-App Payout)
 - Opened from the chat action bar for the selected conversation
 - **Linked Order selector:** Dropdown lists eligible orders for the customer; each item shows Order ID, card type, payout amount, and a **transfer status pill** (`Transferred` / `Pending`). Selecting an order auto-fills the transfer amount.
@@ -1751,6 +1766,7 @@ src/
 | **WhatsApp Nickname Display** | The customer's WhatsApp nickname (`waNickname`) is displayed as `~Nickname` next to the system alias in the conversation list and chat header. |
 | **Secondary Alias (Alias 2)** | A second 6-char alphanumeric identifier (`alias2`) is shown as a monospace chip next to the nickname for WhatsApp customers. This replaces the previously proposed masked phone-number chip — no phone digits are exposed in the UI. |
 | **Drag Image → Sales Order** | Card images in group chats are draggable; dropping one onto the Sales Order panel auto-selects the sending customer's alias in the alias selector. A hint line explains the interaction. |
+| **WhatsApp Groups Spec** | New §5.4 subsection "WhatsApp Group Conversations" documents group behaviour: violet accent, participant nicknames + Alias 2 chips, mandatory `CustomerAliasSelector` in the Sales Order tab (post-login), Orders tab, and Process Transfer modal, shared selection via `panelConvo`, Points +/- and Transfer routing, drag-to-Sales-Order, group threads moving to Processing when an active order exists, and Escalate/Reassign remaining App-Messages-only. |
 
 ### v6.0 → v6.1 — August 7, 2026
 
