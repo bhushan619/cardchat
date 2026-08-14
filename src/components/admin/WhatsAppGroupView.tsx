@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { Users, Send, Smile, Paperclip } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
+import TransferReceiptCard, { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
 
 /** Small pill showing whether a WhatsApp sender is a known customer. */
 function ParticipantBadge({ alias }: { alias: string | null }) {
@@ -24,7 +25,7 @@ function ParticipantBadge({ alias }: { alias: string | null }) {
 export function GroupAvatar({ className = "w-8 h-8" }: { className?: string }) {
   return (
     <div
-      className={`${className} rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-600 dark:text-emerald-400`}
+      className={`${className} rounded-full bg-violet-500/10 flex items-center justify-center text-violet-600 dark:text-violet-400`}
     >
       <Users className="w-4 h-4" />
     </div>
@@ -42,7 +43,7 @@ export function GroupThread({
   messages: GroupMessage[];
   highlightId: number | null;
   /** System notices (order created, transfer executed, ...) appended to the thread. */
-  systemMessages?: { id: number; text: string; time: string }[];
+  systemMessages?: { id: number; text: string; time: string; receipt?: TransferReceipt }[];
   /** Action buttons rendered in the composer (Points +/-, Transfer). */
   actions?: ReactNode;
 }) {
@@ -83,7 +84,7 @@ export function GroupThread({
           <div>
             <div className="flex items-center gap-1.5">
               <p className="text-sm font-semibold whitespace-nowrap">{group.groupName}</p>
-              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium leading-none whitespace-nowrap">
+              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-600 dark:text-violet-400 font-medium leading-none whitespace-nowrap">
                 WhatsApp Group
               </span>
             </div>
@@ -111,19 +112,42 @@ export function GroupThread({
                     <ParticipantBadge alias={p?.alias ?? null} />
                   </div>
                 )}
-                <p>{msg.text}</p>
+                {msg.image && msg.imageUrl ? (
+                  <img
+                    src={msg.imageUrl}
+                    alt="Card image sent by customer"
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("text/cardchat-alias", p?.alias || "");
+                      e.dataTransfer.setData("text/plain", p?.alias || "");
+                    }}
+                    className="w-40 h-28 object-cover rounded-md border cursor-grab active:cursor-grabbing"
+                    title={p?.alias ? `Drag onto the Sales Order panel to select ${p.alias}` : "Sender is not a customer"}
+                  />
+                ) : (
+                  <p>{msg.text}</p>
+                )}
                 <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
               </div>
             </div>
           );
         })}
-        {systemMessages.map((m) => (
-          <div key={`sys-${m.id}`} className="flex justify-center">
-            <div className="max-w-[80%] text-center text-[11px] px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-              {m.text} <span className="opacity-60 ml-1">{m.time}</span>
+        {systemMessages.map((m) =>
+          m.receipt ? (
+            <div key={`sys-${m.id}`} className="flex justify-end">
+              <div className="space-y-1">
+                <TransferReceiptCard receipt={m.receipt} />
+                <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {m.time}</p>
+              </div>
             </div>
-          </div>
-        ))}
+          ) : (
+            <div key={`sys-${m.id}`} className="flex justify-center">
+              <div className="max-w-[80%] text-center text-[11px] px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
+                {m.text} <span className="opacity-60 ml-1">{m.time}</span>
+              </div>
+            </div>
+          ),
+        )}
       </div>
 
       {/* Chat input */}
