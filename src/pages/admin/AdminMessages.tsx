@@ -776,15 +776,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
-  // Orders eligible for transfer for the currently selected customer
+  // Orders eligible for transfer for the currently selected customer.
+  // In group threads there is no 1:1 selectedConvo — fall back to the customer
+  // picked via the alias selector (txConvo) so wallet credits still resolve.
   const transferEligibleOrders = useMemo(() => {
-    if (!selectedConvo) return [];
+    const convo = selectedConvo ?? groupCustomerConvo;
+    if (!convo) return [];
     const map = new Map<
       string,
       { id: string; amount: number; payout: number; cardType: string; status: string; customer: string }
     >();
     orders
-      .filter((o) => o.customer === selectedConvo.alias)
+      .filter((o) => o.customer === convo.alias)
       .forEach((o) => {
         map.set(o.id, {
           id: o.id,
@@ -808,12 +811,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           payout: current.payout,
           cardType: current.cardType,
           status: liveStatus || current.status,
-          customer: selectedConvo.alias,
+          customer: convo.alias,
         });
       }
     }
     return Array.from(map.values());
-  }, [selectedConvo, selectedId, currentOrderId, currentOrderStatus, allOrders]);
+  }, [selectedConvo, groupCustomerConvo, selectedId, currentOrderId, currentOrderStatus, allOrders]);
+
 
   // Pre-select the current linked order when the transfer modal opens
   useEffect(() => {
