@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Globe, Plus, Trash2, Shield, AlertTriangle, Clock } from "lucide-react";
+import { Plus, Trash2, Shield, AlertTriangle, Clock } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";

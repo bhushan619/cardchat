@@ -1,6 +1,6 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useState } from "react";
-import { ChevronDown, ChevronRight, Home, MessageCircle, Users, User, CreditCard, Gift, BookOpen, CheckCircle2, ShieldCheck, Bell, Banknote } from "lucide-react";
+import { ChevronDown, ChevronRight, Home, MessageCircle, Users, User, Gift, BookOpen, CheckCircle2, ShieldCheck, Bell, Banknote } from "lucide-react";
 
 interface GuideStep {
   text: string;

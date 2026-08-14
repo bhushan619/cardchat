@@ -1,6 +1,5 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Send, Users, Clock, CheckCircle } from "lucide-react";
-import { Input } from "@/components/ui/input";
+import { Send, Clock, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function AdminBroadcast() {

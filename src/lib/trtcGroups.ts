@@ -41,7 +41,7 @@ export const getGroups = (): TrtcGroup[] => {
   }
 };
 
-export const saveGroups = (groups: TrtcGroup[]) => {
+const saveGroups = (groups: TrtcGroup[]) => {
   sessionStorage.setItem(STORAGE_KEY, JSON.stringify(groups));
   window.dispatchEvent(new CustomEvent(EVENT_NAME));
 };

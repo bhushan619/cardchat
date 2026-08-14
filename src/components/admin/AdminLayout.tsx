@@ -1,18 +1,13 @@
-import { ReactNode, useState, useEffect, useMemo } from "react";
+import { ReactNode, useState, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
-  LayoutDashboard,
   MessageSquare,
   CreditCard,
-  Settings,
   Users,
   TrendingUp,
   Search,
   Bell,
-  ChevronDown,
-  Shield,
   Globe,
-  DollarSign,
   BarChart3,
   Send,
   FileText,
@@ -23,7 +18,6 @@ import {
   Sun,
   Moon,
   Wallet,
-  Gift,
   ArrowDownToLine,
   Coins,
   Phone,

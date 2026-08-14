@@ -8,8 +8,6 @@ import {
   Download,
   Search,
   X,
-  Building2,
-  RefreshCw,
   Coins,
 } from "lucide-react";
 import PointsAmount from "@/components/admin/PointsAmount";

@@ -1,11 +1,11 @@
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
-import { Users, Send, Smile, Paperclip, Info } from "lucide-react";
+import { Users, Send, Smile, Paperclip } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
 
 /** Small pill showing whether a WhatsApp sender is a known customer. */
-export function ParticipantBadge({ alias }: { alias: string | null }) {
+function ParticipantBadge({ alias }: { alias: string | null }) {
   if (alias) {
     return (
       <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-semibold leading-none whitespace-nowrap">
@@ -190,81 +190,5 @@ export function GroupThread({
         </div>
       </div>
     </>
-  );
-}
-
-export function GroupInfoPanel({
-  group,
-  messages,
-  onSelectParticipant,
-  activeParticipantId,
-}: {
-  group: WhatsAppGroup;
-  messages: GroupMessage[];
-  onSelectParticipant: (participantId: string) => void;
-  activeParticipantId: string | null;
-}) {
-  const matched = group.participants.filter((p) => p.alias).length;
-  return (
-    <div className="flex flex-col h-full">
-      <div className="h-12 border-b bg-muted/30 flex items-center px-4 shrink-0">
-        <span className="text-xs font-semibold">Group Info</span>
-        <span className="ml-2 text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-medium leading-none">
-          Read-only
-        </span>
-      </div>
-
-      <div className="p-4 border-b shrink-0">
-        <div className="flex items-center gap-3">
-          <GroupAvatar />
-          <div className="min-w-0">
-            <p className="text-sm font-semibold truncate">{group.groupName}</p>
-            <p className="text-[10px] text-muted-foreground">
-              {group.participants.length} members · {matched} matched customers
-            </p>
-          </div>
-        </div>
-        <p className="mt-3 text-[10px] text-muted-foreground leading-relaxed flex items-start gap-1.5">
-          <Info className="w-3 h-3 mt-0.5 shrink-0" />
-          Group chats contain multiple customers — use the Sales Order tab to pick a customer before creating an order or
-          transfer.
-        </p>
-      </div>
-
-      <div className="px-4 py-2 border-b shrink-0">
-        <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Participants</p>
-      </div>
-
-      <div className="flex-1 overflow-y-auto">
-        {group.participants.map((p) => {
-          const last = [...messages].reverse().find((m) => m.participantId === p.id);
-          const isActive = activeParticipantId === p.id;
-          return (
-            <button
-              key={p.id}
-              onClick={() => onSelectParticipant(p.id)}
-              className={`w-full text-left px-4 py-2.5 border-b hover:bg-muted/50 transition-colors ${
-                isActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
-              }`}
-            >
-              <div className="flex items-center gap-2">
-                <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary shrink-0">
-                  {p.waName.slice(0, 2).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-1.5 min-w-0">
-                    <span className="text-xs font-semibold truncate">{p.waName}</span>
-                    <ParticipantBadge alias={p.alias} />
-                  </div>
-                  <p className="text-[10px] text-muted-foreground truncate">
-                    {last ? last.text : "No messages in this thread"}
-                  </p>
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
   );
 }

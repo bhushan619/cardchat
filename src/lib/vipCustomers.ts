@@ -49,12 +49,6 @@ export function setVip(alias: string, vip: boolean) {
   listeners.forEach((l) => l());
 }
 
-export function toggleVip(alias: string): boolean {
-  const next = !isVip(alias);
-  setVip(alias, next);
-  return next;
-}
-
 export function onVipChange(listener: Listener): () => void {
   listeners.add(listener);
   return () => listeners.delete(listener);

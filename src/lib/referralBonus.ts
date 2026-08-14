@@ -11,7 +11,7 @@ export type ReferralBonusSettings = {
 
 const KEY = "cardchat_referral_bonus_v1";
 
-export const defaultReferralBonus: ReferralBonusSettings = {
+const defaultReferralBonus: ReferralBonusSettings = {
   enabled: true,
   inviterBonus: 500,
   inviteeBonus: 200,

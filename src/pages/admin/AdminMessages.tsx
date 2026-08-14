@@ -21,22 +21,17 @@ import {
   Star,
   Send,
   Image,
-  MoreVertical,
   Users,
   Search,
   CheckCircle2,
-  Clock,
-  XCircle,
   Crown,
   Shield,
   X,
-  Banknote,
   Eye,
   EyeOff,
   AlertTriangle,
   UserCheck,
   Smile,
-  FileText as FileTextIcon,
   Info,
   CreditCard,
   Copy,
@@ -79,7 +74,6 @@ import {
   AgentOrderStatus,
   agentStatusLabels,
   agentStatusStyles,
-  getTabForStatus,
   toCustomerStatus,
   customerStatusLabels,
 } from "@/lib/orderStateMachine";
@@ -184,8 +178,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
-  const [paymentOrderId, setPaymentOrderId] = useState<string | null>(null);
-  const [selectedBankId, setSelectedBankId] = useState<number | null>(null);
   const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(() => {
     try {
       const saved = sessionStorage.getItem("cardchat_transfer_completed");
@@ -264,14 +256,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const selectedGroup =
     channelFilter === "whatsapp" ? whatsappGroups.find((g) => g.id === selectedId) ?? null : null;
   const selectedGroupMessages = selectedGroup ? groupMessages[selectedGroup.id] ?? [] : [];
-  const [activeParticipantId, setActiveParticipantId] = useState<string | null>(null);
   const [highlightMsgId, setHighlightMsgId] = useState<number | null>(null);
-  const handleSelectParticipant = (participantId: string) => {
-    setActiveParticipantId(participantId);
-    const last = [...selectedGroupMessages].reverse().find((m) => m.participantId === participantId);
-    setHighlightMsgId(last ? last.id : null);
-  };
-
   // Group chats: the customer behind an order/transfer must be selected manually.
   const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
   // System notices shown inside group threads (order created, transfer executed, ...)
@@ -464,13 +449,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         addSystemMessage(`📌 💰 ${payoutAmount.toLocaleString()} points credited to customer's wallet`);
       }
     }
-  };
-
-  const handleCreateOrderFromChat = () => {
-    if (!selectedId) return;
-    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
-    orderStatus.createOrder(selectedId, orderId);
-    addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
   };
 
   const toggleStar = (e: React.MouseEvent, id: string) => {
@@ -744,15 +722,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       createdAt: o.created,
     })),
   ];
-
-  const selectedOrder = selectedOrderId ? allOrders.find((o) => o.id === selectedOrderId) : null;
-
-  const handleExecuteTransfer = (orderId: string, payout: number) => {
-    setTransferCompletedOrders((prev) => new Set(prev).add(orderId));
-    setPaymentOrderId(null);
-    setSelectedBankId(null);
-    addSystemMessage(`💰 ${payout.toLocaleString()} points released to customer's account`);
-  };
 
   const getSenderColor = (sender: string, senderName: string) => {
     if (sender === "customer") return "text-primary";
@@ -1210,7 +1179,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       key={g.id}
                       onClick={() => {
                         setSelectedId(g.id);
-                        setActiveParticipantId(null);
                         setHighlightMsgId(null);
                       }}
                       className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${

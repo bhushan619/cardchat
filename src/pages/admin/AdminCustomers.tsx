@@ -1,7 +1,7 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
-import { Search, Users, Eye, Wallet, ArrowDownLeft, ArrowUpRight, Coins, Phone, Landmark, Plus, Trash2, Loader2, CheckCircle2 } from "lucide-react";
+import { Search, Users, Eye, ArrowDownLeft, ArrowUpRight, Coins, Landmark, Plus, Trash2, Loader2, CheckCircle2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -15,7 +15,7 @@ import { listWaNumbers, pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { listBankAccounts, addBankAccount, removeBankAccount, onBankAccountsChange, mockVerifyAccount, NIGERIAN_BANKS, type CustomerBankAccount } from "@/lib/customerBankAccounts";
 import { toast } from "sonner";
 import { maskName } from "@/lib/utils";
-import { isVip, setVip, listVipAliases, onVipChange } from "@/lib/vipCustomers";
+import { setVip, listVipAliases, onVipChange } from "@/lib/vipCustomers";
 import { Crown } from "lucide-react";
 
 const customers = conversations.map((c) => {

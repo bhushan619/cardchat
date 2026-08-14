@@ -48,7 +48,7 @@ export function useSetAdminLang(): (l: AdminLang) => void {
 }
 
 // Shared admin translations (escalation / group chat)
-export const adminTranslations: Record<AdminLang, Record<string, string>> = {
+const adminTranslations: Record<AdminLang, Record<string, string>> = {
   en: {
     Escalate: "Escalate",
     "Add to Chat": "Add to Chat",

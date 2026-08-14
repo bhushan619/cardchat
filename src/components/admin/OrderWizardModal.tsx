@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import {
   X,
   Plus,
@@ -29,7 +29,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { cardRates, systemNairaRate, systemDenomination } from "@/data/mock";
+import { systemNairaRate, systemDenomination } from "@/data/mock";
 import MfaChallenge from "@/components/admin/MfaChallenge";
 import { isMfaBound } from "@/lib/mfaEnrollment";
 

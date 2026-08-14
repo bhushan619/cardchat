@@ -1,7 +1,7 @@
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Link } from "react-router-dom";
 import { useAdminT } from "@/contexts/AdminLangContext";
-import { BarChart3, Users, MessageSquare, TrendingUp, Clock } from "lucide-react";
+import { Users, MessageSquare, TrendingUp, Clock } from "lucide-react";
 
 const agents = [
   { name: "Mike Agent", chats: 12, orders: 8, settled: 6, pending: 2, avgTime: "8 min" },

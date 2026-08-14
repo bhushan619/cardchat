@@ -136,10 +136,6 @@ export function listWaNumbers(): WaBusinessNumber[] {
   return read();
 }
 
-export function getWaNumber(id: string): WaBusinessNumber | undefined {
-  return read().find((n) => n.id === id);
-}
-
 const DEFAULT_NEW: Omit<WaBusinessNumber, "id" | "label" | "phone"> = {
   status: "linking",
   active: false,
@@ -243,7 +239,7 @@ export function completeLink(id: string, actor = "Admin One") {
   write(list);
 }
 
-export function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
+function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
   const list = read();
   const idx = list.findIndex((x) => x.id === id);
   if (idx < 0) return;
