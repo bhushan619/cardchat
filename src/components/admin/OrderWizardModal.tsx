@@ -767,8 +767,8 @@ export default function CardlightPanel({
                 <span className="text-xs text-muted-foreground">Total {orderList.length}</span>
               </div>
 
-              <div className="border rounded-lg overflow-hidden">
-                <table className="w-full text-[10px]">
+              <div className="border rounded-lg overflow-x-auto">
+                <table className="w-full min-w-[720px] text-[10px]">
                   <thead>
                     <tr className="bg-muted/50 border-b">
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
