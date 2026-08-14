@@ -1254,12 +1254,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 ~{c.waNickname}
                               </span>
                             )}
-                            {c.channel === "whatsapp" && c.whatsappNumber && (
+                            {c.channel === "whatsapp" && (c as any).alias2 && (
                               <span
                                 className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono leading-none whitespace-nowrap shrink-0"
-                                title={`WhatsApp number: ${c.whatsappNumber}`}
+                                title={`Secondary alias: ${(c as any).alias2}`}
                               >
-                                {c.whatsappNumber.slice(-4)}
+                                {(c as any).alias2}
                               </span>
                             )}
                             {channelFilter !== "whatsapp" && isVip(c.alias) && (
@@ -1360,12 +1360,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             ~{selectedConvo.waNickname}
                           </span>
                         )}
-                        {selectedConvo.channel === "whatsapp" && selectedConvo.whatsappNumber && (
+                        {selectedConvo.channel === "whatsapp" && (selectedConvo as any).alias2 && (
                           <span
                             className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono leading-none whitespace-nowrap"
-                            title="WhatsApp number"
+                            title="Secondary alias"
                           >
-                            {selectedConvo.whatsappNumber}
+                            {(selectedConvo as any).alias2}
                           </span>
                         )}
                         {channelFilter !== "whatsapp" && isVip(selectedConvo.alias) && (
