@@ -733,6 +733,17 @@ Group threads live in the same WhatsApp inbox as 1:1 chats and behave identicall
 - On submit, the transfer is recorded against the selected order ID, the order is marked as transferred, and a system message is posted to the chat.
 - **WhatsApp-sourced orders:** No customer wallet is credited. The platform records the transfer against the order only and maintains the order details for reconciliation.
 
+#### Transaction Receipt (sent after a successful transfer)
+When a transfer completes successfully, the platform posts a **Transaction Details** receipt into the customer's chat thread (1:1 and group; in groups it is addressed to the selected customer alias). Rendered by `src/components/admin/TransferReceiptCard.tsx`.
+
+- **Header:** "Transfer to bank" with the debited amount shown as a negative value in Points
+- **Fields (in order):** Order amount · Fee · Status (`Success`) · Bank name · Account number · Account name · Balance · Transaction number
+- **Excluded:** the "Paid with" field is intentionally omitted
+- **Privacy:** the account name follows the global masking rule (`maskName`) until identity is revealed by an authorized role
+- **Trigger:** emitted automatically on transfer success — the same event that records the transfer against the order and marks it `Transferred`. No manual send action is required.
+- **Persistence:** the receipt is part of the chat transcript, so it remains visible to the agent and customer for reconciliation; the transaction number matches the Transfer ID on `/admin/transfers`
+
+
 #### Right Panel — Order Sidebar (35% width, 320–504px, hidden below `xl`)
 - **Tabbed interface:** "Orders" tab and "Sales Order" (Cardlight) tab
 
