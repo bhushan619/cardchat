@@ -3092,9 +3092,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
               {/* Wallet balance card */}
               {(() => {
-                const credits = transferEligibleOrders
-                  .filter((o) => o.status === "success")
-                  .reduce((s, o) => s + (o.payout || 0), 0);
+                const credits = Math.round(
+                  transferEligibleOrders
+                    .filter((o) => o.status === "success")
+                    .reduce((s, o) => s + (o.payout || 0), 0),
+                );
                 const priorTransfers = txConvo
                   ? (
                       JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
@@ -3494,9 +3496,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   if (!transferBank || !transferVerified || !transferAmount || !transferRate) return true;
                   const amt = Number(transferAmount || 0);
                   if (!txConvo) return true;
-                  const credits = transferEligibleOrders
-                    .filter((o) => o.status === "success")
-                    .reduce((s, o) => s + (o.payout || 0), 0);
+                  const credits = Math.round(
+                    transferEligibleOrders
+                      .filter((o) => o.status === "success")
+                      .reduce((s, o) => s + (o.payout || 0), 0),
+                  );
                   const priorTransfers = (
                     JSON.parse(sessionStorage.getItem(`cc.transfers.${txConvo.id}`) || "[]") as Array<{
                       amount: number;
