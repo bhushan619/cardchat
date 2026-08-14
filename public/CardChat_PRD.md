@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.1  
-**Date:** August 7, 2026
+**Version:** 6.2  
+**Date:** August 14, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -654,6 +654,9 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - **Channel badge** (icon-only chip) next to the alias indicating the active messaging channel
   - Star toggle (favorites)
   - Alias (6-char code)
+  - **WhatsApp nickname** (`~Nickname`, WhatsApp channel only) shown next to the alias
+  - **Secondary alias ("Alias 2")** — a second 6-char alphanumeric identifier rendered as a small monospace chip next to the nickname (WhatsApp channel only). Replaces the earlier phone-number chip so no PII is exposed in the list or header.
+  - **WhatsApp group conversations** use a violet accent (avatar, badges, active sidebar state) to distinguish them from 1:1 WhatsApp threads (emerald)
   - Last message (truncated)
   - Timestamp
   - Unread count badge
