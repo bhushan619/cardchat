@@ -24,7 +24,6 @@ const adminScreens = [
 ];
 
 export default function AdminScreensGallery() {
-  const navigate = useNavigate();
   const [selectedScreen, setSelectedScreen] = useState<typeof adminScreens[0] | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 

@@ -68,7 +68,6 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
 
 export default function AdminWithdrawals() {
   const { role } = useAdminRole();
-  const canAct = role === "super_admin" || role === "finance";
 
   const { label: activeChannelLabel } = usePaymentChannel();
   const [items, setItems] = useState<Withdrawal[]>(seed);

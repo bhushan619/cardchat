@@ -452,7 +452,6 @@ export default function CustomerMe() {
             <div className="space-y-2">
               {filteredTx.map(t => {
                 const isWithdrawal = t.type === "withdrawal";
-                const isCredit = t.type === "credit";
                 const Row = (
                   <>
                     <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${t.type === "credit" ? "bg-success/10" : "bg-warning/10"}`}>

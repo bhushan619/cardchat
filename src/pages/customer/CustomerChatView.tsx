@@ -73,7 +73,6 @@ const REPORT_REASONS = [
   { value: "other", label: "Something else" },
 ];
 
-const REPLACEMENT_AGENTS = ["Agent Mike", "Agent Grace", "Agent Tunde", "Agent Ada"];
 
 export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const navigate = useNavigate();
@@ -85,7 +84,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const [expanded, setExpanded] = useState(true);
 
   // Safety: report / block / unblock
-  const [agentName, setAgentName] = useState("CardChat Support");
+  const [agentName] = useState("CardChat Support");
   const [reportOpen, setReportOpen] = useState(false);
   const [reportMessageId, setReportMessageId] = useState<string | null>(null);
   const [reportedIds, setReportedIds] = useState<string[]>([]);

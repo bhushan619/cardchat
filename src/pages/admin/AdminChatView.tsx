@@ -47,7 +47,6 @@ const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
 
 export default function AdminChatView() {
   const navigate = useNavigate();
-  const { id } = useParams();
   const { role } = useAdminRole();
   const { toast } = useToast();
   const fileInputRef = useRef<HTMLInputElement>(null);

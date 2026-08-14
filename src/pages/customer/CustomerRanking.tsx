@@ -36,7 +36,6 @@ export default function CustomerRanking() {
   const currentPeriod = getCurrentBiWeeklyPeriod(new Date(2026, 2, 10)); // Mock: March 2026
 
   const me = rankingList.find((u) => u.alias === currentUserAlias)!;
-  const currentTier = getCurrentTier(me.volume);
   const nextTier = getNextTier(me.volume);
   const remaining = nextTier ? nextTier.threshold - me.volume : 0;
   const progressPercent = nextTier

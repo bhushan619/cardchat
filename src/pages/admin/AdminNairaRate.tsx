@@ -11,7 +11,6 @@ export default function AdminNairaRate() {
   const { role } = useAdminRole();
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
-  const [denomination, setDenomination] = useState(systemDenomination.toString());
   const [priceControl, setPriceControl] = useState(systemPriceControl.toFixed(2));
   const [vipPriceControl, setVipPriceControl] = useState(systemVipPriceControl.toFixed(2));
   const [reason, setReason] = useState("");

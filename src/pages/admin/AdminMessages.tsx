@@ -178,7 +178,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
   const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
-  const [transferCompletedOrders, setTransferCompletedOrders] = useState<Set<string>>(() => {
+  const [transferCompletedOrders] = useState<Set<string>>(() => {
     try {
       const saved = sessionStorage.getItem("cardchat_transfer_completed");
       return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -2144,22 +2144,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const orderCode = detailOrder.id;
                   const mockNicknames = ["肖捺", "王伟", "李娜", "Chen Yu", "Zhang Min", "Liu Yang"];
                   const mockAliases = ["M09L81", "K23P47", "T81X02", "Q44R19", "B67N38", "Z12V90"];
-                  const providerName =
-                    (detailOrder as any).providerName ||
-                    (detailOrder as any).alias ||
-                    mockAliases[seedNum % mockAliases.length];
                   const buyerNickname =
                     (detailOrder as any).buyerNickname ||
                     (detailOrder as any).buyer ||
                     mockNicknames[seedNum % mockNicknames.length];
-                  const sysUserId =
-                    (detailOrder as any).sysUserId ||
-                    `2${String(seedNum * 7919)
-                      .padStart(17, "0")
-                      .slice(0, 17)}`;
-                  const platSellerId =
-                    (detailOrder as any).platSellerId || `${seedNum}${String(seedNum * 31).slice(0, 12)}`;
-                  const origin = (detailOrder as any).origin || "Web";
                   const cardStatusMap: Record<string, string> = {
                     "0": "Pending",
                     "1": "Verified",
@@ -2176,16 +2164,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         : seedNum % 2 === 0
                           ? "Yes"
                           : "No";
-                  const transferStatusMap: Record<string, string> = {
-                    "0": "Not transferred",
-                    "1": "Transferred",
-                    "2": "Failed",
-                  };
-                  const transferStatusRaw = String((detailOrder as any).transferStatus ?? "1");
-                  const transferStatus = transferStatusMap[transferStatusRaw] || transferStatusRaw;
-                  const viewStatusMap: Record<string, string> = { "0": "Unviewed", "1": "Viewed" };
-                  const viewStatusRaw = String((detailOrder as any).viewStatus ?? "1");
-                  const viewStatus = viewStatusMap[viewStatusRaw] || viewStatusRaw;
                   const rawCreateTime = (detailOrder as any).createTime;
                   const createTime = rawCreateTime
                     ? formatDate(new Date(Number(rawCreateTime)))
@@ -2193,11 +2171,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const cardFaceValue = detailOrder.amount;
                   const purchaseFaceValue = detailOrder.amount;
                   const purchaseRate = detailOrder.unitPrice || detailOrder.nairaRate || 0;
-                  const sellCost = detailOrder.payout;
                   const settleCoin = (detailOrder as any).settleCoin || "USD";
                   const settleRate = (detailOrder as any).settleRate || 1;
                   const settleFaceValue = (detailOrder as any).settleFaceValue || cardFaceValue;
-                  const settlePrice = (detailOrder as any).settlePrice || settleFaceValue * settleRate;
                   const nairaRate = detailOrder.nairaRate;
                   const cardImagesRaw = (detailOrder as any).cardImages || (detailOrder as any).cardImage;
                   const cardImages: string[] = Array.isArray(cardImagesRaw)
