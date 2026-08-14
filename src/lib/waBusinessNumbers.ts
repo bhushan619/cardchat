@@ -136,10 +136,6 @@ export function listWaNumbers(): WaBusinessNumber[] {
   return read();
 }
 
-export function getWaNumber(id: string): WaBusinessNumber | undefined {
-  return read().find((n) => n.id === id);
-}
-
 const DEFAULT_NEW: Omit<WaBusinessNumber, "id" | "label" | "phone"> = {
   status: "linking",
   active: false,
@@ -237,25 +233,6 @@ export function completeLink(id: string, actor = "Admin One") {
     warmupDay: list[idx].warmupDay ?? 1,
     auditLog: [
       { ts: now(), event: "linked" as const, actor, note: "QR scanned from handset" },
-      ...list[idx].auditLog,
-    ].slice(0, 50),
-  };
-  write(list);
-}
-
-export function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
-  const list = read();
-  const idx = list.findIndex((x) => x.id === id);
-  if (idx < 0) return;
-  const prev = list[idx].assignedAgents || [];
-  // Single-agent model: only first agent is kept (assignedAgent is source of truth)
-  const single = agents.slice(0, 1);
-  list[idx] = {
-    ...list[idx],
-    assignedAgents: single,
-    assignedAgent: single[0] ?? null,
-    auditLog: [
-      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agent: ${single[0] || "(unassigned)"} (was: ${prev.join(", ") || "(none)"})` },
       ...list[idx].auditLog,
     ].slice(0, 50),
   };

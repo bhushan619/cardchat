@@ -23,10 +23,6 @@ export function isMfaBound(account: string): boolean {
   return !!readAll()[norm(account)];
 }
 
-export function getMfaBoundAt(account: string): string | null {
-  return readAll()[norm(account)]?.boundAt ?? null;
-}
-
 export function bindMfa(account: string) {
   const all = readAll();
   all[norm(account)] = { boundAt: new Date().toISOString() };

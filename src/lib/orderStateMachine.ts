@@ -28,10 +28,6 @@ export function canTransition(from: AgentOrderStatus, to: AgentOrderStatus): boo
   return validTransitions[from]?.includes(to) ?? false;
 }
 
-export function getNextStatuses(current: AgentOrderStatus): AgentOrderStatus[] {
-  return validTransitions[current] || [];
-}
-
 // Agent status → Customer-facing status
 export function toCustomerStatus(status: AgentOrderStatus): CustomerOrderStatus {
   switch (status) {

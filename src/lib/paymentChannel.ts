@@ -12,9 +12,9 @@ export const PAYMENT_CHANNELS = [
 
 export type PaymentChannelValue = (typeof PAYMENT_CHANNELS)[number]["value"];
 
-export const DEFAULT_PAYMENT_CHANNEL: PaymentChannelValue = "palmpay1";
+const DEFAULT_PAYMENT_CHANNEL: PaymentChannelValue = "palmpay1";
 
-export function getPaymentChannel(): PaymentChannelValue {
+function getPaymentChannel(): PaymentChannelValue {
   try {
     const v = sessionStorage.getItem(STORAGE_KEY) as PaymentChannelValue | null;
     if (v && PAYMENT_CHANNELS.some((c) => c.value === v)) return v;
@@ -24,7 +24,7 @@ export function getPaymentChannel(): PaymentChannelValue {
   return DEFAULT_PAYMENT_CHANNEL;
 }
 
-export function setPaymentChannel(value: PaymentChannelValue) {
+function setPaymentChannel(value: PaymentChannelValue) {
   try {
     sessionStorage.setItem(STORAGE_KEY, value);
   } catch {
@@ -35,11 +35,6 @@ export function setPaymentChannel(value: PaymentChannelValue) {
 
 export function paymentChannelLabel(value: string): string {
   return PAYMENT_CHANNELS.find((c) => c.value === value)?.label ?? value;
-}
-
-/** Label of the currently active payout channel, e.g. "PalmPay 2". */
-export function getPaymentChannelLabel(): string {
-  return paymentChannelLabel(getPaymentChannel());
 }
 
 /** Reactive hook — re-renders when the active channel changes anywhere in the app. */
