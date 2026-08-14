@@ -1633,6 +1633,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                       );
                     }
+                    if (msg.receipt) {
+                      return (
+                        <div key={msg.id} className="flex justify-end">
+                          <div className="space-y-1">
+                            <TransferReceiptCard receipt={msg.receipt} />
+                            <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {msg.time}</p>
+                          </div>
+                        </div>
+                      );
+                    }
                     if (msg.isOrder) {
                       return (
                         <div key={msg.id} className="pinned-order animate-slide-up">
@@ -2100,7 +2110,23 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 value="sales"
                 className="flex-1 overflow-hidden mt-0 data-[state=active]:flex flex-col data-[state=inactive]:hidden"
               >
-                <div className="flex-1 overflow-hidden">
+                <div
+                  className="flex-1 overflow-hidden"
+                  onDragOver={(e) => {
+                    if (selectedGroup) e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    if (!selectedGroup) return;
+                    e.preventDefault();
+                    const alias = e.dataTransfer.getData("text/cardchat-alias") || e.dataTransfer.getData("text/plain");
+                    if (alias) {
+                      setGroupCustomerAlias(alias);
+                      toast.success(`Customer ${alias} selected from dropped image`);
+                    } else {
+                      toast.error("Sender is not a registered customer");
+                    }
+                  }}
+                >
 
                   <CardlightPanel
                     key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
@@ -3472,10 +3498,22 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     });
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
                   }
+                  const wallet = txConvo ? customerWallets.find((w) => w.alias === txConvo.alias) : null;
+                  const receipt: TransferReceipt = {
+                    amount: amt,
+                    fee: 0,
+                    status: "Success",
+                    bankName: transferBank,
+                    accountNumber: transferAccount,
+                    accountName: transferRecipient,
+                    balance: Math.max(0, (wallet?.balance ?? 0) - amt),
+                    transactionNumber: `${Date.now()}${Math.floor(Math.random() * 900 + 100)}`,
+                  };
                   addSystemMessage(
                     `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
                   );
-                  toast.success("Transfer initiated");
+                  addSystemMessage("", receipt);
+                  toast.success("Transfer successful — receipt sent to customer");
                   setTransferOpen(false);
                   resetTransferForm();
                 }}
