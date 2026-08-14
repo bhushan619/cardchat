@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.1  
-**Date:** August 7, 2026
+**Version:** 6.2  
+**Date:** August 14, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -654,6 +654,9 @@ A **3-panel layout** combining conversation list, chat, and order sidebar:
   - **Channel badge** (icon-only chip) next to the alias indicating the active messaging channel
   - Star toggle (favorites)
   - Alias (6-char code)
+  - **WhatsApp nickname** (`~Nickname`, WhatsApp channel only) shown next to the alias
+  - **Secondary alias ("Alias 2")** — a second 6-char alphanumeric identifier rendered as a small monospace chip next to the nickname (WhatsApp channel only). Replaces the earlier phone-number chip so no PII is exposed in the list or header.
+  - **WhatsApp group conversations** use a violet accent (avatar, badges, active sidebar state) to distinguish them from 1:1 WhatsApp threads (emerald)
   - Last message (truncated)
   - Timestamp
   - Unread count badge
@@ -1738,6 +1741,16 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.1 → v6.2 — August 14, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Transfer Receipt in Chat** | On a successful transfer, a **Transaction Details** receipt card (`src/components/admin/TransferReceiptCard.tsx`) is posted into the customer's chat thread: transfer-to-bank header, amount, fee, Success status, bank name, account number, account name, balance, and transaction number. The "Paid with" field is intentionally excluded. |
+| **WhatsApp Group Colour Coding** | WhatsApp **group** conversations use a violet accent (avatar, badges, active sidebar state) so they are visually distinct from emerald 1:1 WhatsApp threads. |
+| **WhatsApp Nickname Display** | The customer's WhatsApp nickname (`waNickname`) is displayed as `~Nickname` next to the system alias in the conversation list and chat header. |
+| **Secondary Alias (Alias 2)** | A second 6-char alphanumeric identifier (`alias2`) is shown as a monospace chip next to the nickname for WhatsApp customers. This replaces the previously proposed masked phone-number chip — no phone digits are exposed in the UI. |
+| **Drag Image → Sales Order** | Card images in group chats are draggable; dropping one onto the Sales Order panel auto-selects the sending customer's alias in the alias selector. A hint line explains the interaction. |
 
 ### v6.0 → v6.1 — August 7, 2026
 
