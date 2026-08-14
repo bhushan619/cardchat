@@ -220,6 +220,3 @@ export const commonProperties: { property: string; source: string; example: stri
   { property: "os_version", source: "device_info_plus", example: "Android 14" },
   { property: "install_source", source: "PackageManager", example: "play_store / sideloaded" },
 ];
-
-export const trackingNamingConvention =
-  "category_action_detail — all snake_case, lowercase. Example: auth_login_success, order_create_started, chat_message_sent";

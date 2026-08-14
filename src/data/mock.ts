@@ -113,9 +113,6 @@ export type FundAdjustment = {
   performedBy: string;
   timestamp: string;
 };
-
-export const fundAdjustments: FundAdjustment[] = [];
-
 // Channel a customer is currently messaging from. TRTC.io = native in-app chat; WhatsApp = WhatsApp Business Cloud API (Meta).
 export type MessagingChannel = "trtc" | "whatsapp";
 
@@ -154,14 +151,6 @@ export const bankAccounts = [
   { id: 2, bankName: "GTBank", accountNumber: "****5678", holderName: "JOHN ADEBAYO", verified: true },
   { id: 3, bankName: "Access Bank", accountNumber: "****9012", holderName: "J.A. DOE", verified: true },
 ];
-
-export const transactions = [
-  { id: "TXN-001", orderId: "ORD-20260318-001", amount: "₦215,200", status: "success" as const, date: "18/03/2026", bank: "First Bank ****1234" },
-  { id: "TXN-002", orderId: "ORD-20260317-005", amount: "₦93,000", status: "success" as const, date: "17/03/2026", bank: "GTBank ****5678" },
-  { id: "TXN-003", orderId: "ORD-20260316-003", amount: "₦186,000", status: "failed" as const, date: "16/03/2026", bank: "Access Bank ****9012" },
-  { id: "TXN-004", orderId: "ORD-20260315-008", amount: "₦62,000", status: "success" as const, date: "15/03/2026", bank: "First Bank ****1234" },
-];
-
 export const adminUsers = [
   { id: 1, name: "Admin One", email: "admin@cardchat.com", role: "super_admin" as const, status: "active" as const, lastLogin: "2 min ago" },
   { id: 2, name: "Sarah Lead", email: "sarah@cardchat.com", role: "team_lead" as const, status: "active" as const, lastLogin: "10 min ago" },
@@ -175,13 +164,6 @@ export const nairaRateHistory = [
   { timestamp: "18/03/2026 · 10:00 AM", oldRate: 270, newRate: 289, oldPriceControl: 84.0, newPriceControl: 85.0, oldVipPriceControl: 87.0, newVipPriceControl: 88.0, changedBy: "Admin One", reason: "Market adjustment" },
   { timestamp: "17/03/2026 · 02:30 PM", oldRate: 255, newRate: 270, oldPriceControl: 84.0, newPriceControl: 84.0, oldVipPriceControl: 86.5, newVipPriceControl: 87.0, changedBy: "Admin One", reason: "Daily update" },
   { timestamp: "16/03/2026 · 09:00 AM", oldRate: 240, newRate: 255, oldPriceControl: 83.5, newPriceControl: 84.0, oldVipPriceControl: 86.5, newVipPriceControl: 86.5, changedBy: "Admin One", reason: "Weekly review" },
-];
-
-
-export const promoBanners = [
-  { id: 1, title: "Sell iTunes Cards", subtitle: "Best rates guaranteed!", color: "accent" },
-  { id: 2, title: "Refer & Earn", subtitle: "Get ₦500 for every referral", color: "primary" },
-  { id: 3, title: "New: Steam Cards", subtitle: "Now accepting Steam gift cards", color: "warning" },
 ];
 
 export const customerContacts = [
