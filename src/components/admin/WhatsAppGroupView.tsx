@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
-import { Users, Send, Smile, Paperclip, Info } from "lucide-react";
+import { Users, Send, Smile, Paperclip } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
 
