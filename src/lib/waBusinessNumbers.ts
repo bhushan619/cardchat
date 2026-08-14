@@ -239,6 +239,25 @@ export function completeLink(id: string, actor = "Admin One") {
   write(list);
 }
 
+function setAssignedAgents(id: string, agents: string[], actor = "Admin One") {
+  const list = read();
+  const idx = list.findIndex((x) => x.id === id);
+  if (idx < 0) return;
+  const prev = list[idx].assignedAgents || [];
+  // Single-agent model: only first agent is kept (assignedAgent is source of truth)
+  const single = agents.slice(0, 1);
+  list[idx] = {
+    ...list[idx],
+    assignedAgents: single,
+    assignedAgent: single[0] ?? null,
+    auditLog: [
+      { ts: now(), event: "warmup_advanced" as const, actor, note: `Assigned agent: ${single[0] || "(unassigned)"} (was: ${prev.join(", ") || "(none)"})` },
+      ...list[idx].auditLog,
+    ].slice(0, 50),
+  };
+  write(list);
+}
+
 export function setAssignedAgent(id: string, agent: string | null, actor = "Admin One") {
   setAssignedAgents(id, agent ? [agent] : [], actor);
 }
