@@ -339,17 +339,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const filteredGroups = useMemo(() => {
     if (channelFilter !== "whatsapp") return [];
-    // Group conversations never appear in the Processing (trading) tab
-    if (activeTab === "trading") return [];
     return whatsappGroups.filter((g) => {
-      const matchesTab = g.tab === activeTab;
+      // Once an order is raised for a group it follows the order state machine tab
+      const hasOrder = !!orderStatus.getStatus(g.id);
+      const dynamicTab = hasOrder ? orderStatus.getConversationTab(g.id) : g.tab;
+      const matchesTab = dynamicTab === activeTab;
       const matchesSearch =
         !customerSearch ||
         g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
         g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
       return matchesTab && matchesSearch;
     });
-  }, [channelFilter, activeTab, customerSearch]);
+  }, [channelFilter, activeTab, customerSearch, orderStatus]);
 
   // Interleave group rows with the 1:1 conversation rows
   const listItems = useMemo(() => {
