@@ -14,7 +14,6 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Radio } from "lucide-react";
-import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { toast } from "@/hooks/use-toast";
 import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
@@ -67,7 +66,6 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
 };
 
 export default function AdminWithdrawals() {
-  const { role } = useAdminRole();
 
   const { label: activeChannelLabel } = usePaymentChannel();
   const [items, setItems] = useState<Withdrawal[]>(seed);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl, systemVipPriceControl } from "@/data/mock";
+import { nairaRateHistory, systemNairaRate, systemPriceControl, systemVipPriceControl } from "@/data/mock";
 import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent, Crown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

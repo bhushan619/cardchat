@@ -2143,7 +2143,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     detailOrder.cardNumbers.length > 0 ? detailOrder.cardNumbers.join(", ") : fallbackCardNumber;
                   const orderCode = detailOrder.id;
                   const mockNicknames = ["肖捺", "王伟", "李娜", "Chen Yu", "Zhang Min", "Liu Yang"];
-                  const mockAliases = ["M09L81", "K23P47", "T81X02", "Q44R19", "B67N38", "Z12V90"];
                   const buyerNickname =
                     (detailOrder as any).buyerNickname ||
                     (detailOrder as any).buyer ||

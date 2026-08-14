@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import {
   rankingList,
   currentUserAlias,
-  getCurrentTier,
   getNextTier,
   rankingTiers,
   getCurrentBiWeeklyPeriod,
