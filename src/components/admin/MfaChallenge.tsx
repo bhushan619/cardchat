@@ -22,11 +22,6 @@ export default function MfaChallenge({ account, onVerified, onBack, compact }: M
     inputs.current[0]?.focus();
   }, []);
 
-  useEffect(() => {
-    const t = setInterval(() => setSecondsLeft((s) => (s <= 1 ? 30 : s - 1)), 1000);
-    return () => clearInterval(t);
-  }, []);
-
   const setDigit = (index: number, value: string) => {
     const digits = value.replace(/\D/g, "");
     const next = [...code];
@@ -117,7 +112,6 @@ export default function MfaChallenge({ account, onVerified, onBack, compact }: M
           onClick={() => {
             setCode(Array(CODE_LENGTH).fill(""));
             setError("");
-            setSecondsLeft(30);
             inputs.current[0]?.focus();
           }}
           className="inline-flex items-center gap-1.5 text-xs font-medium text-accent hover:underline"

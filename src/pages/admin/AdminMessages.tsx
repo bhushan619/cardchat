@@ -66,6 +66,7 @@ import CardlightPanel, {
   type CardlightResult,
 } from "@/components/admin/OrderWizardModal";
 import ChannelBadge from "@/components/admin/ChannelBadge";
+import TransferReceiptCard, { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
 import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -140,6 +141,7 @@ type ChatMessage = {
   imageUrl?: string;
   isOrder?: boolean;
   isSystemNote?: boolean;
+  receipt?: TransferReceipt;
 
 };
 
@@ -260,7 +262,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   // Group chats: the customer behind an order/transfer must be selected manually.
   const [groupCustomerAlias, setGroupCustomerAlias] = useState<string | null>(null);
   // System notices shown inside group threads (order created, transfer executed, ...)
-  const [groupSystemMsgs, setGroupSystemMsgs] = useState<Record<string, { id: number; text: string; time: string }[]>>(
+  const [groupSystemMsgs, setGroupSystemMsgs] = useState<Record<string, { id: number; text: string; time: string; receipt?: TransferReceipt }[]>>(
     () => {
       try {
         return JSON.parse(sessionStorage.getItem("cc.groupSystemMsgs") || "{}");
@@ -410,12 +412,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   );
 
   // Helper: add system message
-  const addSystemMessage = (text: string) => {
+  const addSystemMessage = (text: string, receipt?: TransferReceipt) => {
     const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     if (selectedGroup) {
       const gid = selectedGroup.id;
       setGroupSystemMsgs((prev) => {
-        const next = { ...prev, [gid]: [...(prev[gid] ?? []), { id: Date.now(), text, time }] };
+        const next = { ...prev, [gid]: [...(prev[gid] ?? []), { id: Date.now(), text, time, receipt }] };
         sessionStorage.setItem("cc.groupSystemMsgs", JSON.stringify(next));
         return next;
       });
@@ -428,6 +430,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       text,
       time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
       isOrder: true,
+      receipt,
     };
     setLocalMessages((prev) => [...prev, newMsg]);
   };
@@ -1182,7 +1185,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         setHighlightMsgId(null);
                       }}
                       className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
-                        gActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
+                        gActive
+                          ? "bg-violet-500/10 border-l-2 border-l-violet-500"
+                          : "bg-violet-500/[0.04]"
                       }`}
                     >
                       <div className="flex items-center gap-2">
@@ -1191,7 +1196,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span className="text-xs font-semibold truncate">{g.groupName}</span>
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium leading-none whitespace-nowrap">
+                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400 font-medium leading-none whitespace-nowrap">
                                 Group
                               </span>
                             </div>
@@ -1241,6 +1246,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
+                            {c.channel === "whatsapp" && c.waNickname && (
+                              <span
+                                className="text-[10px] text-muted-foreground truncate max-w-[90px]"
+                                title={`WhatsApp nickname: ${c.waNickname}`}
+                              >
+                                ~{c.waNickname}
+                              </span>
+                            )}
                             {channelFilter !== "whatsapp" && isVip(c.alias) && (
                               <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none shrink-0 border border-amber-600/20">
                                 <Crown className="w-3 h-3" /> VIP
@@ -1331,6 +1344,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     <div>
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-semibold whitespace-nowrap">{panelConvo.alias}</p>
+                        {selectedConvo.channel === "whatsapp" && selectedConvo.waNickname && (
+                          <span
+                            className="text-[11px] text-muted-foreground whitespace-nowrap"
+                            title="WhatsApp nickname"
+                          >
+                            ~{selectedConvo.waNickname}
+                          </span>
+                        )}
                         {channelFilter !== "whatsapp" && isVip(selectedConvo.alias) && (
                           <span className="inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded-full bg-amber-500 text-amber-950 leading-none border border-amber-600/20">
                             <Crown className="w-3 h-3" /> VIP
@@ -1609,6 +1630,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             {msg.text}
                           </span>
                           <span className="flex-1 h-px bg-border" />
+                        </div>
+                      );
+                    }
+                    if (msg.receipt) {
+                      return (
+                        <div key={msg.id} className="flex justify-end">
+                          <div className="space-y-1">
+                            <TransferReceiptCard receipt={msg.receipt} />
+                            <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {msg.time}</p>
+                          </div>
                         </div>
                       );
                     }
@@ -2079,7 +2110,23 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 value="sales"
                 className="flex-1 overflow-hidden mt-0 data-[state=active]:flex flex-col data-[state=inactive]:hidden"
               >
-                <div className="flex-1 overflow-hidden">
+                <div
+                  className="flex-1 overflow-hidden"
+                  onDragOver={(e) => {
+                    if (selectedGroup) e.preventDefault();
+                  }}
+                  onDrop={(e) => {
+                    if (!selectedGroup) return;
+                    e.preventDefault();
+                    const alias = e.dataTransfer.getData("text/cardchat-alias") || e.dataTransfer.getData("text/plain");
+                    if (alias) {
+                      setGroupCustomerAlias(alias);
+                      toast.success(`Customer ${alias} selected from dropped image`);
+                    } else {
+                      toast.error("Sender is not a registered customer");
+                    }
+                  }}
+                >
 
                   <CardlightPanel
                     key={selectedGroup ? groupCustomerAlias ?? "none" : selectedConvo?.alias ?? "none"}
@@ -2094,7 +2141,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <CustomerAliasSelector value={groupCustomerAlias} onChange={setGroupCustomerAlias} />
                           <p className="text-[10px] text-muted-foreground flex items-start gap-1.5">
                             <Info className="w-3 h-3 mt-0.5 shrink-0" />
-                            Group chats have multiple customers — select who this order belongs to.
+                            Group chats have multiple customers — select who this order belongs to, or drag a card
+                            image from the chat onto this panel to auto-fill the sender's alias.
                           </p>
                         </div>
                       ) : undefined
@@ -3451,10 +3499,22 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     });
                     sessionStorage.setItem(key, JSON.stringify(prev.slice(0, 20)));
                   }
+                  const wallet = txConvo ? customerWallets.find((w) => w.alias === txConvo.alias) : null;
+                  const receipt: TransferReceipt = {
+                    amount: amt,
+                    fee: 0,
+                    status: "Success",
+                    bankName: transferBank,
+                    accountNumber: transferAccount,
+                    accountName: transferRecipient,
+                    balance: Math.max(0, (wallet?.balance ?? 0) - amt),
+                    transactionNumber: `${Date.now()}${Math.floor(Math.random() * 900 + 100)}`,
+                  };
                   addSystemMessage(
                     `💸 Transfer sent via ${transferMethod}: Pts ${amt.toLocaleString()} to ${transferRecipient} (${transferBank} · ${transferAccount})${transferNote ? ` — ${transferNote}` : ""}`,
                   );
-                  toast.success("Transfer initiated");
+                  addSystemMessage("", receipt);
+                  toast.success("Transfer successful — receipt sent to customer");
                   setTransferOpen(false);
                   resetTransferForm();
                 }}
