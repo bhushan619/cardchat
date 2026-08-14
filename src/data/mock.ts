@@ -117,13 +117,13 @@ export type FundAdjustment = {
 export type MessagingChannel = "trtc" | "whatsapp";
 
 export const conversations = [
-  { id: "c1", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 803 111 2222" },
-  { id: "c2", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 805 444 7788" },
-  { id: "c3", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "trading" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 809 222 3344" },
-  { id: "c4", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 812 998 5566" },
-  { id: "c5", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 807 661 2233" },
-  { id: "c6", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "consulting" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 814 770 9911" },
-  { id: "c7", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [], channel: "trtc" as MessagingChannel, whatsappNumber: "" },
+  { id: "c1", waNickname: "Amara ✨", alias: "A7X3KP", lastMessage: "I have iTunes $100 cards to sell", time: "2m", unread: 2, status: "consulting" as const, goodRate: 85, totalValue: "₦450,000", tags: ["VIP", "Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 803 111 2222" },
+  { id: "c2", waNickname: "Tobi Bello", alias: "K9M2BL", lastMessage: "Card images sent", time: "5m", unread: 0, status: "trading" as const, goodRate: 72, totalValue: "₦120,000", tags: ["New"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 805 444 7788" },
+  { id: "c3", waNickname: "Segun Cards", alias: "R4P8TN", lastMessage: "When will I receive payment?", time: "8m", unread: 1, status: "trading" as const, goodRate: 90, totalValue: "₦2,100,000", tags: ["VIP"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 809 222 3344" },
+  { id: "c4", waNickname: "Mama Nkechi", alias: "B5N1QW", lastMessage: "Thanks for the quick transfer!", time: "15m", unread: 0, status: "consulting" as const, goodRate: 65, totalValue: "₦80,000", tags: [], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 812 998 5566" },
+  { id: "c5", waNickname: "Ifeanyi Cards", alias: "H2L6YD", lastMessage: "Sending Amazon $50 card now", time: "20m", unread: 0, status: "trading" as const, goodRate: 78, totalValue: "₦340,000", tags: ["Repeat"], channel: "trtc" as MessagingChannel, whatsappNumber: "+234 807 661 2233" },
+  { id: "c6", waNickname: "Emeka Ent.", alias: "W8T4FJ", lastMessage: "Please check my bank details", time: "25m", unread: 3, status: "consulting" as const, goodRate: 88, totalValue: "₦1,500,000", tags: ["VIP", "Priority"], channel: "whatsapp" as MessagingChannel, whatsappNumber: "+234 814 770 9911" },
+  { id: "c7", waNickname: "Dayo T.", alias: "D3F9RX", lastMessage: "I want to sell Steam cards", time: "30m", unread: 0, status: "consulting" as const, goodRate: 60, totalValue: "₦45,000", tags: [], channel: "trtc" as MessagingChannel, whatsappNumber: "" },
 ];
 
 export const chatMessages = [
@@ -229,6 +229,8 @@ export type GroupMessage = {
   participantId?: string;
   text: string;
   time: string;
+  image?: boolean;
+  imageUrl?: string;
 };
 
 export const whatsappGroups: WhatsAppGroup[] = [
@@ -297,12 +299,15 @@ export const groupMessages: Record<string, GroupMessage[]> = {
     { id: 6, sender: "participant", participantId: "g1p7", text: "Is the rate fixed for the whole day?", time: "09:14 AM" },
     { id: 7, sender: "participant", participantId: "g1p6", text: "Rates were solid yesterday, paid within 5 mins 🙏", time: "09:18 AM" },
     { id: 8, sender: "participant", participantId: "g1p1", text: "Sending pictures shortly.", time: "09:21 AM" },
+    { id: 9, sender: "participant", participantId: "g1p1", text: "", time: "09:22 AM", image: true, imageUrl: "/placeholder.svg" },
+    { id: 10, sender: "participant", participantId: "g1p6", text: "", time: "09:26 AM", image: true, imageUrl: "/placeholder.svg" },
   ],
   g2: [
     { id: 1, sender: "participant", participantId: "g2p2", text: "Anyone trading Razer Gold here?", time: "08:31 AM" },
     { id: 2, sender: "agent", text: "Yes, Razer Gold e-code at 700.", time: "08:33 AM" },
     { id: 3, sender: "participant", participantId: "g2p3", text: "Noted. I'll send mine after lunch.", time: "08:40 AM" },
     { id: 4, sender: "participant", participantId: "g2p1", text: "Sent the Steam codes ✅", time: "08:52 AM" },
+    { id: 5, sender: "participant", participantId: "g2p3", text: "", time: "08:58 AM", image: true, imageUrl: "/placeholder.svg" },
   ],
   g3: [
     { id: 1, sender: "participant", participantId: "g3p3", text: "Group is quiet today 😅", time: "07:45 AM" },
