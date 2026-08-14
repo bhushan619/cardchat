@@ -109,6 +109,14 @@ export function GroupThread({
                 {!isAgent && (
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-[10px] font-semibold text-primary">{p?.waName || "Unknown"}</span>
+                    {p?.phone && (
+                      <span
+                        className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground font-mono leading-none whitespace-nowrap"
+                        title={`WhatsApp number: ${p.phone}`}
+                      >
+                        {p.phone.slice(-4)}
+                      </span>
+                    )}
                     <ParticipantBadge alias={p?.alias ?? null} />
                   </div>
                 )}
