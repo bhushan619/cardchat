@@ -16,7 +16,6 @@ export default function MfaChallenge({ account, onVerified, onBack, compact }: M
   const [code, setCode] = useState<string[]>(Array(CODE_LENGTH).fill(""));
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [secondsLeft, setSecondsLeft] = useState(30);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {

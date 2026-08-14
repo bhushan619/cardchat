@@ -169,8 +169,6 @@ export default function CustomerHome() {
 
           <div className="space-y-2">
             {filteredRates.slice(0, 5).map((rate) => {
-              const symbol =
-                rate.currency === "USD" ? "$" : rate.currency === "GBP" ? "£" : rate.currency === "EUR" ? "€" : "";
               return (
                 <div
                   key={rate.id}

@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { ExternalLink, Monitor, Maximize2, X, Grid3X3, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -24,7 +23,6 @@ const adminScreens = [
 ];
 
 export default function AdminScreensGallery() {
-  const navigate = useNavigate();
   const [selectedScreen, setSelectedScreen] = useState<typeof adminScreens[0] | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
 

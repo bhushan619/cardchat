@@ -709,16 +709,6 @@ export default function CardlightPanel({
                 const cardRateCny = pointsRateNum > 0 && pointsPriceNum > 0 ? pointsPriceNum / pointsRateNum : 0;
                 // Total Release = Points Rate × Card Rate (CNY) × Card Amount
                 const totalPayout = pointsRateNum * cardRateCny * totalFaceValue;
-                const currencySymbol =
-                  cardCurrency === "GBP"
-                    ? "£"
-                    : cardCurrency === "EUR"
-                      ? "€"
-                      : cardCurrency === "CAD"
-                        ? "C$"
-                        : cardCurrency === "AUD"
-                          ? "A$"
-                          : "$";
                 const hasValues = totalFaceValue > 0 || totalPayout > 0;
 
                 return hasValues ? (

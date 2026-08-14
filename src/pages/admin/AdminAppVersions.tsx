@@ -381,9 +381,6 @@ export default function AdminAppVersions() {
   const [changelogEn, setChangelogEn] = useState(
     "• Improved chat performance\n• Fixed transfer confirmation bugs\n• Added Chinese translations",
   );
-  const [changelogZh, setChangelogZh] = useState(
-    "• 提升聊天性能\n• 修复转账确认问题\n• 增加中文翻译",
-  );
   const [saveOpen, setSaveOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -403,7 +400,6 @@ export default function AdminAppVersions() {
   // Maintenance
   const [maintOn, setMaintOn] = useState(false);
   const [maintMsgEn, setMaintMsgEn] = useState("Scheduled maintenance in progress. We'll be back shortly.");
-  const [maintMsgZh, setMaintMsgZh] = useState("正在进行计划维护。我们很快就会恢复。");
   const [maintEnd, setMaintEnd] = useState("");
 
   // History

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import { nairaRateHistory, systemNairaRate, systemDenomination, systemPriceControl, systemVipPriceControl } from "@/data/mock";
+import { nairaRateHistory, systemNairaRate, systemPriceControl, systemVipPriceControl } from "@/data/mock";
 import { Coins, Clock, Edit, Save, CheckCircle2, Loader2, Percent, Crown } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,6 @@ export default function AdminNairaRate() {
   const { role } = useAdminRole();
   const [editing, setEditing] = useState(false);
   const [rate, setRate] = useState(systemNairaRate.toString());
-  const [denomination, setDenomination] = useState(systemDenomination.toString());
   const [priceControl, setPriceControl] = useState(systemPriceControl.toFixed(2));
   const [vipPriceControl, setVipPriceControl] = useState(systemVipPriceControl.toFixed(2));
   const [reason, setReason] = useState("");
