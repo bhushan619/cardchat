@@ -21,7 +21,7 @@ export function TransferReceiptImage({ receipt }: { receipt: TransferReceipt }) 
     if (!node) return;
     const bg = getComputedStyle(document.body).backgroundColor;
     const raf = requestAnimationFrame(() => {
-      toPng(node, { pixelRatio: 2, cacheBust: true, backgroundColor: bg })
+      toPng(node, { pixelRatio: 2, cacheBust: true, backgroundColor: bg, skipFonts: true })
         .then((dataUrl) => {
           if (!cancelled) setUrl(dataUrl);
         })
@@ -42,8 +42,8 @@ export function TransferReceiptImage({ receipt }: { receipt: TransferReceipt }) 
       {/* off-screen source */}
       {!url && (
         <div className="fixed -left-[9999px] top-0 pointer-events-none" aria-hidden>
-          <div ref={sourceRef}>
-            <TransferReceiptCard receipt={receipt} />
+          <div ref={sourceRef} style={{ fontFamily: "Inter, system-ui, sans-serif" }}>
+            <TransferReceiptCard receipt={receipt} className="w-[340px]" />
           </div>
         </div>
       )}
