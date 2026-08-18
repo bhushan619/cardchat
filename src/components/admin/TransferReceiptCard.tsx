@@ -29,7 +29,7 @@ export function TransferReceiptCard({ receipt, className = "w-[280px]" }: { rece
           <span className="w-6 h-6 rounded-full bg-accent/15 text-accent flex items-center justify-center shrink-0">
             <CreditCard className="w-3.5 h-3.5" />
           </span>
-          <span className="text-xs font-semibold truncate">Transfer to bank</span>
+          <span className="text-xs font-semibold whitespace-nowrap">Transfer to bank</span>
         </div>
         <span className="text-xs font-semibold shrink-0 whitespace-nowrap">−{pts(receipt.amount)}</span>
       </div>
