@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { Users, Send, Smile, Paperclip } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
-import TransferReceiptCard, { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
+import { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
+import TransferReceiptImage from "@/components/admin/TransferReceiptImage";
 
 /** Small pill showing whether a WhatsApp sender is a known customer. */
 function ParticipantBadge({ alias }: { alias: string | null }) {
@@ -144,7 +145,7 @@ export function GroupThread({
           m.receipt ? (
             <div key={`sys-${m.id}`} className="flex justify-end">
               <div className="space-y-1">
-                <TransferReceiptCard receipt={m.receipt} />
+                <TransferReceiptImage receipt={m.receipt} />
                 <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {m.time}</p>
               </div>
             </div>
