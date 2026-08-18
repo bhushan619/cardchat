@@ -1,3 +1,4 @@
+import ReceiptTest from "./pages/ReceiptTest";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
@@ -68,6 +69,7 @@ const App = () => (
         <AdminLangProvider>
           <BrowserRouter>
             <Routes>
+              <Route path="/__receipt_test" element={<ReceiptTest />} />
               <Route path="/" element={<Index />} />
               <Route path="/landing" element={<Landing />} />
               <Route path="/privacy" element={<Privacy />} />
