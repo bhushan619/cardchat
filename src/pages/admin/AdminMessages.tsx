@@ -66,7 +66,8 @@ import CardlightPanel, {
   type CardlightResult,
 } from "@/components/admin/OrderWizardModal";
 import ChannelBadge from "@/components/admin/ChannelBadge";
-import TransferReceiptCard, { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
+import { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
+import TransferReceiptImage from "@/components/admin/TransferReceiptImage";
 import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -1657,7 +1658,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       return (
                         <div key={msg.id} className="flex justify-end">
                           <div className="space-y-1">
-                            <TransferReceiptCard receipt={msg.receipt} />
+                            <TransferReceiptImage receipt={msg.receipt} />
                             <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {msg.time}</p>
                           </div>
                         </div>
