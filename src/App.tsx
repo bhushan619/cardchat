@@ -109,6 +109,7 @@ const App = () => (
               <Route path="/admin/customer-guide" element={<AdminRoleProvider><AdminCustomerGuide /></AdminRoleProvider>} />
               <Route path="/admin/sensitive-words" element={<AdminRoleProvider><AdminSensitiveWords /></AdminRoleProvider>} />
               <Route path="/admin/customers" element={<AdminRoleProvider><AdminCustomers /></AdminRoleProvider>} />
+              <Route path="/admin/finance-customers" element={<AdminRoleProvider><AdminFinanceCustomers /></AdminRoleProvider>} />
               <Route path="/admin/wallets" element={<AdminRoleProvider><AdminWallets /></AdminRoleProvider>} />
               <Route path="/admin/withdrawals" element={<AdminRoleProvider><AdminWithdrawals /></AdminRoleProvider>} />
               <Route path="/admin/transfers" element={<AdminRoleProvider><AdminTransfers /></AdminRoleProvider>} />
