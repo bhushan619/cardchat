@@ -66,6 +66,13 @@ const navItems = [
     roles: ["super_admin", "team_lead", "agent"],
   },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
+  {
+    id: "finance-customers",
+    label: "Customers",
+    icon: Users,
+    path: "/admin/finance-customers",
+    roles: ["finance"],
+  },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
   {
     id: "withdrawals",
