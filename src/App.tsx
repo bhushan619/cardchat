@@ -45,6 +45,7 @@ import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
 import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
 import AdminSensitiveWords from "./pages/admin/AdminSensitiveWords";
 import AdminCustomers from "./pages/admin/AdminCustomers";
+import AdminFinanceCustomers from "./pages/admin/AdminFinanceCustomers";
 import AdminWallets from "./pages/admin/AdminWallets";
 import AdminWithdrawals from "./pages/admin/AdminWithdrawals";
 import AdminTransfers from "./pages/admin/AdminTransfers";
