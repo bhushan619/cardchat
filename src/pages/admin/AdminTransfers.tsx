@@ -189,7 +189,9 @@ export default function AdminTransfers() {
                 <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Current Balance</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Pts Rate</TableHead>
+
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
