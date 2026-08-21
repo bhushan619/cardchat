@@ -366,19 +366,67 @@ export default function AdminWallets() {
               <SelectItem value="disbursement">Disbursements</SelectItem>
             </SelectContent>
           </Select>
-          <Select value={customerFilter} onValueChange={setCustomerFilter}>
-            <SelectTrigger className="w-[140px] h-9 text-sm">
-              <SelectValue placeholder="All Customers" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Customers</SelectItem>
-              {uniqueCustomers.map((c) => (
-                <SelectItem key={c} value={c}>
-                  {c}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+          <Popover open={customerOpen} onOpenChange={setCustomerOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="w-[160px] h-9 flex items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-left text-sm hover:border-accent transition-colors"
+              >
+                <span className={`truncate ${customerFilter === "all" ? "text-muted-foreground" : ""}`}>
+                  {customerFilter === "all" ? "All Customers" : customerFilter}
+                </span>
+                <ChevronsUpDown className="w-3.5 h-3.5 shrink-0 opacity-60" />
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="p-0 w-[220px]" align="start">
+              <div className="flex items-center gap-2 border-b px-3">
+                <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+                <Input
+                  autoFocus
+                  value={customerQuery}
+                  onChange={(e) => setCustomerQuery(e.target.value)}
+                  placeholder="Enter alias..."
+                  className="h-9 border-0 px-0 shadow-none focus-visible:ring-0 text-[13px]"
+                />
+              </div>
+              <div className="max-h-56 overflow-y-auto py-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setCustomerFilter("all");
+                    setCustomerQuery("");
+                    setCustomerOpen(false);
+                  }}
+                  className="w-full text-left px-3 py-2 text-xs hover:bg-muted/60 transition-colors"
+                >
+                  All Customers
+                </button>
+                {uniqueCustomers
+                  .filter((c) => c.toLowerCase().includes(customerQuery.trim().toLowerCase()))
+                  .map((c) => (
+                    <button
+                      key={c}
+                      type="button"
+                      onClick={() => {
+                        setCustomerFilter(c);
+                        setCustomerQuery("");
+                        setCustomerOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-xs font-medium hover:bg-muted/60 transition-colors flex items-center justify-between gap-2"
+                    >
+                      <span className="truncate">{c}</span>
+                      {customerFilter === c && <Check className="w-3.5 h-3.5 text-accent shrink-0" />}
+                    </button>
+                  ))}
+                {uniqueCustomers.filter((c) =>
+                  c.toLowerCase().includes(customerQuery.trim().toLowerCase()),
+                ).length === 0 && (
+                  <p className="px-3 py-5 text-center text-xs text-muted-foreground">No customer found</p>
+                )}
+              </div>
+            </PopoverContent>
+          </Popover>
+
           <div className="flex items-end gap-2">
             <div>
               <label className="text-[10px] font-medium text-muted-foreground mb-1 block">From</label>
