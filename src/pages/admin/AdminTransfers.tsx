@@ -63,6 +63,10 @@ const seed: Transfer[] = customerWallets.flatMap((w, i) => {
   });
 });
 
+const balanceByAlias: Record<string, number> = Object.fromEntries(
+  customerWallets.map((w) => [w.alias, w.balance]),
+);
+
 const statusConfig: Record<Status, { label: string; className: string; icon: typeof CheckCircle2 }> = {
   pending: { label: "Pending", className: "bg-amber-500/10 text-amber-600", icon: Clock },
   processing: { label: "Processing", className: "bg-blue-500/10 text-blue-600", icon: Clock },
@@ -106,8 +110,8 @@ export default function AdminTransfers() {
   }, [filtered]);
 
   const exportCsv = () => {
-    const headers = ["ID", "Alias", "Amount", "Pts Rate", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
-    const rows = filtered.map(w => [w.id, w.alias, w.amount, w.pointsRate, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
+    const headers = ["ID", "Alias", "Amount", "Current Balance", "Pts Rate", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
+    const rows = filtered.map(w => [w.id, w.alias, w.amount, balanceByAlias[w.alias] ?? 0, w.pointsRate, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -189,7 +193,9 @@ export default function AdminTransfers() {
                 <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
                 <TableHead className="text-xs font-semibold">Customer</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Amount</TableHead>
+                <TableHead className="text-xs font-semibold text-right">Current Balance</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Pts Rate</TableHead>
+
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
@@ -213,6 +219,7 @@ export default function AdminTransfers() {
                       </div>
                     </TableCell>
                     <TableCell className="text-right text-sm font-semibold"><span className="inline-flex items-center gap-0.5 justify-end"><Coins className="w-3 h-3" />{w.amount.toLocaleString()}</span></TableCell>
+                    <TableCell className="text-right text-sm"><span className="inline-flex items-center gap-0.5 justify-end text-muted-foreground"><Coins className="w-3 h-3" />{(balanceByAlias[w.alias] ?? 0).toLocaleString()}</span></TableCell>
                     <TableCell className="text-right text-xs font-mono text-muted-foreground">{w.pointsRate}</TableCell>
                     <TableCell className="text-xs">
                       <p className="font-medium">{w.bankName}</p>
@@ -236,7 +243,7 @@ export default function AdminTransfers() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
                     No transfers match your filters
                   </TableCell>
                 </TableRow>
@@ -254,7 +261,7 @@ export default function AdminTransfers() {
                       {totals.all.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={7} />
                 </TableRow>
               </TableFooter>
             )}
@@ -275,6 +282,7 @@ export default function AdminTransfers() {
               {[
                 ["Customer", selected.alias],
                 ["Amount", <span key="amt" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selected.amount.toLocaleString()}</span>],
+                ["Current Balance", <span key="bal" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{(balanceByAlias[selected.alias] ?? 0).toLocaleString()}</span>],
                 ["Pts Rate", selected.pointsRate],
                 ["Bank", selected.bankName],
                 ["Account", selected.accountNumber],
