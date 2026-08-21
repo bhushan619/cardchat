@@ -100,11 +100,13 @@ export default function AdminTransfers() {
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
+    const uniqueAliases = Array.from(new Set(filtered.map(w => w.alias)));
     return {
       all: filtered.reduce((a, w) => a + w.amount, 0),
       pending: sum("pending"),
       successful: sum("successful"),
       processing: sum("processing"),
+      balance: uniqueAliases.reduce((a, alias) => a + (balanceByAlias[alias] ?? 0), 0),
       count: filtered.length,
     };
   }, [filtered]);
@@ -261,7 +263,13 @@ export default function AdminTransfers() {
                       {totals.all.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell colSpan={7} />
+                  <TableCell className="text-right text-sm font-bold">
+                    <span className="inline-flex items-center gap-0.5 justify-end">
+                      <Coins className="w-3 h-3" />
+                      {totals.balance.toLocaleString()}
+                    </span>
+                  </TableCell>
+                  <TableCell colSpan={6} />
                 </TableRow>
               </TableFooter>
             )}
