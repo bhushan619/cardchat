@@ -25,6 +25,7 @@ import {
 import { toast } from "sonner";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { parse } from "date-fns";
@@ -158,7 +159,6 @@ export default function AdminWallets() {
   const [typeFilter, setTypeFilter] = useState<"all" | "deposit" | "disbursement">("all");
   const [customerFilter, setCustomerFilter] = useState("all");
   const [customerOpen, setCustomerOpen] = useState(false);
-  const [customerQuery, setCustomerQuery] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
@@ -374,62 +374,55 @@ export default function AdminWallets() {
             <PopoverTrigger asChild>
               <button
                 type="button"
-                className="w-[160px] h-9 flex items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-left text-sm hover:border-accent transition-colors"
+                role="combobox"
+                aria-expanded={customerOpen}
+                className="w-[160px] h-9 flex items-center justify-between gap-2 rounded-md border border-input bg-background px-3 text-left text-sm ring-offset-background focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
               >
                 <span className={`truncate ${customerFilter === "all" ? "text-muted-foreground" : ""}`}>
                   {customerFilter === "all" ? "All Customers" : customerFilter}
                 </span>
-                <ChevronsUpDown className="w-3.5 h-3.5 shrink-0 opacity-60" />
+                <ChevronsUpDown className="w-4 h-4 shrink-0 opacity-50" />
               </button>
             </PopoverTrigger>
-            <PopoverContent className="p-0 w-[220px]" align="start">
-              <div className="flex items-center gap-2 border-b px-3">
-                <Search className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
-                <Input
-                  autoFocus
-                  value={customerQuery}
-                  onChange={(e) => setCustomerQuery(e.target.value)}
-                  placeholder="Enter alias..."
-                  className="h-9 border-0 px-0 shadow-none focus-visible:ring-0 text-[13px]"
-                />
-              </div>
-              <div className="max-h-56 overflow-y-auto py-1">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setCustomerFilter("all");
-                    setCustomerQuery("");
-                    setCustomerOpen(false);
-                  }}
-                  className="w-full text-left px-3 py-2 text-xs hover:bg-muted/60 transition-colors"
-                >
-                  All Customers
-                </button>
-                {uniqueCustomers
-                  .filter((c) => c.toLowerCase().includes(customerQuery.trim().toLowerCase()))
-                  .map((c) => (
-                    <button
-                      key={c}
-                      type="button"
-                      onClick={() => {
-                        setCustomerFilter(c);
-                        setCustomerQuery("");
+            <PopoverContent className="p-0 w-[200px] shadow-lg" align="start">
+              <Command>
+                <CommandInput placeholder="Enter alias..." className="text-sm" />
+                <CommandList>
+                  <CommandEmpty>No customer found</CommandEmpty>
+                  <CommandGroup>
+                    <CommandItem
+                      value="All Customers"
+                      onSelect={() => {
+                        setCustomerFilter("all");
                         setCustomerOpen(false);
                       }}
-                      className="w-full text-left px-3 py-2 text-xs font-medium hover:bg-muted/60 transition-colors flex items-center justify-between gap-2"
                     >
-                      <span className="truncate">{c}</span>
-                      {customerFilter === c && <Check className="w-3.5 h-3.5 text-accent shrink-0" />}
-                    </button>
-                  ))}
-                {uniqueCustomers.filter((c) =>
-                  c.toLowerCase().includes(customerQuery.trim().toLowerCase()),
-                ).length === 0 && (
-                  <p className="px-3 py-5 text-center text-xs text-muted-foreground">No customer found</p>
-                )}
-              </div>
+                      <Check
+                        className={`mr-2 h-4 w-4 ${customerFilter === "all" ? "opacity-100" : "opacity-0"}`}
+                      />
+                      All Customers
+                    </CommandItem>
+                    {uniqueCustomers.map((c) => (
+                      <CommandItem
+                        key={c}
+                        value={c}
+                        onSelect={() => {
+                          setCustomerFilter(c);
+                          setCustomerOpen(false);
+                        }}
+                      >
+                        <Check
+                          className={`mr-2 h-4 w-4 ${customerFilter === c ? "opacity-100" : "opacity-0"}`}
+                        />
+                        {c}
+                      </CommandItem>
+                    ))}
+                  </CommandGroup>
+                </CommandList>
+              </Command>
             </PopoverContent>
           </Popover>
+
 
           <div className="flex items-end gap-2">
             <div>
