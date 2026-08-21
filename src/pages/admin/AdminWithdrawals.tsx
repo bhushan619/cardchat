@@ -318,6 +318,26 @@ export default function AdminWithdrawals() {
                 </TableRow>
               )}
             </TableBody>
+            {filtered.length > 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={2} className="text-xs font-semibold">
+                    Total ({filtered.length} requests)
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-bold">
+                    Pts {filtered.reduce((a, w) => a + Number(w.amount || 0), 0).toLocaleString()}
+                  </TableCell>
+                  <TableCell colSpan={3} />
+                  <TableCell className="text-right text-xs font-bold">
+                    Pts{" "}
+                    {Array.from(new Set(filtered.map((w) => w.alias)))
+                      .reduce((a, alias) => a + Number(walletByAlias[alias]?.balance ?? 0), 0)
+                      .toLocaleString()}
+                  </TableCell>
+                  <TableCell colSpan={2} />
+                </TableRow>
+              </TableFooter>
+            )}
           </Table>
         </div>
       </div>
