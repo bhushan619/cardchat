@@ -13,7 +13,7 @@ import {
 import PointsAmount from "@/components/admin/PointsAmount";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -494,6 +494,27 @@ export default function AdminWallets() {
                 </TableRow>
               )}
             </TableBody>
+            {filtered.length > 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={6} className="text-xs font-semibold">
+                    Total ({filtered.length} records)
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-bold">
+                    <PointsAmount
+                      value={Math.round(
+                        filtered.reduce(
+                          (a, r) => a + (r.type === "deposit" ? Number(r.amount || 0) : -Number(r.amount || 0)),
+                          0,
+                        ),
+                      )}
+                      className="justify-end"
+                    />
+                  </TableCell>
+                  <TableCell colSpan={2} />
+                </TableRow>
+              </TableFooter>
+            )}
           </Table>
         </div>
       </div>

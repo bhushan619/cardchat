@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+  Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -242,6 +242,22 @@ export default function AdminTransfers() {
                 </TableRow>
               )}
             </TableBody>
+            {filtered.length > 0 && (
+              <TableFooter>
+                <TableRow>
+                  <TableCell colSpan={2} className="text-xs font-semibold">
+                    Total ({filtered.length} transfers)
+                  </TableCell>
+                  <TableCell className="text-right text-sm font-bold">
+                    <span className="inline-flex items-center gap-0.5 justify-end">
+                      <Coins className="w-3 h-3" />
+                      {totals.all.toLocaleString()}
+                    </span>
+                  </TableCell>
+                  <TableCell colSpan={6} />
+                </TableRow>
+              </TableFooter>
+            )}
           </Table>
         </div>
       </div>
