@@ -547,6 +547,35 @@ export default function AdminOrders() {
                 );
               })}
             </tbody>
+            {filtered.length > 0 && (
+              <tfoot>
+                <tr className="border-t bg-muted/50 font-semibold">
+                  <td className="px-2" />
+                  <td className="px-4 py-3 text-xs" colSpan={7}>
+                    Total ({filtered.length} orders)
+                  </td>
+                  <td className="px-4 py-3 text-sm text-right">
+                    ${filtered.reduce((a, o) => a + Number(o.amount || 0), 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="px-4 py-3 text-sm text-right">
+                    <span className="inline-flex items-center gap-0.5 justify-end">
+                      <Coins className="w-3 h-3" />
+                      {filtered
+                        .reduce(
+                          (a, o) =>
+                            a +
+                            (o.nairaRate
+                              ? Number(o.nairaRate) * (Number(o.unitPrice) / Number(o.nairaRate)) * Number(o.amount || 0)
+                              : 0),
+                          0,
+                        )
+                        .toLocaleString(undefined, { maximumFractionDigits: 2 })}
+                    </span>
+                  </td>
+                  <td colSpan={2} />
+                </tr>
+              </tfoot>
+            )}
           </table>
         </div>
       </div>
