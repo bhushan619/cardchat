@@ -159,7 +159,6 @@ export default function AdminWallets() {
   const [typeFilter, setTypeFilter] = useState<"all" | "deposit" | "disbursement">("all");
   const [customerFilter, setCustomerFilter] = useState("all");
   const [customerOpen, setCustomerOpen] = useState(false);
-  const [customerQuery, setCustomerQuery] = useState("");
   const [dateFrom, setDateFrom] = useState<Date | undefined>();
   const [dateTo, setDateTo] = useState<Date | undefined>();
 
