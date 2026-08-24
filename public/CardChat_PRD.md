@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.2  
-**Date:** August 14, 2026
+**Version:** 6.3  
+**Date:** August 24, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -742,6 +742,8 @@ When a transfer completes successfully, the platform posts a **Transaction Detai
 - **Privacy:** the account name follows the global masking rule (`maskName`) until identity is revealed by an authorized role
 - **Trigger:** emitted automatically on transfer success — the same event that records the transfer against the order and marks it `Transferred`. No manual send action is required.
 - **Persistence:** the receipt is part of the chat transcript, so it remains visible to the agent and customer for reconciliation; the transaction number matches the Transfer ID on `/admin/transfers`
+- **Delivered as an image (v6.3):** the receipt is posted as a real **image bubble**, not a DOM card. `src/components/admin/TransferReceiptImage.tsx` renders the card off-screen at a fixed 340px width, rasterizes it to PNG with `html-to-image` (`pixelRatio: 2`, page background, fonts skipped), and shows the result inline with a hover **Download** button and click-to-zoom dialog. A skeleton is shown while rasterizing and the DOM card is used as a fallback if rasterization fails. All receipt rows use `whitespace-nowrap` so no label truncates in the exported PNG.
+- **Production note:** in production the receipt should be generated server-side and delivered as a WhatsApp media message; the client-side rasterization above is the prototype equivalent.
 
 
 #### Right Panel — Order Sidebar (35% width, 320–504px, hidden below `xl`)
@@ -1252,17 +1254,18 @@ A consolidated ledger of all transfers initiated from the in-chat **Transfer pop
 - Bank filter + Min/Max Points range
 
 #### Table
-- Columns: Transfer ID, **Order ID**, Customer, Amount (Points/Coins icon), Bank + masked account, Channel, Status, Requested, Actions
+- Columns: Transfer ID, **Order ID**, Customer, Amount (Points/Coins icon), **Current Balance (Points)**, Bank + masked account, Channel, Status, Requested, Actions
+- **Totals row (v6.3):** a sticky footer row totals **Amount** and **Current Balance**, recomputed whenever filters/search change. Current Balance is summed once per unique customer in the filtered set to avoid double counting.
 - Status pills: Pending=amber, Processing=blue, Successful=emerald, Failed=rose
 - Row "View" opens a Transfer Details dialog
 - **Active channel routing (v6.1):** the page header shows an **"Active channel: {PalmPay N}"** badge; new transfers are executed on that channel and the Channel filter lists all four PalmPay rails plus Manual.
 
 #### Details Dialog
-- Shows: Customer, **Order ID**, Amount (Points), Bank, Account Number, Account Name, Channel, Reference, Requested, Status
+- Shows: Customer, **Order ID**, Amount (Points), **Current Balance (Points)**, Bank, Account Number, Account Name, Channel, Reference, Requested, Status
 
 #### CSV Export
 - Exports filtered records; filename `transfers-{timestamp}.csv`
-- Includes Order ID column
+- Includes Order ID and Current Balance columns
 
 #### Related Changes
 - **WhatsApp channel customers:** In `/admin/customers`, the transaction ledger relabels "Withdrawal" as "Transfer" when the selected customer's channel is `whatsapp`. Native TRTC customers continue to use "Withdrawal".
@@ -1767,6 +1770,20 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.2 → v6.3 — August 24, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Receipt as an Image** | The transaction receipt is now sent as a genuine PNG **image bubble** via the new `src/components/admin/TransferReceiptImage.tsx` (off-screen render + `html-to-image` rasterization, 2× pixel ratio, download button, click-to-zoom dialog, skeleton while generating, DOM-card fallback). Applies to 1:1 WhatsApp threads and groups (`WhatsAppGroupView.tsx`). |
+| **Receipt Layout Fixes** | `TransferReceiptCard.tsx` uses `whitespace-nowrap` on every label/value and a fixed 340px capture width, fixing the collapsed-blob output and the truncated "Transfer to ba…" header. |
+| **Table Totals Rows** | `/admin/orders`, `/admin/wallets`, `/admin/withdrawals` and `/admin/transfers` render a totals row at the bottom of their tables summing amount-related columns only. Totals are filter-aware and recompute with search/status/date filters. |
+| **Orders Amount Total Removed** | The USD **Amount** total was removed from the `/admin/orders` footer; remaining Points-based totals stay. |
+| **Transfers Current Balance** | `/admin/transfers` adds a **Current Balance** column (from `customerWallets`), included in the details dialog, CSV export, and the totals row (summed per unique customer in the filtered set). |
+| **Searchable Customer Filter** | The "All Customers" dropdown on `/admin/wallets` is now a searchable combobox (shadcn `Popover` + `Command`) so an agent can type an alias; restyled to the standard Command surface after an initial transparent/misaligned variant. |
+| **Group Wallet Lookup Fix** | In WhatsApp groups the Process Transfer modal read the wallet from the group conversation object and showed a 0 balance. Wallet lookups now fall back to the alias-selected customer. |
+| **Rounding Consistency** | Wallet credits and balance comparisons are wrapped in `Math.round()`, removing the false "Transfer amount exceeds available wallet balance" error caused by decimal drift. |
+| **Order List Scroll** | The Cardlight Order List table in `OrderWizardModal.tsx` gained `overflow-x-auto` with a minimum width so columns are no longer clipped inside the modal. |
 
 ### v6.1 → v6.2 — August 14, 2026
 
