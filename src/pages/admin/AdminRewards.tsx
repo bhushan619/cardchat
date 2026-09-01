@@ -135,15 +135,18 @@ export default function AdminRewards() {
     return matchSearch && matchType && matchDate;
   });
 
+  const rankedUsers = useMemo(() => getRankedUsers(rankingList), []);
+
   const filteredRanking = useMemo(() => {
-    if (!rankSearch.trim()) return rankingList;
-    return rankingList.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
-  }, [rankSearch]);
+    if (!rankSearch.trim()) return rankedUsers;
+    return rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+  }, [rankSearch, rankedUsers]);
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
   const totalRanking = allRecords.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
   const totalReferral = allRecords.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
-  const projectedPayout = rankingList.reduce((s, u) => s + u.reward, 0);
+  const projectedPayout = rankedUsers.reduce((s, u) => s + u.reward, 0);
+
 
   const handleExportRanking = () => {
     const headers = ["Rank", "Alias", "Volume", "Reward (Pts)"];
