@@ -152,14 +152,24 @@ export default function CustomerRanking() {
           </div>
         </div>
         <div className="flex items-center gap-3">
-        <button
-          onClick={() => setEmptyPeriod((v) => !v)}
-          className={`text-[10px] px-2 py-1 rounded-full border transition-colors ${
-            emptyPeriod ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
-          }`}
-        >
-          {emptyPeriod ? "Empty period" : "Live"}
-        </button>
+        <Select value={scenario} onValueChange={(v) => setScenario(v as Scenario)}>
+          <SelectTrigger
+            className={`h-7 w-[132px] text-[10px] rounded-full px-3 ${
+              scenario !== "live" ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
+            }`}
+          >
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent align="end" className="z-50">
+            {scenarioOptions.map((o) => (
+              <SelectItem key={o.value} value={o.value} className="text-xs">
+                <span className="font-medium">{o.label}</span>
+                <span className="block text-[10px] text-muted-foreground">{o.hint}</span>
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
 
           <DialogTrigger asChild>
