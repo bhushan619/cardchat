@@ -213,6 +213,20 @@ export default function CustomerRanking() {
               <Trophy className="w-4 h-4 text-accent" /> Leaderboard
             </h3>
 
+            {displayList.length === 0 ? (
+              <Card className="border border-dashed shadow-none">
+                <div className="p-8 text-center space-y-2">
+                  <Trophy className="w-8 h-8 mx-auto text-muted-foreground/40" />
+                  <p className="text-sm font-semibold text-foreground">
+                    No trades yet this period
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    The leaderboard is empty — be the first to complete an order and
+                    claim rank #1.
+                  </p>
+                </div>
+              </Card>
+            ) : (
             <div className="rounded-xl border overflow-hidden bg-card">
               <div className="grid grid-cols-[3rem_1fr_5.5rem_4rem] text-[10px] uppercase tracking-wider text-muted-foreground font-medium px-3 py-2.5 bg-muted/50 border-b">
                 <span>Rank</span>
@@ -222,6 +236,7 @@ export default function CustomerRanking() {
               </div>
 
               <div>
+
                 {(displayList as (RankingUser | "separator")[]).map((item, idx) => {
                   if (item === "separator") {
                     return (
