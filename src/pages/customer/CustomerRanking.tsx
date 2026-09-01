@@ -11,6 +11,7 @@ import {
   rankingList,
   currentUserAlias,
   getNextTier,
+  getRankedUsers,
   rankingTiers,
   getCurrentBiWeeklyPeriod,
   type RankingUser,
@@ -31,25 +32,37 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
+  // Prototype-only: simulate a period where nobody has traded yet
+  const [emptyPeriod, setEmptyPeriod] = useState(false);
 
   const currentPeriod = getCurrentBiWeeklyPeriod(new Date(2026, 2, 10)); // Mock: March 2026
 
-  const me = rankingList.find((u) => u.alias === currentUserAlias)!;
-  const nextTier = getNextTier(me.volume);
-  const remaining = nextTier ? nextTier.threshold - me.volume : 0;
+  const sourceList = emptyPeriod
+    ? rankingList.map((u) => ({ ...u, volume: 0, reward: 0 }))
+    : rankingList;
+  const ranked = getRankedUsers(sourceList);
+
+  const me = ranked.find((u) => u.alias === currentUserAlias);
+  const myVolume = me?.volume ?? 0;
+  const myReward = me?.reward ?? 0;
+  const isUnranked = !me;
+
+  const nextTier = getNextTier(myVolume);
+  const remaining = nextTier ? nextTier.threshold - myVolume : 0;
   const progressPercent = nextTier
-    ? Math.round((me.volume / nextTier.threshold) * 100)
+    ? Math.round((myVolume / nextTier.threshold) * 100)
     : 100;
 
   // Build display list
-  const inTop20 = me.rank <= 20;
   let displayList: (RankingUser | "separator")[];
 
-  if (inTop20) {
-    displayList = rankingList.filter((u) => u.rank <= 20);
+  if (isUnranked) {
+    displayList = ranked.filter((u) => u.rank <= 20);
+  } else if (me.rank <= 20) {
+    displayList = ranked.filter((u) => u.rank <= 20);
   } else {
-    const top10 = rankingList.filter((u) => u.rank <= 10);
-    const nearMe = rankingList.filter(
+    const top10 = ranked.filter((u) => u.rank <= 10);
+    const nearMe = ranked.filter(
       (u) => u.rank >= me.rank - 2 && u.rank <= me.rank + 2
     );
     displayList = [...top10, "separator", ...nearMe];
@@ -61,6 +74,7 @@ export default function CustomerRanking() {
     }, 400);
     return () => clearTimeout(timer);
   }, []);
+
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
