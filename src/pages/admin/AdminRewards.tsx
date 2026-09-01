@@ -21,7 +21,8 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
-import { getBiWeeklyPeriods, getRankedUsers, rankingList, rankingTiers } from "@/data/rankingMock";
+import { getBiWeeklyPeriods, getRankedUsers, rankingTiers } from "@/data/rankingMock";
+import { buildScenarioList, scenarioOptions, type Scenario } from "@/data/rankingScenarios";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getReferralBonus, setReferralBonus, type ReferralBonusSettings } from "@/lib/referralBonus";
