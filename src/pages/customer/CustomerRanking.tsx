@@ -133,7 +133,9 @@ export default function CustomerRanking() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </header>
+
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
