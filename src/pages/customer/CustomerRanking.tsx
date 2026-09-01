@@ -97,7 +97,17 @@ export default function CustomerRanking() {
             </p>
           </div>
         </div>
+        <div className="flex items-center gap-3">
+        <button
+          onClick={() => setEmptyPeriod((v) => !v)}
+          className={`text-[10px] px-2 py-1 rounded-full border transition-colors ${
+            emptyPeriod ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
+          }`}
+        >
+          {emptyPeriod ? "Empty period" : "Live"}
+        </button>
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
+
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
               <Info className="w-3.5 h-3.5" /> Rules
