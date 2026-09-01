@@ -136,17 +136,28 @@ export default function CustomerRanking() {
                   <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">
                     My Rank
                   </p>
-                  <p className="text-5xl font-black text-foreground leading-none">
-                    #{me.rank}
-                  </p>
+                  {isUnranked ? (
+                    <>
+                      <p className="text-5xl font-black text-muted-foreground/50 leading-none">
+                        —
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Unranked · complete your first order to enter the ranking
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-5xl font-black text-foreground leading-none">
+                      #{me.rank}
+                    </p>
+                  )}
                 </div>
                 <div className="text-right space-y-1">
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                       Current Reward
                     </p>
-                    <p className="text-xl font-bold text-accent">
-                      ₦{formatVolume(me.reward)}
+                    <p className={`text-xl font-bold ${isUnranked ? "text-muted-foreground" : "text-accent"}`}>
+                      ₦{formatVolume(myReward)}
                     </p>
                   </div>
                 </div>
@@ -158,7 +169,7 @@ export default function CustomerRanking() {
                     Trading Volume
                   </p>
                   <p className="text-lg font-bold text-foreground">
-                    {formatVolume(me.volume)}
+                    {formatVolume(myVolume)}
                   </p>
                 </div>
                 <div className="bg-background/60 rounded-lg p-3">
@@ -174,6 +185,7 @@ export default function CustomerRanking() {
                   )}
                 </div>
               </div>
+
             </div>
           </Card>
 
