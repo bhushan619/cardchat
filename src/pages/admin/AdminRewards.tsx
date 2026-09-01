@@ -216,6 +216,21 @@ export default function AdminRewards() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Select value={scenario} onValueChange={v => setScenario(v as Scenario)}>
+              <SelectTrigger
+                className={`w-52 h-9 text-xs ${scenario !== "live" ? "border-warning/40 text-warning" : ""}`}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {scenarioOptions.map(o => (
+                  <SelectItem key={o.value} value={o.value} className="text-xs">
+                    <span className="font-medium">{o.label}</span>
+                    <span className="block text-[10px] text-muted-foreground">{o.hint}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select value={selectedPeriod} onValueChange={v => { setSelectedPeriod(v); setCheckResult(null); }}>
               <SelectTrigger className="w-60 h-9 text-xs">
                 <SelectValue />
