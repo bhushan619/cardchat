@@ -304,6 +304,8 @@ export default function CustomerRanking() {
                 })}
               </div>
             </div>
+            )}
+
           </div>
 
           <div className="h-4" />
