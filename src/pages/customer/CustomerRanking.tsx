@@ -32,15 +32,14 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
-  // Prototype-only: simulate a period where nobody has traded yet
-  const [emptyPeriod, setEmptyPeriod] = useState(false);
+  // Prototype-only: simulate different period / ranking scenarios
+  const [scenario, setScenario] = useState<Scenario>("live");
 
   const currentPeriod = getCurrentBiWeeklyPeriod(new Date(2026, 2, 10)); // Mock: March 2026
 
-  const sourceList = emptyPeriod
-    ? rankingList.map((u) => ({ ...u, volume: 0, reward: 0 }))
-    : rankingList;
+  const sourceList = buildScenarioList(scenario);
   const ranked = getRankedUsers(sourceList);
+
 
   const me = ranked.find((u) => u.alias === currentUserAlias);
   const myVolume = me?.volume ?? 0;
