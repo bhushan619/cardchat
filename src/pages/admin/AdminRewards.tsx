@@ -21,7 +21,8 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
-import { getBiWeeklyPeriods, getRankedUsers, rankingList, rankingTiers } from "@/data/rankingMock";
+import { getBiWeeklyPeriods, getRankedUsers, rankingTiers } from "@/data/rankingMock";
+import { buildScenarioList, scenarioOptions, type Scenario } from "@/data/rankingScenarios";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getReferralBonus, setReferralBonus, type ReferralBonusSettings } from "@/lib/referralBonus";
@@ -95,6 +96,9 @@ export default function AdminRewards() {
 
   // Leaderboard tab
   const [rankSearch, setRankSearch] = useState("");
+  // Prototype-only: simulate ranking scenarios
+  const [scenario, setScenario] = useState<Scenario>("live");
+
 
   // Distribution dialog
   const [distributeOpen, setDistributeOpen] = useState(false);
@@ -135,7 +139,7 @@ export default function AdminRewards() {
     return matchSearch && matchType && matchDate;
   });
 
-  const rankedUsers = useMemo(() => getRankedUsers(rankingList), []);
+  const rankedUsers = useMemo(() => getRankedUsers(buildScenarioList(scenario)), [scenario]);
 
   const filteredRanking = useMemo(() => {
     if (!rankSearch.trim()) return rankedUsers;
@@ -212,6 +216,21 @@ export default function AdminRewards() {
             </p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <Select value={scenario} onValueChange={v => setScenario(v as Scenario)}>
+              <SelectTrigger
+                className={`w-52 h-9 text-xs ${scenario !== "live" ? "border-warning/40 text-warning" : ""}`}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent align="end">
+                {scenarioOptions.map(o => (
+                  <SelectItem key={o.value} value={o.value} className="text-xs">
+                    <span className="font-medium">{o.label}</span>
+                    <span className="block text-[10px] text-muted-foreground">{o.hint}</span>
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Select value={selectedPeriod} onValueChange={v => { setSelectedPeriod(v); setCheckResult(null); }}>
               <SelectTrigger className="w-60 h-9 text-xs">
                 <SelectValue />
