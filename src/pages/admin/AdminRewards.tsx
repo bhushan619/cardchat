@@ -96,6 +96,9 @@ export default function AdminRewards() {
 
   // Leaderboard tab
   const [rankSearch, setRankSearch] = useState("");
+  // Prototype-only: simulate ranking scenarios
+  const [scenario, setScenario] = useState<Scenario>("live");
+
 
   // Distribution dialog
   const [distributeOpen, setDistributeOpen] = useState(false);
