@@ -203,9 +203,10 @@ export default function CustomerRanking() {
                   Trade <span className="font-bold text-warning">{formatVolume(remaining)}</span> more
                   to unlock{" "}
                   <span className="font-bold text-accent">₦{formatVolume(nextTier.reward)}</span>{" "}
-                  reward — almost there!
+                  reward{isUnranked ? " — start your first trade!" : " — almost there!"}
                 </p>
               ) : (
+
                 <p className="text-sm text-accent font-semibold">
                   🎉 You've reached the highest tier!
                 </p>
