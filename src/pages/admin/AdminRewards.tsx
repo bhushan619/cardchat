@@ -21,7 +21,7 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter,
 } from "@/components/ui/dialog";
-import { getBiWeeklyPeriods, rankingList, rankingTiers } from "@/data/rankingMock";
+import { getBiWeeklyPeriods, getRankedUsers, rankingList, rankingTiers } from "@/data/rankingMock";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { getReferralBonus, setReferralBonus, type ReferralBonusSettings } from "@/lib/referralBonus";
@@ -135,15 +135,18 @@ export default function AdminRewards() {
     return matchSearch && matchType && matchDate;
   });
 
+  const rankedUsers = useMemo(() => getRankedUsers(rankingList), []);
+
   const filteredRanking = useMemo(() => {
-    if (!rankSearch.trim()) return rankingList;
-    return rankingList.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
-  }, [rankSearch]);
+    if (!rankSearch.trim()) return rankedUsers;
+    return rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+  }, [rankSearch, rankedUsers]);
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
   const totalRanking = allRecords.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
   const totalReferral = allRecords.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
-  const projectedPayout = rankingList.reduce((s, u) => s + u.reward, 0);
+  const projectedPayout = rankedUsers.reduce((s, u) => s + u.reward, 0);
+
 
   const handleExportRanking = () => {
     const headers = ["Rank", "Alias", "Volume", "Reward (Pts)"];
@@ -170,7 +173,7 @@ export default function AdminRewards() {
   const handleDistribute = () => {
     setDistributing(true);
     setTimeout(() => {
-      const newRecords: RewardRecord[] = rankingList.map((u, i) => ({
+      const newRecords: RewardRecord[] = rankedUsers.map((u, i) => ({
         id: `RW-${String(allRecords.length + i + 1).padStart(3, "0")}`,
         alias: u.alias,
         type: "ranking" as const,
@@ -329,7 +332,7 @@ export default function AdminRewards() {
                       ))}
                       {filteredRanking.length === 0 && (
                         <tr>
-                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No users found</td>
+                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No trades yet this period — leaderboard is empty</td>
                         </tr>
                       )}
                     </tbody>
@@ -515,7 +518,7 @@ export default function AdminRewards() {
                 <div className="text-xs">
                   <p className="font-semibold text-success">All Orders Settled</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling Pts {projectedPayout.toLocaleString()}.
+                    Rankings have been generated. Ready to distribute rewards to {rankedUsers.length} users totalling Pts {projectedPayout.toLocaleString()}.
                   </p>
                 </div>
               </div>

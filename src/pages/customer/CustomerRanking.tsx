@@ -11,6 +11,7 @@ import {
   rankingList,
   currentUserAlias,
   getNextTier,
+  getRankedUsers,
   rankingTiers,
   getCurrentBiWeeklyPeriod,
   type RankingUser,
@@ -31,25 +32,37 @@ export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
   const [rulesOpen, setRulesOpen] = useState(false);
+  // Prototype-only: simulate a period where nobody has traded yet
+  const [emptyPeriod, setEmptyPeriod] = useState(false);
 
   const currentPeriod = getCurrentBiWeeklyPeriod(new Date(2026, 2, 10)); // Mock: March 2026
 
-  const me = rankingList.find((u) => u.alias === currentUserAlias)!;
-  const nextTier = getNextTier(me.volume);
-  const remaining = nextTier ? nextTier.threshold - me.volume : 0;
+  const sourceList = emptyPeriod
+    ? rankingList.map((u) => ({ ...u, volume: 0, reward: 0 }))
+    : rankingList;
+  const ranked = getRankedUsers(sourceList);
+
+  const me = ranked.find((u) => u.alias === currentUserAlias);
+  const myVolume = me?.volume ?? 0;
+  const myReward = me?.reward ?? 0;
+  const isUnranked = !me;
+
+  const nextTier = getNextTier(myVolume);
+  const remaining = nextTier ? nextTier.threshold - myVolume : 0;
   const progressPercent = nextTier
-    ? Math.round((me.volume / nextTier.threshold) * 100)
+    ? Math.round((myVolume / nextTier.threshold) * 100)
     : 100;
 
   // Build display list
-  const inTop20 = me.rank <= 20;
   let displayList: (RankingUser | "separator")[];
 
-  if (inTop20) {
-    displayList = rankingList.filter((u) => u.rank <= 20);
+  if (isUnranked) {
+    displayList = ranked.filter((u) => u.rank <= 20);
+  } else if (me.rank <= 20) {
+    displayList = ranked.filter((u) => u.rank <= 20);
   } else {
-    const top10 = rankingList.filter((u) => u.rank <= 10);
-    const nearMe = rankingList.filter(
+    const top10 = ranked.filter((u) => u.rank <= 10);
+    const nearMe = ranked.filter(
       (u) => u.rank >= me.rank - 2 && u.rank <= me.rank + 2
     );
     displayList = [...top10, "separator", ...nearMe];
@@ -61,6 +74,7 @@ export default function CustomerRanking() {
     }, 400);
     return () => clearTimeout(timer);
   }, []);
+
 
   return (
     <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
@@ -83,7 +97,17 @@ export default function CustomerRanking() {
             </p>
           </div>
         </div>
+        <div className="flex items-center gap-3">
+        <button
+          onClick={() => setEmptyPeriod((v) => !v)}
+          className={`text-[10px] px-2 py-1 rounded-full border transition-colors ${
+            emptyPeriod ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
+          }`}
+        >
+          {emptyPeriod ? "Empty period" : "Live"}
+        </button>
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
+
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
               <Info className="w-3.5 h-3.5" /> Rules
@@ -109,7 +133,9 @@ export default function CustomerRanking() {
             </div>
           </DialogContent>
         </Dialog>
+        </div>
       </header>
+
 
       <ScrollArea className="flex-1">
         <div className="p-4 space-y-4">
@@ -122,17 +148,28 @@ export default function CustomerRanking() {
                   <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium mb-1">
                     My Rank
                   </p>
-                  <p className="text-5xl font-black text-foreground leading-none">
-                    #{me.rank}
-                  </p>
+                  {isUnranked ? (
+                    <>
+                      <p className="text-5xl font-black text-muted-foreground/50 leading-none">
+                        —
+                      </p>
+                      <p className="text-[11px] text-muted-foreground mt-1.5">
+                        Unranked · complete your first order to enter the ranking
+                      </p>
+                    </>
+                  ) : (
+                    <p className="text-5xl font-black text-foreground leading-none">
+                      #{me.rank}
+                    </p>
+                  )}
                 </div>
                 <div className="text-right space-y-1">
                   <div>
                     <p className="text-[10px] text-muted-foreground uppercase tracking-wider">
                       Current Reward
                     </p>
-                    <p className="text-xl font-bold text-accent">
-                      ₦{formatVolume(me.reward)}
+                    <p className={`text-xl font-bold ${isUnranked ? "text-muted-foreground" : "text-accent"}`}>
+                      ₦{formatVolume(myReward)}
                     </p>
                   </div>
                 </div>
@@ -144,7 +181,7 @@ export default function CustomerRanking() {
                     Trading Volume
                   </p>
                   <p className="text-lg font-bold text-foreground">
-                    {formatVolume(me.volume)}
+                    {formatVolume(myVolume)}
                   </p>
                 </div>
                 <div className="bg-background/60 rounded-lg p-3">
@@ -160,6 +197,7 @@ export default function CustomerRanking() {
                   )}
                 </div>
               </div>
+
             </div>
           </Card>
 
@@ -177,9 +215,10 @@ export default function CustomerRanking() {
                   Trade <span className="font-bold text-warning">{formatVolume(remaining)}</span> more
                   to unlock{" "}
                   <span className="font-bold text-accent">₦{formatVolume(nextTier.reward)}</span>{" "}
-                  reward — almost there!
+                  reward{isUnranked ? " — start your first trade!" : " — almost there!"}
                 </p>
               ) : (
+
                 <p className="text-sm text-accent font-semibold">
                   🎉 You've reached the highest tier!
                 </p>
@@ -199,6 +238,20 @@ export default function CustomerRanking() {
               <Trophy className="w-4 h-4 text-accent" /> Leaderboard
             </h3>
 
+            {displayList.length === 0 ? (
+              <Card className="border border-dashed shadow-none">
+                <div className="p-8 text-center space-y-2">
+                  <Trophy className="w-8 h-8 mx-auto text-muted-foreground/40" />
+                  <p className="text-sm font-semibold text-foreground">
+                    No trades yet this period
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    The leaderboard is empty — be the first to complete an order and
+                    claim rank #1.
+                  </p>
+                </div>
+              </Card>
+            ) : (
             <div className="rounded-xl border overflow-hidden bg-card">
               <div className="grid grid-cols-[3rem_1fr_5.5rem_4rem] text-[10px] uppercase tracking-wider text-muted-foreground font-medium px-3 py-2.5 bg-muted/50 border-b">
                 <span>Rank</span>
@@ -208,6 +261,7 @@ export default function CustomerRanking() {
               </div>
 
               <div>
+
                 {(displayList as (RankingUser | "separator")[]).map((item, idx) => {
                   if (item === "separator") {
                     return (
@@ -275,6 +329,8 @@ export default function CustomerRanking() {
                 })}
               </div>
             </div>
+            )}
+
           </div>
 
           <div className="h-4" />
