@@ -9,7 +9,6 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
-  rankingList,
   currentUserAlias,
   getNextTier,
   getRankedUsers,
@@ -17,6 +16,7 @@ import {
   getCurrentBiWeeklyPeriod,
   type RankingUser,
 } from "@/data/rankingMock";
+import { buildScenarioList, scenarioOptions, type Scenario } from "@/data/rankingScenarios";
 
 function getMedalIcon(rank: number) {
   if (rank === 1) return <Medal className="w-5 h-5 text-[hsl(45,93%,47%)]" />;
