@@ -17,9 +17,24 @@ export type RankingUser = {
   alias: string;
   volume: number;
   reward: number;
+  /** Timestamp (ms) at which the user reached their current volume — used as tie-breaker. */
+  reachedAt?: number;
 };
 
 export const currentUserAlias = "A7X3KP";
+
+/**
+ * Only users with trading volume > 0 are ranked. Users with zero volume are
+ * unranked and excluded from the leaderboard entirely.
+ * Ties are broken by who reached the volume first.
+ */
+export function getRankedUsers(list: RankingUser[] = rankingList): RankingUser[] {
+  return list
+    .filter((u) => u.volume > 0)
+    .sort((a, b) => b.volume - a.volume || (a.reachedAt ?? 0) - (b.reachedAt ?? 0))
+    .map((u, i) => ({ ...u, rank: i + 1 }));
+}
+
 
 export const rankingList: RankingUser[] = [
   { rank: 1, alias: "Z9W4MK", volume: 22500000, reward: 170000 },
