@@ -135,7 +135,7 @@ export default function AdminRewards() {
     return matchSearch && matchType && matchDate;
   });
 
-  const rankedUsers = useMemo(() => getRankedUsers(rankingList), []);
+  const rankedUsers = useMemo(() => getRankedUsers(buildScenarioList(scenario)), [scenario]);
 
   const filteredRanking = useMemo(() => {
     if (!rankSearch.trim()) return rankedUsers;
