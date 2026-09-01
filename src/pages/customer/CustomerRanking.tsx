@@ -28,6 +28,61 @@ function formatVolume(v: number) {
   return v.toLocaleString();
 }
 
+/* ---------- Prototype scenario simulator ---------- */
+type Scenario =
+  | "live"
+  | "empty"
+  | "unranked_me"
+  | "first_order"
+  | "top3"
+  | "outside_top20"
+  | "tie";
+
+const scenarioOptions: { value: Scenario; label: string; hint: string }[] = [
+  { value: "live", label: "Live (default)", hint: "Full leaderboard, I'm #18" },
+  { value: "empty", label: "Empty period", hint: "Nobody has traded yet" },
+  { value: "unranked_me", label: "Unranked (others traded)", hint: "My TTV = 0" },
+  { value: "first_order", label: "My first order only", hint: "I'm the only ranked user" },
+  { value: "top3", label: "Top 3", hint: "I'm ranked #3" },
+  { value: "outside_top20", label: "Outside top 20", hint: "Top 10 + near me view" },
+  { value: "tie", label: "Tie-break", hint: "Same volume, earlier trade wins" },
+];
+
+function buildScenarioList(scenario: Scenario): RankingUser[] {
+  const others = rankingList.filter((u) => u.alias !== currentUserAlias);
+  const me = rankingList.find((u) => u.alias === currentUserAlias)!;
+
+  switch (scenario) {
+    case "empty":
+      return rankingList.map((u) => ({ ...u, volume: 0, reward: 0 }));
+    case "unranked_me":
+      return [...others, { ...me, volume: 0, reward: 0 }];
+    case "first_order":
+      return [
+        ...others.map((u) => ({ ...u, volume: 0, reward: 0 })),
+        { ...me, volume: 350000, reward: 0 },
+      ];
+    case "top3":
+      return [...others, { ...me, volume: 15500000, reward: 80000 }];
+    case "outside_top20":
+      return [...others, { ...me, volume: 300000, reward: 0 }];
+    case "tie": {
+      const rival = others[0];
+      return [
+        ...others.map((u) =>
+          u.alias === rival.alias
+            ? { ...u, volume: 5900000, reward: 30000, reachedAt: 1000 }
+            : u
+        ),
+        { ...me, volume: 5900000, reward: 30000, reachedAt: 2000 },
+      ];
+    }
+    default:
+      return rankingList;
+  }
+}
+
+
 export default function CustomerRanking() {
   const navigate = useNavigate();
   const userRowRef = useRef<HTMLTableRowElement>(null);
