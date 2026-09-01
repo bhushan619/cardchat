@@ -173,7 +173,7 @@ export default function AdminRewards() {
   const handleDistribute = () => {
     setDistributing(true);
     setTimeout(() => {
-      const newRecords: RewardRecord[] = rankingList.map((u, i) => ({
+      const newRecords: RewardRecord[] = rankedUsers.map((u, i) => ({
         id: `RW-${String(allRecords.length + i + 1).padStart(3, "0")}`,
         alias: u.alias,
         type: "ranking" as const,
@@ -332,7 +332,7 @@ export default function AdminRewards() {
                       ))}
                       {filteredRanking.length === 0 && (
                         <tr>
-                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No users found</td>
+                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No trades yet this period — leaderboard is empty</td>
                         </tr>
                       )}
                     </tbody>
@@ -518,7 +518,7 @@ export default function AdminRewards() {
                 <div className="text-xs">
                   <p className="font-semibold text-success">All Orders Settled</p>
                   <p className="text-muted-foreground mt-0.5">
-                    Rankings have been generated. Ready to distribute rewards to {rankingList.length} users totalling Pts {projectedPayout.toLocaleString()}.
+                    Rankings have been generated. Ready to distribute rewards to {rankedUsers.length} users totalling Pts {projectedPayout.toLocaleString()}.
                   </p>
                 </div>
               </div>
