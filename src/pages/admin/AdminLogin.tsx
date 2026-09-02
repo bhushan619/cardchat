@@ -9,11 +9,25 @@ import { Shield, Eye, EyeOff, AlertCircle } from "lucide-react";
 // Prototype-only credential map. In a production build this MUST be replaced
 // with a server-validated auth call (e.g. Lovable Cloud / Supabase Auth).
 // Credentials are no longer rendered in the UI and the array is not exported.
-const PROTOTYPE_ACCOUNTS: Record<string, { password: string; role: string }> = {
-  "admin@cardchat.com": { password: "admin123", role: "super_admin" },
-  "lead@cardchat.com": { password: "lead123", role: "team_lead" },
-  "agent@cardchat.com": { password: "agent123", role: "agent" },
+const PROTOTYPE_ACCOUNTS: Record<string, { password: string; role: string; macAddress?: string }> = {
+  "admin@cardchat.com": { password: "admin123", role: "super_admin", macAddress: "A4:5E:60:E8:1A:2B" },
+  "lead@cardchat.com": { password: "lead123", role: "team_lead", macAddress: "B2:18:7F:C3:9D:04" },
+  "agent@cardchat.com": { password: "agent123", role: "agent", macAddress: "CC:4A:92:11:E7:55" },
 };
+
+// Browsers cannot read the real device MAC — in production the desktop/agent
+// app sends it to the backend. For the prototype we simulate one per browser
+// and persist it so admins can register it in User Management.
+function getDeviceMac(): string {
+  const KEY = "cc_device_mac";
+  const existing = localStorage.getItem(KEY);
+  if (existing) return existing;
+  const mac = Array.from({ length: 6 }, () =>
+    Math.floor(Math.random() * 256).toString(16).padStart(2, "0").toUpperCase()
+  ).join(":");
+  localStorage.setItem(KEY, mac);
+  return mac;
+}
 
 export default function AdminLogin() {
   const navigate = useNavigate();
