@@ -35,11 +35,14 @@ export default function AdminLogin() {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [macError, setMacError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const deviceMac = getDeviceMac();
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    setMacError(false);
     setLoading(true);
 
     setTimeout(() => {
@@ -49,12 +52,20 @@ export default function AdminLogin() {
       const passwordMatches = stored
         ? password === stored || (known && password === known.password)
         : known && password === known.password;
-      if (known && passwordMatches) {
-        sessionStorage.setItem("adminAuth", JSON.stringify({ email: lowerEmail, role: known.role }));
-        navigate("/admin");
-      } else {
+      if (!known || !passwordMatches) {
         setError("Invalid email or password.");
+        setLoading(false);
+        return;
       }
+      // Device MAC verification — account with no MAC set is not device-locked
+      if (known.macAddress && known.macAddress.toUpperCase() !== deviceMac.toUpperCase()) {
+        setMacError(true);
+        setError("Device not registered");
+        setLoading(false);
+        return;
+      }
+      sessionStorage.setItem("adminAuth", JSON.stringify({ email: lowerEmail, role: known.role }));
+      navigate("/admin");
       setLoading(false);
     }, 600);
   };
