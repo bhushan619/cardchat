@@ -181,6 +181,14 @@ export default function AdminUsers() {
       avatar: formAvatar || undefined,
       macAddress: formMac.trim().toLowerCase() || undefined,
     };
+    // Persist MAC registration so the login screen enforces it
+    try {
+      const macs = JSON.parse(localStorage.getItem("cc_admin_macs") || "{}");
+      const emailKey = formEmail.trim().toLowerCase();
+      if (profileFields.macAddress) macs[emailKey] = profileFields.macAddress;
+      else delete macs[emailKey];
+      localStorage.setItem("cc_admin_macs", JSON.stringify(macs));
+    } catch { /* ignore */ }
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id
         ? { ...u, name: formName, email: formEmail, role: formRole, ...profileFields }
