@@ -152,12 +152,12 @@ export const bankAccounts = [
   { id: 3, bankName: "Access Bank", accountNumber: "****9012", holderName: "J.A. DOE", verified: true },
 ];
 export const adminUsers = [
-  { id: 1, name: "Admin One", email: "admin@cardchat.com", role: "super_admin" as const, status: "active" as const, lastLogin: "2 min ago", macAddress: "A4:5E:60:E8:1A:2B" },
-  { id: 2, name: "Sarah Lead", email: "sarah@cardchat.com", role: "team_lead" as const, status: "active" as const, lastLogin: "10 min ago", macAddress: "B2:18:7F:C3:9D:04" },
-  { id: 3, name: "Mike Agent", email: "mike@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "5 min ago", macAddress: "CC:4A:92:11:E7:55" },
-  { id: 4, name: "Tunde Agent", email: "tunde@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "1 hr ago", macAddress: "D0:9B:33:67:AF:8E" },
-  { id: 5, name: "Joy Agent", email: "joy@cardchat.com", role: "agent" as const, status: "offline" as const, lastLogin: "3 hrs ago", macAddress: "E8:71:2C:44:BD:19" },
-  { id: 6, name: "Femi Finance", email: "femi@cardchat.com", role: "finance" as const, status: "active" as const, lastLogin: "15 min ago", macAddress: "F3:66:A1:DD:05:70" },
+  { id: 1, name: "Admin One", email: "admin@cardchat.com", role: "super_admin" as const, status: "active" as const, lastLogin: "2 min ago", macAddress: "a4-5e-60-e8-1a-2b" },
+  { id: 2, name: "Sarah Lead", email: "sarah@cardchat.com", role: "team_lead" as const, status: "active" as const, lastLogin: "10 min ago", macAddress: "b2-18-7f-c3-9d-04" },
+  { id: 3, name: "Mike Agent", email: "mike@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "5 min ago", macAddress: "cc-4a-92-11-e7-55" },
+  { id: 4, name: "Tunde Agent", email: "tunde@cardchat.com", role: "agent" as const, status: "active" as const, lastLogin: "1 hr ago", macAddress: "d0-9b-33-67-af-8e" },
+  { id: 5, name: "Joy Agent", email: "joy@cardchat.com", role: "agent" as const, status: "offline" as const, lastLogin: "3 hrs ago", macAddress: "e8-71-2c-44-bd-19" },
+  { id: 6, name: "Femi Finance", email: "femi@cardchat.com", role: "finance" as const, status: "active" as const, lastLogin: "15 min ago", macAddress: "f3-66-a1-dd-05-70" },
 ];
 
 export const nairaRateHistory = [

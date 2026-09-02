@@ -34,7 +34,7 @@ type User = {
   macAddress?: string;
 };
 
-const MAC_RE = /^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/;
+const MAC_RE = /^([0-9a-f]{2}-){5}[0-9a-f]{2}$/;
 
 const roleLabels: Record<string, { label: string; color: string }> = {
   super_admin: { label: "Super Admin", color: "bg-accent/10 text-accent" },
@@ -179,7 +179,7 @@ export default function AdminUsers() {
       rating: Math.max(0, Math.min(5, parseFloat(formRating) || 0)),
       specialties: formSpecialties.split(",").map(s => s.trim()).filter(Boolean),
       avatar: formAvatar || undefined,
-      macAddress: formMac.trim() || undefined,
+      macAddress: formMac.trim().toLowerCase() || undefined,
     };
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id
@@ -455,15 +455,15 @@ export default function AdminUsers() {
               <label className="text-xs font-medium text-muted-foreground">MAC Address</label>
               <Input
                 value={formMac}
-                onChange={e => setFormMac(e.target.value.toUpperCase())}
+                onChange={e => setFormMac(e.target.value.toLowerCase().replace(/[^0-9a-f-]/g, ""))}
                 className="mt-1 font-mono"
-                placeholder="AA:BB:CC:DD:EE:FF"
+                placeholder="aa-bb-cc-dd-ee-ff"
               />
               <p className="text-[11px] text-muted-foreground mt-1">
                 Device MAC address allowed to sign in with this account. Leave blank for no device lock.
               </p>
               {formMac && !MAC_RE.test(formMac.trim()) && (
-                <p className="text-[11px] text-destructive mt-1">Enter a valid MAC address (e.g. AA:BB:CC:DD:EE:FF)</p>
+                <p className="text-[11px] text-destructive mt-1">Enter a valid MAC address (e.g. aa-bb-cc-dd-ee-ff)</p>
               )}
             </div>
 
