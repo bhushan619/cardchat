@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.3  
-**Date:** August 24, 2026
+**Version:** 6.4  
+**Date:** September 2, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1770,6 +1770,19 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.3 → v6.4 — September 2, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Unranked & Empty-Period Ranking** | Ranking logic in `src/data/rankingMock.ts` now filters out users with TTV = 0 — they are **unranked** and excluded from the leaderboard entirely. Ties are broken by a `reachedAt` timestamp (earlier volume wins). The customer ranking page shows an "Unranked · complete your first order to enter the ranking" state when TTV = 0, and an empty-state card ("No trades yet this period — be the first to claim rank #1") when the whole leaderboard is empty. Applied to both `/customer/ranking` and `/admin/rewards`. |
+| **Ranking Scenario Simulator** | New `src/data/rankingScenarios.ts` with a shared scenario dropdown (Live, Empty period, Unranked user, Single first order, Top 3, Outside top 20, Tie-break) added to both the customer ranking page and `/admin/rewards` so all ranking edge cases can be previewed in the prototype. |
+| **Agent Performance Table Redesign** | The "Agent Performance" section on `/admin/team` was rebuilt per the reference CSV: metrics for average/first response time, delayed replies, missing replies (with drill-down), and total users handled, plus period filters and CSV export. |
+| **Team Dashboard Role Restriction** | `/admin/team` is now guarded to **Super Admin** and **Team Lead** roles only; other roles no longer see the dashboard. |
+| **MAC Address Field (User Management)** | `/admin/users` profiles include a validated **MAC Address** field, displayed as a table column and included in search. Registrations persist to `localStorage` keyed by email so they survive reloads. |
+| **MAC Address Login Verification** | The admin login screen verifies the device's (simulated) MAC against the account's registered MAC. On mismatch a clear **"Device not registered"** error is shown, with a demo box listing registered MACs for testing. |
+| **MAC Format** | The MAC format is lowercase hyphen-separated: `aa-bb-cc-dd-ee-ff`. Applied to validation, sanitization, mock data, the simulated MAC generator, and all placeholders/hints. |
+| **Device Self-Registration Recovery** | To break the lockout loop (can't log in to register a MAC), the "Device not registered" error panel includes a **"Register this device for the account (prototype recovery)"** link that binds the current device's MAC to the account — only after a valid email + correct password, so it cannot bypass credential checks. |
 
 ### v6.2 → v6.3 — August 24, 2026
 
