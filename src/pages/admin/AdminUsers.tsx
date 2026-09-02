@@ -119,7 +119,8 @@ export default function AdminUsers() {
   const filtered = users.filter(u => {
     const matchesSearch =
       u.name.toLowerCase().includes(search.toLowerCase()) ||
-      u.email.toLowerCase().includes(search.toLowerCase());
+      u.email.toLowerCase().includes(search.toLowerCase()) ||
+      (u.macAddress?.toLowerCase().includes(search.toLowerCase()) ?? false);
     const matchesRole = roleFilter === "all" || u.role === roleFilter;
     const matchesStatus = statusFilter === "all" || u.status === statusFilter;
     return matchesSearch && matchesRole && matchesStatus;
@@ -300,6 +301,7 @@ export default function AdminUsers() {
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">User</th>
                 <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Email</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Role</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">MAC Address</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">PIN</th>
                 <th className="text-center text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Last Login</th>
@@ -325,6 +327,11 @@ export default function AdminUsers() {
                   <td className="px-4 py-3 text-center">
                     <span className={`status-badge ${roleLabels[u.role]?.color || ""}`}>
                       {roleLabels[u.role]?.label || u.role}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-left">
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {u.macAddress || "—"}
                     </span>
                   </td>
                   <td className="px-4 py-3 text-center">
