@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Shield, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Shield, ShieldAlert, Eye, EyeOff, AlertCircle } from "lucide-react";
 
 // Prototype-only credential map. In a production build this MUST be replaced
 // with a server-validated auth call (e.g. Lovable Cloud / Supabase Auth).
@@ -163,6 +163,12 @@ export default function AdminLogin() {
                 <div>Super Admin · admin@cardchat.com / admin123</div>
                 <div>Team Lead · lead@cardchat.com / lead123</div>
                 <div>Agent · agent@cardchat.com / agent123</div>
+              </div>
+              <div className="border-t border-border/60 pt-2">
+                <p className="text-[11px] text-muted-foreground">
+                  This device's simulated MAC: <span className="font-mono font-medium text-foreground select-all">{deviceMac}</span>
+                  <br />Registered MACs: A4:5E:60:E8:1A:2B (Super Admin) · B2:18:7F:C3:9D:04 (Team Lead) · CC:4A:92:11:E7:55 (Agent)
+                </p>
               </div>
             </div>
           </CardContent>
