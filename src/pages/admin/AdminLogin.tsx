@@ -153,16 +153,19 @@ export default function AdminLogin() {
                     type="button"
                     className="text-[11px] font-medium text-accent hover:underline"
                     onClick={() => {
+                      // Prototype recovery: register THIS device as the account's
+                      // MAC so the user can sign in again. In production this would
+                      // be an out-of-band admin action (e.g. hardware reset request).
                       try {
                         const macs = JSON.parse(localStorage.getItem("cc_admin_macs") || "{}");
-                        delete macs[email.trim().toLowerCase()];
+                        macs[email.trim().toLowerCase()] = deviceMac.toLowerCase();
                         localStorage.setItem("cc_admin_macs", JSON.stringify(macs));
                       } catch { /* ignore */ }
                       setError("");
                       setMacError(false);
                     }}
                   >
-                    Reset device lock for this account (prototype recovery)
+                    Register this device for the account (prototype recovery)
                   </button>
                 </div>
               )}
