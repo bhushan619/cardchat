@@ -31,7 +31,10 @@ type User = {
   rating?: number;
   specialties?: string[];
   avatar?: string;
+  macAddress?: string;
 };
+
+const MAC_RE = /^([0-9A-Fa-f]{2}[:-]){5}[0-9A-Fa-f]{2}$/;
 
 const roleLabels: Record<string, { label: string; color: string }> = {
   super_admin: { label: "Super Admin", color: "bg-accent/10 text-accent" },
@@ -95,6 +98,7 @@ export default function AdminUsers() {
   const [formRating, setFormRating] = useState<string>("4.8");
   const [formSpecialties, setFormSpecialties] = useState<string>("iTunes, Amazon, Steam, Google Play");
   const [formAvatar, setFormAvatar] = useState<string>("");
+  const [formMac, setFormMac] = useState<string>("");
   const avatarInputRef = useRef<HTMLInputElement>(null);
 
   const handleAvatarFile = (file: File | undefined) => {
@@ -131,6 +135,7 @@ export default function AdminUsers() {
     setFormRating("4.8");
     setFormSpecialties("iTunes, Amazon, Steam, Google Play");
     setFormAvatar("");
+    setFormMac("");
     setModalOpen(true);
   };
 
@@ -144,6 +149,7 @@ export default function AdminUsers() {
     setFormRating(String(u.rating ?? 4.8));
     setFormSpecialties((u.specialties ?? ["iTunes", "Amazon", "Steam", "Google Play"]).join(", "));
     setFormAvatar(u.avatar ?? "");
+    setFormMac(u.macAddress ?? "");
     setModalOpen(true);
   };
 
@@ -172,6 +178,7 @@ export default function AdminUsers() {
       rating: Math.max(0, Math.min(5, parseFloat(formRating) || 0)),
       specialties: formSpecialties.split(",").map(s => s.trim()).filter(Boolean),
       avatar: formAvatar || undefined,
+      macAddress: formMac.trim() || undefined,
     };
     if (editingUser) {
       setUsers(prev => prev.map(u => u.id === editingUser.id
@@ -530,7 +537,7 @@ export default function AdminUsers() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setModalOpen(false)}>Cancel</Button>
-            <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSave} disabled={!formName || !formEmail}>
+            <Button className="bg-accent text-accent-foreground hover:bg-accent/90" onClick={handleSave} disabled={!formName || !formEmail || (!!formMac.trim() && !MAC_RE.test(formMac.trim()))}>
               {editingUser ? "Save Changes" : "Create User"}
             </Button>
           </DialogFooter>
