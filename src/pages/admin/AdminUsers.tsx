@@ -329,6 +329,11 @@ export default function AdminUsers() {
                       {roleLabels[u.role]?.label || u.role}
                     </span>
                   </td>
+                  <td className="px-4 py-3 text-left">
+                    <span className="text-xs font-mono text-muted-foreground">
+                      {u.macAddress || "—"}
+                    </span>
+                  </td>
                   <td className="px-4 py-3 text-center">
                     {getUserPinStatus(u) ? (
                       <span className="inline-flex items-center gap-1 text-[10px] font-medium text-success bg-success/10 px-2 py-0.5 rounded-full">
