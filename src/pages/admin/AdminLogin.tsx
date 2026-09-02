@@ -10,9 +10,9 @@ import { Shield, ShieldAlert, Eye, EyeOff, AlertCircle } from "lucide-react";
 // with a server-validated auth call (e.g. Lovable Cloud / Supabase Auth).
 // Credentials are no longer rendered in the UI and the array is not exported.
 const PROTOTYPE_ACCOUNTS: Record<string, { password: string; role: string; macAddress?: string }> = {
-  "admin@cardchat.com": { password: "admin123", role: "super_admin", macAddress: "A4:5E:60:E8:1A:2B" },
-  "lead@cardchat.com": { password: "lead123", role: "team_lead", macAddress: "B2:18:7F:C3:9D:04" },
-  "agent@cardchat.com": { password: "agent123", role: "agent", macAddress: "CC:4A:92:11:E7:55" },
+  "admin@cardchat.com": { password: "admin123", role: "super_admin", macAddress: "a4-5e-60-e8-1a-2b" },
+  "lead@cardchat.com": { password: "lead123", role: "team_lead", macAddress: "b2-18-7f-c3-9d-04" },
+  "agent@cardchat.com": { password: "agent123", role: "agent", macAddress: "cc-4a-92-11-e7-55" },
 };
 
 // Browsers cannot read the real device MAC — in production the desktop/agent
@@ -23,8 +23,8 @@ function getDeviceMac(): string {
   const existing = localStorage.getItem(KEY);
   if (existing) return existing;
   const mac = Array.from({ length: 6 }, () =>
-    Math.floor(Math.random() * 256).toString(16).padStart(2, "0").toUpperCase()
-  ).join(":");
+    Math.floor(Math.random() * 256).toString(16).padStart(2, "0")
+  ).join("-");
   localStorage.setItem(KEY, mac);
   return mac;
 }
@@ -166,8 +166,8 @@ export default function AdminLogin() {
               </div>
               <div className="border-t border-border/60 pt-2">
                 <p className="text-[11px] text-muted-foreground">
-                  This device's simulated MAC: <span className="font-mono font-medium text-foreground select-all">{deviceMac}</span>
-                  <br />Registered MACs: A4:5E:60:E8:1A:2B (Super Admin) · B2:18:7F:C3:9D:04 (Team Lead) · CC:4A:92:11:E7:55 (Agent)
+                This device's simulated MAC: <span className="font-mono font-medium text-foreground select-all">{deviceMac}</span>
+                <br />Registered MACs: a4-5e-60-e8-1a-2b (Super Admin) · b2-18-7f-c3-9d-04 (Team Lead) · cc-4a-92-11-e7-55 (Agent)
                 </p>
               </div>
             </div>
