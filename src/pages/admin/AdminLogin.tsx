@@ -149,6 +149,24 @@ export default function AdminLogin() {
                   <p className="text-[11px] text-muted-foreground">
                     Ask a Super Admin to register this MAC address under User Management, or sign in from your registered device.
                   </p>
+                  <button
+                    type="button"
+                    className="text-[11px] font-medium text-accent hover:underline"
+                    onClick={() => {
+                      // Prototype recovery: register THIS device as the account's
+                      // MAC so the user can sign in again. In production this would
+                      // be an out-of-band admin action (e.g. hardware reset request).
+                      try {
+                        const macs = JSON.parse(localStorage.getItem("cc_admin_macs") || "{}");
+                        macs[email.trim().toLowerCase()] = deviceMac.toLowerCase();
+                        localStorage.setItem("cc_admin_macs", JSON.stringify(macs));
+                      } catch { /* ignore */ }
+                      setError("");
+                      setMacError(false);
+                    }}
+                  >
+                    Register this device for the account (prototype recovery)
+                  </button>
                 </div>
               )}
               {error && !macError && (
