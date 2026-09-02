@@ -2,7 +2,8 @@ import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Link } from "react-router-dom";
 import { useAdminT } from "@/contexts/AdminLangContext";
-import { Users, MessageSquare, TrendingUp, Clock, Download, Timer, AlertTriangle } from "lucide-react";
+import { useAdminRole } from "@/contexts/AdminRoleContext";
+import { Users, MessageSquare, TrendingUp, Clock, Download, Timer, AlertTriangle, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -89,6 +90,8 @@ const fmtSec = (s: number) => (s >= 60 ? `${Math.floor(s / 60)}m ${s % 60}s` : `
 
 export default function AdminTeam() {
   const t = useAdminT();
+  const { role } = useAdminRole();
+  const canView = role === "super_admin" || role === "team_lead";
   const [source, setSource] = useState<Source>("app");
   const [date, setDate] = useState("");
   const [agent, setAgent] = useState("all");
@@ -135,6 +138,22 @@ export default function AdminTeam() {
     URL.revokeObjectURL(url);
     toast({ title: "Report exported", description: `${filtered.length} rows` });
   };
+
+  if (!canView) {
+    return (
+      <AdminLayout>
+        <div className="p-6">
+          <div className="mx-auto max-w-md rounded-xl border bg-card p-8 text-center">
+            <Lock className="w-6 h-6 mx-auto mb-3 text-muted-foreground" />
+            <h1 className="font-heading text-lg font-bold mb-1">Restricted</h1>
+            <p className="text-sm text-muted-foreground">
+              The Team Dashboard is available to Super Admins and Team Leads only.
+            </p>
+          </div>
+        </div>
+      </AdminLayout>
+    );
+  }
 
   return (
     <AdminLayout>
