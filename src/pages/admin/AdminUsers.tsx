@@ -437,6 +437,22 @@ export default function AdminUsers() {
                 </SelectContent>
               </Select>
             </div>
+            <div>
+              <label className="text-xs font-medium text-muted-foreground">MAC Address</label>
+              <Input
+                value={formMac}
+                onChange={e => setFormMac(e.target.value.toUpperCase())}
+                className="mt-1 font-mono"
+                placeholder="AA:BB:CC:DD:EE:FF"
+              />
+              <p className="text-[11px] text-muted-foreground mt-1">
+                Device MAC address allowed to sign in with this account. Leave blank for no device lock.
+              </p>
+              {formMac && !MAC_RE.test(formMac.trim()) && (
+                <p className="text-[11px] text-destructive mt-1">Enter a valid MAC address (e.g. AA:BB:CC:DD:EE:FF)</p>
+              )}
+            </div>
+
 
             {/* Public profile (visible to customers on agent profile page) */}
             <div className="pt-3 mt-3 border-t border-border">
