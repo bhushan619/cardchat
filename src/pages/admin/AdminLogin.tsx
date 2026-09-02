@@ -57,8 +57,14 @@ export default function AdminLogin() {
         setLoading(false);
         return;
       }
-      // Device MAC verification — account with no MAC set is not device-locked
-      if (known.macAddress && known.macAddress.toUpperCase() !== deviceMac.toUpperCase()) {
+      // Device MAC verification — account with no MAC set is not device-locked.
+      // Prefer the MAC registered in User Management (persisted), else fall back to the prototype default.
+      let registeredMac = known.macAddress;
+      try {
+        const macs = JSON.parse(localStorage.getItem("cc_admin_macs") || "{}");
+        if (macs[lowerEmail]) registeredMac = macs[lowerEmail];
+      } catch { /* ignore */ }
+      if (registeredMac && registeredMac.toUpperCase() !== deviceMac.toUpperCase()) {
         setMacError(true);
         setError("Device not registered");
         setLoading(false);
