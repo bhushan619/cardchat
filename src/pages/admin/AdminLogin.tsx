@@ -128,7 +128,24 @@ export default function AdminLogin() {
                 </div>
               </div>
 
-              {error && (
+              {error && macError && (
+                <div className="text-sm text-destructive bg-destructive/10 rounded-md p-3 space-y-1.5">
+                  <div className="flex items-center gap-2 font-medium">
+                    <ShieldAlert className="w-4 h-4 shrink-0" />
+                    Device not registered
+                  </div>
+                  <p className="text-xs leading-relaxed">
+                    This device's MAC address is not linked to this account. Sign-in is only allowed from the registered device.
+                  </p>
+                  <p className="text-xs">
+                    Your device MAC: <span className="font-mono font-semibold select-all">{deviceMac}</span>
+                  </p>
+                  <p className="text-[11px] text-muted-foreground">
+                    Ask a Super Admin to register this MAC address under User Management, or sign in from your registered device.
+                  </p>
+                </div>
+              )}
+              {error && !macError && (
                 <div className="flex items-center gap-2 text-sm text-destructive bg-destructive/10 rounded-md p-3">
                   <AlertCircle className="w-4 h-4 shrink-0" />
                   {error}
