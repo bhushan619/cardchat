@@ -149,6 +149,21 @@ export default function AdminLogin() {
                   <p className="text-[11px] text-muted-foreground">
                     Ask a Super Admin to register this MAC address under User Management, or sign in from your registered device.
                   </p>
+                  <button
+                    type="button"
+                    className="text-[11px] font-medium text-accent hover:underline"
+                    onClick={() => {
+                      try {
+                        const macs = JSON.parse(localStorage.getItem("cc_admin_macs") || "{}");
+                        delete macs[email.trim().toLowerCase()];
+                        localStorage.setItem("cc_admin_macs", JSON.stringify(macs));
+                      } catch { /* ignore */ }
+                      setError("");
+                      setMacError(false);
+                    }}
+                  >
+                    Reset device lock for this account (prototype recovery)
+                  </button>
                 </div>
               )}
               {error && !macError && (
