@@ -2728,7 +2728,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <span className="text-success font-medium">Pts {cw.totalCredits.toLocaleString()}</span>
                       </span>
                       <span>
-                        Withdrawals:{" "}
+                        {channelFilter === "whatsapp" ? "Transfers:" : "Withdrawals:"}{" "}
                         <span className="text-destructive font-medium">Pts {cw.totalWithdrawals.toLocaleString()}</span>
                       </span>
                     </div>
@@ -2836,7 +2836,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             ) : (
                               <MinusCircle className="w-3 h-3 text-destructive shrink-0" />
                             )}
-                            <span className="text-muted-foreground truncate">{tx.description}</span>
+                            <span className="text-muted-foreground truncate">
+                              {channelFilter === "whatsapp"
+                                ? tx.description.replace(/^Withdrawal to/i, "Transfer to")
+                                : tx.description}
+                            </span>
                           </div>
                           <span
                             className={`font-medium shrink-0 ml-2 ${tx.type === "credit" ? "text-success" : "text-destructive"}`}
