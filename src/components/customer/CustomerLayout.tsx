@@ -3,6 +3,16 @@ import { Home, MessageCircle, Users, User } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import BeginnerGuide, { guideSteps } from "./BeginnerGuide";
 import NotificationPermissionBar from "./NotificationPermissionBar";
+import PopupOverlay from "./PopupOverlay";
+import type { PopupScreen } from "@/lib/popups";
+
+const screenForPath = (path: string): PopupScreen => {
+  if (path.startsWith("/customer/chat")) return "Chat";
+  if (path.startsWith("/customer/rewards")) return "Rewards";
+  if (path.startsWith("/customer/ranking")) return "Ranking";
+  if (path.startsWith("/customer/me")) return "Settings";
+  return "Home";
+};
 
 
 const tabs = [
@@ -81,6 +91,7 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
           onSkip={handleGuideComplete}
         />
       )}
+      {!showGuide && <PopupOverlay screen={screenForPath(location.pathname)} />}
     </div>
   );
 }
