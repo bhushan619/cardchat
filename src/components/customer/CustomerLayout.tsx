@@ -68,7 +68,7 @@ export default function CustomerLayout({ children }: { children: ReactNode }) {
   }, [guideStep, handleGuideComplete, navigate]);
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="relative flex flex-col h-screen max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       <div className="flex-1 overflow-y-auto">{children}</div>
 
