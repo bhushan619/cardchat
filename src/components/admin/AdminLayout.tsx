@@ -25,6 +25,7 @@ import {
   Download,
   Trophy,
   Activity,
+  Megaphone,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -124,6 +125,13 @@ const navItems = [
     label: "App Versions",
     icon: Download,
     path: "/admin/app-versions",
+    roles: ["super_admin"],
+  },
+  {
+    id: "popups",
+    label: "Popups",
+    icon: Megaphone,
+    path: "/admin/popups",
     roles: ["super_admin"],
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
