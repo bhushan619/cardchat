@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
-import { Users, Send, Smile, Paperclip } from "lucide-react";
+import { Users, Send, Smile, Paperclip, StickyNote } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
 import { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
 import TransferReceiptImage from "@/components/admin/TransferReceiptImage";
@@ -39,6 +46,7 @@ export function GroupThread({
   highlightId,
   systemMessages = [],
   actions,
+  onRemark,
 }: {
   group: WhatsAppGroup;
   messages: GroupMessage[];
@@ -47,7 +55,10 @@ export function GroupThread({
   systemMessages?: { id: number; text: string; time: string; receipt?: TransferReceipt }[];
   /** Action buttons rendered in the composer (Points +/-, Transfer). */
   actions?: ReactNode;
+  /** Right-click → Add Remark on a message bubble. */
+  onRemark?: (payload: { alias: string | null; name: string; text: string }) => void;
 }) {
+
   const [message, setMessage] = useState("");
   const [localMessages, setLocalMessages] = useState<GroupMessage[]>(messages);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,11 +113,14 @@ export function GroupThread({
           const highlighted = highlightId === msg.id;
           return (
             <div key={msg.id} data-msg-id={msg.id} className={isAgent ? "flex justify-end" : "flex justify-start"}>
+              <ContextMenu>
+                <ContextMenuTrigger asChild disabled={isAgent}>
               <div
                 className={`${isAgent ? "chat-bubble-self" : "chat-bubble-other"} ${
                   highlighted ? "ring-2 ring-accent ring-offset-2 ring-offset-background rounded-lg" : ""
                 }`}
               >
+
                 {!isAgent && (
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-[10px] font-semibold text-primary">{p?.waName || "Unknown"}</span>
@@ -138,7 +152,24 @@ export function GroupThread({
                 )}
                 <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
               </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent className="w-44">
+                  <ContextMenuItem
+                    onSelect={() =>
+                      onRemark?.({
+                        alias: p?.alias ?? null,
+                        name: p?.waName || "Unknown",
+                        text: msg.image ? "[Image]" : msg.text,
+                      })
+                    }
+                  >
+                    <StickyNote className="w-3.5 h-3.5 mr-2" />
+                    Add Remark
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             </div>
+
           );
         })}
         {systemMessages.map((m) =>
