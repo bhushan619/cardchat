@@ -145,7 +145,24 @@ export function GroupThread({
                 )}
                 <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
               </div>
+                </ContextMenuTrigger>
+                <ContextMenuContent className="w-44">
+                  <ContextMenuItem
+                    onSelect={() =>
+                      onRemark?.({
+                        alias: p?.alias ?? null,
+                        name: p?.waName || "Unknown",
+                        text: msg.image ? "[Image]" : msg.text,
+                      })
+                    }
+                  >
+                    <StickyNote className="w-3.5 h-3.5 mr-2" />
+                    Add Remark
+                  </ContextMenuItem>
+                </ContextMenuContent>
+              </ContextMenu>
             </div>
+
           );
         })}
         {systemMessages.map((m) =>
