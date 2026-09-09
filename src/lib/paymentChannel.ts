@@ -8,8 +8,8 @@ export const PAYMENT_CHANNELS = [
   { value: "palmpay2", label: "PalmPay 2" },
   { value: "palmpay3", label: "PalmPay 3" },
   { value: "palmpay4", label: "PalmPay 4" },
-  { value: "aicapayboost1", label: "AicaPay Boost 1" },
-  { value: "aicapayboost2", label: "AicaPay Boost 2" },
+  { value: "aicapayboost1", label: "AicaPay 1" },
+  { value: "aicapayboost2", label: "AicaPay 2" },
 ] as const;
 
 export type PaymentChannelValue = (typeof PAYMENT_CHANNELS)[number]["value"];
