@@ -53,22 +53,6 @@ import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import { StickyNote, Trash2 } from "lucide-react";
-import {
-  addRemark,
-  loadRemarks,
-  onRemarksChange,
-  remarksFor,
-  removeRemark,
-  type CustomerRemark,
-} from "@/lib/customerRemarks";
-
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -170,13 +154,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  // Customer remarks (right-click on a WhatsApp message bubble)
-  const [remarkTarget, setRemarkTarget] = useState<{ alias: string | null; name: string; quote: string } | null>(null);
-  const [remarkText, setRemarkText] = useState("");
-  const [allRemarks, setAllRemarks] = useState<CustomerRemark[]>(() => loadRemarks());
-  useEffect(() => onRemarksChange(() => setAllRemarks(loadRemarks())), []);
-
 
   // Chat state
   const [message, setMessage] = useState("");
@@ -1369,14 +1346,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 highlightId={highlightMsgId}
                 systemMessages={groupSystemMsgs[selectedGroup.id] ?? []}
                 actions={renderComposerActions()}
-                onRemark={(p) =>
-                  setRemarkTarget({
-                    alias: p.alias ?? groupCustomerAlias ?? null,
-                    name: p.name,
-                    quote: p.text,
-                  })
-                }
-
               />
             ) : selectedId && selectedConvo ? (
               <>
@@ -1712,8 +1681,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     return (
                       <Fragment key={msg.id}>
                         <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
-                          <ContextMenu>
-                            <ContextMenuTrigger asChild disabled={channelFilter !== "whatsapp"}>
                           <div
                             className={
                               isCustomer
@@ -1723,7 +1690,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   : "chat-bubble-self"
                             }
                           >
-
                             {showName && (
                               <p
                                 className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
@@ -1758,24 +1724,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             )}
                             <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                           </div>
-                            </ContextMenuTrigger>
-                            <ContextMenuContent className="w-44">
-                              <ContextMenuItem
-                                onSelect={() =>
-                                  setRemarkTarget({
-                                    alias: panelConvo.alias,
-                                    name: msg.senderName || panelConvo.alias,
-                                    quote: msg.image ? "[Image]" : msg.text,
-                                  })
-                                }
-                              >
-                                <StickyNote className="w-3.5 h-3.5 mr-2" />
-                                Add Remark
-                              </ContextMenuItem>
-                            </ContextMenuContent>
-                          </ContextMenu>
                         </div>
-
                         {/* Detected bank details chip */}
                         {(() => {
                           if (msg.image || msg.sender !== "customer") return null;
@@ -2114,68 +2063,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </div>
 
-                    {/* Customer remarks */}
-                    {channelFilter === "whatsapp" && (
-                      <div className="p-4 border-b">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-heading font-semibold text-sm flex items-center gap-1.5">
-                            <StickyNote className="w-3.5 h-3.5 text-amber-500" />
-                            Remarks
-                            <span className="text-[10px] text-muted-foreground font-normal">
-                              ({remarksFor(panelConvo.alias, allRemarks).length})
-                            </span>
-                          </h3>
-                          <Button
-                            size="sm"
-                            variant="ghost"
-                            className="h-6 px-2 text-[11px]"
-                            onClick={() =>
-                              setRemarkTarget({ alias: panelConvo.alias, name: panelConvo.alias, quote: "" })
-                            }
-                          >
-                            Add
-                          </Button>
-                        </div>
-                        {remarksFor(panelConvo.alias, allRemarks).length === 0 ? (
-                          <p className="text-[11px] text-muted-foreground">
-                            No remarks yet. Right-click a message to add one.
-                          </p>
-                        ) : (
-                          <div className="space-y-1.5 max-h-40 overflow-y-auto">
-                            {remarksFor(panelConvo.alias, allRemarks).map((r) => (
-                              <div
-                                key={r.id}
-                                className="group rounded-md border border-amber-500/30 bg-amber-500/5 p-2"
-                              >
-                                <div className="flex items-start gap-2">
-                                  <p className="flex-1 text-[11px] leading-snug">{r.text}</p>
-                                  <button
-                                    onClick={() => removeRemark(r.id)}
-                                    title="Delete remark"
-                                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </button>
-                                </div>
-                                {r.quote && (
-                                  <p className="mt-1 text-[10px] text-muted-foreground italic line-clamp-2">
-                                    “{r.quote}”
-                                  </p>
-                                )}
-                                <p className="mt-1 text-[9px] text-muted-foreground">
-                                  {r.author} · {new Date(r.createdAt).toLocaleString()}
-                                </p>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    )}
-
                     {/* Customer info */}
                     <div className="p-4">
                       <h3 className="font-heading font-semibold text-sm mb-3">Customer Info</h3>
-
                       <div className="space-y-2 text-xs">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Alias</span>
@@ -2602,87 +2492,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         );
       })()}
 
-      {/* Add Remark modal */}
-      <Dialog
-        open={!!remarkTarget}
-        onOpenChange={(open) => {
-          if (!open) {
-            setRemarkTarget(null);
-            setRemarkText("");
-          }
-        }}
-      >
-        <DialogContent className="max-w-sm">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <StickyNote className="w-4 h-4 text-amber-500" />
-              Add Remark
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div className="text-xs">
-              <span className="text-muted-foreground">Customer</span>{" "}
-              <span className="font-medium">{remarkTarget?.alias ?? "Not a customer"}</span>
-              {remarkTarget?.name && remarkTarget.name !== remarkTarget.alias && (
-                <span className="text-muted-foreground"> · {remarkTarget.name}</span>
-              )}
-            </div>
-            {remarkTarget?.quote && (
-              <div className="rounded-md bg-muted p-2 text-[11px] italic text-muted-foreground line-clamp-3">
-                “{remarkTarget.quote}”
-              </div>
-            )}
-            <div className="space-y-1.5">
-              <Label className="text-xs">Remark</Label>
-              <Textarea
-                value={remarkText}
-                onChange={(e) => setRemarkText(e.target.value)}
-                placeholder="e.g. Customer prefers transfers to GTBank account"
-                rows={4}
-                autoFocus
-              />
-            </div>
-            {!remarkTarget?.alias && (
-              <p className="text-[11px] text-warning">
-                This sender is not a registered customer — select the customer first to save a remark.
-              </p>
-            )}
-            <div className="flex gap-2 pt-1">
-              <Button
-                variant="outline"
-                className="flex-1"
-                onClick={() => {
-                  setRemarkTarget(null);
-                  setRemarkText("");
-                }}
-              >
-                Cancel
-              </Button>
-              <Button
-                className="flex-1"
-                disabled={!remarkText.trim() || !remarkTarget?.alias}
-                onClick={() => {
-                  if (!remarkTarget?.alias) return;
-                  addRemark({
-                    alias: remarkTarget.alias,
-                    text: remarkText.trim(),
-                    quote: remarkTarget.quote || undefined,
-                    author: "Admin",
-                  });
-                  toast.success("Remark added");
-                  setRemarkTarget(null);
-                  setRemarkText("");
-                }}
-              >
-                Save Remark
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Confirmation Modal for money-related actions */}
-
       <Dialog
         open={!!confirmAction}
         onOpenChange={(open) => {
