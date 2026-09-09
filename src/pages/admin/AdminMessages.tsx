@@ -1681,6 +1681,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     return (
                       <Fragment key={msg.id}>
                         <div className={isCustomer ? "flex justify-start" : "flex justify-end"}>
+                          <ContextMenu>
+                            <ContextMenuTrigger asChild disabled={channelFilter !== "whatsapp"}>
                           <div
                             className={
                               isCustomer
@@ -1690,6 +1692,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   : "chat-bubble-self"
                             }
                           >
+
                             {showName && (
                               <p
                                 className={`text-[9px] font-semibold mb-0.5 ${getSenderColor(msg.sender, msg.senderName)}`}
