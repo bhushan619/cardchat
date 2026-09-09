@@ -39,6 +39,7 @@ export function GroupThread({
   highlightId,
   systemMessages = [],
   actions,
+  onRemark,
 }: {
   group: WhatsAppGroup;
   messages: GroupMessage[];
@@ -47,7 +48,10 @@ export function GroupThread({
   systemMessages?: { id: number; text: string; time: string; receipt?: TransferReceipt }[];
   /** Action buttons rendered in the composer (Points +/-, Transfer). */
   actions?: ReactNode;
+  /** Right-click → Add Remark on a message bubble. */
+  onRemark?: (payload: { alias: string | null; name: string; text: string }) => void;
 }) {
+
   const [message, setMessage] = useState("");
   const [localMessages, setLocalMessages] = useState<GroupMessage[]>(messages);
   const containerRef = useRef<HTMLDivElement>(null);
