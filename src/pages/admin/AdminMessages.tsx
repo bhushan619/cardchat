@@ -2602,7 +2602,87 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         );
       })()}
 
+      {/* Add Remark modal */}
+      <Dialog
+        open={!!remarkTarget}
+        onOpenChange={(open) => {
+          if (!open) {
+            setRemarkTarget(null);
+            setRemarkText("");
+          }
+        }}
+      >
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <StickyNote className="w-4 h-4 text-amber-500" />
+              Add Remark
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3">
+            <div className="text-xs">
+              <span className="text-muted-foreground">Customer</span>{" "}
+              <span className="font-medium">{remarkTarget?.alias ?? "Not a customer"}</span>
+              {remarkTarget?.name && remarkTarget.name !== remarkTarget.alias && (
+                <span className="text-muted-foreground"> · {remarkTarget.name}</span>
+              )}
+            </div>
+            {remarkTarget?.quote && (
+              <div className="rounded-md bg-muted p-2 text-[11px] italic text-muted-foreground line-clamp-3">
+                “{remarkTarget.quote}”
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <Label className="text-xs">Remark</Label>
+              <Textarea
+                value={remarkText}
+                onChange={(e) => setRemarkText(e.target.value)}
+                placeholder="e.g. Customer prefers transfers to GTBank account"
+                rows={4}
+                autoFocus
+              />
+            </div>
+            {!remarkTarget?.alias && (
+              <p className="text-[11px] text-warning">
+                This sender is not a registered customer — select the customer first to save a remark.
+              </p>
+            )}
+            <div className="flex gap-2 pt-1">
+              <Button
+                variant="outline"
+                className="flex-1"
+                onClick={() => {
+                  setRemarkTarget(null);
+                  setRemarkText("");
+                }}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="flex-1"
+                disabled={!remarkText.trim() || !remarkTarget?.alias}
+                onClick={() => {
+                  if (!remarkTarget?.alias) return;
+                  addRemark({
+                    alias: remarkTarget.alias,
+                    text: remarkText.trim(),
+                    quote: remarkTarget.quote || undefined,
+                    author: currentUser?.name ?? "Admin",
+                  });
+                  toast.success("Remark added");
+                  setRemarkTarget(null);
+                  setRemarkText("");
+                }}
+              >
+                Save Remark
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Confirmation Modal for money-related actions */}
+
       <Dialog
         open={!!confirmAction}
         onOpenChange={(open) => {
