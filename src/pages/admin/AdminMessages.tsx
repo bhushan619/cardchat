@@ -2114,9 +2114,68 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </div>
 
+                    {/* Customer remarks */}
+                    {channelFilter === "whatsapp" && (
+                      <div className="p-4 border-b">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-heading font-semibold text-sm flex items-center gap-1.5">
+                            <StickyNote className="w-3.5 h-3.5 text-amber-500" />
+                            Remarks
+                            <span className="text-[10px] text-muted-foreground font-normal">
+                              ({remarksFor(panelConvo.alias, allRemarks).length})
+                            </span>
+                          </h3>
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-6 px-2 text-[11px]"
+                            onClick={() =>
+                              setRemarkTarget({ alias: panelConvo.alias, name: panelConvo.alias, quote: "" })
+                            }
+                          >
+                            Add
+                          </Button>
+                        </div>
+                        {remarksFor(panelConvo.alias, allRemarks).length === 0 ? (
+                          <p className="text-[11px] text-muted-foreground">
+                            No remarks yet. Right-click a message to add one.
+                          </p>
+                        ) : (
+                          <div className="space-y-1.5 max-h-40 overflow-y-auto">
+                            {remarksFor(panelConvo.alias, allRemarks).map((r) => (
+                              <div
+                                key={r.id}
+                                className="group rounded-md border border-amber-500/30 bg-amber-500/5 p-2"
+                              >
+                                <div className="flex items-start gap-2">
+                                  <p className="flex-1 text-[11px] leading-snug">{r.text}</p>
+                                  <button
+                                    onClick={() => removeRemark(r.id)}
+                                    title="Delete remark"
+                                    className="opacity-0 group-hover:opacity-100 text-muted-foreground hover:text-destructive"
+                                  >
+                                    <Trash2 className="w-3 h-3" />
+                                  </button>
+                                </div>
+                                {r.quote && (
+                                  <p className="mt-1 text-[10px] text-muted-foreground italic line-clamp-2">
+                                    “{r.quote}”
+                                  </p>
+                                )}
+                                <p className="mt-1 text-[9px] text-muted-foreground">
+                                  {r.author} · {new Date(r.createdAt).toLocaleString()}
+                                </p>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )}
+
                     {/* Customer info */}
                     <div className="p-4">
                       <h3 className="font-heading font-semibold text-sm mb-3">Customer Info</h3>
+
                       <div className="space-y-2 text-xs">
                         <div className="flex justify-between">
                           <span className="text-muted-foreground">Alias</span>
