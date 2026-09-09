@@ -2667,7 +2667,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     alias: remarkTarget.alias,
                     text: remarkText.trim(),
                     quote: remarkTarget.quote || undefined,
-                    author: currentUser?.name ?? "Admin",
+                    author: "Admin",
                   });
                   toast.success("Remark added");
                   setRemarkTarget(null);
