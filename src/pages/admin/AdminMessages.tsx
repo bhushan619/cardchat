@@ -1369,6 +1369,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 highlightId={highlightMsgId}
                 systemMessages={groupSystemMsgs[selectedGroup.id] ?? []}
                 actions={renderComposerActions()}
+                onRemark={(p) =>
+                  setRemarkTarget({
+                    alias: p.alias ?? groupAlias ?? null,
+                    name: p.name,
+                    quote: p.text,
+                  })
+                }
+
               />
             ) : selectedId && selectedConvo ? (
               <>
