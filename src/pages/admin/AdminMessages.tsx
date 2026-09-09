@@ -171,6 +171,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
+  // Customer remarks (right-click on a WhatsApp message bubble)
+  const [remarkTarget, setRemarkTarget] = useState<{ alias: string | null; name: string; quote: string } | null>(null);
+  const [remarkText, setRemarkText] = useState("");
+  const [allRemarks, setAllRemarks] = useState<CustomerRemark[]>(() => loadRemarks());
+  useEffect(() => onRemarksChange(() => setAllRemarks(loadRemarks())), []);
+
+
   // Chat state
   const [message, setMessage] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
