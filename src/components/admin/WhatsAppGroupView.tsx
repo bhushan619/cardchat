@@ -106,11 +106,14 @@ export function GroupThread({
           const highlighted = highlightId === msg.id;
           return (
             <div key={msg.id} data-msg-id={msg.id} className={isAgent ? "flex justify-end" : "flex justify-start"}>
+              <ContextMenu>
+                <ContextMenuTrigger asChild disabled={isAgent}>
               <div
                 className={`${isAgent ? "chat-bubble-self" : "chat-bubble-other"} ${
                   highlighted ? "ring-2 ring-accent ring-offset-2 ring-offset-background rounded-lg" : ""
                 }`}
               >
+
                 {!isAgent && (
                   <div className="flex items-center gap-1.5 mb-1">
                     <span className="text-[10px] font-semibold text-primary">{p?.waName || "Unknown"}</span>
