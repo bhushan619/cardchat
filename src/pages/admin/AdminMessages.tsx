@@ -1371,7 +1371,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 actions={renderComposerActions()}
                 onRemark={(p) =>
                   setRemarkTarget({
-                    alias: p.alias ?? groupAlias ?? null,
+                    alias: p.alias ?? groupCustomerAlias ?? null,
                     name: p.name,
                     quote: p.text,
                   })
