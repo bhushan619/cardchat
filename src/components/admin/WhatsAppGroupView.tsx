@@ -1,7 +1,14 @@
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
-import { Users, Send, Smile, Paperclip } from "lucide-react";
+import { Users, Send, Smile, Paperclip, StickyNote } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
+
 import type { WhatsAppGroup, GroupMessage } from "@/data/mock";
 import { type TransferReceipt } from "@/components/admin/TransferReceiptCard";
 import TransferReceiptImage from "@/components/admin/TransferReceiptImage";
