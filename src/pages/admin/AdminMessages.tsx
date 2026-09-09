@@ -1724,7 +1724,24 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             )}
                             <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
                           </div>
+                            </ContextMenuTrigger>
+                            <ContextMenuContent className="w-44">
+                              <ContextMenuItem
+                                onSelect={() =>
+                                  setRemarkTarget({
+                                    alias: panelConvo.alias,
+                                    name: msg.senderName || panelConvo.alias,
+                                    quote: msg.image ? "[Image]" : msg.text,
+                                  })
+                                }
+                              >
+                                <StickyNote className="w-3.5 h-3.5 mr-2" />
+                                Add Remark
+                              </ContextMenuItem>
+                            </ContextMenuContent>
+                          </ContextMenu>
                         </div>
+
                         {/* Detected bank details chip */}
                         {(() => {
                           if (msg.image || msg.sender !== "customer") return null;
