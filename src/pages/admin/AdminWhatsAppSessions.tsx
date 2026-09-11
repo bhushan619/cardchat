@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
-  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
+  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus, History,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -37,7 +37,8 @@ const T = {
     hNumber: "Number", hStatus: "Status", hAgent: "Assigned Agent", hWarmup: "Warmup",
     hToday: "Today", hReply: "Reply ratio", hRam: "RAM", hSeen: "Last seen",
     unassigned: "Unassigned", warmedUp: "Warmed up", pause: "Pause", resume: "Resume",
-    relink: "Re-link (new QR)", advance: "Advance warmup", assign: "Assign Agent", remove: "Remove",
+    relink: "Re-link (new QR)", advance: "Advance Warmup Day", assign: "Assign Agents", remove: "Remove",
+    viewAudit: "View Audit Log", auditTitle: "Audit Log",
     emptyRow: `No sessions yet. Click "Link WhatsApp Number" to add one.`,
     footNote: "Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.",
     assignTitle: "Assign agent to",
@@ -56,7 +57,8 @@ const T = {
     hNumber: "号码", hStatus: "状态", hAgent: "指定坐席", hWarmup: "预热",
     hToday: "今日", hReply: "回复率", hRam: "内存", hSeen: "最近在线",
     unassigned: "未分配", warmedUp: "已预热", pause: "暂停", resume: "恢复",
-    relink: "重新绑定 (新二维码)", advance: "推进预热", assign: "分配坐席", remove: "移除",
+    relink: "重新绑定 (新二维码)", advance: "推进预热天数", assign: "分配坐席", remove: "移除",
+    viewAudit: "查看审计日志", auditTitle: "审计日志",
     emptyRow: "暂无会话。点击 " + `"绑定 WhatsApp 号码"` + " 添加。",
     footNote: "每个号码作为一个 Puppeteer 实例运行。若手机离线,网关将尝试自动重连 (10 秒 → 30 秒 → 60 秒) 并通知团队群。",
     assignTitle: "为以下号码分配坐席:",
