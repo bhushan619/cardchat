@@ -309,7 +309,14 @@ export default function AdminWhatsAppSessions() {
                               <MoreVertical className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-44">
+                          <DropdownMenuContent align="end" className="w-52">
+                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
+                              <Users className="w-3.5 h-3.5 mr-2" /> {t("assign")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSelected(s)}>
+                              <History className="w-3.5 h-3.5 mr-2" /> {t("viewAudit")}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             {s.status === "paused" || s.status === "disconnected" ? (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "connected", "Resumed from admin panel"); toast.success(`${s.label} resumed`); }}>
                                 <Play className="w-3.5 h-3.5 mr-2" /> {t("resume")}
