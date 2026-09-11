@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/select";
 import {
   QrCode, Plus, MoreVertical, Play, Pause, Link as LinkIcon, Trash2,
-  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus,
+  Wifi, WifiOff, Timer, MessageSquare, Shield, RotateCw, CheckCircle2, Users, UserPlus, History,
 } from "lucide-react";
 import { toast } from "sonner";
 import {
@@ -37,7 +37,8 @@ const T = {
     hNumber: "Number", hStatus: "Status", hAgent: "Assigned Agent", hWarmup: "Warmup",
     hToday: "Today", hReply: "Reply ratio", hRam: "RAM", hSeen: "Last seen",
     unassigned: "Unassigned", warmedUp: "Warmed up", pause: "Pause", resume: "Resume",
-    relink: "Re-link (new QR)", advance: "Advance warmup", assign: "Assign Agent", remove: "Remove",
+    relink: "Re-link (new QR)", advance: "Advance Warmup Day", assign: "Assign Agents", remove: "Remove",
+    viewAudit: "View Audit Log", auditTitle: "Audit Log",
     emptyRow: `No sessions yet. Click "Link WhatsApp Number" to add one.`,
     footNote: "Sessions run as one Puppeteer instance per number. If a handset goes offline, the gateway attempts auto-reconnect (10s → 30s → 60s) and alerts Team Chat.",
     assignTitle: "Assign agent to",
@@ -56,7 +57,8 @@ const T = {
     hNumber: "号码", hStatus: "状态", hAgent: "指定坐席", hWarmup: "预热",
     hToday: "今日", hReply: "回复率", hRam: "内存", hSeen: "最近在线",
     unassigned: "未分配", warmedUp: "已预热", pause: "暂停", resume: "恢复",
-    relink: "重新绑定 (新二维码)", advance: "推进预热", assign: "分配坐席", remove: "移除",
+    relink: "重新绑定 (新二维码)", advance: "推进预热天数", assign: "分配坐席", remove: "移除",
+    viewAudit: "查看审计日志", auditTitle: "审计日志",
     emptyRow: "暂无会话。点击 " + `"绑定 WhatsApp 号码"` + " 添加。",
     footNote: "每个号码作为一个 Puppeteer 实例运行。若手机离线,网关将尝试自动重连 (10 秒 → 30 秒 → 60 秒) 并通知团队群。",
     assignTitle: "为以下号码分配坐席:",
@@ -85,6 +87,30 @@ const maskPhone = (p: string) => {
   if (clean.length < 4) return p;
   return `+${clean.slice(0, 3)}\u2009•••••\u2009${clean.slice(-4)}`;
 };
+
+const absTime = (iso: string) =>
+  new Date(iso).toLocaleString("en-US", {
+    month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
+
+const AUDIT_TITLES: Record<string, string> = {
+  created: "Created",
+  linked: "Connected",
+  disconnected: "Disconnected",
+  reconnected: "Reconnected",
+  paused: "Paused",
+  resumed: "Resumed",
+  relinked: "Re-linked",
+  removed: "Removed",
+  warmup_advanced: "Warmup Advanced",
+};
+
+const auditTitle = (event: string) =>
+  AUDIT_TITLES[event] ??
+  event.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+const auditPayload = (e: { actor: string; note?: string }) =>
+  JSON.stringify(e.note ? { actor: e.actor, note: e.note } : { actor: e.actor });
 
 const timeAgo = (iso: string) => {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
@@ -309,7 +335,14 @@ export default function AdminWhatsAppSessions() {
                               <MoreVertical className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-44">
+                          <DropdownMenuContent align="end" className="w-52">
+                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
+                              <Users className="w-3.5 h-3.5 mr-2" /> {t("assign")}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => setSelected(s)}>
+                              <History className="w-3.5 h-3.5 mr-2" /> {t("viewAudit")}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
                             {s.status === "paused" || s.status === "disconnected" ? (
                               <DropdownMenuItem onClick={() => { setStatus(s.id, "connected", "Resumed from admin panel"); toast.success(`${s.label} resumed`); }}>
                                 <Play className="w-3.5 h-3.5 mr-2" /> {t("resume")}
@@ -324,9 +357,6 @@ export default function AdminWhatsAppSessions() {
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => { appendAudit(s.id, { ts: new Date().toISOString(), event: "warmup_advanced", actor: "Admin One", note: "Manually advanced warmup day" }); toast.success("Warmup day advanced"); }}>
                               <RotateCw className="w-3.5 h-3.5 mr-2" /> {t("advance")}
-                            </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
-                              <UserPlus className="w-3.5 h-3.5 mr-2" /> {t("assign")}
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(s)}>
@@ -428,31 +458,34 @@ export default function AdminWhatsAppSessions() {
         </DialogContent>
       </Dialog>
 
-      {/* Audit-log drawer (simple dialog) */}
+      {/* Audit log */}
       <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
         <DialogContent className="sm:max-w-lg">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              {selected?.label}
-              {selected && <span className="text-xs text-muted-foreground font-mono font-normal">{maskPhone(selected.phone)}</span>}
+          <DialogHeader className="space-y-1">
+            <DialogTitle className="flex items-center gap-2 text-base">
+              <History className="w-4 h-4 text-emerald-600" /> {t("auditTitle")}
             </DialogTitle>
-            <DialogDescription>
-              Session audit log · proxy {selected?.proxyRegion}
-            </DialogDescription>
+            <DialogDescription>{selected?.label}</DialogDescription>
           </DialogHeader>
-          <div className="max-h-80 overflow-y-auto border rounded-lg divide-y">
+          <div className="max-h-80 overflow-y-auto -mr-2 pr-2">
             {selected?.auditLog.length === 0 && (
               <p className="p-4 text-xs text-muted-foreground text-center">No events yet.</p>
             )}
-            {selected?.auditLog.map((e, i) => (
-              <div key={i} className="p-3 text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="font-medium capitalize">{e.event.replace("_", " ")}</span>
-                  <span className="text-muted-foreground">{timeAgo(e.ts)}</span>
-                </div>
-                <div className="text-muted-foreground">by {e.actor}{e.note ? ` · ${e.note}` : ""}</div>
-              </div>
-            ))}
+            <ol className="relative">
+              {selected?.auditLog.map((e, i, arr) => (
+                <li key={i} className="relative pl-6 pb-5 last:pb-0">
+                  {i < arr.length - 1 && (
+                    <span className="absolute left-[5px] top-3 bottom-0 w-px bg-border" aria-hidden />
+                  )}
+                  <span className="absolute left-0 top-1.5 w-[11px] h-[11px] rounded-full border-2 border-muted-foreground/40 bg-background" aria-hidden />
+                  <div className="flex items-start justify-between gap-3">
+                    <p className="text-sm font-medium">{auditTitle(e.event)}</p>
+                    <span className="text-xs text-muted-foreground whitespace-nowrap pt-0.5">{absTime(e.ts)}</span>
+                  </div>
+                  <p className="text-xs font-mono text-muted-foreground mt-0.5 break-all">{auditPayload(e)}</p>
+                </li>
+              ))}
+            </ol>
           </div>
         </DialogContent>
       </Dialog>
