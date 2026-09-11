@@ -86,6 +86,30 @@ const maskPhone = (p: string) => {
   return `+${clean.slice(0, 3)}\u2009•••••\u2009${clean.slice(-4)}`;
 };
 
+const absTime = (iso: string) =>
+  new Date(iso).toLocaleString("en-US", {
+    month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
+  });
+
+const AUDIT_TITLES: Record<string, string> = {
+  created: "Created",
+  linked: "Connected",
+  disconnected: "Disconnected",
+  reconnected: "Reconnected",
+  paused: "Paused",
+  resumed: "Resumed",
+  relinked: "Re-linked",
+  removed: "Removed",
+  warmup_advanced: "Warmup Advanced",
+};
+
+const auditTitle = (event: string) =>
+  AUDIT_TITLES[event] ??
+  event.split("_").map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ");
+
+const auditPayload = (e: { actor: string; note?: string }) =>
+  JSON.stringify(e.note ? { actor: e.actor, note: e.note } : { actor: e.actor });
+
 const timeAgo = (iso: string) => {
   const diff = (Date.now() - new Date(iso).getTime()) / 1000;
   if (diff < 60) return `${Math.floor(diff)}s ago`;
