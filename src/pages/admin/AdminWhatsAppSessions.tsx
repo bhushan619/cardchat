@@ -332,9 +332,6 @@ export default function AdminWhatsAppSessions() {
                             <DropdownMenuItem onClick={() => { appendAudit(s.id, { ts: new Date().toISOString(), event: "warmup_advanced", actor: "Admin One", note: "Manually advanced warmup day" }); toast.success("Warmup day advanced"); }}>
                               <RotateCw className="w-3.5 h-3.5 mr-2" /> {t("advance")}
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => { setAssignFor(s); setAssignDraft(s.assignedAgent || ""); }}>
-                              <UserPlus className="w-3.5 h-3.5 mr-2" /> {t("assign")}
-                            </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem className="text-destructive" onClick={() => setConfirmDelete(s)}>
                               <Trash2 className="w-3.5 h-3.5 mr-2" /> {t("remove")}
