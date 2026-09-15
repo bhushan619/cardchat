@@ -3,10 +3,12 @@ import { parse } from "date-fns";
 import { formatDate } from "@/lib/utils";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
+import ChannelBadge from "@/components/admin/ChannelBadge";
 import {
   Gift, Search, ArrowDownLeft, Trophy, AlertTriangle, CheckCircle2, Loader2,
   Medal, Award, Download, Users, Settings2,
 } from "lucide-react";
+
 
 import { Input } from "@/components/ui/input";
 import { DateTimePicker } from "@/components/ui/date-time-picker";
@@ -155,8 +157,8 @@ export default function AdminRewards() {
 
 
   const handleExportRanking = () => {
-    const headers = ["Rank", "Alias", "Volume", "Reward (Pts)"];
-    const rows = filteredRanking.map(u => [u.rank, u.alias, u.volume, u.reward]);
+    const headers = ["Rank", "Alias", "Channel", "Volume", "Reward (Pts)"];
+    const rows = filteredRanking.map(u => [u.rank, u.alias, u.channel ?? "trtc", u.volume, u.reward]);
     const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -166,6 +168,7 @@ export default function AdminRewards() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
 
   const handleExportRecords = () => {
     const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date", "Time"];
@@ -355,6 +358,7 @@ export default function AdminRewards() {
                       <tr className="text-xs text-muted-foreground border-b">
                         <th className="text-left py-2 pl-3 w-16">Rank</th>
                         <th className="text-left py-2">Alias</th>
+                        <th className="text-left py-2">Channel</th>
                         <th className="text-right py-2">Volume</th>
                         <th className="text-right py-2 pr-3">Reward</th>
                       </tr>
@@ -368,18 +372,22 @@ export default function AdminRewards() {
                             </span>
                           </td>
                           <td className="py-2.5 font-mono text-xs">{u.alias}</td>
+                          <td className="py-2.5">
+                            <ChannelBadge channel={u.channel ?? "trtc"} size="xs" />
+                          </td>
                           <td className="py-2.5 text-right">{u.volume.toLocaleString()}</td>
                           <td className="py-2.5 text-right pr-3 font-semibold text-accent">Pts {u.reward.toLocaleString()}</td>
                         </tr>
                       ))}
                       {filteredRanking.length === 0 && (
                         <tr>
-                          <td colSpan={4} className="text-center py-8 text-muted-foreground text-sm">No trades yet this period — leaderboard is empty</td>
+                          <td colSpan={5} className="text-center py-8 text-muted-foreground text-sm">No trades yet this period — leaderboard is empty</td>
                         </tr>
                       )}
                     </tbody>
                   </table>
                 </div>
+
               </div>
             </div>
           </TabsContent>

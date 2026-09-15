@@ -1,7 +1,10 @@
+export type RankingChannel = "trtc" | "whatsapp";
+
 export type RankingTier = {
   threshold: number;
   reward: number;
 };
+
 
 export const rankingTiers: RankingTier[] = [
   { threshold: 2000000, reward: 10000 },
@@ -17,9 +20,12 @@ export type RankingUser = {
   alias: string;
   volume: number;
   reward: number;
+  /** Customer messaging channel — app (TRTC) or WhatsApp. */
+  channel?: RankingChannel;
   /** Timestamp (ms) at which the user reached their current volume — used as tie-breaker. */
   reachedAt?: number;
 };
+
 
 export const currentUserAlias = "A7X3KP";
 
@@ -37,32 +43,33 @@ export function getRankedUsers(list: RankingUser[] = rankingList): RankingUser[]
 
 
 export const rankingList: RankingUser[] = [
-  { rank: 1, alias: "Z9W4MK", volume: 22500000, reward: 170000 },
-  { rank: 2, alias: "P3L7GX", volume: 18200000, reward: 80000 },
-  { rank: 3, alias: "T6N8QR", volume: 15400000, reward: 80000 },
-  { rank: 4, alias: "F1H5VB", volume: 12100000, reward: 80000 },
-  { rank: 5, alias: "C8J2YS", volume: 10800000, reward: 80000 },
-  { rank: 6, alias: "M4R9DL", volume: 9200000, reward: 50000 },
-  { rank: 7, alias: "W2K6PN", volume: 8100000, reward: 50000 },
-  { rank: 8, alias: "G7X1AT", volume: 7500000, reward: 50000 },
-  { rank: 9, alias: "B5E3UF", volume: 6800000, reward: 30000 },
-  { rank: 10, alias: "N9S4HC", volume: 5900000, reward: 30000 },
-  { rank: 11, alias: "L2V7JQ", volume: 5200000, reward: 30000 },
-  { rank: 12, alias: "R6D8WM", volume: 4600000, reward: 20000 },
-  { rank: 13, alias: "Y1P3KX", volume: 3800000, reward: 20000 },
-  { rank: 14, alias: "Q4T9BN", volume: 3200000, reward: 20000 },
-  { rank: 15, alias: "H8A2FL", volume: 2900000, reward: 10000 },
-  { rank: 16, alias: "J5G6RS", volume: 2500000, reward: 10000 },
-  { rank: 17, alias: "X3M1YD", volume: 2200000, reward: 10000 },
-  { rank: 18, alias: currentUserAlias, volume: 2100000, reward: 10000 },
-  { rank: 19, alias: "E7C4VP", volume: 1800000, reward: 0 },
-  { rank: 20, alias: "U2N8TK", volume: 1500000, reward: 0 },
-  { rank: 21, alias: "I6B5QL", volume: 1200000, reward: 0 },
-  { rank: 22, alias: "O9F3WA", volume: 950000, reward: 0 },
-  { rank: 23, alias: "S1H7MG", volume: 720000, reward: 0 },
-  { rank: 24, alias: "V4K2XJ", volume: 480000, reward: 0 },
-  { rank: 25, alias: "D8L6PR", volume: 250000, reward: 0 },
+  { rank: 1, alias: "Z9W4MK", volume: 22500000, reward: 170000, channel: "trtc" },
+  { rank: 2, alias: "P3L7GX", volume: 18200000, reward: 80000, channel: "whatsapp" },
+  { rank: 3, alias: "T6N8QR", volume: 15400000, reward: 80000, channel: "trtc" },
+  { rank: 4, alias: "F1H5VB", volume: 12100000, reward: 80000, channel: "whatsapp" },
+  { rank: 5, alias: "C8J2YS", volume: 10800000, reward: 80000, channel: "trtc" },
+  { rank: 6, alias: "M4R9DL", volume: 9200000, reward: 50000, channel: "whatsapp" },
+  { rank: 7, alias: "W2K6PN", volume: 8100000, reward: 50000, channel: "trtc" },
+  { rank: 8, alias: "G7X1AT", volume: 7500000, reward: 50000, channel: "whatsapp" },
+  { rank: 9, alias: "B5E3UF", volume: 6800000, reward: 30000, channel: "trtc" },
+  { rank: 10, alias: "N9S4HC", volume: 5900000, reward: 30000, channel: "whatsapp" },
+  { rank: 11, alias: "L2V7JQ", volume: 5200000, reward: 30000, channel: "trtc" },
+  { rank: 12, alias: "R6D8WM", volume: 4600000, reward: 20000, channel: "whatsapp" },
+  { rank: 13, alias: "Y1P3KX", volume: 3800000, reward: 20000, channel: "trtc" },
+  { rank: 14, alias: "Q4T9BN", volume: 3200000, reward: 20000, channel: "whatsapp" },
+  { rank: 15, alias: "H8A2FL", volume: 2900000, reward: 10000, channel: "trtc" },
+  { rank: 16, alias: "J5G6RS", volume: 2500000, reward: 10000, channel: "whatsapp" },
+  { rank: 17, alias: "X3M1YD", volume: 2200000, reward: 10000, channel: "trtc" },
+  { rank: 18, alias: currentUserAlias, volume: 2100000, reward: 10000, channel: "whatsapp" },
+  { rank: 19, alias: "E7C4VP", volume: 1800000, reward: 0, channel: "trtc" },
+  { rank: 20, alias: "U2N8TK", volume: 1500000, reward: 0, channel: "whatsapp" },
+  { rank: 21, alias: "I6B5QL", volume: 1200000, reward: 0, channel: "trtc" },
+  { rank: 22, alias: "O9F3WA", volume: 950000, reward: 0, channel: "whatsapp" },
+  { rank: 23, alias: "S1H7MG", volume: 720000, reward: 0, channel: "trtc" },
+  { rank: 24, alias: "V4K2XJ", volume: 480000, reward: 0, channel: "whatsapp" },
+  { rank: 25, alias: "D8L6PR", volume: 250000, reward: 0, channel: "trtc" },
 ];
+
 
 export function getCurrentTier(volume: number): RankingTier | null {
   let current: RankingTier | null = null;
