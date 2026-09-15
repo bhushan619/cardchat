@@ -167,6 +167,27 @@ export default function AdminRewards() {
     URL.revokeObjectURL(url);
   };
 
+  const handleExportRecords = () => {
+    const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date", "Time"];
+    const rows = filtered.map(r => [
+      r.id,
+      r.alias,
+      r.type,
+      `"${r.description.replace(/"/g, '""')}"`,
+      r.amount,
+      r.date,
+      r.time,
+    ]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reward_records_${typeFilter}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   const handleCheckAndDistribute = () => {
     setChecking(true);
     setCheckResult(null);
