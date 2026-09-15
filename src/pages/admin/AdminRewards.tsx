@@ -142,8 +142,10 @@ export default function AdminRewards() {
   const rankedUsers = useMemo(() => getRankedUsers(buildScenarioList(scenario)), [scenario]);
 
   const filteredRanking = useMemo(() => {
-    if (!rankSearch.trim()) return rankedUsers;
-    return rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+    const list = !rankSearch.trim()
+      ? rankedUsers
+      : rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+    return list.slice(0, 20); // leaderboard shows top 20 only
   }, [rankSearch, rankedUsers]);
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
