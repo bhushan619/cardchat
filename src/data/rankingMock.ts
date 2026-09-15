@@ -1,7 +1,10 @@
+export type RankingChannel = "trtc" | "whatsapp";
+
 export type RankingTier = {
   threshold: number;
   reward: number;
 };
+
 
 export const rankingTiers: RankingTier[] = [
   { threshold: 2000000, reward: 10000 },
