@@ -20,9 +20,12 @@ export type RankingUser = {
   alias: string;
   volume: number;
   reward: number;
+  /** Customer messaging channel — app (TRTC) or WhatsApp. */
+  channel?: RankingChannel;
   /** Timestamp (ms) at which the user reached their current volume — used as tie-breaker. */
   reachedAt?: number;
 };
+
 
 export const currentUserAlias = "A7X3KP";
 
