@@ -142,8 +142,10 @@ export default function AdminRewards() {
   const rankedUsers = useMemo(() => getRankedUsers(buildScenarioList(scenario)), [scenario]);
 
   const filteredRanking = useMemo(() => {
-    if (!rankSearch.trim()) return rankedUsers;
-    return rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+    const list = !rankSearch.trim()
+      ? rankedUsers
+      : rankedUsers.filter(u => u.alias.toLowerCase().includes(rankSearch.toLowerCase()));
+    return list.slice(0, 20); // leaderboard shows top 20 only
   }, [rankSearch, rankedUsers]);
 
   const totalRewards = allRecords.reduce((s, r) => s + r.amount, 0);
@@ -161,6 +163,27 @@ export default function AdminRewards() {
     const a = document.createElement("a");
     a.href = url;
     a.download = `ranking_${selectedPeriod}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportRecords = () => {
+    const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date", "Time"];
+    const rows = filtered.map(r => [
+      r.id,
+      r.alias,
+      r.type,
+      `"${r.description.replace(/"/g, '""')}"`,
+      r.amount,
+      r.date,
+      r.time,
+    ]);
+    const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `reward_records_${typeFilter}.csv`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -310,7 +333,7 @@ export default function AdminRewards() {
               {/* Leaderboard table */}
               <div className="lg:col-span-2 bg-card border rounded-xl p-5">
                 <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
-                  <h2 className="text-sm font-semibold">Leaderboard ({filteredRanking.length} users)</h2>
+                  <h2 className="text-sm font-semibold">Leaderboard ({filteredRanking.length} users, top 20)</h2>
                   <div className="flex items-center gap-2">
                     <div className="relative w-48">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -393,6 +416,9 @@ export default function AdminRewards() {
                   Clear dates
                 </button>
               )}
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 text-xs ml-auto" onClick={handleExportRecords}>
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </Button>
             </div>
 
             <div className="bg-card border rounded-xl overflow-hidden">
