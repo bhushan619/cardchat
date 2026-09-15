@@ -157,8 +157,8 @@ export default function AdminRewards() {
 
 
   const handleExportRanking = () => {
-    const headers = ["Rank", "Alias", "Volume", "Reward (Pts)"];
-    const rows = filteredRanking.map(u => [u.rank, u.alias, u.volume, u.reward]);
+    const headers = ["Rank", "Alias", "Channel", "Volume", "Reward (Pts)"];
+    const rows = filteredRanking.map(u => [u.rank, u.alias, u.channel ?? "trtc", u.volume, u.reward]);
     const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -168,6 +168,7 @@ export default function AdminRewards() {
     a.click();
     URL.revokeObjectURL(url);
   };
+
 
   const handleExportRecords = () => {
     const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date", "Time"];
