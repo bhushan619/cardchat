@@ -333,7 +333,7 @@ export default function AdminRewards() {
               {/* Leaderboard table */}
               <div className="lg:col-span-2 bg-card border rounded-xl p-5">
                 <div className="flex items-center justify-between gap-2 mb-4 flex-wrap">
-                  <h2 className="text-sm font-semibold">Leaderboard ({filteredRanking.length} users)</h2>
+                  <h2 className="text-sm font-semibold">Leaderboard ({filteredRanking.length} users, top 20)</h2>
                   <div className="flex items-center gap-2">
                     <div className="relative w-48">
                       <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
@@ -416,6 +416,9 @@ export default function AdminRewards() {
                   Clear dates
                 </button>
               )}
+              <Button variant="outline" size="sm" className="h-9 gap-1.5 text-xs ml-auto" onClick={handleExportRecords}>
+                <Download className="w-3.5 h-3.5" /> Export CSV
+              </Button>
             </div>
 
             <div className="bg-card border rounded-xl overflow-hidden">
