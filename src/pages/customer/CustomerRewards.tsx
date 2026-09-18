@@ -102,6 +102,7 @@ export default function CustomerRewards() {
               {copied ? <CheckCircle className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
             </Button>
           </div>
+          <p className="text-[10px] text-muted-foreground mt-2">{inviteLimitLabel}</p>
         </div>
 
         {/* Enter Invite Code */}
