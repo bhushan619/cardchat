@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, Info, X } from "lucide-react";
+import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, Info, X, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,12 +25,17 @@ const rewardHistory: RewardEntry[] = [
   { id: "RW-015", type: "ranking", amount: 10000, description: "Ranking reward — Rank #17", date: "Jan 31, 2026" },
 ];
 
+// Prototype: referral codes whose owner has already reached the invite limit.
+// Any code entered here triggers the "invalid referral code" modal.
+const LIMIT_REACHED_CODES = ["FULL00", "LMT999"];
+
 export default function CustomerRewards() {
   const navigate = useNavigate();
   const [inviteCode, setInviteCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showInvalidCode, setShowInvalidCode] = useState(false);
 
   const myReferralCode = "A7X3KP";
   const bonusSettings = getReferralBonus();
@@ -44,10 +49,15 @@ export default function CustomerRewards() {
   const totalReferral = rewardHistory.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
 
   const handleSubmitCode = () => {
-    if (inviteCode.trim()) {
-      setSubmitted(true);
-      toast.success("Invite code submitted successfully!");
+    const code = inviteCode.trim().toUpperCase();
+    if (!code) return;
+    // Invalid when the inviter has already reached their invite limit
+    if (LIMIT_REACHED_CODES.includes(code)) {
+      setShowInvalidCode(true);
+      return;
     }
+    setSubmitted(true);
+    toast.success("Invite code submitted successfully!");
   };
 
   const handleCopyReferral = () => {
@@ -172,6 +182,32 @@ export default function CustomerRewards() {
               <p><span className="font-semibold text-foreground">Invite Limit</span> — {bonusSettings.maxReferralsPerUser > 0 ? `You can earn referral bonuses for up to ${bonusSettings.maxReferralsPerUser} invited friends.` : "There's no limit on how many friends you can invite."}</p>
             </div>
             <Button variant="outline" className="w-full" onClick={() => setShowInfo(false)}>Got it</Button>
+          </div>
+        </div>
+      )}
+
+      {/* Invalid referral code modal — inviter reached invite limit */}
+      {showInvalidCode && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowInvalidCode(false)}>
+          <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-3 animate-slide-up text-center" onClick={e => e.stopPropagation()}>
+            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <XCircle className="w-6 h-6 text-destructive" />
+            </div>
+            <h3 className="font-heading font-semibold">Invalid Referral Code</h3>
+            <p className="text-sm text-muted-foreground">
+              This referral code is no longer valid — the inviter has already reached their invite limit
+              {bonusSettings.maxReferralsPerUser > 0 ? ` of ${bonusSettings.maxReferralsPerUser} invites` : ""}.
+              Please try a different code.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setShowInvalidCode(false)}>Cancel</Button>
+              <Button
+                className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={() => { setInviteCode(""); setShowInvalidCode(false); }}
+              >
+                Try Another Code
+              </Button>
+            </div>
           </div>
         </div>
       )}
