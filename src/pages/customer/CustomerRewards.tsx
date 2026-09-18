@@ -185,6 +185,32 @@ export default function CustomerRewards() {
           </div>
         </div>
       )}
+
+      {/* Invalid referral code modal — inviter reached invite limit */}
+      {showInvalidCode && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowInvalidCode(false)}>
+          <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-3 animate-slide-up text-center" onClick={e => e.stopPropagation()}>
+            <div className="mx-auto w-12 h-12 rounded-full bg-destructive/10 flex items-center justify-center">
+              <XCircle className="w-6 h-6 text-destructive" />
+            </div>
+            <h3 className="font-heading font-semibold">Invalid Referral Code</h3>
+            <p className="text-sm text-muted-foreground">
+              This referral code is no longer valid — the inviter has already reached their invite limit
+              {bonusSettings.maxReferralsPerUser > 0 ? ` of ${bonusSettings.maxReferralsPerUser} invites` : ""}.
+              Please try a different code.
+            </p>
+            <div className="flex gap-2">
+              <Button variant="outline" className="flex-1" onClick={() => setShowInvalidCode(false)}>Cancel</Button>
+              <Button
+                className="flex-1 bg-accent text-accent-foreground hover:bg-accent/90"
+                onClick={() => { setInviteCode(""); setShowInvalidCode(false); }}
+              >
+                Try Another Code
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
