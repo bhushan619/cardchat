@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { rewardsBalance } from "@/data/mock";
+import { getReferralBonus } from "@/lib/referralBonus";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 
 type RewardEntry = {
@@ -32,6 +33,12 @@ export default function CustomerRewards() {
   const [showInfo, setShowInfo] = useState(false);
 
   const myReferralCode = "A7X3KP";
+  const bonusSettings = getReferralBonus();
+  const referralsUsed = rewardHistory.filter(r => r.type === "referral").length;
+  const inviteLimitLabel =
+    bonusSettings.maxReferralsPerUser > 0
+      ? `${referralsUsed} of ${bonusSettings.maxReferralsPerUser} invites used`
+      : `Unlimited invites — ${referralsUsed} used so far`;
 
   const totalRanking = rewardHistory.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
   const totalReferral = rewardHistory.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
