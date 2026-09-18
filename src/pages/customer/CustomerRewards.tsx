@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { rewardsBalance } from "@/data/mock";
+import { getReferralBonus } from "@/lib/referralBonus";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 
 type RewardEntry = {
@@ -32,6 +33,12 @@ export default function CustomerRewards() {
   const [showInfo, setShowInfo] = useState(false);
 
   const myReferralCode = "A7X3KP";
+  const bonusSettings = getReferralBonus();
+  const referralsUsed = rewardHistory.filter(r => r.type === "referral").length;
+  const inviteLimitLabel =
+    bonusSettings.maxReferralsPerUser > 0
+      ? `${referralsUsed} of ${bonusSettings.maxReferralsPerUser} invites used`
+      : `Unlimited invites — ${referralsUsed} used so far`;
 
   const totalRanking = rewardHistory.filter(r => r.type === "ranking").reduce((s, r) => s + r.amount, 0);
   const totalReferral = rewardHistory.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
@@ -95,6 +102,7 @@ export default function CustomerRewards() {
               {copied ? <CheckCircle className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
             </Button>
           </div>
+          <p className="text-[10px] text-muted-foreground mt-2">{inviteLimitLabel}</p>
         </div>
 
         {/* Enter Invite Code */}
@@ -161,6 +169,7 @@ export default function CustomerRewards() {
               <p><span className="font-semibold text-foreground">Ranking Rewards</span> — Earn rewards based on your trading volume in bi-weekly periods (1st–15th and 16th–end of month). Rankings are generated after all orders in the period are settled, and rewards are distributed by the admin team.</p>
               <p><span className="font-semibold text-foreground">Referral Rewards</span> — Share your referral code with friends. Earn an automatic bonus when they sign up and complete their first trade.</p>
               <p><span className="font-semibold text-foreground">Invite Code</span> — Enter a friend's code within 7 days of registration. After that, it can't be changed.</p>
+              <p><span className="font-semibold text-foreground">Invite Limit</span> — {bonusSettings.maxReferralsPerUser > 0 ? `You can earn referral bonuses for up to ${bonusSettings.maxReferralsPerUser} invited friends.` : "There's no limit on how many friends you can invite."}</p>
             </div>
             <Button variant="outline" className="w-full" onClick={() => setShowInfo(false)}>Got it</Button>
           </div>
