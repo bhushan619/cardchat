@@ -25,12 +25,17 @@ const rewardHistory: RewardEntry[] = [
   { id: "RW-015", type: "ranking", amount: 10000, description: "Ranking reward — Rank #17", date: "Jan 31, 2026" },
 ];
 
+// Prototype: referral codes whose owner has already reached the invite limit.
+// Any code entered here triggers the "invalid referral code" modal.
+const LIMIT_REACHED_CODES = ["FULL00", "LMT999"];
+
 export default function CustomerRewards() {
   const navigate = useNavigate();
   const [inviteCode, setInviteCode] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [showInfo, setShowInfo] = useState(false);
+  const [showInvalidCode, setShowInvalidCode] = useState(false);
 
   const myReferralCode = "A7X3KP";
   const bonusSettings = getReferralBonus();
