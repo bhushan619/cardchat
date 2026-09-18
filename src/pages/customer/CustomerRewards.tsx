@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, Info, X } from "lucide-react";
+import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, Info, X, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
