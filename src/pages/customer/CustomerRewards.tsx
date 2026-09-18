@@ -49,10 +49,15 @@ export default function CustomerRewards() {
   const totalReferral = rewardHistory.filter(r => r.type === "referral").reduce((s, r) => s + r.amount, 0);
 
   const handleSubmitCode = () => {
-    if (inviteCode.trim()) {
-      setSubmitted(true);
-      toast.success("Invite code submitted successfully!");
+    const code = inviteCode.trim().toUpperCase();
+    if (!code) return;
+    // Invalid when the inviter has already reached their invite limit
+    if (LIMIT_REACHED_CODES.includes(code)) {
+      setShowInvalidCode(true);
+      return;
     }
+    setSubmitted(true);
+    toast.success("Invite code submitted successfully!");
   };
 
   const handleCopyReferral = () => {
