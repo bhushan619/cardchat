@@ -17,6 +17,7 @@ import {
   type RankingUser,
 } from "@/data/rankingMock";
 import { buildScenarioList, scenarioOptions, type Scenario } from "@/data/rankingScenarios";
+import { maskAlias } from "@/lib/utils";
 
 function getMedalIcon(rank: number) {
   if (rank === 1) return <Medal className="w-5 h-5 text-[hsl(45,93%,47%)]" />;
