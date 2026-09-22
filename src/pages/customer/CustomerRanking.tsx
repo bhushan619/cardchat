@@ -318,7 +318,7 @@ export default function CustomerRanking() {
                           isMe ? "font-bold text-foreground" : "text-foreground"
                         }`}
                       >
-                        {item.alias}
+                        {isMe ? item.alias : maskAlias(item.alias)}
                         {isMe && (
                           <span className="ml-1.5 text-[10px] font-bold bg-accent text-accent-foreground px-1.5 py-0.5 rounded-full">
                             Me
