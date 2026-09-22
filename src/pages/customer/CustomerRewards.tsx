@@ -167,7 +167,7 @@ export default function CustomerRewards() {
                   ₦{r.amount.toLocaleString()}
                 </p>
               </div>
-            ))}
+            );})}
           </div>
         </div>
       </div>
