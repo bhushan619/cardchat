@@ -149,13 +149,17 @@ export default function CustomerRewards() {
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">History</p>
           <div className="space-y-2">
-            {rewardHistory.map(r => (
+            {rewardHistory.map(r => {
+              const displayDescription = r.invitedAlias
+                ? `Referral — invited ${r.invitedAlias === currentUserAlias ? r.invitedAlias : maskAlias(r.invitedAlias)}`
+                : r.description;
+              return (
               <div key={r.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${r.type === "ranking" ? "bg-accent/10" : "bg-warning/10"}`}>
                   {r.type === "ranking" ? <Trophy className="w-4 h-4 text-accent" /> : <Gift className="w-4 h-4 text-warning" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">{r.description}</p>
+                  <p className="text-xs font-medium truncate">{displayDescription}</p>
                   <p className="text-[10px] text-muted-foreground">{r.date}</p>
                 </div>
                 <p className="text-sm font-bold text-success shrink-0 flex items-center gap-0.5">
