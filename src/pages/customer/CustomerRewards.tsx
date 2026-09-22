@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { rewardsBalance } from "@/data/mock";
 import { getReferralBonus } from "@/lib/referralBonus";
+import { maskAlias } from "@/lib/utils";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
+import { currentUserAlias } from "@/data/rankingMock";
 
 type RewardEntry = {
   id: string;
