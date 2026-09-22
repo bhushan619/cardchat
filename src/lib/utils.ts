@@ -24,6 +24,18 @@ export function maskName(name: string | null | undefined): string {
 }
 
 /**
+ * Mask an alias for privacy display.
+ * Keeps the first and last character, replaces the middle with •.
+ * e.g. "A7X3KP" -> "A••••P"
+ */
+export function maskAlias(alias: string | null | undefined): string {
+  if (!alias) return "";
+  const cleaned = alias.trim();
+  if (cleaned.length <= 2) return cleaned;
+  return cleaned[0] + "•".repeat(cleaned.length - 2) + cleaned[cleaned.length - 1];
+}
+
+/**
  * Format a date value as dd/mm/yyyy.
  * Accepts Date objects or ISO/date strings.
  */

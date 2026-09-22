@@ -6,7 +6,9 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { rewardsBalance } from "@/data/mock";
 import { getReferralBonus } from "@/lib/referralBonus";
+import { maskAlias } from "@/lib/utils";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
+import { currentUserAlias } from "@/data/rankingMock";
 
 type RewardEntry = {
   id: string;
@@ -14,14 +16,15 @@ type RewardEntry = {
   amount: number;
   description: string;
   date: string;
+  invitedAlias?: string;
 };
 
 const rewardHistory: RewardEntry[] = [
   { id: "RW-005", type: "ranking", amount: 10000, description: "Ranking reward — Rank #18", date: "Mar 31, 2026" },
-  { id: "RW-006", type: "referral", amount: 500, description: "Referral — invited K9M2BL", date: "Mar 20, 2026" },
-  { id: "RW-011", type: "referral", amount: 500, description: "Referral — invited D3F9RX", date: "Mar 10, 2026" },
+  { id: "RW-006", type: "referral", amount: 500, description: "Referral — invited K9M2BL", invitedAlias: "K9M2BL", date: "Mar 20, 2026" },
+  { id: "RW-011", type: "referral", amount: 500, description: "Referral — invited D3F9RX", invitedAlias: "D3F9RX", date: "Mar 10, 2026" },
   { id: "RW-013", type: "ranking", amount: 20000, description: "Ranking reward — Rank #14", date: "Feb 28, 2026" },
-  { id: "RW-014", type: "referral", amount: 500, description: "Referral — invited W8T4FJ", date: "Feb 15, 2026" },
+  { id: "RW-014", type: "referral", amount: 500, description: "Referral — invited W8T4FJ", invitedAlias: "W8T4FJ", date: "Feb 15, 2026" },
   { id: "RW-015", type: "ranking", amount: 10000, description: "Ranking reward — Rank #17", date: "Jan 31, 2026" },
 ];
 
@@ -146,13 +149,17 @@ export default function CustomerRewards() {
         <div>
           <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">History</p>
           <div className="space-y-2">
-            {rewardHistory.map(r => (
+            {rewardHistory.map(r => {
+              const displayDescription = r.invitedAlias
+                ? `Referral — invited ${r.invitedAlias === currentUserAlias ? r.invitedAlias : maskAlias(r.invitedAlias)}`
+                : r.description;
+              return (
               <div key={r.id} className="flex items-center gap-3 p-3 bg-card border rounded-xl">
                 <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${r.type === "ranking" ? "bg-accent/10" : "bg-warning/10"}`}>
                   {r.type === "ranking" ? <Trophy className="w-4 h-4 text-accent" /> : <Gift className="w-4 h-4 text-warning" />}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs font-medium truncate">{r.description}</p>
+                  <p className="text-xs font-medium truncate">{displayDescription}</p>
                   <p className="text-[10px] text-muted-foreground">{r.date}</p>
                 </div>
                 <p className="text-sm font-bold text-success shrink-0 flex items-center gap-0.5">
@@ -160,7 +167,7 @@ export default function CustomerRewards() {
                   ₦{r.amount.toLocaleString()}
                 </p>
               </div>
-            ))}
+            );})}
           </div>
         </div>
       </div>
