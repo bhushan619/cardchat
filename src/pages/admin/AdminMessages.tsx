@@ -81,6 +81,7 @@ import {
   customerStatusLabels,
 } from "@/lib/orderStateMachine";
 import { verifyPin } from "@/lib/securePin";
+import { CustomerTagDef, getActiveCustomerTags, tagPillStyle } from "@/lib/customerTags";
 
 const columns = [
   {
@@ -156,6 +157,12 @@ type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
   const { role } = useAdminRole();
+  const [tagDefs, setTagDefs] = useState<CustomerTagDef[]>(() => getActiveCustomerTags());
+  useEffect(() => {
+    const refresh = () => setTagDefs(getActiveCustomerTags());
+    window.addEventListener("customer-tags-updated", refresh);
+    return () => window.removeEventListener("customer-tags-updated", refresh);
+  }, []);
   const orderStatus = useOrderStatus();
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
