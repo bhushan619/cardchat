@@ -26,6 +26,7 @@ import {
   Trophy,
   Activity,
   Megaphone,
+  Tags,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -133,6 +134,13 @@ const navItems = [
     icon: Megaphone,
     path: "/admin/popups",
     roles: ["super_admin"],
+  },
+  {
+    id: "customer-tags",
+    label: "Customer Tags",
+    icon: Tags,
+    path: "/admin/customer-tags",
+    roles: ["super_admin", "team_lead"],
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   {
