@@ -699,6 +699,11 @@ export default function AdminRewards() {
                     ? `A user can earn the bonus for a maximum of ${referralDraft.maxReferralsPerUser} referrals.`
                     : "There is no cap on the number of referrals a user can earn from."}
                 </li>
+                <li>
+                  {referralDraft.codeValidityDays > 0
+                    ? `New users must submit the referral code within ${referralDraft.codeValidityDays} day${referralDraft.codeValidityDays === 1 ? "" : "s"} of registration.`
+                    : "New users can submit the referral code any time after registration."}
+                </li>
                 <li>Cancelled or reversed first orders void the bonus; self-referral and duplicate devices are rejected.</li>
                 <li>Referral rewards are separate from ranking rewards and do not affect leaderboard volume.</li>
               </ul>
