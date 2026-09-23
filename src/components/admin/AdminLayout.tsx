@@ -61,6 +61,13 @@ const navItems = [
     roles: ["super_admin", "team_lead", "agent"],
   },
   {
+    id: "customer-tags",
+    label: "Customer Tags",
+    icon: Tags,
+    path: "/admin/customer-tags",
+    roles: ["super_admin", "team_lead"],
+  },
+  {
     id: "card-rates",
     label: "Card Rates",
     icon: CreditCard,
@@ -134,13 +141,6 @@ const navItems = [
     icon: Megaphone,
     path: "/admin/popups",
     roles: ["super_admin"],
-  },
-  {
-    id: "customer-tags",
-    label: "Customer Tags",
-    icon: Tags,
-    path: "/admin/customer-tags",
-    roles: ["super_admin", "team_lead"],
   },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   {
