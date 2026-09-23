@@ -19,6 +19,7 @@ const defaultReferralBonus: ReferralBonusSettings = {
   minFirstOrderValue: 5000,
   maxReferralsPerUser: 0,
   payoutDelayHours: 0,
+  codeValidityDays: 7,
 };
 
 export function getReferralBonus(): ReferralBonusSettings {

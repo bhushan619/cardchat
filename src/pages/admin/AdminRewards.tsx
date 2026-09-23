@@ -667,6 +667,14 @@ export default function AdminRewards() {
                     onChange={e => setReferralDraft(d => ({ ...d, payoutDelayHours: Number(e.target.value) || 0 }))}
                   />
                 </div>
+                <div className="space-y-1 col-span-2">
+                  <Label className="text-[11px]">Referral code validity for new users (days, 0 = no expiry)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.codeValidityDays}
+                    onChange={e => setReferralDraft(d => ({ ...d, codeValidityDays: Number(e.target.value) || 0 }))}
+                  />
+                </div>
               </div>
             </div>
 
