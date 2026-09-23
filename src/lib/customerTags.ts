@@ -39,9 +39,7 @@ export function saveCustomerTags(tags: CustomerTagDef[]) {
 }
 
 export function getActiveCustomerTags(): CustomerTagDef[] {
-  return getCustomerTags()
-    .filter((t) => t.active)
-    .sort((a, b) => a.order - b.order);
+  return getCustomerTags().sort((a, b) => a.order - b.order);
 }
 
 // Helpers to render a colored tag pill from a hex colour.

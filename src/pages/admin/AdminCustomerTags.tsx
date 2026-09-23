@@ -4,7 +4,6 @@ import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +34,6 @@ export default function AdminCustomerTags() {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState("#faad14");
   const [order, setOrder] = useState("10");
-  const [active, setActive] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<CustomerTagDef | null>(null);
 
   useEffect(() => {
@@ -60,7 +58,6 @@ export default function AdminCustomerTags() {
     setLabel("");
     setColor("#1677ff");
     setOrder(String((Math.max(0, ...tags.map((t) => t.order)) || 0) + 10));
-    setActive(true);
     setDialogOpen(true);
   };
 
@@ -70,7 +67,6 @@ export default function AdminCustomerTags() {
     setLabel(tag.label);
     setColor(tag.color);
     setOrder(String(tag.order));
-    setActive(tag.active);
     setDialogOpen(true);
   };
 
@@ -106,13 +102,13 @@ export default function AdminCustomerTags() {
           label: trimmed,
           color: color.trim().toLowerCase(),
           order: orderNum,
-          active,
+          active: true,
         },
       ];
     } else {
       next = tags.map((t) =>
         t.id === editingId
-          ? { ...t, label: trimmed, color: color.trim().toLowerCase(), order: orderNum, active }
+          ? { ...t, label: trimmed, color: color.trim().toLowerCase(), order: orderNum }
           : t
       );
     }
@@ -130,12 +126,6 @@ export default function AdminCustomerTags() {
     setTags(next);
     toast.success(`Tag "${deleteTarget.label}" deleted`);
     setDeleteTarget(null);
-  };
-
-  const toggleActive = (tag: CustomerTagDef, value: boolean) => {
-    const next = tags.map((t) => (t.id === tag.id ? { ...t, active: value } : t));
-    saveCustomerTags(next);
-    setTags(next);
   };
 
   return (
@@ -160,7 +150,6 @@ export default function AdminCustomerTags() {
                 <th className="px-4 py-3 font-medium">Tag</th>
                 <th className="px-4 py-3 font-medium">Colour</th>
                 <th className="px-4 py-3 font-medium text-right">Order</th>
-                <th className="px-4 py-3 font-medium">Active</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -177,13 +166,6 @@ export default function AdminCustomerTags() {
                   </td>
                   <td className="px-4 py-3 font-mono text-muted-foreground">{tag.color}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{tag.order}</td>
-                  <td className="px-4 py-3">
-                    <Switch
-                      checked={tag.active}
-                      onCheckedChange={(v) => toggleActive(tag, v)}
-                      aria-label={`Toggle ${tag.label} active`}
-                    />
-                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" className="gap-1" onClick={() => openEdit(tag)}>
@@ -203,7 +185,7 @@ export default function AdminCustomerTags() {
               ))}
               {tags.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                     No tags yet. Add one to get started.
                   </td>
                 </tr>
@@ -219,7 +201,7 @@ export default function AdminCustomerTags() {
           <DialogHeader>
             <DialogTitle>{mode === "add" ? "Add tag" : "Edit tag"}</DialogTitle>
             <DialogDescription>
-              Active tags appear in the right-click tagging menu on customer conversations.
+              Tags appear in the right-click tagging menu on customer conversations.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
@@ -263,20 +245,14 @@ export default function AdminCustomerTags() {
                 />
               </div>
             </div>
-            <div className="flex items-center justify-between rounded-lg border border-border px-3 py-2.5">
-              <div className="flex items-center gap-2">
-                <span
-                  className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium"
-                  style={tagPillStyle(isHexColor(color) ? color.trim().toLowerCase() : "#1677ff")}
-                >
-                  {label.trim() || "Preview"}
-                </span>
-                <span className="text-xs text-muted-foreground">Preview</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Label htmlFor="tag-active" className="text-sm">Active</Label>
-                <Switch id="tag-active" checked={active} onCheckedChange={setActive} />
-              </div>
+            <div className="flex items-center gap-2 rounded-lg border border-border px-3 py-2.5">
+              <span
+                className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium"
+                style={tagPillStyle(isHexColor(color) ? color.trim().toLowerCase() : "#1677ff")}
+              >
+                {label.trim() || "Preview"}
+              </span>
+              <span className="text-xs text-muted-foreground">Preview</span>
             </div>
           </div>
           <DialogFooter>
