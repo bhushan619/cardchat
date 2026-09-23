@@ -2642,20 +2642,32 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </DialogHeader>
           <div className="px-5 pb-5">
             <div className="space-y-2">
-              {CUSTOMER_TAGS.map((tag) => {
-                const checked = tagDraft.includes(tag);
-                return (
-                  <label key={tag} className="flex items-center gap-2 cursor-pointer w-fit">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => setTagDraft((current) => checked ? current.filter((item) => item !== tag) : [...current, tag])}
-                      className="h-4 w-4 rounded border-input accent-primary"
-                    />
-                    <span className={`text-xs px-2 py-1 rounded-sm ${customerTagStyles[tag]}`}>{tag}</span>
-                  </label>
-                );
-              })}
+              {(() => {
+                const options = [
+                  ...tagDefs.map((d) => d.label),
+                  ...tagDraft.filter((t) => !tagDefs.some((d) => d.label === t)),
+                ];
+                return options.map((tag) => {
+                  const checked = tagDraft.includes(tag);
+                  const def = tagDefs.find((d) => d.label === tag);
+                  return (
+                    <label key={tag} className="flex items-center gap-2 cursor-pointer w-fit">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => setTagDraft((current) => checked ? current.filter((item) => item !== tag) : [...current, tag])}
+                        className="h-4 w-4 rounded border-input accent-primary"
+                      />
+                      <span
+                        className={`text-xs px-2 py-1 rounded-sm ${def ? "" : "bg-muted text-muted-foreground"}`}
+                        style={def ? tagPillStyle(def.color) : undefined}
+                      >
+                        {tag}
+                      </span>
+                    </label>
+                  );
+                });
+              })()}
             </div>
             <div className="flex justify-end gap-2 pt-5">
               <Button variant="outline" onClick={() => setTagsOpen(false)}>Cancel</Button>
