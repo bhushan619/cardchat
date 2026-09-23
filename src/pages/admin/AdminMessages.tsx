@@ -294,16 +294,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     if (tags.length === 0) return null;
     return (
       <div className="flex flex-wrap items-center gap-1">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className={`${compact ? "text-[8px] px-1 py-0.5" : "text-[10px] px-2 py-0.5"} rounded-sm font-medium leading-none whitespace-nowrap ${
-              customerTagStyles[tag as keyof typeof customerTagStyles] ?? "bg-muted text-muted-foreground"
-            }`}
-          >
-            {tag}
-          </span>
-        ))}
+        {tags.map((tag) => {
+          const def = tagDefs.find((d) => d.label === tag);
+          return (
+            <span
+              key={tag}
+              className={`${compact ? "text-[8px] px-1 py-0.5" : "text-[10px] px-2 py-0.5"} rounded-sm font-medium leading-none whitespace-nowrap ${def ? "" : "bg-muted text-muted-foreground"}`}
+              style={def ? tagPillStyle(def.color) : undefined}
+            >
+              {tag}
+            </span>
+          );
+        })}
       </div>
     );
   };
