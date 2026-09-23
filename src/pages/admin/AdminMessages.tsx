@@ -1397,12 +1397,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
-                        <div className="mt-1">{renderCustomerTags(c.id, true)}</div>
-                        {customerNotes[c.id]?.remark && (
-                          <p className="text-[9px] text-muted-foreground mt-1 truncate border-l-2 border-primary/30 pl-1.5">
-                            {customerNotes[c.id].remark}
-                          </p>
-                        )}
                         {c.channel === "whatsapp" &&
                           (role === "super_admin" || role === "team_lead") &&
                           (() => {
@@ -1463,8 +1457,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               />
             ) : selectedId && selectedConvo ? (
               <>
-                <header className="flex items-center justify-between px-5 border-b bg-card shrink-0 h-12">
-                  <div className="flex items-center gap-3">
+                <header className="flex min-h-24 items-center justify-between gap-4 border-b bg-card px-5 py-2.5 shrink-0">
+                  <div className="flex min-w-0 items-center gap-3">
                     <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
                       {selectedConvo.alias.slice(-2)}
                     </div>
