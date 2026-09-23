@@ -149,15 +149,8 @@ type ChatMessage = {
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
 
-const CUSTOMER_TAGS = ["VIP", "Fraud risk", "Slow payer", "Bulk trader", "New customer"] as const;
-
-const customerTagStyles: Record<(typeof CUSTOMER_TAGS)[number], string> = {
-  VIP: "bg-warning/15 text-warning",
-  "Fraud risk": "bg-destructive/10 text-destructive",
-  "Slow payer": "bg-warning/10 text-warning",
-  "Bulk trader": "bg-success/10 text-success",
-  "New customer": "bg-primary/10 text-primary",
-};
+// Customer tag definitions are managed on /admin/customer-tags (see src/lib/customerTags).
+// Falls back to muted styling for tags that no longer exist in the managed list.
 
 type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
