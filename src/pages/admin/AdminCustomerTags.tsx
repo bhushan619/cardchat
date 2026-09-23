@@ -201,7 +201,7 @@ export default function AdminCustomerTags() {
           <DialogHeader>
             <DialogTitle>{mode === "add" ? "Add tag" : "Edit tag"}</DialogTitle>
             <DialogDescription>
-              Active tags appear in the right-click tagging menu on customer conversations.
+              Tags appear in the right-click tagging menu on customer conversations.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
