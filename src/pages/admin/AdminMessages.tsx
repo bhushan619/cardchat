@@ -1506,11 +1506,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="mt-1 flex flex-wrap items-center gap-2">
                         {renderCustomerTags(selectedConvo.id)}
                       </div>
-                      <p className="text-[10px] text-muted-foreground mt-1">
-                        {isGroupChat
-                          ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
-                          : `${panelConvo.goodRate}% rate · ${panelConvo.totalValue} total`}
-                      </p>
+                      {(isGroupChat || selectedConvo.channel !== "whatsapp") && (
+                        <p className="text-[10px] text-muted-foreground mt-1">
+                          {isGroupChat
+                            ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
+                            : `${panelConvo.goodRate}% rate · ${panelConvo.totalValue} total`}
+                        </p>
+                      )}
                       {customerNotes[selectedConvo.id]?.remark && (
                         <p className="text-[10px] text-muted-foreground mt-1 border-l-2 border-primary/40 pl-2 max-w-[360px] truncate">
                           {customerNotes[selectedConvo.id].remark}
