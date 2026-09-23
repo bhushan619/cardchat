@@ -150,7 +150,6 @@ export default function AdminCustomerTags() {
                 <th className="px-4 py-3 font-medium">Tag</th>
                 <th className="px-4 py-3 font-medium">Colour</th>
                 <th className="px-4 py-3 font-medium text-right">Order</th>
-                <th className="px-4 py-3 font-medium">Active</th>
                 <th className="px-4 py-3 font-medium text-right">Actions</th>
               </tr>
             </thead>
@@ -167,13 +166,6 @@ export default function AdminCustomerTags() {
                   </td>
                   <td className="px-4 py-3 font-mono text-muted-foreground">{tag.color}</td>
                   <td className="px-4 py-3 text-right tabular-nums">{tag.order}</td>
-                  <td className="px-4 py-3">
-                    <Switch
-                      checked={tag.active}
-                      onCheckedChange={(v) => toggleActive(tag, v)}
-                      aria-label={`Toggle ${tag.label} active`}
-                    />
-                  </td>
                   <td className="px-4 py-3">
                     <div className="flex justify-end gap-2">
                       <Button variant="outline" size="sm" className="gap-1" onClick={() => openEdit(tag)}>
@@ -193,7 +185,7 @@ export default function AdminCustomerTags() {
               ))}
               {tags.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-10 text-center text-muted-foreground">
+                  <td colSpan={4} className="px-4 py-10 text-center text-muted-foreground">
                     No tags yet. Add one to get started.
                   </td>
                 </tr>
