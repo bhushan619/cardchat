@@ -4,7 +4,6 @@ import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import {
   Dialog,
   DialogContent,
@@ -35,7 +34,6 @@ export default function AdminCustomerTags() {
   const [label, setLabel] = useState("");
   const [color, setColor] = useState("#faad14");
   const [order, setOrder] = useState("10");
-  const [active, setActive] = useState(true);
   const [deleteTarget, setDeleteTarget] = useState<CustomerTagDef | null>(null);
 
   useEffect(() => {
