@@ -81,6 +81,7 @@ import {
   customerStatusLabels,
 } from "@/lib/orderStateMachine";
 import { verifyPin } from "@/lib/securePin";
+import { CustomerTagDef, getActiveCustomerTags, tagPillStyle } from "@/lib/customerTags";
 
 const columns = [
   {
@@ -149,20 +150,19 @@ type ChatMessage = {
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
 
-const CUSTOMER_TAGS = ["VIP", "Fraud risk", "Slow payer", "Bulk trader", "New customer"] as const;
-
-const customerTagStyles: Record<(typeof CUSTOMER_TAGS)[number], string> = {
-  VIP: "bg-warning/15 text-warning",
-  "Fraud risk": "bg-destructive/10 text-destructive",
-  "Slow payer": "bg-warning/10 text-warning",
-  "Bulk trader": "bg-success/10 text-success",
-  "New customer": "bg-primary/10 text-primary",
-};
+// Customer tag definitions are managed on /admin/customer-tags (see src/lib/customerTags).
+// Falls back to muted styling for tags that no longer exist in the managed list.
 
 type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
   const { role } = useAdminRole();
+  const [tagDefs, setTagDefs] = useState<CustomerTagDef[]>(() => getActiveCustomerTags());
+  useEffect(() => {
+    const refresh = () => setTagDefs(getActiveCustomerTags());
+    window.addEventListener("customer-tags-updated", refresh);
+    return () => window.removeEventListener("customer-tags-updated", refresh);
+  }, []);
   const orderStatus = useOrderStatus();
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
@@ -294,16 +294,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     if (tags.length === 0) return null;
     return (
       <div className="flex flex-wrap items-center gap-1">
-        {tags.map((tag) => (
-          <span
-            key={tag}
-            className={`${compact ? "text-[8px] px-1 py-0.5" : "text-[10px] px-2 py-0.5"} rounded-sm font-medium leading-none whitespace-nowrap ${
-              customerTagStyles[tag as keyof typeof customerTagStyles] ?? "bg-muted text-muted-foreground"
-            }`}
-          >
-            {tag}
-          </span>
-        ))}
+        {tags.map((tag) => {
+          const def = tagDefs.find((d) => d.label === tag);
+          return (
+            <span
+              key={tag}
+              className={`${compact ? "text-[8px] px-1 py-0.5" : "text-[10px] px-2 py-0.5"} rounded-sm font-medium leading-none whitespace-nowrap ${def ? "" : "bg-muted text-muted-foreground"}`}
+              style={def ? tagPillStyle(def.color) : undefined}
+            >
+              {tag}
+            </span>
+          );
+        })}
       </div>
     );
   };
@@ -2640,20 +2642,32 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </DialogHeader>
           <div className="px-5 pb-5">
             <div className="space-y-2">
-              {CUSTOMER_TAGS.map((tag) => {
-                const checked = tagDraft.includes(tag);
-                return (
-                  <label key={tag} className="flex items-center gap-2 cursor-pointer w-fit">
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => setTagDraft((current) => checked ? current.filter((item) => item !== tag) : [...current, tag])}
-                      className="h-4 w-4 rounded border-input accent-primary"
-                    />
-                    <span className={`text-xs px-2 py-1 rounded-sm ${customerTagStyles[tag]}`}>{tag}</span>
-                  </label>
-                );
-              })}
+              {(() => {
+                const options = [
+                  ...tagDefs.map((d) => d.label),
+                  ...tagDraft.filter((t) => !tagDefs.some((d) => d.label === t)),
+                ];
+                return options.map((tag) => {
+                  const checked = tagDraft.includes(tag);
+                  const def = tagDefs.find((d) => d.label === tag);
+                  return (
+                    <label key={tag} className="flex items-center gap-2 cursor-pointer w-fit">
+                      <input
+                        type="checkbox"
+                        checked={checked}
+                        onChange={() => setTagDraft((current) => checked ? current.filter((item) => item !== tag) : [...current, tag])}
+                        className="h-4 w-4 rounded border-input accent-primary"
+                      />
+                      <span
+                        className={`text-xs px-2 py-1 rounded-sm ${def ? "" : "bg-muted text-muted-foreground"}`}
+                        style={def ? tagPillStyle(def.color) : undefined}
+                      >
+                        {tag}
+                      </span>
+                    </label>
+                  );
+                });
+              })()}
             </div>
             <div className="flex justify-end gap-2 pt-5">
               <Button variant="outline" onClick={() => setTagsOpen(false)}>Cancel</Button>
