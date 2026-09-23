@@ -59,6 +59,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "@/components/ui/context-menu";
 import { Switch } from "@/components/ui/switch";
 import CardlightPanel, {
   type CompletedOrder,
@@ -148,12 +149,47 @@ type ChatMessage = {
 
 const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827-9QXR-1NMV"];
 
+const CUSTOMER_TAGS = ["VIP", "Fraud risk", "Slow payer", "Bulk trader", "New customer"] as const;
+
+const customerTagStyles: Record<(typeof CUSTOMER_TAGS)[number], string> = {
+  VIP: "bg-warning/15 text-warning",
+  "Fraud risk": "bg-destructive/10 text-destructive",
+  "Slow payer": "bg-warning/10 text-warning",
+  "Bulk trader": "bg-success/10 text-success",
+  "New customer": "bg-primary/10 text-primary",
+};
+
+type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
+
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
   const { role } = useAdminRole();
   const orderStatus = useOrderStatus();
   const [starred, setStarred] = useState<Set<string>>(new Set());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [customerNotes, setCustomerNotes] = useState<CustomerNotes>(() => {
+    try {
+      const saved = localStorage.getItem("cardchat_customer_notes");
+      return saved
+        ? JSON.parse(saved)
+        : {
+            c1: { remark: "", tags: ["VIP"] },
+            c2: { remark: "Card images verified", tags: ["Bulk trader", "New customer"] },
+            c3: { remark: "", tags: ["VIP"] },
+            c4: { remark: "", tags: [] },
+            c5: { remark: "", tags: ["Bulk trader"] },
+            c6: { remark: "Verify bank details before transfer", tags: ["Fraud risk"] },
+            c7: { remark: "", tags: ["New customer"] },
+          };
+    } catch {
+      return {};
+    }
+  });
+  const [notesCustomerId, setNotesCustomerId] = useState<string | null>(null);
+  const [remarkOpen, setRemarkOpen] = useState(false);
+  const [tagsOpen, setTagsOpen] = useState(false);
+  const [remarkDraft, setRemarkDraft] = useState("");
+  const [tagDraft, setTagDraft] = useState<string[]>([]);
 
   // Chat state
   const [message, setMessage] = useState("");
@@ -210,6 +246,67 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   useEffect(() => {
     sessionStorage.setItem("cardchat_cardlight_results", JSON.stringify(cardlightResults));
   }, [cardlightResults]);
+
+  useEffect(() => {
+    localStorage.setItem("cardchat_customer_notes", JSON.stringify(customerNotes));
+  }, [customerNotes]);
+
+  const openRemarkEditor = (conversationId: string) => {
+    setNotesCustomerId(conversationId);
+    setRemarkDraft(customerNotes[conversationId]?.remark ?? "");
+    setRemarkOpen(true);
+  };
+
+  const openTagsEditor = (conversationId: string) => {
+    setNotesCustomerId(conversationId);
+    setTagDraft(customerNotes[conversationId]?.tags ?? []);
+    setTagsOpen(true);
+  };
+
+  const saveRemark = () => {
+    if (!notesCustomerId) return;
+    setCustomerNotes((previous) => ({
+      ...previous,
+      [notesCustomerId]: {
+        remark: remarkDraft.trim(),
+        tags: previous[notesCustomerId]?.tags ?? [],
+      },
+    }));
+    setRemarkOpen(false);
+    toast.success(remarkDraft.trim() ? "Remark saved" : "Remark cleared");
+  };
+
+  const saveTags = () => {
+    if (!notesCustomerId) return;
+    setCustomerNotes((previous) => ({
+      ...previous,
+      [notesCustomerId]: {
+        remark: previous[notesCustomerId]?.remark ?? "",
+        tags: tagDraft,
+      },
+    }));
+    setTagsOpen(false);
+    toast.success("Tags saved");
+  };
+
+  const renderCustomerTags = (conversationId: string, compact = false) => {
+    const tags = customerNotes[conversationId]?.tags ?? [];
+    if (tags.length === 0) return null;
+    return (
+      <div className="flex flex-wrap items-center gap-1">
+        {tags.map((tag) => (
+          <span
+            key={tag}
+            className={`${compact ? "text-[8px] px-1 py-0.5" : "text-[10px] px-2 py-0.5"} rounded-sm font-medium leading-none whitespace-nowrap ${
+              customerTagStyles[tag as keyof typeof customerTagStyles] ?? "bg-muted text-muted-foreground"
+            }`}
+          >
+            {tag}
+          </span>
+        ))}
+      </div>
+    );
+  };
 
   const [localMessages, setLocalMessages] = useState<ChatMessage[]>(
     chatMessages.map((m) => ({
@@ -1226,13 +1323,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 const isStarred = starred.has(c.id);
                 const cStatus = orderStatus.getStatus(c.id);
                 return (
+                  <ContextMenu key={c.id}>
+                    <ContextMenuTrigger asChild>
                   <button
-                    key={c.id}
                     onClick={() => setSelectedId(c.id)}
                     onMouseEnter={() => setHoveredId(c.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
-                      isActive ? "bg-accent/5 border-l-2 border-l-accent" : ""
+                      isActive ? "bg-accent/5 border-l-2 border-l-accent ring-1 ring-inset ring-ring" : ""
                     }`}
                   >
                     <div className="flex items-center gap-2">
@@ -1299,6 +1397,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        <div className="mt-1">{renderCustomerTags(c.id, true)}</div>
+                        {customerNotes[c.id]?.remark && (
+                          <p className="text-[9px] text-muted-foreground mt-1 truncate border-l-2 border-primary/30 pl-1.5">
+                            {customerNotes[c.id].remark}
+                          </p>
+                        )}
                         {c.channel === "whatsapp" &&
                           (role === "super_admin" || role === "team_lead") &&
                           (() => {
@@ -1327,6 +1431,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     )}
                   </button>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent className="w-36 p-1.5 shadow-lg">
+                      <ContextMenuItem className="h-9 px-3" onSelect={() => openRemarkEditor(c.id)}>
+                        Add remark
+                      </ContextMenuItem>
+                      <ContextMenuItem className="h-9 px-3" onSelect={() => openTagsEditor(c.id)}>
+                        Add tags
+                      </ContextMenuItem>
+                    </ContextMenuContent>
+                  </ContextMenu>
                 );
               })}
               {listItems.length === 0 && (
@@ -1395,11 +1509,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </span>
                         )}
                       </div>
-                      <p className="text-[10px] text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-2">
+                        {renderCustomerTags(selectedConvo.id)}
+                      </div>
+                      <p className="text-[10px] text-muted-foreground mt-1">
                         {isGroupChat
                           ? `You, ${groupMembers.map((m) => m.name).join(", ")}, ${selectedConvo.alias}`
                           : `${panelConvo.goodRate}% rate · ${panelConvo.totalValue} total`}
                       </p>
+                      {customerNotes[selectedConvo.id]?.remark && (
+                        <p className="text-[10px] text-muted-foreground mt-1 border-l-2 border-primary/40 pl-2 max-w-[360px] truncate">
+                          {customerNotes[selectedConvo.id].remark}
+                        </p>
+                      )}
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
@@ -2493,6 +2615,60 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       })()}
 
       {/* Confirmation Modal for money-related actions */}
+      <Dialog open={remarkOpen} onOpenChange={setRemarkOpen}>
+        <DialogContent className="max-w-[520px] gap-0 p-0 overflow-hidden">
+          <DialogHeader className="px-5 pt-5 pb-3">
+            <DialogTitle className="text-base">Add remark</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 pb-5 space-y-2">
+            <Textarea
+              value={remarkDraft}
+              onChange={(event) => setRemarkDraft(event.target.value.slice(0, 1000))}
+              className="min-h-[120px] resize-y"
+              autoFocus
+            />
+            <div className="flex items-center justify-between text-xs text-muted-foreground">
+              <span>Saving an empty note clears it.</span>
+              <span>{remarkDraft.length} / 1000</span>
+            </div>
+            <div className="flex justify-end gap-2 pt-2">
+              <Button variant="outline" onClick={() => setRemarkOpen(false)}>Cancel</Button>
+              <Button onClick={saveRemark}>Save</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={tagsOpen} onOpenChange={setTagsOpen}>
+        <DialogContent className="max-w-[520px] gap-0 p-0 overflow-hidden">
+          <DialogHeader className="px-5 pt-5 pb-3">
+            <DialogTitle className="text-base">Add tags</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 pb-5">
+            <div className="space-y-2">
+              {CUSTOMER_TAGS.map((tag) => {
+                const checked = tagDraft.includes(tag);
+                return (
+                  <label key={tag} className="flex items-center gap-2 cursor-pointer w-fit">
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => setTagDraft((current) => checked ? current.filter((item) => item !== tag) : [...current, tag])}
+                      className="h-4 w-4 rounded border-input accent-primary"
+                    />
+                    <span className={`text-xs px-2 py-1 rounded-sm ${customerTagStyles[tag]}`}>{tag}</span>
+                  </label>
+                );
+              })}
+            </div>
+            <div className="flex justify-end gap-2 pt-5">
+              <Button variant="outline" onClick={() => setTagsOpen(false)}>Cancel</Button>
+              <Button onClick={saveTags}>Save</Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <Dialog
         open={!!confirmAction}
         onOpenChange={(open) => {
