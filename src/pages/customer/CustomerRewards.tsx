@@ -141,7 +141,11 @@ export default function CustomerRewards() {
                 Submit
               </Button>
             </div>
-            <p className="text-[10px] text-muted-foreground">Must be submitted within 7 days of registration</p>
+            <p className="text-[10px] text-muted-foreground">
+              {bonusSettings.codeValidityDays > 0
+                ? `Must be submitted within ${bonusSettings.codeValidityDays} day${bonusSettings.codeValidityDays === 1 ? "" : "s"} of registration`
+                : "Can be submitted any time after registration"}
+            </p>
           </div>
         )}
 

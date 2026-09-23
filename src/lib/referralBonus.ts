@@ -7,6 +7,7 @@ export type ReferralBonusSettings = {
   minFirstOrderValue: number; // Minimum first order value (Pts) before bonus triggers
   maxReferralsPerUser: number; // 0 = unlimited
   payoutDelayHours: number;   // Delay after qualifying order before auto-credit
+  codeValidityDays: number;   // Days after registration a new user can still submit a referral code (0 = no expiry)
 };
 
 const KEY = "cardchat_referral_bonus_v1";
