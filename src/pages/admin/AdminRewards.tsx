@@ -667,6 +667,14 @@ export default function AdminRewards() {
                     onChange={e => setReferralDraft(d => ({ ...d, payoutDelayHours: Number(e.target.value) || 0 }))}
                   />
                 </div>
+                <div className="space-y-1 col-span-2">
+                  <Label className="text-[11px]">Referral code validity for new users (days, 0 = no expiry)</Label>
+                  <Input
+                    type="number" min={0} className="h-9 text-xs"
+                    value={referralDraft.codeValidityDays}
+                    onChange={e => setReferralDraft(d => ({ ...d, codeValidityDays: Number(e.target.value) || 0 }))}
+                  />
+                </div>
               </div>
             </div>
 
@@ -690,6 +698,11 @@ export default function AdminRewards() {
                   {referralDraft.maxReferralsPerUser > 0
                     ? `A user can earn the bonus for a maximum of ${referralDraft.maxReferralsPerUser} referrals.`
                     : "There is no cap on the number of referrals a user can earn from."}
+                </li>
+                <li>
+                  {referralDraft.codeValidityDays > 0
+                    ? `New users must submit the referral code within ${referralDraft.codeValidityDays} day${referralDraft.codeValidityDays === 1 ? "" : "s"} of registration.`
+                    : "New users can submit the referral code any time after registration."}
                 </li>
                 <li>Cancelled or reversed first orders void the bonus; self-referral and duplicate devices are rejected.</li>
                 <li>Referral rewards are separate from ranking rewards and do not affect leaderboard volume.</li>
