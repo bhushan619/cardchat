@@ -1281,6 +1281,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 if (item.kind === "group") {
                   const g = item.data;
                   const gActive = selectedId === g.id;
+                  const isGroupStarred = starred.has(g.id);
                   return (
                     <button
                       key={g.id}
@@ -1288,6 +1289,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         setSelectedId(g.id);
                         setHighlightMsgId(null);
                       }}
+                      onMouseEnter={() => setHoveredId(g.id)}
+                      onMouseLeave={() => setHoveredId(null)}
                       className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
                         gActive
                           ? "bg-violet-500/10 border-l-2 border-l-violet-500"
@@ -1317,6 +1320,26 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </span>
                         )}
                       </div>
+                      {(hoveredId === g.id || isGroupStarred) && (
+                        <div className="flex justify-end mt-1">
+                          <span
+                            role="button"
+                            tabIndex={0}
+                            aria-label={isGroupStarred ? `Remove ${g.groupName} from favorites` : `Add ${g.groupName} to favorites`}
+                            title={isGroupStarred ? "Remove from favorites" : "Add to favorites"}
+                            onClick={(e) => toggleStar(e, g.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter" || e.key === " ") {
+                                e.preventDefault();
+                                toggleStar(e as unknown as React.MouseEvent, g.id);
+                              }
+                            }}
+                            className="inline-flex text-muted-foreground hover:text-warning transition-colors"
+                          >
+                            <Star className={`w-3 h-3 ${isGroupStarred ? "text-warning fill-warning" : ""}`} />
+                          </span>
+                        </div>
+                      )}
                     </button>
                   );
                 }
@@ -1394,7 +1417,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 {agentStatusLabels[cStatus]}
                               </span>
                             )}
-                            {isStarred && <Star className="w-3 h-3 text-warning fill-warning" />}
                             <span className="text-[10px] text-muted-foreground">{c.time}</span>
                           </div>
                         </div>
