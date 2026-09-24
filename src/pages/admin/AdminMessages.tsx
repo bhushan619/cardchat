@@ -554,7 +554,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }
   };
 
-  const toggleStar = (e: React.MouseEvent, id: string) => {
+  const toggleStar = (e: React.SyntheticEvent, id: string) => {
     e.stopPropagation();
     setStarred((prev) => {
       const next = new Set(prev);
@@ -1331,7 +1331,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             onKeyDown={(e) => {
                               if (e.key === "Enter" || e.key === " ") {
                                 e.preventDefault();
-                                toggleStar(e as unknown as React.MouseEvent, g.id);
+                                toggleStar(e, g.id);
                               }
                             }}
                             className="inline-flex text-muted-foreground hover:text-warning transition-colors"
