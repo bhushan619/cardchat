@@ -55,11 +55,11 @@ const rewardRecords: RewardRecord[] = [
 const distributedPeriods = new Set<string>();
 
 // Mock pending orders per period
-const mockPendingOrders: Record<string, { id: string; customer: string; status: string; cardType: string; amount: number }[]> = {
+const mockPendingOrders: Record<string, { id: string; customer: string; status: string; cardType: string; amount: number; channel: "trtc" | "whatsapp" }[]> = {
   "2-h1": [], // Mar H1 — all settled
   "2-h2": [
-    { id: "ORD-20260318-002", customer: "K9M2BL", status: "in_trade", cardType: "Amazon US", amount: 150 },
-    { id: "ORD-20260320-004", customer: "R4P8TN", status: "pending", cardType: "iTunes US", amount: 200 },
+    { id: "ORD-20260318-002", customer: "K9M2BL", status: "in_trade", cardType: "Amazon US", amount: 150, channel: "trtc" },
+    { id: "ORD-20260320-004", customer: "R4P8TN", status: "pending", cardType: "iTunes US", amount: 200, channel: "whatsapp" },
   ],
 };
 
@@ -542,6 +542,7 @@ export default function AdminRewards() {
                       <TableRow>
                         <TableHead className="text-[10px] font-semibold py-2">Order ID</TableHead>
                         <TableHead className="text-[10px] font-semibold py-2">Customer</TableHead>
+                        <TableHead className="text-[10px] font-semibold py-2">Channel</TableHead>
                         <TableHead className="text-[10px] font-semibold py-2">Card</TableHead>
                         <TableHead className="text-[10px] font-semibold py-2">Status</TableHead>
                       </TableRow>
@@ -551,6 +552,9 @@ export default function AdminRewards() {
                         <TableRow key={o.id}>
                           <TableCell className="text-[10px] font-medium text-accent py-1.5">{o.id}</TableCell>
                           <TableCell className="text-[10px] font-bold py-1.5">{o.customer}</TableCell>
+                          <TableCell className="py-1.5">
+                            <ChannelBadge channel={o.channel} size="xs" />
+                          </TableCell>
                           <TableCell className="text-[10px] py-1.5">{o.cardType} ${o.amount}</TableCell>
                           <TableCell className="py-1.5">
                             <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-warning/10 text-warning font-medium capitalize">
