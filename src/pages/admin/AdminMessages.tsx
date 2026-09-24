@@ -448,11 +448,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const queue = [...filteredGroups];
     filteredConversations.forEach((c, i) => {
       out.push({ kind: "dm", data: c });
-      if (i % 2 === 1 && queue.length) out.push({ kind: "group", data: queue.shift()! });
+      if (i % 2 === 1 && queue.length) {
+        const group = queue.shift();
+        if (group) out.push({ kind: "group", data: group });
+      }
     });
     queue.forEach((g) => out.push({ kind: "group", data: g }));
-    return out;
-  }, [filteredConversations, filteredGroups]);
+    return out.sort((a, b) => Number(starred.has(b.data.id)) - Number(starred.has(a.data.id)));
+  }, [filteredConversations, filteredGroups, starred]);
 
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
@@ -1283,11 +1286,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const gActive = selectedId === g.id;
                   const isGroupStarred = starred.has(g.id);
                   return (
-                    <button
+                    <div
                       key={g.id}
+                      role="button"
+                      tabIndex={0}
                       onClick={() => {
                         setSelectedId(g.id);
                         setHighlightMsgId(null);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          setSelectedId(g.id);
+                          setHighlightMsgId(null);
+                        }
                       }}
                       onMouseEnter={() => setHoveredId(g.id)}
                       onMouseLeave={() => setHoveredId(null)}
@@ -1322,25 +1334,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                       {(hoveredId === g.id || isGroupStarred) && (
                         <div className="flex justify-end mt-1">
-                          <span
-                            role="button"
-                            tabIndex={0}
+                          <button
+                            type="button"
                             aria-label={isGroupStarred ? `Remove ${g.groupName} from favorites` : `Add ${g.groupName} to favorites`}
                             title={isGroupStarred ? "Remove from favorites" : "Add to favorites"}
                             onClick={(e) => toggleStar(e, g.id)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter" || e.key === " ") {
-                                e.preventDefault();
-                                toggleStar(e, g.id);
-                              }
-                            }}
-                            className="inline-flex text-muted-foreground hover:text-warning transition-colors"
+                            className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-warning transition-colors"
                           >
-                            <Star className={`w-3 h-3 ${isGroupStarred ? "text-warning fill-warning" : ""}`} />
-                          </span>
+                            <Star className={`w-4 h-4 ${isGroupStarred ? "text-warning fill-warning" : ""}`} />
+                          </button>
                         </div>
                       )}
-                    </button>
+                    </div>
                   );
                 }
                 const c = item.data;
@@ -1350,8 +1355,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 return (
                   <ContextMenu key={c.id}>
                     <ContextMenuTrigger asChild>
-                  <button
+                  <div
+                    role="button"
+                    tabIndex={0}
                     onClick={() => setSelectedId(c.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        setSelectedId(c.id);
+                      }
+                    }}
                     onMouseEnter={() => setHoveredId(c.id)}
                     onMouseLeave={() => setHoveredId(null)}
                     className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
@@ -1441,14 +1454,17 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     {(hoveredId === c.id || isStarred) && (
                       <div className="flex justify-end mt-1">
                         <button
+                          type="button"
+                          aria-label={isStarred ? `Remove ${c.alias} from favorites` : `Add ${c.alias} to favorites`}
+                          title={isStarred ? "Remove from favorites" : "Add to favorites"}
                           onClick={(e) => toggleStar(e, c.id)}
-                          className="text-muted-foreground hover:text-warning transition-colors"
+                          className="inline-flex h-8 w-8 items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-warning transition-colors"
                         >
-                          <Star className={`w-3 h-3 ${isStarred ? "text-warning fill-warning" : ""}`} />
+                          <Star className={`w-4 h-4 ${isStarred ? "text-warning fill-warning" : ""}`} />
                         </button>
                       </div>
                     )}
-                  </button>
+                  </div>
                     </ContextMenuTrigger>
                     <ContextMenuContent className="w-36 p-1.5 shadow-lg">
                       <ContextMenuItem className="h-9 px-3" onSelect={() => openRemarkEditor(c.id)}>
