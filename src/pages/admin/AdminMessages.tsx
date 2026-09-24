@@ -1312,28 +1312,25 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <div className="flex items-center gap-2">
                         <GroupAvatar className="w-8 h-8 shrink-0" />
                         <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between">
+                          <div className="flex items-center">
                             <div className="flex items-center gap-1.5 min-w-0">
                               <span className="text-xs font-semibold truncate">{g.groupName}</span>
                               <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-violet-500/15 text-violet-600 dark:text-violet-400 font-medium leading-none whitespace-nowrap">
                                 Group
                               </span>
                             </div>
-                            <span className="text-[10px] text-muted-foreground shrink-0">{g.time}</span>
                           </div>
                           <p className="text-[10px] text-muted-foreground truncate">{g.lastMessage}</p>
                           <p className="text-[9px] text-muted-foreground mt-0.5">
                             {g.participants.length} members
                           </p>
                         </div>
-                        {g.unread > 0 && (
-                          <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
-                            {g.unread}
-                          </span>
-                        )}
-                      </div>
-                      {(hoveredId === g.id || isGroupStarred) && (
-                        <div className="flex justify-end mt-1">
+                        <div className="flex items-center gap-1 shrink-0">
+                          {g.unread > 0 && (
+                            <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
+                              {g.unread}
+                            </span>
+                          )}
                           <button
                             type="button"
                             aria-label={isGroupStarred ? `Remove ${g.groupName} from favorites` : `Add ${g.groupName} to favorites`}
@@ -1344,14 +1341,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <Star className={`w-4 h-4 ${isGroupStarred ? "text-warning fill-warning" : ""}`} />
                           </button>
                         </div>
-                      )}
+                      </div>
                     </div>
                   );
                 }
                 const c = item.data;
                 const isActive = selectedId === c.id;
                 const isStarred = starred.has(c.id);
-                const cStatus = orderStatus.getStatus(c.id);
                 return (
                   <ContextMenu key={c.id}>
                     <ContextMenuTrigger asChild>
@@ -1384,7 +1380,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
                             {c.channel === "whatsapp" && c.waNickname && (
@@ -1422,16 +1418,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 );
                               })()}
                           </div>
-                          <div className="flex items-center gap-1">
-                            {cStatus && (
-                              <span
-                                className={`text-[8px] font-medium px-1 py-0.5 rounded ${agentStatusStyles[cStatus].bg} ${agentStatusStyles[cStatus].color}`}
-                              >
-                                {agentStatusLabels[cStatus]}
-                              </span>
-                            )}
-                            <span className="text-[10px] text-muted-foreground">{c.time}</span>
-                          </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
                         {c.channel === "whatsapp" &&
@@ -1445,14 +1431,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             );
                           })()}
                       </div>
-                      {c.unread > 0 && (
-                        <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold shrink-0">
-                          {c.unread}
-                        </span>
-                      )}
-                    </div>
-                    {(hoveredId === c.id || isStarred) && (
-                      <div className="flex justify-end mt-1">
+                      <div className="flex items-center gap-1 shrink-0">
+                        {c.unread > 0 && (
+                          <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
+                            {c.unread}
+                          </span>
+                        )}
                         <button
                           type="button"
                           aria-label={isStarred ? `Remove ${c.alias} from favorites` : `Add ${c.alias} to favorites`}
@@ -1463,7 +1447,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <Star className={`w-4 h-4 ${isStarred ? "text-warning fill-warning" : ""}`} />
                         </button>
                       </div>
-                    )}
+                    </div>
                   </div>
                     </ContextMenuTrigger>
                     <ContextMenuContent className="w-36 p-1.5 shadow-lg">
