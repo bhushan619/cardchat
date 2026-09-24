@@ -1405,18 +1405,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                               </span>
                             )}
                             <ChannelBadge channel={c.channel} size="xs" showLabel={false} />
-                            {c.channel === "whatsapp" &&
-                              (() => {
-                                const line = pickBusinessNumberFor(c.id);
-                                return (
-                                  <span
-                                    className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium truncate leading-none"
-                                    title={`Received on ${line.label} · ${line.phone}`}
-                                  >
-                                    {line.label}
-                                  </span>
-                                );
-                              })()}
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
@@ -1511,16 +1499,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </span>
                         )}
                         <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
-                        {selectedConvo.channel === "whatsapp" &&
-                          !isGroupChat &&
-                          (() => {
-                            const line = pickBusinessNumberFor(selectedConvo.id);
-                            return (
-                              <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-medium whitespace-nowrap leading-none">
-                                {line.label}
-                              </span>
-                            );
-                          })()}
                         {isGroupChat && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
                             <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
