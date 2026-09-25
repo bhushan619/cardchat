@@ -16,7 +16,6 @@ const adminScreens = [
   { name: "IP & Country", path: "/admin/ip-restrictions", description: "IP whitelisting & country blocks" },
   { name: "Sensitive Words", path: "/admin/sensitive-words", description: "Chat content filtering" },
   { name: "API Config", path: "/admin/api-config", description: "Third-party API integrations" },
-  { name: "SMS Broadcast", path: "/admin/broadcast", description: "Bulk SMS to customers" },
   { name: "Customer Guide", path: "/admin/customer-guide", description: "Customer-facing help content" },
   { name: "Admin Guide", path: "/admin/guide", description: "Internal admin documentation" },
   { name: "Profile", path: "/admin/profile", description: "Admin profile & settings" },
