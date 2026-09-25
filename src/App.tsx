@@ -58,6 +58,7 @@ import AdminContentReports from "./pages/admin/AdminContentReports";
 import AdminEventTracking from "./pages/admin/AdminEventTracking";
 import AdminPopups from "./pages/admin/AdminPopups";
 import AdminCustomerTags from "./pages/admin/AdminCustomerTags";
+import AdminNotifications from "./pages/admin/AdminNotifications";
 
 const queryClient = new QueryClient();
 
@@ -123,6 +124,7 @@ const App = () => (
               <Route path="/admin/event-tracking" element={<AdminRoleProvider><AdminEventTracking /></AdminRoleProvider>} />
               <Route path="/admin/popups" element={<AdminRoleProvider><AdminPopups /></AdminRoleProvider>} />
               <Route path="/admin/customer-tags" element={<AdminRoleProvider><AdminCustomerTags /></AdminRoleProvider>} />
+              <Route path="/admin/notifications" element={<AdminRoleProvider><AdminNotifications /></AdminRoleProvider>} />
 
 
               <Route path="*" element={<NotFound />} />

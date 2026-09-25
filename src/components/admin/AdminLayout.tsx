@@ -142,6 +142,13 @@ const navItems = [
     path: "/admin/popups",
     roles: ["super_admin"],
   },
+  {
+    id: "notifications",
+    label: "Notifications",
+    icon: Bell,
+    path: "/admin/notifications",
+    roles: ["super_admin"],
+  },
   { id: "broadcast", label: "SMS Broadcast", icon: Send, path: "/admin/broadcast", roles: ["super_admin"] },
   {
     id: "event-tracking",
