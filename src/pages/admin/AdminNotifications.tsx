@@ -32,13 +32,12 @@ import {
   NotificationAudience,
   NotificationSendType,
   NotificationStatus,
-  compareVersionSafe,
-  isValidSemverSafe,
   loadNotifications,
   nextNotificationCode,
   notificationStatus,
   saveNotifications,
-} from "@/lib/notificationsPageUtils";
+} from "@/lib/notifications";
+import { compareVersion, isValidSemver } from "@/lib/popups";
 
 type Mode = "add" | "edit" | "copy";
 
