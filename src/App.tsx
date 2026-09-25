@@ -39,7 +39,6 @@ import AdminNairaRate from "./pages/admin/AdminNairaRate";
 import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTeam from "./pages/admin/AdminTeam";
 import AdminApiConfig from "./pages/admin/AdminApiConfig";
-import AdminBroadcast from "./pages/admin/AdminBroadcast";
 import AdminGuide from "./pages/admin/AdminGuide";
 import AdminIpRestrictions from "./pages/admin/AdminIpRestrictions";
 import AdminCustomerGuide from "./pages/admin/AdminCustomerGuide";
@@ -105,7 +104,6 @@ const App = () => (
               <Route path="/admin/team" element={<AdminRoleProvider><AdminTeam /></AdminRoleProvider>} />
               <Route path="/admin/api-config" element={<AdminRoleProvider><AdminApiConfig /></AdminRoleProvider>} />
               <Route path="/admin/whatsapp-sessions" element={<AdminRoleProvider><AdminWhatsAppSessions /></AdminRoleProvider>} />
-              <Route path="/admin/broadcast" element={<AdminRoleProvider><AdminBroadcast /></AdminRoleProvider>} />
               <Route path="/admin/guide" element={<AdminRoleProvider><AdminGuide /></AdminRoleProvider>} />
               <Route path="/admin/ip-restrictions" element={<AdminRoleProvider><AdminIpRestrictions /></AdminRoleProvider>} />
               <Route path="/admin/customer-guide" element={<AdminRoleProvider><AdminCustomerGuide /></AdminRoleProvider>} />
