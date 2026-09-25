@@ -158,12 +158,12 @@ export default function AdminNotifications() {
     if (!f.body.trim()) e.body = "Message body is required";
     if (f.body.length > 500) e.body = "Max 500 characters";
     if (!f.platforms.length) e.platforms = "Select at least one platform";
-    if (!isValidSemverSafe(f.startVersion)) e.startVersion = "Use a version like 1.0.0";
-    if (!isValidSemverSafe(f.endVersion)) e.endVersion = "Use a version like 3.0.0";
+    if (!isValidSemver(f.startVersion)) e.startVersion = "Use a version like 1.0.0";
+    if (!isValidSemver(f.endVersion)) e.endVersion = "Use a version like 3.0.0";
     if (
-      isValidSemverSafe(f.startVersion) &&
-      isValidSemverSafe(f.endVersion) &&
-      compareVersionSafe(f.endVersion, f.startVersion) < 0
+      isValidSemver(f.startVersion) &&
+      isValidSemver(f.endVersion) &&
+      compareVersion(f.endVersion, f.startVersion) < 0
     )
       e.endVersion = "End version must be ≥ start version";
     if (f.action !== "none" && !f.pathParam.trim())
