@@ -193,13 +193,17 @@ export default function AdminCardRates() {
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("sellRate")}>
                   <span className="flex items-center gap-1 justify-end">Points Price <SortIcon col="sellRate" /></span>
                 </th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Last Updated</th>
+                <th className="text-right text-xs font-semibold text-accent px-4 py-3">
+                  <span className="flex items-center gap-1 justify-end">Purchase Price</span>
+                </th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Last Updated</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Remarks</th>
               </tr>
             </thead>
             <tbody>
               {sorted.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  <td colSpan={9} className="px-4 py-10 text-center text-sm text-muted-foreground">
                     No rates match your filters.
                   </td>
                 </tr>
@@ -221,7 +225,13 @@ export default function AdminCardRates() {
                   <td className="px-4 py-3 text-sm text-right font-semibold rate-value">
                     <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.sellRate}</span>
                   </td>
+                  <td className="px-4 py-3 text-sm text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.buyRate}</span>
+                  </td>
                   <td className="px-4 py-3 text-xs text-right text-muted-foreground">{r.lastUpdated}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[280px]">
+                    <span className="line-clamp-2 leading-relaxed" title={r.remarks}>{r.remarks}</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
