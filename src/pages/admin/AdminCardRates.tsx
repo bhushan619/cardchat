@@ -193,13 +193,17 @@ export default function AdminCardRates() {
                 <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3 cursor-pointer select-none" onClick={() => toggleSort("sellRate")}>
                   <span className="flex items-center gap-1 justify-end">Points Price <SortIcon col="sellRate" /></span>
                 </th>
-                <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Last Updated</th>
+                <th className="text-right text-xs font-semibold text-accent px-4 py-3">
+                  <span className="flex items-center gap-1 justify-end">Purchase Price</span>
+                </th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Last Updated</th>
+                <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Remarks</th>
               </tr>
             </thead>
             <tbody>
               {sorted.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-sm text-muted-foreground">
+                  <td colSpan={9} className="px-4 py-10 text-center text-sm text-muted-foreground">
                     No rates match your filters.
                   </td>
                 </tr>
