@@ -225,7 +225,13 @@ export default function AdminCardRates() {
                   <td className="px-4 py-3 text-sm text-right font-semibold rate-value">
                     <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.sellRate}</span>
                   </td>
+                  <td className="px-4 py-3 text-sm text-right font-semibold">
+                    <span className="inline-flex items-center gap-1 justify-end"><Coins className="w-3.5 h-3.5 text-accent" />{r.buyRate}</span>
+                  </td>
                   <td className="px-4 py-3 text-xs text-right text-muted-foreground">{r.lastUpdated}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground max-w-[280px]">
+                    <span className="line-clamp-2 leading-relaxed" title={r.remarks}>{r.remarks}</span>
+                  </td>
                 </tr>
               ))}
             </tbody>
