@@ -2380,24 +2380,25 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </div>
                           </PopoverContent>
                         </Popover>
+                        {/* QR-02 Method A — quick reply sidebar panel */}
+                        <button
+                          type="button"
+                          onClick={() => setQrPanelOpen((v) => !v)}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                            qrPanelOpen
+                              ? "bg-accent/15 text-accent"
+                              : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                          }`}
+                          title="Quick replies"
+                        >
+                          <Zap className="w-4 h-4" />
+                        </button>
                       </div>
                       <div className="flex items-center gap-2">
                         {renderComposerActions()}
                         <button
                           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
-                          onClick={() => {
-                            if (message.trim()) {
-                              const newMsg: ChatMessage = {
-                                id: Date.now(),
-                                sender: "agent",
-                                senderName: "You",
-                                text: message.trim(),
-                                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                              };
-                              setLocalMessages((prev) => [...prev, newMsg]);
-                              setMessage("");
-                            }
-                          }}
+                          onClick={sendCurrentMessage}
                         >
                           <Send className="w-4 h-4 text-accent-foreground" />
                         </button>
