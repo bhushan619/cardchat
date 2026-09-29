@@ -321,6 +321,39 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [escalateSelected, setEscalateSelected] = useState<number[]>([]);
   const t = useAdminT();
 
+  // Quick reply templates (QR-02)
+  const [templates, setTemplates] = useState<QuickReplyTemplate[]>(() => loadTemplates());
+  useEffect(() => {
+    const refresh = () => setTemplates(loadTemplates());
+    window.addEventListener("quick-replies-updated", refresh);
+    return () => window.removeEventListener("quick-replies-updated", refresh);
+  }, []);
+  const [qrPanelOpen, setQrPanelOpen] = useState(false);
+  const [pendingTemplateId, setPendingTemplateId] = useState<string | null>(null);
+  const [slashIndex, setSlashIndex] = useState(0);
+
+  // Rate quote → order pre-fill (AQ-03)
+  const [quotePrefill, setQuotePrefill] = useState<{
+    cardType: string;
+    amount: number;
+    rate: number;
+    cardFormat: string;
+  } | null>(null);
+
+  // Inactivity follow-up (IF-01/02)
+  const [inactSettings, setInactSettings] = useState(() => loadInactivitySettings());
+  const [pausedConvos, setPausedConvos] = useState<string[]>(() => loadPausedConversations());
+  useEffect(() => {
+    const rs = () => setInactSettings(loadInactivitySettings());
+    const rp = () => setPausedConvos(loadPausedConversations());
+    window.addEventListener("inactivity-settings-updated", rs);
+    window.addEventListener("inactivity-paused-updated", rp);
+    return () => {
+      window.removeEventListener("inactivity-settings-updated", rs);
+      window.removeEventListener("inactivity-paused-updated", rp);
+    };
+  }, []);
+
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
   const [reassignOpen, setReassignOpen] = useState(false);
