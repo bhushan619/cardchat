@@ -1020,6 +1020,96 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
+  // ---- Quick reply helpers (QR-02) ----
+  const agentDisplayName =
+    role === "super_admin"
+      ? "Admin One"
+      : role === "team_lead"
+        ? "Sarah Lead"
+        : role === "finance"
+          ? "Femi Finance"
+          : "Mike Agent";
+
+  const slashQuery =
+    message.startsWith("/") && !message.includes("\n") ? message.slice(1).toLowerCase() : null;
+  const slashMatches =
+    slashQuery != null
+      ? templates
+          .filter(
+            (tp) =>
+              tp.name.toLowerCase().includes(slashQuery) ||
+              (tp.shortcut ?? "").toLowerCase().includes(slashQuery) ||
+              CATEGORY_LABEL[tp.category].toLowerCase().includes(slashQuery),
+          )
+          .slice(0, 6)
+      : [];
+
+  const templateCtx = () => {
+    const activeOrder = allOrders.find((o) => o.id === (selectedOrderId ?? currentOrderId));
+    const rate = activeOrder ? cardRates.find((r) => r.cardType === activeOrder.cardType)?.sellRate : undefined;
+    const amount = activeOrder ? Number(activeOrder.amount) || undefined : undefined;
+    return {
+      alias: panelConvo?.alias,
+      agentName: agentDisplayName,
+      cardType: activeOrder?.cardType,
+      rate: rate != null ? `Pts ${rate.toLocaleString()}` : undefined,
+      amount: amount != null ? `$${amount}` : undefined,
+      totalRelease:
+        rate != null && amount != null ? `Pts ${Math.round(rate * amount).toLocaleString()}` : undefined,
+      bankName: undefined,
+    };
+  };
+
+  const insertTemplate = (tp: QuickReplyTemplate) => {
+    setMessage(resolveTemplateVariables(tp.message, templateCtx()));
+    setPendingTemplateId(tp.id);
+    setSlashIndex(0);
+  };
+
+  const sendCurrentMessage = () => {
+    if (!message.trim()) return;
+    const newMsg: ChatMessage = {
+      id: Date.now(),
+      sender: "agent",
+      senderName: "You",
+      text: message.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setLocalMessages((prev) => [...prev, newMsg]);
+    if (pendingTemplateId) {
+      recordTemplateUsage(pendingTemplateId, agentDisplayName);
+      setPendingTemplateId(null);
+    }
+    setMessage("");
+  };
+
+  // ---- Inactivity helpers (IF-02) ----
+  const getSilentMinutes = (convoId: string): number | null => {
+    if (!inactSettings.enabled) return null;
+    if (pausedConvos.includes(convoId)) return null;
+    const sim = simulatedInactivity(convoId);
+    if (!sim.agentLast) return null; // indicator only when the agent sent the last message
+    if (sim.silentMin < inactSettings.warningThresholdMin) return null;
+    return sim.silentMin;
+  };
+
+  const selectedSilentMin = selectedId ? getSilentMinutes(selectedId) : null;
+  const reminderDue =
+    selectedSilentMin != null &&
+    inactSettings.reminderThresholdMin > 0 &&
+    selectedSilentMin >= inactSettings.reminderThresholdMin &&
+    inactSettings.maxRemindersPerConversation > 0;
+
+  // Log the auto-reminder once per conversation (IF-03) so stats stay consistent.
+  useEffect(() => {
+    if (!reminderDue || !selectedId) return;
+    const guardKey = `cc.autoReminderSent.${selectedId}`;
+    if (sessionStorage.getItem(guardKey)) return;
+    sessionStorage.setItem(guardKey, "1");
+    recordInactivityEvent({ type: "reminder_sent", conversationId: selectedId, at: new Date().toISOString() });
+  }, [reminderDue, selectedId]);
+
+
   // Orders eligible for transfer for the currently selected customer.
   // In group threads there is no 1:1 selectedConvo — fall back to the customer
   // picked via the alias selector (txConvo) so wallet credits still resolve.
