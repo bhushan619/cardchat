@@ -2149,9 +2149,107 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </div>
                           );
                         })()}
+                        {/* AQ-01/02: rate quote suggestion card (both channels) */}
+                        {(() => {
+                          if (msg.image || msg.sender !== "customer") return null;
+                          const det = detectRateQuote(msg.text);
+                          if (!det) return null;
+                          return (
+                            <div className="flex justify-start">
+                              <RateQuoteCard
+                                detected={det}
+                                onSend={(amt, fmt) => {
+                                  const q = {
+                                    cardType: det.cardType,
+                                    amount: amt,
+                                    cardFormat: fmt,
+                                    rate: det.rate,
+                                    currency: det.currency,
+                                  };
+                                  const newMsg: ChatMessage = {
+                                    id: Date.now(),
+                                    sender: "agent",
+                                    senderName: "You",
+                                    text: buildQuoteMessage(q),
+                                    time: new Date().toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    }),
+                                  };
+                                  setLocalMessages((prev) => [...prev, newMsg]);
+                                  if (selectedId) lockQuote(selectedId, q);
+                                  toast.success("Quote sent — rate locked for 15 minutes");
+                                }}
+                              />
+                            </div>
+                          );
+                        })()}
+                        {/* AQ-03: customer accepted the quote → pre-fill Sales Order */}
+                        {(() => {
+                          if (msg.image || msg.sender !== "customer" || !selectedId) return null;
+                          if (!isAcceptMessage(msg.text)) return null;
+                          const q = getQuote(selectedId);
+                          if (!q) return null;
+                          const expired = isQuoteExpired(q);
+                          return (
+                            <div className="flex justify-start">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (expired) {
+                                    const cur = cardRates.find((r) => r.cardType === q.cardType);
+                                    setQuotePrefill({
+                                      cardType: q.cardType,
+                                      amount: q.amount,
+                                      rate: cur?.sellRate ?? q.rate,
+                                      cardFormat: q.cardFormat,
+                                    });
+                                    toast.warning("Quote expired — current rate applied");
+                                  } else {
+                                    setQuotePrefill({
+                                      cardType: q.cardType,
+                                      amount: q.amount,
+                                      rate: q.rate,
+                                      cardFormat: q.cardFormat,
+                                    });
+                                    toast.success(`Quote accepted — locked rate Pts ${q.rate.toLocaleString()}`);
+                                  }
+                                  clearQuote(selectedId);
+                                  setRightTab("sales");
+                                }}
+                                className="mt-1 inline-flex items-center gap-2 rounded-full border border-success/40 bg-success/5 hover:bg-success/10 text-success px-3 py-1 text-[11px] font-medium transition-colors"
+                              >
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>
+                                  Quote accepted → Pre-fill Sales Order
+                                  {expired
+                                    ? " (expired — current rate)"
+                                    : ` (${quoteMinutesRemaining(q)} min lock left)`}
+                                </span>
+                              </button>
+                            </div>
+                          );
+                        })()}
                       </Fragment>
                     );
                   })}
+                  {/* IF-03: simulated auto-reminder bubble (agent-visible label) */}
+                  {reminderDue && (
+                    <div className="flex justify-end">
+                      <div className="space-y-1 max-w-[75%]">
+                        <div className="chat-bubble-self">
+                          <p className="text-[9px] font-semibold mb-0.5 text-primary">You</p>
+                          <p>{inactSettings.reminderMessage}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1">
+                            {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                        </div>
+                        <p className="text-[9px] text-warning text-right font-medium flex items-center justify-end gap-1">
+                          <Clock className="w-2.5 h-2.5" /> Auto-reminder · sent after {inactSettings.reminderThresholdMin} min of silence
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Chat input */}
