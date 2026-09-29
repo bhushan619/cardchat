@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Shield, Save } from "lucide-react";
+import { Shield } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -17,105 +17,83 @@ export default function WarmupAntiBanCard() {
     toast.success("Warmup & anti-ban policy saved");
   };
 
-  const updateCap = (i: number, field: "conv" | "msg", value: number) => {
-    const next = policy.dailyCaps.map((c, idx) => idx === i ? { ...c, [field]: value } : c);
-    setPolicy({ ...policy, dailyCaps: next });
-  };
+  const num = (v: string) => Math.max(0, Number(v) || 0);
 
   return (
     <div className="bg-card border rounded-xl p-5 space-y-4">
-      <div className="flex items-start gap-3">
-        <div className="w-9 h-9 rounded-lg bg-amber-500/10 flex items-center justify-center shrink-0">
-          <Shield className="w-4 h-4 text-amber-600" />
-        </div>
-        <div>
-          <h2 className="font-heading font-semibold text-sm">Warmup &amp; Anti-Ban Policy</h2>
-          <p className="text-xs text-muted-foreground mt-0.5">
-            Daily caps applied to every wwebjs session while it warms up, plus
-            reply-ratio and proxy safeguards to keep numbers healthy.
-          </p>
-        </div>
+      <div className="flex items-center gap-2">
+        <Shield className="w-4 h-4 text-emerald-600" />
+        <h2 className="font-heading font-semibold text-sm">Warmup / Anti-Ban Settings</h2>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <table className="w-full text-xs">
-          <thead className="bg-muted/40 text-muted-foreground">
-            <tr>
-              <th className="text-left px-3 py-2 font-medium">Warmup phase</th>
-              <th className="text-left px-3 py-2 font-medium">Max new conversations / day</th>
-              <th className="text-left px-3 py-2 font-medium">Max outbound messages / day</th>
-            </tr>
-          </thead>
-          <tbody>
-            {policy.dailyCaps.map((cap, i) => (
-              <tr key={cap.day} className="border-t">
-                <td className="px-3 py-2 font-medium">{cap.day}</td>
-                <td className="px-3 py-2">
-                  <Input
-                    type="number" min={0} value={cap.conv}
-                    onChange={(e) => updateCap(i, "conv", Number(e.target.value) || 0)}
-                    className="h-8 text-xs w-28"
-                  />
-                </td>
-                <td className="px-3 py-2">
-                  <Input
-                    type="number" min={0} value={cap.msg}
-                    onChange={(e) => updateCap(i, "msg", Number(e.target.value) || 0)}
-                    className="h-8 text-xs w-28"
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <p className="text-xs text-muted-foreground">
+        Daily caps per warmup phase — set via Gateway environment variables at startup, not editable here
+      </p>
+
+      <div className="grid grid-cols-4 gap-3">
+        {policy.dailyCaps.map((cap) => (
+          <div key={cap.day} className="rounded-lg bg-muted/40 p-3 text-center">
+            <p className="text-sm font-semibold">{cap.day}</p>
+            <p className="text-[11px] text-muted-foreground mt-0.5">
+              {cap.conv === 0 ? "Unlimited convo" : `${cap.conv} convo`} · {cap.msg === 0 ? "Unlimited msg" : `${cap.msg} msg`}
+            </p>
+          </div>
+        ))}
       </div>
-      <p className="text-[11px] text-muted-foreground">Set caps to 0 for "no enforced limit" (rate-limited only by anti-ban logic).</p>
+
+      <div className="border-t pt-4">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <p className="text-sm font-medium">Warmup enforcement</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              When off, all sessions skip daily caps regardless of warmup day.
+            </p>
+          </div>
+          <Switch
+            checked={policy.warmupEnforcement}
+            onCheckedChange={(v) => setPolicy({ ...policy, warmupEnforcement: v })}
+          />
+        </div>
+      </div>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="text-xs font-medium text-muted-foreground">Minimum reply ratio</label>
-          <div className="flex items-center gap-2 mt-1">
-            <Input
-              type="number" step="0.05" min={0} max={1}
-              value={policy.minReplyRatio}
-              onChange={(e) => setPolicy({ ...policy, minReplyRatio: Math.min(1, Math.max(0, Number(e.target.value) || 0)) })}
-              className="w-24"
-            />
-            <span className="text-xs text-muted-foreground">inbound / outbound over 24h. Below this triggers auto-pause.</span>
-          </div>
-        </div>
-        <div>
-          <label className="text-xs font-medium text-muted-foreground">Residential proxy region</label>
+          <label className="text-xs font-medium text-muted-foreground">Min Reply Ratio (%)</label>
           <Input
-            className="mt-1 font-mono"
-            value={policy.proxyRegion}
-            onChange={(e) => setPolicy({ ...policy, proxyRegion: e.target.value })}
-            placeholder="NG-Lagos-Residential"
+            type="number" min={0} max={100} className="mt-1"
+            value={policy.minReplyRatioPct}
+            onChange={(e) => setPolicy({ ...policy, minReplyRatioPct: Math.min(100, num(e.target.value)) })}
           />
         </div>
         <div>
-          <label className="text-xs font-medium text-muted-foreground">Daily gateway restart</label>
+          <label className="text-xs font-medium text-muted-foreground">Burst Max (msgs/60s)</label>
           <Input
-            type="time" className="mt-1 w-32"
-            value={policy.dailyRestartAt}
-            onChange={(e) => setPolicy({ ...policy, dailyRestartAt: e.target.value })}
+            type="number" min={0} className="mt-1"
+            value={policy.burstMaxPer60s}
+            onChange={(e) => setPolicy({ ...policy, burstMaxPer60s: num(e.target.value) })}
           />
         </div>
-        <div className="flex items-center justify-between border rounded-lg px-3 py-2">
-          <div>
-            <p className="text-sm font-medium">Number rotation</p>
-            <p className="text-[11px] text-muted-foreground">Rotate sender number for broadcasts to spread load.</p>
-          </div>
-          <Switch
-            checked={policy.numberRotation}
-            onCheckedChange={(v) => setPolicy({ ...policy, numberRotation: v })}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground">Message Delay Min (ms)</label>
+          <Input
+            type="number" min={0} className="mt-1"
+            value={policy.msgDelayMinMs}
+            onChange={(e) => setPolicy({ ...policy, msgDelayMinMs: num(e.target.value) })}
+          />
+        </div>
+        <div>
+          <label className="text-xs font-medium text-muted-foreground">Message Delay Max (ms)</label>
+          <Input
+            type="number" min={0} className="mt-1"
+            value={policy.msgDelayMaxMs}
+            onChange={(e) => setPolicy({ ...policy, msgDelayMaxMs: num(e.target.value) })}
           />
         </div>
       </div>
 
       <div className="flex justify-end">
-        <Button size="sm" onClick={save} className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90">
-          <Save className="w-3.5 h-3.5" /> Save Policy
+        <Button size="sm" onClick={save} className="bg-accent text-accent-foreground hover:bg-accent/90">
+          Save Policy
         </Button>
       </div>
     </div>

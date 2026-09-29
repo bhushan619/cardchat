@@ -311,27 +311,29 @@ export function gatewayHealth(): GatewayHealth {
 
 // ---- Warmup / anti-ban policy (shared config) ---------------------------
 export type WarmupPolicy = {
-  dailyCaps: { day: string; conv: number; msg: number }[];
-  minReplyRatio: number;   // 0..1
-  proxyRegion: string;
-  numberRotation: boolean;
-  dailyRestartAt: string;  // "HH:MM"
+  dailyCaps: { day: string; conv: number; msg: number }[]; // read-only, set via gateway env vars
+  warmupEnforcement: boolean;
+  minReplyRatioPct: number;  // 0..100
+  burstMaxPer60s: number;    // max outbound messages per 60s
+  msgDelayMinMs: number;
+  msgDelayMaxMs: number;
 };
 
-const POLICY_KEY = "cc_wa_warmup_policy_v1";
+const POLICY_KEY = "cc_wa_warmup_policy_v2";
 const POLICY_EVENT = "cc:wa-warmup-policy-updated";
 
 const DEFAULT_POLICY: WarmupPolicy = {
   dailyCaps: [
-    { day: "Day 1–3",  conv: 20,  msg: 50 },
-    { day: "Day 4–7",  conv: 50,  msg: 150 },
-    { day: "Day 8–14", conv: 100, msg: 400 },
-    { day: "Day 15+",  conv: 0,   msg: 0 }, // 0 = no enforced cap
+    { day: "Day 1-3",  conv: 20,  msg: 50 },
+    { day: "Day 4-7",  conv: 50,  msg: 150 },
+    { day: "Day 8-14", conv: 100, msg: 400 },
+    { day: "Day 15+",  conv: 0,   msg: 0 }, // 0 = unlimited
   ],
-  minReplyRatio: 0.5,
-  proxyRegion: "NG-Lagos-Residential",
-  numberRotation: true,
-  dailyRestartAt: "03:00",
+  warmupEnforcement: true,
+  minReplyRatioPct: 40,
+  burstMaxPer60s: 9999,
+  msgDelayMinMs: 500,
+  msgDelayMaxMs: 1000,
 };
 
 export function getWarmupPolicy(): WarmupPolicy {
