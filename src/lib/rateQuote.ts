@@ -29,18 +29,19 @@ const STORAGE_KEY = "cardchat_rate_quotes";
 
 // Common abbreviations → canonical card type names in the rate list.
 const CARD_ALIASES: Record<string, string> = {
-  itunes: "iTunes",
-  "google play": "Google Play",
-  googleplay: "Google Play",
-  gplay: "Google Play",
-  steam: "Steam",
-  amazon: "Amazon",
-  apple: "Apple",
-  ebay: "eBay",
+  itunes: "iTunes US",
+  "google play": "Google Play US",
+  googleplay: "Google Play US",
+  gplay: "Google Play US",
+  steam: "Steam US",
+  amazon: "Amazon US",
+  apple: "iTunes US",
+  ebay: "eBay US",
   walmart: "Walmart",
   sephora: "Sephora",
   nike: "Nike",
-  visa: "Visa",
+  visa: "Vanilla Visa",
+  "vanilla visa": "Vanilla Visa",
   xbox: "Xbox",
   "razer gold": "Razer Gold",
   razer: "Razer Gold",
@@ -77,10 +78,17 @@ export function detectRateQuote(text: string): DetectedRateQuote | null {
   let cardType: string | null = null;
 
   const names = [...new Set(cardRates.map((r) => r.cardType))];
-  // Longest names first so "Google Play" wins over "Play".
+  const escapeRe = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // Longest names first so "Google Play US" wins over "Google Play".
   for (const name of names.sort((a, b) => b.length - a.length)) {
     const needle = name.toLowerCase();
-    if (new RegExp(`(^|[^a-z])${needle.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`, "i").test(lowered)) {
+    if (new RegExp(`(^|[^a-z])${escapeRe(needle)}([^a-z]|$)`, "i").test(lowered)) {
+      cardType = name;
+      break;
+    }
+    // Also match the base name without a country suffix ("iTunes" → "iTunes US").
+    const base = needle.replace(/\s+(us|uk|eu|ca|au|de|fr)$/i, "");
+    if (base !== needle && new RegExp(`(^|[^a-z])${escapeRe(base)}([^a-z]|$)`, "i").test(lowered)) {
       cardType = name;
       break;
     }
