@@ -48,6 +48,11 @@ import {
   Coins,
   ArrowRightLeft,
   CheckCheck,
+  Zap,
+  Clock,
+  MoreVertical,
+  TimerOff,
+  Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -82,6 +87,36 @@ import {
 } from "@/lib/orderStateMachine";
 import { verifyPin } from "@/lib/securePin";
 import { CustomerTagDef, getActiveCustomerTags, tagPillStyle } from "@/lib/customerTags";
+import {
+  loadTemplates,
+  resolveTemplateVariables,
+  recordTemplateUsage,
+  CATEGORY_LABEL,
+  CATEGORY_COLOR,
+  type QuickReplyTemplate,
+} from "@/lib/quickReplies";
+import {
+  detectRateQuote,
+  isAcceptMessage,
+  lockQuote,
+  getQuote,
+  isQuoteExpired,
+  quoteMinutesRemaining,
+  clearQuote,
+  buildQuoteMessage,
+} from "@/lib/rateQuote";
+import {
+  loadInactivitySettings,
+  loadPausedConversations,
+  setInactivityPaused,
+  recordInactivityEvent,
+} from "@/lib/inactivity";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const columns = [
   {
