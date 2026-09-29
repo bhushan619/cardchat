@@ -118,6 +118,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { CATEGORIES } from "@/lib/quickReplies";
 
 const columns = [
   {
@@ -2417,6 +2419,73 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </div>
             )}
           </div>
+
+          {/* QR-02: Quick reply sidebar panel */}
+          {qrPanelOpen && selectedId && !selectedGroup && (
+            <div className="w-72 border-l bg-card flex-col h-full shrink-0 hidden xl:flex">
+              <div className="h-12 border-b flex items-center justify-between px-4 shrink-0">
+                <p className="text-xs font-semibold flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-accent" /> Quick Replies
+                </p>
+                <button
+                  onClick={() => setQrPanelOpen(false)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  title="Close panel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <Accordion type="multiple" defaultValue={[...CATEGORIES]} className="px-2">
+                  {CATEGORIES.map((cat) => {
+                    const items = templates.filter((tp) => tp.category === cat);
+                    if (items.length === 0) return null;
+                    return (
+                      <AccordionItem key={cat} value={cat} className="border-b">
+                        <AccordionTrigger className="py-2.5 text-xs font-medium hover:no-underline">
+                          <span className="flex items-center gap-2">
+                            <span
+                              className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${CATEGORY_COLOR[cat]}`}
+                            >
+                              {items.length}
+                            </span>
+                            {CATEGORY_LABEL[cat]}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-2 space-y-1">
+                          {items.map((tp) => (
+                            <button
+                              key={tp.id}
+                              type="button"
+                              onClick={() => {
+                                insertTemplate(tp);
+                                toast.success("Template inserted — edit before sending");
+                              }}
+                              className="w-full text-left rounded-lg border bg-muted/40 hover:bg-muted p-2 transition-colors"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] font-medium truncate">{tp.name}</span>
+                                {tp.shortcut && (
+                                  <span className="text-[9px] font-mono text-muted-foreground shrink-0">
+                                    /{tp.shortcut}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{tp.message}</p>
+                            </button>
+                          ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </div>
+              <div className="p-3 border-t text-[10px] text-muted-foreground shrink-0">
+                Tip: type <span className="font-mono font-semibold text-foreground">/</span> in the message box to
+                search templates.
+              </div>
+            </div>
+          )}
 
           {/* Right panel: Tabbed Orders & Sales Order */}
           <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
