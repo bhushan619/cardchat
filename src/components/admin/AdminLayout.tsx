@@ -28,7 +28,6 @@ import {
   Megaphone,
   Tags,
   Zap,
-  Settings2,
   LineChart,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";

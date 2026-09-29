@@ -29,7 +29,7 @@ export default function WhatsAppGatewayCard() {
 
   const stats = [
     { label: "Active Sessions", value: `${health.activeSessions}/${health.totalSessions}`, sub: "" },
-    { label: "Uptime", value: formatUptime(health.lastRestart, now), sub: "" },
+    { label: "Uptime", value: formatUptime(new Date(health.lastRestart), now), sub: "" },
     { label: "RAM", value: `${health.totalMemoryMB} MB`, sub: `${gwMB} gw + ${sessMB} sess` },
     { label: "Status", value: healthy ? "Healthy" : "Degraded", sub: "", green: healthy },
   ];
