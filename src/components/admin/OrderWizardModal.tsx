@@ -105,6 +105,9 @@ interface CardlightPanelProps {
   onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
   /** Optional customer selector rendered at the top of the form once logged in (group chats). */
   groupSelector?: React.ReactNode;
+  /** AQ-03: pre-fill from an accepted rate quote (rate locked at quoted value). */
+  quotePrefill?: { cardType: string; amount: number; rate: number; cardFormat: string };
+  onQuotePrefillApplied?: () => void;
 }
 
 const makeCard = (): CardEntry => ({
