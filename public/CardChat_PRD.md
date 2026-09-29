@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.4  
-**Date:** September 2, 2026
+**Version:** 6.5  
+**Date:** September 29, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -1770,6 +1770,18 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.4 → v6.5 — September 29, 2026
+
+Proactive agent tooling from the CardChat Proactive Features PRD — four feature groups:
+
+| Change | Description |
+|--------|-------------|
+| **Quick Reply Templates** | New `/admin/quick-replies` page (`AdminQuickReplies.tsx`, super_admin only) backed by `src/lib/quickReplies.ts`: template CRUD with name, shortcut, category (Greeting, Card Request, Verification, Rate Quote, Payout, Follow-Up, Custom), language, and message body with variable support (`{alias}`, `{agent_name}`, `{card_type}`, `{rate}`, `{amount}`, `{total_release}`, `{bank_name}`). Includes a usage analytics tab (per-template, per-agent, per-category, 14-day trend). In both App Messages and WhatsApp chats, agents can open a quick-reply sidebar panel (⚡ button in the composer, grouped accordion by category) or type `/` in the composer to get a slash-command dropdown filtered by shortcut/name; inserting a template resolves variables against the current conversation context and records a usage event. |
+| **Auto Rate Quotation** | New `src/lib/rateQuote.ts`: customer messages are scanned for an active card type (including abbreviations like "itunes" → "iTunes US", and base names without country suffixes) plus a USD amount. A "Rate Quote detected" card renders above the composer with an editable amount, Physical/E-Code format selector, live rate (Pts/$), and computed Total Release. "Send Quote to Customer" sends a formatted quote message and **locks the rate for 15 minutes** (per conversation, localStorage-persisted). When the customer replies with an acceptance ("ok", "deal", "accept", …) while the lock is active, a "Quote accepted → Pre-fill Sales Order" chip appears; clicking it opens the Cardlight Sales Order wizard with card type, amount, and locked rate pre-filled and marked with a "Locked from quote" badge. Expired locks are ignored. |
+| **Inactivity Follow-Up** | New `/admin/settings` page (`AdminSettings.tsx`) with an Inactivity Follow-Up card: enable toggle, warning threshold (min), auto-reminder threshold (min), editable reminder message, max reminders per conversation, active-hours-only flag, and recovery stats. In the messages screens (`src/lib/inactivity.ts` store): conversations silent past the warning threshold show an amber "X min silent" indicator in the list and an "inactive" badge in the header; past the reminder threshold an auto-reminder bubble is simulated (recorded once per conversation); the header three-dot "Conversation actions" menu offers Pause/Resume inactivity timer per conversation. |
+| **Trading Analytics** | New `/admin/analytics/trading` page (`AdminTradingAnalytics.tsx`, data from `src/data/tradingAnalyticsMock.ts`, super_admin only) with period (Today / 7d / 30d / Quarter), channel, and agent filters across four tabs: Overview (volume stat cards, daily/weekly volume-over-time chart vs previous period, volume by card type bars), Peak Hours (day × hour heatmap), Customers (growing/declining cohorts, new vs returning), and Card Types (rank shifts between periods). |
+| **New Menu Entries** | Sidebar gains **Quick Replies** (after Card Rates), **Trading Analytics** (after Event Tracking), and **Settings** (after Trading Analytics) — all super_admin only. Routes: `/admin/quick-replies`, `/admin/analytics/trading`, `/admin/settings`. |
 
 ### v6.3 → v6.4 — September 2, 2026
 
