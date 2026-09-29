@@ -1961,6 +1961,40 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </PopoverContent>
                       </Popover>
                     )}
+
+                    {/* Conversation actions (IF-01 per-conversation override) */}
+                    {inactSettings.enabled && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="w-7 h-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                            title="Conversation actions"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              if (!selectedId) return;
+                              const next = !pausedConvos.includes(selectedId);
+                              setInactivityPaused(selectedId, next);
+                              toast.success(next ? "Inactivity timer paused for this chat" : "Inactivity timer resumed");
+                            }}
+                          >
+                            {pausedConvos.includes(selectedId ?? "") ? (
+                              <>
+                                <Timer className="w-3.5 h-3.5 mr-2" /> Resume inactivity timer
+                              </>
+                            ) : (
+                              <>
+                                <TimerOff className="w-3.5 h-3.5 mr-2" /> Pause inactivity timer
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                 </header>
 
