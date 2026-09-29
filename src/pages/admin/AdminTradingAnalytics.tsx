@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import {
@@ -338,8 +338,8 @@ export default function AdminTradingAnalytics() {
                     </div>
                   ))}
                   {DAY_LABELS.map((label, dayIdx) => (
-                    <>
-                      <div key={`label-${label}`} className="text-xs text-muted-foreground flex items-center pr-2">
+                    <Fragment key={`row-${label}`}>
+                      <div className="text-xs text-muted-foreground flex items-center pr-2">
                         {label}
                       </div>
                       {HOUR_LABELS.map((hour) => {
@@ -353,7 +353,7 @@ export default function AdminTradingAnalytics() {
                           />
                         );
                       })}
-                    </>
+                    </Fragment>
                   ))}
                 </div>
               </div>
