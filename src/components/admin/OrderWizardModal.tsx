@@ -191,6 +191,26 @@ export default function CardlightPanel({
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
   const [cardTypeOpen, setCardTypeOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
+  const [quoteLocked, setQuoteLocked] = useState(false);
+
+  // AQ-03: apply an accepted rate quote — card type, amount, and the locked
+  // quoted rate (not the current rate).
+  useEffect(() => {
+    if (!quotePrefill) return;
+    setCardType(quotePrefill.cardType);
+    setCardRate(String(quotePrefill.rate));
+    setCards((prev) => {
+      const first = {
+        ...prev[0],
+        cardAmount: String(quotePrefill.amount),
+        cardRate: String(quotePrefill.rate),
+      };
+      return [first, ...prev.slice(1)];
+    });
+    setQuoteLocked(true);
+    onQuotePrefillApplied?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quotePrefill]);
 
   // Order list - persisted in sessionStorage
   const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
