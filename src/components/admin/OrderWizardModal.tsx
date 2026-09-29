@@ -169,6 +169,8 @@ export default function CardlightPanel({
   embedded,
   onBuyerSelected,
   groupSelector,
+  quotePrefill,
+  onQuotePrefillApplied,
 }: CardlightPanelProps) {
   // Login state - persisted in sessionStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("cardlight_logged_in") === "true");
