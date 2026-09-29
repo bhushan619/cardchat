@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Plus,
@@ -589,11 +589,21 @@ export default function CardlightPanel({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Points price</label>
+                  <label className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                    Points price
+                    {quoteLocked && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-success/15 text-success font-semibold leading-none">
+                        Locked from quote
+                      </span>
+                    )}
+                  </label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
-                    onChange={(e) => setCardRate(e.target.value.replace(/[^0-9.]/g, ""))}
+                    onChange={(e) => {
+                      setCardRate(e.target.value.replace(/[^0-9.]/g, ""));
+                      setQuoteLocked(false);
+                    }}
                     className="h-8 text-xs"
                   />
                 </div>
