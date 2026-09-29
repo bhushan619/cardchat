@@ -2763,6 +2763,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     onClose={() => setRightTab("orders")}
                     onComplete={handleOrderComplete}
                     customerAlias={selectedGroup ? groupCustomerAlias ?? undefined : selectedConvo?.alias}
+                    quotePrefill={quotePrefill ?? undefined}
+                    onQuotePrefillApplied={() => setQuotePrefill(null)}
                     embedded
                     groupSelector={
                       selectedGroup ? (
