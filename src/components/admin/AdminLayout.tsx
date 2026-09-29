@@ -27,6 +27,9 @@ import {
   Activity,
   Megaphone,
   Tags,
+  Zap,
+  Settings2,
+  LineChart,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -73,6 +76,13 @@ const navItems = [
     icon: CreditCard,
     path: "/admin/card-rates",
     roles: ["super_admin", "team_lead", "agent"],
+  },
+  {
+    id: "quick-replies",
+    label: "Quick Replies",
+    icon: Zap,
+    path: "/admin/quick-replies",
+    roles: ["super_admin"],
   },
   { id: "orders", label: "Orders", icon: FileText, path: "/admin/orders" },
   { id: "wallets", label: "Platform Wallet", icon: Wallet, path: "/admin/wallets", roles: ["super_admin", "finance"] },
@@ -154,6 +164,20 @@ const navItems = [
     label: "Event Tracking",
     icon: Activity,
     path: "/admin/event-tracking",
+    roles: ["super_admin"],
+  },
+  {
+    id: "trading-analytics",
+    label: "Trading Analytics",
+    icon: LineChart,
+    path: "/admin/analytics/trading",
+    roles: ["super_admin"],
+  },
+  {
+    id: "settings",
+    label: "Settings",
+    icon: Settings2,
+    path: "/admin/settings",
     roles: ["super_admin"],
   },
   {

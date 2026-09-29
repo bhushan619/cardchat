@@ -7,6 +7,7 @@ import { useAdminT } from "@/contexts/AdminLangContext";
 import {
   conversations as rawConversations,
   chatMessages,
+  cardRates,
   orders,
   adminUsers,
   customerWallets,
@@ -48,6 +49,11 @@ import {
   Coins,
   ArrowRightLeft,
   CheckCheck,
+  Zap,
+  Clock,
+  MoreVertical,
+  TimerOff,
+  Timer,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -82,6 +88,38 @@ import {
 } from "@/lib/orderStateMachine";
 import { verifyPin } from "@/lib/securePin";
 import { CustomerTagDef, getActiveCustomerTags, tagPillStyle } from "@/lib/customerTags";
+import {
+  loadTemplates,
+  resolveTemplateVariables,
+  recordTemplateUsage,
+  CATEGORY_LABEL,
+  CATEGORY_COLOR,
+  type QuickReplyTemplate,
+} from "@/lib/quickReplies";
+import {
+  detectRateQuote,
+  isAcceptMessage,
+  lockQuote,
+  getQuote,
+  isQuoteExpired,
+  quoteMinutesRemaining,
+  clearQuote,
+  buildQuoteMessage,
+} from "@/lib/rateQuote";
+import {
+  loadInactivitySettings,
+  loadPausedConversations,
+  setInactivityPaused,
+  recordInactivityEvent,
+} from "@/lib/inactivity";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { CATEGORIES } from "@/lib/quickReplies";
 
 const columns = [
   {
@@ -133,6 +171,79 @@ const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
   super_admin: { label: "Super Admin", icon: Crown },
   team_lead: { label: "Team Lead", icon: Shield },
 };
+
+// Simulated per-conversation inactivity (prototype): deterministic minutes of
+// customer silence + whether the agent sent the last message, derived from id.
+function simulatedInactivity(convoId: string): { silentMin: number; agentLast: boolean } {
+  let h = 0;
+  for (let i = 0; i < convoId.length; i++) h = (h * 31 + convoId.charCodeAt(i)) >>> 0;
+  return { silentMin: 4 + (h % 52), agentLast: h % 2 === 0 };
+}
+
+// AQ-02 — teal quote suggestion card shown below a detected customer message.
+function RateQuoteCard({
+  detected,
+  onSend,
+}: {
+  detected: NonNullable<ReturnType<typeof detectRateQuote>>;
+  onSend: (amount: number, format: string) => void;
+}) {
+  const [amount, setAmount] = useState<string>(detected.amount != null ? String(detected.amount) : "");
+  const [format, setFormat] = useState<string>(detected.cardFormat);
+  const amt = Number(amount) || 0;
+  const total = Math.round(amt * detected.rate);
+  const symbol = detected.currency === "USD" ? "$" : `${detected.currency} `;
+  return (
+    <div className="mt-1 w-72 rounded-xl border border-accent/40 bg-accent/5 p-3 space-y-2 text-left">
+      <div className="flex items-center gap-1.5 text-accent text-[11px] font-semibold">
+        <Coins className="w-3.5 h-3.5" /> Rate Quote detected
+      </div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-semibold">{detected.cardType}</span>
+        <span className="text-muted-foreground">
+          Pts {detected.rate.toLocaleString()} / {symbol.trim()}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1">
+          <Label className="text-[9px] text-muted-foreground">Amount ({symbol.trim()})</Label>
+          <Input
+            value={amount}
+            onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+            className="h-7 text-xs mt-0.5"
+            placeholder="e.g. 100"
+          />
+        </div>
+        <div className="w-24">
+          <Label className="text-[9px] text-muted-foreground">Format</Label>
+          <Select value={format} onValueChange={setFormat}>
+            <SelectTrigger className="h-7 text-xs mt-0.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Physical">Physical</SelectItem>
+              <SelectItem value="E-Code">E-Code</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="flex items-center justify-between text-xs border-t border-accent/20 pt-2">
+        <span className="text-muted-foreground">Total Release</span>
+        <span className="font-bold inline-flex items-center gap-1">
+          <Coins className="w-3 h-3 text-accent" /> Pts {total.toLocaleString()}
+        </span>
+      </div>
+      <Button
+        size="sm"
+        className="w-full h-7 text-xs"
+        disabled={amt <= 0}
+        onClick={() => onSend(amt, format)}
+      >
+        Send Quote to Customer
+      </Button>
+    </div>
+  );
+}
 
 type ChatMessage = {
   id: number;
@@ -212,6 +323,39 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [escalateSelected, setEscalateSelected] = useState<number[]>([]);
   const t = useAdminT();
+
+  // Quick reply templates (QR-02)
+  const [templates, setTemplates] = useState<QuickReplyTemplate[]>(() => loadTemplates());
+  useEffect(() => {
+    const refresh = () => setTemplates(loadTemplates());
+    window.addEventListener("quick-replies-updated", refresh);
+    return () => window.removeEventListener("quick-replies-updated", refresh);
+  }, []);
+  const [qrPanelOpen, setQrPanelOpen] = useState(false);
+  const [pendingTemplateId, setPendingTemplateId] = useState<string | null>(null);
+  const [slashIndex, setSlashIndex] = useState(0);
+
+  // Rate quote → order pre-fill (AQ-03)
+  const [quotePrefill, setQuotePrefill] = useState<{
+    cardType: string;
+    amount: number;
+    rate: number;
+    cardFormat: string;
+  } | null>(null);
+
+  // Inactivity follow-up (IF-01/02)
+  const [inactSettings, setInactSettings] = useState(() => loadInactivitySettings());
+  const [pausedConvos, setPausedConvos] = useState<string[]>(() => loadPausedConversations());
+  useEffect(() => {
+    const rs = () => setInactSettings(loadInactivitySettings());
+    const rp = () => setPausedConvos(loadPausedConversations());
+    window.addEventListener("inactivity-settings-updated", rs);
+    window.addEventListener("inactivity-paused-updated", rp);
+    return () => {
+      window.removeEventListener("inactivity-settings-updated", rs);
+      window.removeEventListener("inactivity-paused-updated", rp);
+    };
+  }, []);
 
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
@@ -879,6 +1023,96 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
   const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
 
+  // ---- Quick reply helpers (QR-02) ----
+  const agentDisplayName =
+    role === "super_admin"
+      ? "Admin One"
+      : role === "team_lead"
+        ? "Sarah Lead"
+        : role === "finance"
+          ? "Femi Finance"
+          : "Mike Agent";
+
+  const slashQuery =
+    message.startsWith("/") && !message.includes("\n") ? message.slice(1).toLowerCase() : null;
+  const slashMatches =
+    slashQuery != null
+      ? templates
+          .filter(
+            (tp) =>
+              tp.name.toLowerCase().includes(slashQuery) ||
+              (tp.shortcut ?? "").toLowerCase().includes(slashQuery) ||
+              CATEGORY_LABEL[tp.category].toLowerCase().includes(slashQuery),
+          )
+          .slice(0, 6)
+      : [];
+
+  const templateCtx = () => {
+    const activeOrder = allOrders.find((o) => o.id === (selectedOrderId ?? currentOrderId));
+    const rate = activeOrder ? cardRates.find((r) => r.cardType === activeOrder.cardType)?.sellRate : undefined;
+    const amount = activeOrder ? Number(activeOrder.amount) || undefined : undefined;
+    return {
+      alias: panelConvo?.alias,
+      agentName: agentDisplayName,
+      cardType: activeOrder?.cardType,
+      rate: rate != null ? `Pts ${rate.toLocaleString()}` : undefined,
+      amount: amount != null ? `$${amount}` : undefined,
+      totalRelease:
+        rate != null && amount != null ? `Pts ${Math.round(rate * amount).toLocaleString()}` : undefined,
+      bankName: undefined,
+    };
+  };
+
+  const insertTemplate = (tp: QuickReplyTemplate) => {
+    setMessage(resolveTemplateVariables(tp.message, templateCtx()));
+    setPendingTemplateId(tp.id);
+    setSlashIndex(0);
+  };
+
+  const sendCurrentMessage = () => {
+    if (!message.trim()) return;
+    const newMsg: ChatMessage = {
+      id: Date.now(),
+      sender: "agent",
+      senderName: "You",
+      text: message.trim(),
+      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    };
+    setLocalMessages((prev) => [...prev, newMsg]);
+    if (pendingTemplateId) {
+      recordTemplateUsage(pendingTemplateId, agentDisplayName);
+      setPendingTemplateId(null);
+    }
+    setMessage("");
+  };
+
+  // ---- Inactivity helpers (IF-02) ----
+  const getSilentMinutes = (convoId: string): number | null => {
+    if (!inactSettings.enabled) return null;
+    if (pausedConvos.includes(convoId)) return null;
+    const sim = simulatedInactivity(convoId);
+    if (!sim.agentLast) return null; // indicator only when the agent sent the last message
+    if (sim.silentMin < inactSettings.warningThresholdMin) return null;
+    return sim.silentMin;
+  };
+
+  const selectedSilentMin = selectedId ? getSilentMinutes(selectedId) : null;
+  const reminderDue =
+    selectedSilentMin != null &&
+    inactSettings.reminderThresholdMin > 0 &&
+    selectedSilentMin >= inactSettings.reminderThresholdMin &&
+    inactSettings.maxRemindersPerConversation > 0;
+
+  // Log the auto-reminder once per conversation (IF-03) so stats stay consistent.
+  useEffect(() => {
+    if (!reminderDue || !selectedId) return;
+    const guardKey = `cc.autoReminderSent.${selectedId}`;
+    if (sessionStorage.getItem(guardKey)) return;
+    sessionStorage.setItem(guardKey, "1");
+    recordInactivityEvent({ type: "reminder_sent", conversationId: selectedId, at: new Date().toISOString() });
+  }, [reminderDue, selectedId]);
+
+
   // Orders eligible for transfer for the currently selected customer.
   // In group threads there is no 1:1 selectedConvo — fall back to the customer
   // picked via the alias selector (txConvo) so wallet credits still resolve.
@@ -1408,6 +1642,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {getSilentMinutes(c.id) != null && (
+                          <p className="text-[9px] text-warning mt-0.5 flex items-center gap-1 font-medium">
+                            <Clock className="w-2.5 h-2.5" /> {getSilentMinutes(c.id)} min silent
+                          </p>
+                        )}
                         {c.channel === "whatsapp" &&
                           (role === "super_admin" || role === "team_lead") &&
                           (() => {
@@ -1499,6 +1738,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </span>
                         )}
                         <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
+                        {selectedSilentMin != null && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warning/15 text-warning font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
+                            <Clock className="w-2.5 h-2.5" /> Customer inactive — {selectedSilentMin} min
+                          </span>
+                        )}
                         {isGroupChat && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
                             <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
@@ -1720,6 +1964,40 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </PopoverContent>
                       </Popover>
                     )}
+
+                    {/* Conversation actions (IF-01 per-conversation override) */}
+                    {inactSettings.enabled && (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button
+                            className="w-7 h-7 rounded-full hover:bg-muted flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+                            title="Conversation actions"
+                          >
+                            <MoreVertical className="w-4 h-4" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                          <DropdownMenuItem
+                            onSelect={() => {
+                              if (!selectedId) return;
+                              const next = !pausedConvos.includes(selectedId);
+                              setInactivityPaused(selectedId, next);
+                              toast.success(next ? "Inactivity timer paused for this chat" : "Inactivity timer resumed");
+                            }}
+                          >
+                            {pausedConvos.includes(selectedId ?? "") ? (
+                              <>
+                                <Timer className="w-3.5 h-3.5 mr-2" /> Resume inactivity timer
+                              </>
+                            ) : (
+                              <>
+                                <TimerOff className="w-3.5 h-3.5 mr-2" /> Pause inactivity timer
+                              </>
+                            )}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    )}
                   </div>
                 </header>
 
@@ -1874,32 +2152,176 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </div>
                           );
                         })()}
+                        {/* AQ-01/02: rate quote suggestion card (both channels) */}
+                        {(() => {
+                          if (msg.image || msg.sender !== "customer") return null;
+                          const det = detectRateQuote(msg.text);
+                          if (!det) return null;
+                          return (
+                            <div className="flex justify-start">
+                              <RateQuoteCard
+                                detected={det}
+                                onSend={(amt, fmt) => {
+                                  const q = {
+                                    cardType: det.cardType,
+                                    amount: amt,
+                                    cardFormat: fmt,
+                                    rate: det.rate,
+                                    currency: det.currency,
+                                  };
+                                  const newMsg: ChatMessage = {
+                                    id: Date.now(),
+                                    sender: "agent",
+                                    senderName: "You",
+                                    text: buildQuoteMessage(q),
+                                    time: new Date().toLocaleTimeString([], {
+                                      hour: "2-digit",
+                                      minute: "2-digit",
+                                    }),
+                                  };
+                                  setLocalMessages((prev) => [...prev, newMsg]);
+                                  if (selectedId) lockQuote(selectedId, q);
+                                  toast.success("Quote sent — rate locked for 15 minutes");
+                                }}
+                              />
+                            </div>
+                          );
+                        })()}
+                        {/* AQ-03: customer accepted the quote → pre-fill Sales Order */}
+                        {(() => {
+                          if (msg.image || msg.sender !== "customer" || !selectedId) return null;
+                          if (!isAcceptMessage(msg.text)) return null;
+                          const q = getQuote(selectedId);
+                          if (!q) return null;
+                          const expired = isQuoteExpired(q);
+                          return (
+                            <div className="flex justify-start">
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  if (expired) {
+                                    const cur = cardRates.find((r) => r.cardType === q.cardType);
+                                    setQuotePrefill({
+                                      cardType: q.cardType,
+                                      amount: q.amount,
+                                      rate: cur?.sellRate ?? q.rate,
+                                      cardFormat: q.cardFormat,
+                                    });
+                                    toast.warning("Quote expired — current rate applied");
+                                  } else {
+                                    setQuotePrefill({
+                                      cardType: q.cardType,
+                                      amount: q.amount,
+                                      rate: q.rate,
+                                      cardFormat: q.cardFormat,
+                                    });
+                                    toast.success(`Quote accepted — locked rate Pts ${q.rate.toLocaleString()}`);
+                                  }
+                                  clearQuote(selectedId);
+                                  setRightTab("sales");
+                                }}
+                                className="mt-1 inline-flex items-center gap-2 rounded-full border border-success/40 bg-success/5 hover:bg-success/10 text-success px-3 py-1 text-[11px] font-medium transition-colors"
+                              >
+                                <CheckCircle2 className="w-3 h-3" />
+                                <span>
+                                  Quote accepted → Pre-fill Sales Order
+                                  {expired
+                                    ? " (expired — current rate)"
+                                    : ` (${quoteMinutesRemaining(q)} min lock left)`}
+                                </span>
+                              </button>
+                            </div>
+                          );
+                        })()}
                       </Fragment>
                     );
                   })}
+                  {/* IF-03: simulated auto-reminder bubble (agent-visible label) */}
+                  {reminderDue && (
+                    <div className="flex justify-end">
+                      <div className="space-y-1 max-w-[75%]">
+                        <div className="chat-bubble-self">
+                          <p className="text-[9px] font-semibold mb-0.5 text-primary">You</p>
+                          <p>{inactSettings.reminderMessage}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1">
+                            {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                          </p>
+                        </div>
+                        <p className="text-[9px] text-warning text-right font-medium flex items-center justify-end gap-1">
+                          <Clock className="w-2.5 h-2.5" /> Auto-reminder · sent after {inactSettings.reminderThresholdMin} min of silence
+                        </p>
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* Chat input */}
                 <div className="border-t bg-card shrink-0">
                   <div className="flex flex-col gap-2 px-4 py-3">
+                    {/* QR-02 Method B — slash command dropdown */}
+                    {slashMatches.length > 0 && (
+                      <div className="rounded-lg border bg-popover shadow-lg overflow-hidden">
+                        <p className="px-3 py-1.5 text-[10px] text-muted-foreground font-medium uppercase tracking-wider border-b">
+                          Quick Replies — /{slashQuery}
+                        </p>
+                        {slashMatches.map((tp, i) => (
+                          <button
+                            key={tp.id}
+                            type="button"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              insertTemplate(tp);
+                            }}
+                            onMouseEnter={() => setSlashIndex(i)}
+                            className={`w-full flex items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
+                              i === slashIndex ? "bg-accent/10" : "hover:bg-muted"
+                            }`}
+                          >
+                            <Zap className="w-3 h-3 text-accent shrink-0" />
+                            <span className="font-medium shrink-0">{tp.name}</span>
+                            {tp.shortcut && (
+                              <span className="text-[9px] font-mono text-muted-foreground shrink-0">/{tp.shortcut}</span>
+                            )}
+                            <span className="text-muted-foreground truncate ml-auto max-w-[45%]">{tp.message}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     <textarea
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type a message..."
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        setSlashIndex(0);
+                      }}
+                      placeholder="Type a message... (/ for quick replies)"
                       className="w-full rounded-md border-0 bg-muted px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                       style={{ height: "7rem" }}
                       onKeyDown={(e) => {
+                        if (slashMatches.length > 0) {
+                          if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            setSlashIndex((i) => (i + 1) % slashMatches.length);
+                            return;
+                          }
+                          if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            setSlashIndex((i) => (i - 1 + slashMatches.length) % slashMatches.length);
+                            return;
+                          }
+                          if (e.key === "Escape") {
+                            e.preventDefault();
+                            setMessage("");
+                            return;
+                          }
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            insertTemplate(slashMatches[slashIndex] ?? slashMatches[0]);
+                            return;
+                          }
+                        }
                         if (e.key === "Enter" && !e.shiftKey && message.trim()) {
                           e.preventDefault();
-                          const newMsg: ChatMessage = {
-                            id: Date.now(),
-                            sender: "agent",
-                            senderName: "You",
-                            text: message.trim(),
-                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                          };
-                          setLocalMessages((prev) => [...prev, newMsg]);
-                          setMessage("");
+                          sendCurrentMessage();
                         }
                       }}
                     />
@@ -1960,24 +2382,25 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </div>
                           </PopoverContent>
                         </Popover>
+                        {/* QR-02 Method A — quick reply sidebar panel */}
+                        <button
+                          type="button"
+                          onClick={() => setQrPanelOpen((v) => !v)}
+                          className={`w-8 h-8 rounded-full flex items-center justify-center transition-colors ${
+                            qrPanelOpen
+                              ? "bg-accent/15 text-accent"
+                              : "hover:bg-muted text-muted-foreground hover:text-foreground"
+                          }`}
+                          title="Quick replies"
+                        >
+                          <Zap className="w-4 h-4" />
+                        </button>
                       </div>
                       <div className="flex items-center gap-2">
                         {renderComposerActions()}
                         <button
                           className="w-8 h-8 rounded-full bg-accent flex items-center justify-center shrink-0"
-                          onClick={() => {
-                            if (message.trim()) {
-                              const newMsg: ChatMessage = {
-                                id: Date.now(),
-                                sender: "agent",
-                                senderName: "You",
-                                text: message.trim(),
-                                time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                              };
-                              setLocalMessages((prev) => [...prev, newMsg]);
-                              setMessage("");
-                            }
-                          }}
+                          onClick={sendCurrentMessage}
                         >
                           <Send className="w-4 h-4 text-accent-foreground" />
                         </button>
@@ -1996,6 +2419,73 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </div>
             )}
           </div>
+
+          {/* QR-02: Quick reply sidebar panel */}
+          {qrPanelOpen && selectedId && !selectedGroup && (
+            <div className="w-72 border-l bg-card flex-col h-full shrink-0 hidden xl:flex">
+              <div className="h-12 border-b flex items-center justify-between px-4 shrink-0">
+                <p className="text-xs font-semibold flex items-center gap-1.5">
+                  <Zap className="w-3.5 h-3.5 text-accent" /> Quick Replies
+                </p>
+                <button
+                  onClick={() => setQrPanelOpen(false)}
+                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  title="Close panel"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto">
+                <Accordion type="multiple" defaultValue={[...CATEGORIES]} className="px-2">
+                  {CATEGORIES.map((cat) => {
+                    const items = templates.filter((tp) => tp.category === cat);
+                    if (items.length === 0) return null;
+                    return (
+                      <AccordionItem key={cat} value={cat} className="border-b">
+                        <AccordionTrigger className="py-2.5 text-xs font-medium hover:no-underline">
+                          <span className="flex items-center gap-2">
+                            <span
+                              className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${CATEGORY_COLOR[cat]}`}
+                            >
+                              {items.length}
+                            </span>
+                            {CATEGORY_LABEL[cat]}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent className="pb-2 space-y-1">
+                          {items.map((tp) => (
+                            <button
+                              key={tp.id}
+                              type="button"
+                              onClick={() => {
+                                insertTemplate(tp);
+                                toast.success("Template inserted — edit before sending");
+                              }}
+                              className="w-full text-left rounded-lg border bg-muted/40 hover:bg-muted p-2 transition-colors"
+                            >
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-[11px] font-medium truncate">{tp.name}</span>
+                                {tp.shortcut && (
+                                  <span className="text-[9px] font-mono text-muted-foreground shrink-0">
+                                    /{tp.shortcut}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-muted-foreground line-clamp-2 mt-0.5">{tp.message}</p>
+                            </button>
+                          ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    );
+                  })}
+                </Accordion>
+              </div>
+              <div className="p-3 border-t text-[10px] text-muted-foreground shrink-0">
+                Tip: type <span className="font-mono font-semibold text-foreground">/</span> in the message box to
+                search templates.
+              </div>
+            </div>
+          )}
 
           {/* Right panel: Tabbed Orders & Sales Order */}
           <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
@@ -2273,6 +2763,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     onClose={() => setRightTab("orders")}
                     onComplete={handleOrderComplete}
                     customerAlias={selectedGroup ? groupCustomerAlias ?? undefined : selectedConvo?.alias}
+                    quotePrefill={quotePrefill ?? undefined}
+                    onQuotePrefillApplied={() => setQuotePrefill(null)}
                     embedded
                     groupSelector={
                       selectedGroup ? (

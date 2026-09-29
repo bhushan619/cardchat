@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   X,
   Plus,
@@ -105,6 +105,9 @@ interface CardlightPanelProps {
   onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
   /** Optional customer selector rendered at the top of the form once logged in (group chats). */
   groupSelector?: React.ReactNode;
+  /** AQ-03: pre-fill from an accepted rate quote (rate locked at quoted value). */
+  quotePrefill?: { cardType: string; amount: number; rate: number; cardFormat: string };
+  onQuotePrefillApplied?: () => void;
 }
 
 const makeCard = (): CardEntry => ({
@@ -166,6 +169,8 @@ export default function CardlightPanel({
   embedded,
   onBuyerSelected,
   groupSelector,
+  quotePrefill,
+  onQuotePrefillApplied,
 }: CardlightPanelProps) {
   // Login state - persisted in sessionStorage
   const [isLoggedIn, setIsLoggedIn] = useState(() => sessionStorage.getItem("cardlight_logged_in") === "true");
@@ -186,6 +191,26 @@ export default function CardlightPanel({
   const [cards, setCards] = useState<CardEntry[]>([makeCard()]);
   const [cardTypeOpen, setCardTypeOpen] = useState(false);
   const [hoveredBrand, setHoveredBrand] = useState<string | null>(null);
+  const [quoteLocked, setQuoteLocked] = useState(false);
+
+  // AQ-03: apply an accepted rate quote — card type, amount, and the locked
+  // quoted rate (not the current rate).
+  useEffect(() => {
+    if (!quotePrefill) return;
+    setCardType(quotePrefill.cardType);
+    setCardRate(String(quotePrefill.rate));
+    setCards((prev) => {
+      const first = {
+        ...prev[0],
+        cardAmount: String(quotePrefill.amount),
+        cardRate: String(quotePrefill.rate),
+      };
+      return [first, ...prev.slice(1)];
+    });
+    setQuoteLocked(true);
+    onQuotePrefillApplied?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [quotePrefill]);
 
   // Order list - persisted in sessionStorage
   const [orderList, setOrderList] = useState<OrderEntry[]>(() => {
@@ -564,11 +589,21 @@ export default function CardlightPanel({
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-[11px] font-medium text-muted-foreground">Points price</label>
+                  <label className="text-[11px] font-medium text-muted-foreground flex items-center gap-1.5">
+                    Points price
+                    {quoteLocked && (
+                      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-success/15 text-success font-semibold leading-none">
+                        Locked from quote
+                      </span>
+                    )}
+                  </label>
                   <Input
                     placeholder="Enter rate..."
                     value={cardRate}
-                    onChange={(e) => setCardRate(e.target.value.replace(/[^0-9.]/g, ""))}
+                    onChange={(e) => {
+                      setCardRate(e.target.value.replace(/[^0-9.]/g, ""));
+                      setQuoteLocked(false);
+                    }}
                     className="h-8 text-xs"
                   />
                 </div>
