@@ -7,6 +7,7 @@ import { useAdminT } from "@/contexts/AdminLangContext";
 import {
   conversations as rawConversations,
   chatMessages,
+  cardRates,
   orders,
   adminUsers,
   customerWallets,
@@ -2255,24 +2256,70 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 {/* Chat input */}
                 <div className="border-t bg-card shrink-0">
                   <div className="flex flex-col gap-2 px-4 py-3">
+                    {/* QR-02 Method B — slash command dropdown */}
+                    {slashMatches.length > 0 && (
+                      <div className="rounded-lg border bg-popover shadow-lg overflow-hidden">
+                        <p className="px-3 py-1.5 text-[10px] text-muted-foreground font-medium uppercase tracking-wider border-b">
+                          Quick Replies — /{slashQuery}
+                        </p>
+                        {slashMatches.map((tp, i) => (
+                          <button
+                            key={tp.id}
+                            type="button"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              insertTemplate(tp);
+                            }}
+                            onMouseEnter={() => setSlashIndex(i)}
+                            className={`w-full flex items-center gap-2 px-3 py-2 text-left text-xs transition-colors ${
+                              i === slashIndex ? "bg-accent/10" : "hover:bg-muted"
+                            }`}
+                          >
+                            <Zap className="w-3 h-3 text-accent shrink-0" />
+                            <span className="font-medium shrink-0">{tp.name}</span>
+                            {tp.shortcut && (
+                              <span className="text-[9px] font-mono text-muted-foreground shrink-0">/{tp.shortcut}</span>
+                            )}
+                            <span className="text-muted-foreground truncate ml-auto max-w-[45%]">{tp.message}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
                     <textarea
                       value={message}
-                      onChange={(e) => setMessage(e.target.value)}
-                      placeholder="Type a message..."
+                      onChange={(e) => {
+                        setMessage(e.target.value);
+                        setSlashIndex(0);
+                      }}
+                      placeholder="Type a message... (/ for quick replies)"
                       className="w-full rounded-md border-0 bg-muted px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
                       style={{ height: "7rem" }}
                       onKeyDown={(e) => {
+                        if (slashMatches.length > 0) {
+                          if (e.key === "ArrowDown") {
+                            e.preventDefault();
+                            setSlashIndex((i) => (i + 1) % slashMatches.length);
+                            return;
+                          }
+                          if (e.key === "ArrowUp") {
+                            e.preventDefault();
+                            setSlashIndex((i) => (i - 1 + slashMatches.length) % slashMatches.length);
+                            return;
+                          }
+                          if (e.key === "Escape") {
+                            e.preventDefault();
+                            setMessage("");
+                            return;
+                          }
+                          if (e.key === "Enter" && !e.shiftKey) {
+                            e.preventDefault();
+                            insertTemplate(slashMatches[slashIndex] ?? slashMatches[0]);
+                            return;
+                          }
+                        }
                         if (e.key === "Enter" && !e.shiftKey && message.trim()) {
                           e.preventDefault();
-                          const newMsg: ChatMessage = {
-                            id: Date.now(),
-                            sender: "agent",
-                            senderName: "You",
-                            text: message.trim(),
-                            time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-                          };
-                          setLocalMessages((prev) => [...prev, newMsg]);
-                          setMessage("");
+                          sendCurrentMessage();
                         }
                       }}
                     />
