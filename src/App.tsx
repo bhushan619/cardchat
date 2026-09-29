@@ -59,7 +59,6 @@ import AdminPopups from "./pages/admin/AdminPopups";
 import AdminCustomerTags from "./pages/admin/AdminCustomerTags";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminQuickReplies from "./pages/admin/AdminQuickReplies";
-import AdminSettings from "./pages/admin/AdminSettings";
 import AdminTradingAnalytics from "./pages/admin/AdminTradingAnalytics";
 
 const queryClient = new QueryClient();
@@ -127,7 +126,6 @@ const App = () => (
               <Route path="/admin/customer-tags" element={<AdminRoleProvider><AdminCustomerTags /></AdminRoleProvider>} />
               <Route path="/admin/notifications" element={<AdminRoleProvider><AdminNotifications /></AdminRoleProvider>} />
               <Route path="/admin/quick-replies" element={<AdminRoleProvider><AdminQuickReplies /></AdminRoleProvider>} />
-              <Route path="/admin/settings" element={<AdminRoleProvider><AdminSettings /></AdminRoleProvider>} />
               <Route path="/admin/analytics/trading" element={<AdminRoleProvider><AdminTradingAnalytics /></AdminRoleProvider>} />
 
 

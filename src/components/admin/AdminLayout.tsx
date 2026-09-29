@@ -28,7 +28,6 @@ import {
   Megaphone,
   Tags,
   Zap,
-  Settings2,
   LineChart,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -130,7 +129,7 @@ const navItems = [
     path: "/admin/content-reports",
     roles: ["super_admin"],
   },
-  { id: "api-config", label: "API Config", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
+  { id: "api-config", label: "Settings", icon: Globe, path: "/admin/api-config", roles: ["super_admin"] },
   {
     id: "whatsapp-sessions",
     label: "WhatsApp Sessions",
@@ -171,13 +170,6 @@ const navItems = [
     label: "Trading Analytics",
     icon: LineChart,
     path: "/admin/analytics/trading",
-    roles: ["super_admin"],
-  },
-  {
-    id: "settings",
-    label: "Settings",
-    icon: Settings2,
-    path: "/admin/settings",
     roles: ["super_admin"],
   },
   {
