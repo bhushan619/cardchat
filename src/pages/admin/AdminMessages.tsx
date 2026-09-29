@@ -1639,6 +1639,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {getSilentMinutes(c.id) != null && (
+                          <p className="text-[9px] text-warning mt-0.5 flex items-center gap-1 font-medium">
+                            <Clock className="w-2.5 h-2.5" /> {getSilentMinutes(c.id)} min silent
+                          </p>
+                        )}
                         {c.channel === "whatsapp" &&
                           (role === "super_admin" || role === "team_lead") &&
                           (() => {
@@ -1730,6 +1735,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </span>
                         )}
                         <ChannelBadge channel={selectedConvo.channel} size="xs" showLabel={false} />
+                        {selectedSilentMin != null && (
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warning/15 text-warning font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
+                            <Clock className="w-2.5 h-2.5" /> Customer inactive — {selectedSilentMin} min
+                          </span>
+                        )}
                         {isGroupChat && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-primary/10 text-primary font-medium flex items-center gap-0.5 whitespace-nowrap leading-none">
                             <Users className="w-2.5 h-2.5" /> Group · {groupMembers.length + 2}
