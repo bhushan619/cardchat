@@ -169,6 +169,79 @@ const ROLE_META: Record<string, { label: string; icon: typeof Crown }> = {
   team_lead: { label: "Team Lead", icon: Shield },
 };
 
+// Simulated per-conversation inactivity (prototype): deterministic minutes of
+// customer silence + whether the agent sent the last message, derived from id.
+function simulatedInactivity(convoId: string): { silentMin: number; agentLast: boolean } {
+  let h = 0;
+  for (let i = 0; i < convoId.length; i++) h = (h * 31 + convoId.charCodeAt(i)) >>> 0;
+  return { silentMin: 4 + (h % 52), agentLast: h % 2 === 0 };
+}
+
+// AQ-02 — teal quote suggestion card shown below a detected customer message.
+function RateQuoteCard({
+  detected,
+  onSend,
+}: {
+  detected: NonNullable<ReturnType<typeof detectRateQuote>>;
+  onSend: (amount: number, format: string) => void;
+}) {
+  const [amount, setAmount] = useState<string>(detected.amount != null ? String(detected.amount) : "");
+  const [format, setFormat] = useState<string>(detected.cardFormat);
+  const amt = Number(amount) || 0;
+  const total = Math.round(amt * detected.rate);
+  const symbol = detected.currency === "USD" ? "$" : `${detected.currency} `;
+  return (
+    <div className="mt-1 w-72 rounded-xl border border-accent/40 bg-accent/5 p-3 space-y-2 text-left">
+      <div className="flex items-center gap-1.5 text-accent text-[11px] font-semibold">
+        <Coins className="w-3.5 h-3.5" /> Rate Quote detected
+      </div>
+      <div className="flex items-center justify-between text-xs">
+        <span className="font-semibold">{detected.cardType}</span>
+        <span className="text-muted-foreground">
+          Pts {detected.rate.toLocaleString()} / {symbol.trim()}
+        </span>
+      </div>
+      <div className="flex items-center gap-2">
+        <div className="flex-1">
+          <Label className="text-[9px] text-muted-foreground">Amount ({symbol.trim()})</Label>
+          <Input
+            value={amount}
+            onChange={(e) => setAmount(e.target.value.replace(/[^0-9.]/g, ""))}
+            className="h-7 text-xs mt-0.5"
+            placeholder="e.g. 100"
+          />
+        </div>
+        <div className="w-24">
+          <Label className="text-[9px] text-muted-foreground">Format</Label>
+          <Select value={format} onValueChange={setFormat}>
+            <SelectTrigger className="h-7 text-xs mt-0.5">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="Physical">Physical</SelectItem>
+              <SelectItem value="E-Code">E-Code</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+      <div className="flex items-center justify-between text-xs border-t border-accent/20 pt-2">
+        <span className="text-muted-foreground">Total Release</span>
+        <span className="font-bold inline-flex items-center gap-1">
+          <Coins className="w-3 h-3 text-accent" /> Pts {total.toLocaleString()}
+        </span>
+      </div>
+      <Button
+        size="sm"
+        className="w-full h-7 text-xs"
+        disabled={amt <= 0}
+        onClick={() => onSend(amt, format)}
+      >
+        Send Quote to Customer
+      </Button>
+    </div>
+  );
+}
+
 type ChatMessage = {
   id: number;
   sender: string;
