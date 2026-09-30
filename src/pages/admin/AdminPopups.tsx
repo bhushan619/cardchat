@@ -106,6 +106,8 @@ export default function AdminPopups() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [endOpen, setEndOpen] = useState(false);
   const [zoom, setZoom] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [goTo, setGoTo] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const csvRef = useRef<HTMLInputElement>(null);
 
