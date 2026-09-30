@@ -131,6 +131,21 @@ export default function AdminPopups() {
     [popups, applied]
   );
 
+  useEffect(() => {
+    setPage(1);
+  }, [applied]);
+
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const pageRows = rows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const jumpToPage = () => {
+    const n = Number(goTo);
+    if (!Number.isFinite(n) || n < 1) return;
+    setPage(Math.min(Math.floor(n), pageCount));
+    setGoTo("");
+  };
+
   const selectedPopup = popups.find((p) => p.id === selected) || null;
 
   const openAdd = () => {
