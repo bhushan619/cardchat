@@ -48,6 +48,20 @@ import {
 
 type Mode = "add" | "edit" | "copy";
 
+const PAGE_SIZE = 10;
+
+function pageNumbers(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const set = new Set<number>([1, 2, current - 1, current, current + 1, total - 1, total]);
+  const nums = [...set].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  nums.forEach((n, i) => {
+    if (i > 0 && n - nums[i - 1] > 1) out.push("…");
+    out.push(n);
+  });
+  return out;
+}
+
 const emptyForm = (): Popup => ({
   id: "",
   code: "",
