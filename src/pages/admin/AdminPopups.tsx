@@ -23,7 +23,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Lock, Plus, Pencil, Copy, Square, Upload, Search, RotateCcw } from "lucide-react";
+import { Lock, Plus, Pencil, Copy, Square, Upload, Search, RotateCcw, FileUp, Download } from "lucide-react";
 import {
   ACTION_LABEL,
   FREQUENCY_LABEL,
@@ -92,6 +92,7 @@ export default function AdminPopups() {
   const [endOpen, setEndOpen] = useState(false);
   const [zoom, setZoom] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const csvRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setPopups(loadPopups());
@@ -170,6 +171,49 @@ export default function AdminPopups() {
     reader.onload = () => setForm((f) => ({ ...f, image: String(reader.result) }));
     reader.readAsDataURL(file);
   };
+
+  const downloadCsvTemplate = () => {
+    const csv = "alias\nA1B2C3\nM4V9QZ\nK9M2BL\n";
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "popup_recipients_template.csv";
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const onCsv = (file?: File | null) => {
+    if (!file) return;
+    if (!/\.csv$/i.test(file.name) && file.type !== "text/csv") {
+      toast.error("Only .csv files are allowed");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      const lines = String(reader.result || "")
+        .split(/\r?\n/)
+        .map((l) => l.trim())
+        .filter(Boolean);
+      // Drop a header row if present (first cell literally "alias")
+      if (lines.length && /^alias\b/i.test(lines[0])) lines.shift();
+      const aliases = lines
+        .map((l) => l.split(",")[0].trim().toUpperCase())
+        .filter((a) => /^[A-Z0-9]{3,12}$/.test(a));
+      if (!aliases.length) {
+        toast.error("No valid aliases found in the CSV");
+        return;
+      }
+      setForm((f) => {
+        const merged = Array.from(new Set([...f.recipients, ...aliases]));
+        return { ...f, recipients: merged };
+      });
+      toast.success(`Imported ${aliases.length} alias(es) from CSV`);
+    };
+    reader.readAsText(file);
+    if (csvRef.current) csvRef.current.value = "";
+  };
+
 
   const validate = (f: Popup) => {
     const e: Record<string, string> = {};
@@ -651,8 +695,34 @@ export default function AdminPopups() {
                         })
                       }
                     />
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="outline"
+                        onClick={() => csvRef.current?.click()}
+                      >
+                        <FileUp className="w-4 h-4 mr-1.5" /> Upload CSV
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        onClick={downloadCsvTemplate}
+                      >
+                        <Download className="w-4 h-4 mr-1.5" /> CSV Template
+                      </Button>
+                      <input
+                        ref={csvRef}
+                        type="file"
+                        accept=".csv,text/csv"
+                        className="hidden"
+                        onChange={(e) => onCsv(e.target.files?.[0])}
+                      />
+                    </div>
                     <p className="text-xs text-muted-foreground">
-                      {form.recipients.length} recipient(s)
+                      {form.recipients.length} recipient(s) · CSV: one alias per row under an
+                      "alias" header
                     </p>
                   </>
                 )}
