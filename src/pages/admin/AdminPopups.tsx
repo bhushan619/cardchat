@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Button } from "@/components/ui/button";
@@ -47,6 +48,20 @@ import {
 
 type Mode = "add" | "edit" | "copy";
 
+const PAGE_SIZE = 10;
+
+function pageNumbers(current: number, total: number): (number | "…")[] {
+  if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+  const set = new Set<number>([1, 2, current - 1, current, current + 1, total - 1, total]);
+  const nums = [...set].filter((n) => n >= 1 && n <= total).sort((a, b) => a - b);
+  const out: (number | "…")[] = [];
+  nums.forEach((n, i) => {
+    if (i > 0 && n - nums[i - 1] > 1) out.push("…");
+    out.push(n);
+  });
+  return out;
+}
+
 const emptyForm = (): Popup => ({
   id: "",
   code: "",
@@ -91,6 +106,8 @@ export default function AdminPopups() {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [endOpen, setEndOpen] = useState(false);
   const [zoom, setZoom] = useState<string | null>(null);
+  const [page, setPage] = useState(1);
+  const [goTo, setGoTo] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
   const csvRef = useRef<HTMLInputElement>(null);
 
@@ -113,6 +130,21 @@ export default function AdminPopups() {
         .sort((a, b) => a.order - b.order),
     [popups, applied]
   );
+
+  useEffect(() => {
+    setPage(1);
+  }, [applied]);
+
+  const pageCount = Math.max(1, Math.ceil(rows.length / PAGE_SIZE));
+  const safePage = Math.min(page, pageCount);
+  const pageRows = rows.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
+
+  const jumpToPage = () => {
+    const n = Number(goTo);
+    if (!Number.isFinite(n) || n < 1) return;
+    setPage(Math.min(Math.floor(n), pageCount));
+    setGoTo("");
+  };
 
   const selectedPopup = popups.find((p) => p.id === selected) || null;
 
@@ -367,7 +399,7 @@ export default function AdminPopups() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((p) => {
+              {pageRows.map((p) => {
                 const st = popupStatus(p);
                 return (
                   <tr
@@ -438,6 +470,63 @@ export default function AdminPopups() {
               )}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          <div className="flex flex-wrap items-center gap-2 border-t px-4 py-3 text-sm text-muted-foreground">
+            <span>Total {rows.length} Items</span>
+            <div className="flex items-center gap-1 ml-auto">
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-8 w-8"
+                disabled={safePage <= 1}
+                onClick={() => setPage(safePage - 1)}
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {pageNumbers(safePage, pageCount).map((p, i) =>
+                p === "…" ? (
+                  <span key={`e${i}`} className="px-1">
+                    …
+                  </span>
+                ) : (
+                  <Button
+                    key={p}
+                    size="icon"
+                    variant={p === safePage ? "default" : "outline"}
+                    className="h-8 w-8"
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                )
+              )}
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-8 w-8"
+                disabled={safePage >= pageCount}
+                onClick={() => setPage(safePage + 1)}
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+            <span className="ml-2">{PAGE_SIZE} / page</span>
+            <span className="flex items-center gap-1.5">
+              Go to
+              <Input
+                value={goTo}
+                onChange={(e) => setGoTo(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={(e) => e.key === "Enter" && jumpToPage()}
+                className="h-8 w-16 text-center"
+              />
+              <Button size="sm" variant="outline" className="h-8" onClick={jumpToPage}>
+                Page
+              </Button>
+            </span>
+          </div>
         </div>
       </div>
 
