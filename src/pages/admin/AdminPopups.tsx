@@ -399,7 +399,7 @@ export default function AdminPopups() {
               </tr>
             </thead>
             <tbody>
-              {rows.map((p) => {
+              {pageRows.map((p) => {
                 const st = popupStatus(p);
                 return (
                   <tr
@@ -470,6 +470,63 @@ export default function AdminPopups() {
               )}
             </tbody>
           </table>
+
+          {/* Pagination */}
+          <div className="flex flex-wrap items-center gap-2 border-t px-4 py-3 text-sm text-muted-foreground">
+            <span>Total {rows.length} Items</span>
+            <div className="flex items-center gap-1 ml-auto">
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-8 w-8"
+                disabled={safePage <= 1}
+                onClick={() => setPage(safePage - 1)}
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              {pageNumbers(safePage, pageCount).map((p, i) =>
+                p === "…" ? (
+                  <span key={`e${i}`} className="px-1">
+                    …
+                  </span>
+                ) : (
+                  <Button
+                    key={p}
+                    size="icon"
+                    variant={p === safePage ? "default" : "outline"}
+                    className="h-8 w-8"
+                    onClick={() => setPage(p)}
+                  >
+                    {p}
+                  </Button>
+                )
+              )}
+              <Button
+                size="icon"
+                variant="outline"
+                className="h-8 w-8"
+                disabled={safePage >= pageCount}
+                onClick={() => setPage(safePage + 1)}
+                aria-label="Next page"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+            <span className="ml-2">{PAGE_SIZE} / page</span>
+            <span className="flex items-center gap-1.5">
+              Go to
+              <Input
+                value={goTo}
+                onChange={(e) => setGoTo(e.target.value.replace(/\D/g, ""))}
+                onKeyDown={(e) => e.key === "Enter" && jumpToPage()}
+                className="h-8 w-16 text-center"
+              />
+              <Button size="sm" variant="outline" className="h-8" onClick={jumpToPage}>
+                Page
+              </Button>
+            </span>
+          </div>
         </div>
       </div>
 
