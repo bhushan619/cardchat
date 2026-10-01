@@ -204,15 +204,67 @@ export function isValidSemver(v: string) {
 
 // ---- Timezones ----
 
-export const UTC_OFFSETS: string[] = (() => {
-  const list: string[] = [];
-  for (let h = -12; h <= 14; h++) {
-    list.push(h === 0 ? "UTC±0" : `UTC${h > 0 ? "+" : "−"}${Math.abs(h)}`);
-  }
-  // Common half-hour offsets
-  const half = ["UTC−9:30", "UTC−3:30", "UTC+3:30", "UTC+4:30", "UTC+5:30", "UTC+5:45", "UTC+6:30", "UTC+8:45", "UTC+9:30", "UTC+10:30", "UTC+12:45"];
-  return [...list, ...half].sort((a, b) => offsetMinutes(a) - offsetMinutes(b));
-})();
+export interface UtcTimezone {
+  offset: string; // stored value, e.g. "UTC+4"
+  name: string; // common timezone name
+  city: string; // representative city
+}
+
+const RAW_TIMEZONES: Array<[string, string, string]> = [
+  ["UTC−12", "International Date Line West", "Baker Island"],
+  ["UTC−11", "Samoa Standard Time", "Pago Pago"],
+  ["UTC−10", "Hawaii Standard Time", "Honolulu"],
+  ["UTC−9:30", "Marquesas Time", "Taiohae"],
+  ["UTC−9", "Alaska Standard Time", "Anchorage"],
+  ["UTC−8", "Pacific Standard Time", "Los Angeles"],
+  ["UTC−7", "Mountain Standard Time", "Denver"],
+  ["UTC−6", "Central Standard Time", "Mexico City"],
+  ["UTC−5", "Eastern Standard Time", "New York"],
+  ["UTC−4:30", "Venezuela Time", "Caracas"],
+  ["UTC−4", "Atlantic Standard Time", "Halifax"],
+  ["UTC−3:30", "Newfoundland Time", "St. John's"],
+  ["UTC−3", "Brasilia Time", "São Paulo"],
+  ["UTC−2", "South Georgia Time", "King Edward Point"],
+  ["UTC−1", "Azores Time", "Ponta Delgada"],
+  ["UTC±0", "Greenwich Mean Time", "London"],
+  ["UTC+1", "Central European Time", "Berlin"],
+  ["UTC+2", "Eastern European Time", "Cairo"],
+  ["UTC+3", "Moscow Time", "Moscow"],
+  ["UTC+3:30", "Iran Standard Time", "Tehran"],
+  ["UTC+4", "Gulf Standard Time", "Dubai"],
+  ["UTC+4:30", "Afghanistan Time", "Kabul"],
+  ["UTC+5", "Pakistan Standard Time", "Karachi"],
+  ["UTC+5:30", "India Standard Time", "Colombo"],
+  ["UTC+5:45", "Nepal Time", "Kathmandu"],
+  ["UTC+6", "Bangladesh Standard Time", "Dhaka"],
+  ["UTC+6:30", "Myanmar Time", "Yangon"],
+  ["UTC+7", "Indochina Time", "Bangkok"],
+  ["UTC+8", "China Standard Time", "Beijing"],
+  ["UTC+8:45", "Central Western Australia Time", "Eucla"],
+  ["UTC+9", "Japan Standard Time", "Tokyo"],
+  ["UTC+9:30", "Central Australia Time", "Adelaide"],
+  ["UTC+10", "Eastern Australia Time", "Sydney"],
+  ["UTC+10:30", "Lord Howe Time", "Lord Howe Island"],
+  ["UTC+11", "Solomon Islands Time", "Honiara"],
+  ["UTC+12", "New Zealand Standard Time", "Auckland"],
+  ["UTC+12:45", "Chatham Islands Time", "Chatham Islands"],
+  ["UTC+13", "Tonga Time", "Nuku'alofa"],
+  ["UTC+14", "Line Islands Time", "Kiritimati"],
+];
+
+export const UTC_TIMEZONES: UtcTimezone[] = RAW_TIMEZONES.map(
+  ([offset, name, city]) => ({ offset, name, city })
+).sort((a, b) => offsetMinutes(a.offset) - offsetMinutes(b.offset));
+
+export function tzName(offset?: string): string {
+  const tz = UTC_TIMEZONES.find((t) => t.offset === (offset || "UTC+4"));
+  return tz ? tz.name : "";
+}
+
+export function tzCity(offset?: string): string {
+  const tz = UTC_TIMEZONES.find((t) => t.offset === (offset || "UTC+4"));
+  return tz ? tz.city : "";
+}
 
 export function offsetMinutes(tz: string): number {
   const m = tz.match(/^UTC([+±−])(\d+)(?::(\d+))?$/);
