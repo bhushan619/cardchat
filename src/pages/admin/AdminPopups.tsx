@@ -450,7 +450,7 @@ export default function AdminPopups() {
                     <td>{p.audience === "everyone" ? "All" : p.recipients.length}</td>
                     <td className="text-xs">
                       {p.startDate} → {p.endDate}
-                      <span className="text-muted-foreground"> ({p.timezone || "UTC+4"})</span>
+                      <span className="text-muted-foreground"> ({p.timezone || "UTC+4"}{tzName(p.timezone) ? ` · ${tzName(p.timezone)}` : ""})</span>
                     </td>
                     <td>
                       <span
