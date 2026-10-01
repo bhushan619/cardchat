@@ -124,8 +124,8 @@ export default function CustomerRanking() {
         <Dialog open={rulesOpen} onOpenChange={setRulesOpen}>
 
           <DialogTrigger asChild>
-            <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <Info className="w-3.5 h-3.5" /> <span className="hidden min-[380px]:inline">Rules</span>
+            <button className="flex items-center gap-1 h-7 rounded-full border bg-card px-2.5 text-[10px] font-medium text-muted-foreground hover:bg-accent/10 hover:text-accent hover:border-accent/40 transition-colors">
+              <Info className="w-3 h-3" /> <span className="hidden min-[380px]:inline">Rules</span>
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">
