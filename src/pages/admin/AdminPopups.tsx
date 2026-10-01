@@ -753,9 +753,9 @@ export default function AdminPopups() {
                   <SelectContent className="max-h-72">
                     {UTC_TIMEZONES.map((tz) => (
                       <SelectItem key={tz.offset} value={tz.offset}>
-                        <span className="flex items-baseline gap-2">
+                        <span className="flex items-baseline gap-2 whitespace-nowrap">
                           <span className="font-medium">{tz.offset}</span>
-                          <span className="text-muted-foreground text-xs">
+                          <span className="text-foreground/70 text-xs">
                             {tz.name} · {tz.city}
                           </span>
                         </span>
