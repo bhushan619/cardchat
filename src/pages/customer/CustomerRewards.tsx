@@ -221,20 +221,34 @@ export default function CustomerRewards() {
       {/* How it works info modal */}
       {showInfo && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowInfo(false)}>
-          <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl p-5 space-y-3 animate-slide-up" onClick={e => e.stopPropagation()}>
-            <div className="flex items-center justify-between">
-              <h3 className="font-heading font-semibold">How Rewards Work</h3>
-              <button onClick={() => setShowInfo(false)} className="text-muted-foreground hover:text-foreground">
+          <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl flex flex-col max-h-[80dvh] animate-slide-up" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b shrink-0">
+              <h3 className="font-heading font-semibold text-base">How Rewards Work</h3>
+              <button onClick={() => setShowInfo(false)} className="w-8 h-8 -mr-1 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
                 <X className="w-5 h-5" />
               </button>
             </div>
-            <div className="space-y-2 text-sm text-muted-foreground">
-              <p><span className="font-semibold text-foreground">Ranking Rewards</span> — Earn rewards based on your trading volume in bi-weekly periods (1st–15th and 16th–end of month). Rankings are generated after all orders in the period are settled, and rewards are distributed by the admin team.</p>
-              <p><span className="font-semibold text-foreground">Referral Rewards</span> — Share your referral code with friends. Earn an automatic bonus when they sign up and complete their first trade.</p>
-              <p><span className="font-semibold text-foreground">Invite Code</span> — Enter a friend's code within 7 days of registration. After that, it can't be changed.</p>
-              <p><span className="font-semibold text-foreground">Invite Limit</span> — {bonusSettings.maxReferralsPerUser > 0 ? `You can earn referral bonuses for up to ${bonusSettings.maxReferralsPerUser} invited friends.` : "There's no limit on how many friends you can invite."}</p>
+            <div className="overflow-y-auto px-5 py-4 space-y-2.5 text-sm">
+              {[
+                { icon: Trophy, color: "text-accent bg-accent/10", title: "Ranking Rewards", desc: "Earn rewards based on your trading volume in bi-weekly periods (1st–15th and 16th–end of month)." },
+                { icon: Users, color: "text-warning bg-warning/10", title: "Referral Rewards", desc: "Share your referral code with friends and earn an automatic bonus when they complete their first trade." },
+                { icon: Gift, color: "text-accent bg-accent/10", title: "Invite Code", desc: "Enter a friend's code within 7 days of registration. After that, it can't be changed." },
+                { icon: CheckCircle, color: "text-success bg-success/10", title: "Invite Limit", desc: bonusSettings.maxReferralsPerUser > 0 ? `You can earn referral bonuses for up to ${bonusSettings.maxReferralsPerUser} invited friends.` : "There's no limit on how many friends you can invite." },
+              ].map((s) => (
+                <div key={s.title} className="flex gap-3">
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 ${s.color}`}>
+                    <s.icon className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-foreground text-[13px] leading-tight">{s.title}</p>
+                    <p className="text-xs text-muted-foreground leading-snug mt-0.5">{s.desc}</p>
+                  </div>
+                </div>
+              ))}
             </div>
-            <Button variant="outline" className="w-full" onClick={() => setShowInfo(false)}>Got it</Button>
+            <div className="p-4 pt-2 border-t shrink-0 pb-[max(1rem,env(safe-area-inset-bottom))]">
+              <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowInfo(false)}>Got it</Button>
+            </div>
           </div>
         </div>
       )}
