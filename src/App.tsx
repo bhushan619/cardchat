@@ -17,6 +17,7 @@ import NotFound from "./pages/NotFound";
 // Customer App
 import CustomerAuth from "./pages/customer/CustomerAuth";
 import CustomerHome from "./pages/customer/CustomerHome";
+import CustomerHomeV2 from "./pages/customer/CustomerHomeV2";
 import CustomerChat from "./pages/customer/CustomerChat";
 import CustomerContacts from "./pages/customer/CustomerContacts";
 import CustomerMe from "./pages/customer/CustomerMe";
@@ -81,6 +82,7 @@ const App = () => (
               {/* Customer App */}
               <Route path="/customer/auth" element={<CustomerAuth />} />
               <Route path="/customer" element={<CustomerHome />} />
+              <Route path="/customer/home-v2" element={<CustomerHomeV2 />} />
               <Route path="/customer/chat" element={<CustomerChat />} />
               <Route path="/customer/contacts" element={<CustomerContacts />} />
               <Route path="/customer/me" element={<CustomerMe />} />
