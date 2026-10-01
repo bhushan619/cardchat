@@ -36,7 +36,7 @@ export default function OnboardingSlides({ onComplete }: { onComplete: () => voi
   const isLast = current === slides.length - 1;
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       {/* Skip */}
       <div className="flex justify-end p-4">
         <button onClick={onComplete} className="text-xs text-muted-foreground hover:text-foreground active:scale-95 transition-all">

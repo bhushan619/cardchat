@@ -82,30 +82,30 @@ export default function CustomerRanking() {
 
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0 sticky top-0 z-20">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
           <button
             onClick={() => navigate("/customer")}
-            className="text-sm text-accent flex items-center gap-1"
+            className="text-sm text-accent flex items-center gap-1 shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div>
-            <h2 className="font-heading font-bold text-base leading-tight">
+          <div className="min-w-0">
+            <h2 className="font-heading font-bold text-sm leading-tight truncate">
               Trading Volume Ranking
             </h2>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground whitespace-nowrap">
               {currentPeriod.label}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
         <Select value={scenario} onValueChange={(v) => setScenario(v as Scenario)}>
           <SelectTrigger
-            className={`h-7 w-[132px] text-[10px] rounded-full px-3 ${
+            className={`h-7 w-[112px] text-[10px] rounded-full px-2.5 ${
               scenario !== "live" ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
             }`}
           >
@@ -125,7 +125,7 @@ export default function CustomerRanking() {
 
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <Info className="w-3.5 h-3.5" /> Rules
+              <Info className="w-3.5 h-3.5" /> <span className="hidden min-[380px]:inline">Rules</span>
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">

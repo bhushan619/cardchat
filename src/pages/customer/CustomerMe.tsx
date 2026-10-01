@@ -694,7 +694,7 @@ export default function CustomerMe() {
   // ── Bank Accounts ──
   if (activeSection === "bank") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => { setActiveSection(null); setShowAddBank(false); setNewBankName(""); setNewAccountNumber(""); }} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">Add Bank Accounts</h2>
@@ -770,7 +770,7 @@ export default function CustomerMe() {
     const currentIdx = selectedOrder.status === "failed" ? -1 : STATUS_ORDER.indexOf(selectedOrder.status);
 
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => setSelectedOrder(null)} className="text-sm text-accent flex items-center gap-1">
             <ArrowLeft className="w-4 h-4" /> Back
@@ -901,7 +901,7 @@ export default function CustomerMe() {
     const filtered = statusFilter === "all" ? customerOrders : customerOrders.filter(o => o.status === statusFilter);
 
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">My Orders</h2>
@@ -957,7 +957,7 @@ export default function CustomerMe() {
   // ── Dashboard ──
   if (activeSection === "dashboard") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">Data Dashboard</h2>
@@ -1002,7 +1002,7 @@ export default function CustomerMe() {
   // ── Security Settings ──
   if (activeSection === "security") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">Security Settings</h2>
@@ -1245,7 +1245,7 @@ export default function CustomerMe() {
   // ── App Settings ──
   if (activeSection === "settings") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
         <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
           <button onClick={() => setActiveSection(null)} className="text-sm text-accent">← Back</button>
           <h2 className="font-heading font-semibold">App Settings</h2>

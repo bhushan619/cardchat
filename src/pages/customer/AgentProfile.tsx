@@ -12,7 +12,7 @@ export default function AgentProfile() {
 
   if (!agent) {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x items-center justify-center gap-4">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x items-center justify-center gap-4">
         <p className="text-muted-foreground">Agent not found</p>
         <Button variant="ghost" onClick={() => navigate(-1)}>Go back</Button>
       </div>
@@ -22,7 +22,7 @@ export default function AgentProfile() {
   const isOnline = agent.status === "online";
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       {/* Header with gradient backdrop */}
       <div className="relative bg-gradient-to-b from-primary/20 to-background pt-12 pb-8 px-4">

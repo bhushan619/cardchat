@@ -71,7 +71,7 @@ export default function CustomerRewards() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
         <button onClick={() => navigate("/customer")} className="text-sm text-accent flex items-center gap-1">
@@ -85,17 +85,17 @@ export default function CustomerRewards() {
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {/* Total Rewards Card */}
-        <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-5 text-accent-foreground text-center">
-          <p className="text-xs opacity-80">Total Rewards Earned</p>
-          <p className="text-3xl font-heading font-bold mt-1">₦{rewardsBalance.toLocaleString()}</p>
-          <div className="flex justify-center gap-6 mt-3">
+        <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-4 text-accent-foreground text-center">
+          <p className="text-[11px] opacity-80">Total Rewards Earned</p>
+          <p className="text-2xl font-heading font-bold mt-0.5">₦{rewardsBalance.toLocaleString()}</p>
+          <div className="flex justify-center gap-6 mt-2.5">
             <div>
-              <p className="text-lg font-heading font-bold">₦{totalRanking.toLocaleString()}</p>
+              <p className="text-base font-heading font-bold">₦{totalRanking.toLocaleString()}</p>
               <p className="text-[10px] opacity-70">Ranking</p>
             </div>
             <div className="w-px bg-accent-foreground/20" />
             <div>
-              <p className="text-lg font-heading font-bold">₦{totalReferral.toLocaleString()}</p>
+              <p className="text-base font-heading font-bold">₦{totalReferral.toLocaleString()}</p>
               <p className="text-[10px] opacity-70">Referral</p>
             </div>
           </div>
