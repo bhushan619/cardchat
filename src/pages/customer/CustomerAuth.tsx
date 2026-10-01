@@ -30,7 +30,7 @@ export default function CustomerAuth() {
 
   if (step === "welcome") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x text-center">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x text-center">
         {/* Centered content — banner above logo with breathing room */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="rounded-2xl bg-accent/10 border border-accent/30 px-5 py-4 animate-[fade-in_0.4s_ease-out]">
@@ -59,7 +59,7 @@ export default function CustomerAuth() {
 
   if (step === "method") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x p-8">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x p-8">
         <h2 className="font-heading text-2xl font-bold mb-2">Sign In</h2>
         <p className="text-muted-foreground text-sm mb-8">Choose your preferred method</p>
         <div className="space-y-3">
@@ -88,7 +88,7 @@ export default function CustomerAuth() {
 
   if (step === "otp") {
     return (
-      <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x p-8">
+      <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x p-8">
         <h2 className="font-heading text-2xl font-bold mb-2">Enter OTP</h2>
         <p className="text-muted-foreground text-sm mb-8">We sent a 4-digit code to your email</p>
         <div className="flex gap-3 justify-center mb-8">
@@ -114,7 +114,7 @@ export default function CustomerAuth() {
   }
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x items-center justify-center p-8 text-center">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x items-center justify-center p-8 text-center">
       <div className="w-20 h-20 rounded-2xl bg-accent/10 flex items-center justify-center mb-6">
         <Shield className="w-10 h-10 text-accent" />
       </div>

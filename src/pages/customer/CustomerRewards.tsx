@@ -71,7 +71,7 @@ export default function CustomerRewards() {
   };
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">
         <button onClick={() => navigate("/customer")} className="text-sm text-accent flex items-center gap-1">

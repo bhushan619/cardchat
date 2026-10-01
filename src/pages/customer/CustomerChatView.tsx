@@ -158,7 +158,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
   const currentIdx = STATUS_ORDER.indexOf(orderStatus);
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center gap-3 px-4 py-3 border-b bg-card shrink-0">

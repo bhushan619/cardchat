@@ -82,7 +82,7 @@ export default function CustomerRanking() {
 
 
   return (
-    <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x">
+    <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x">
       <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0 sticky top-0 z-20">
