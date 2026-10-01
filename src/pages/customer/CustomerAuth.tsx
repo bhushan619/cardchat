@@ -33,13 +33,12 @@ export default function CustomerAuth() {
       <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x text-center">
         {/* Centered content — banner above logo with breathing room */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
-          <div className="rounded-2xl bg-accent/10 border border-accent/30 px-5 py-4 animate-[fade-in_0.4s_ease-out]">
-            <p className="font-heading text-lg font-bold text-accent">Trade & Earn 1% Rewards 🎁</p>
-            <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
-              Register, trade, and earn 1% rewards.
-              <br />
-              The more you trade, the more you earn.
+          <div className="w-full rounded-xl bg-destructive text-destructive-foreground px-5 py-4 text-left animate-[fade-in_0.4s_ease-out]">
+            <p className="font-heading text-base font-bold">Register and Start Trading:</p>
+            <p className="text-sm mt-1.5 leading-relaxed">
+              Earn 1% on Every Trade, with a Maximum Reward of ₦100,000 🎁
             </p>
+            <p className="text-sm mt-1.5 leading-relaxed">The More You Trade, The More You Earn</p>
           </div>
           <div className="mt-12">
             <Logo className="w-20 h-20 mb-6" />
