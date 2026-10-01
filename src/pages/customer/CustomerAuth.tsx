@@ -34,7 +34,7 @@ export default function CustomerAuth() {
         {/* Centered content — banner above logo with breathing room */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="w-full rounded-xl bg-accent/10 px-5 py-4 text-center animate-[fade-in_0.4s_ease-out]">
-            <p className="font-heading text-base font-bold text-accent">Register and Start Trading:</p>
+            <p className="font-heading text-base font-bold text-accent">Register and Start Trading</p>
             <p className="text-sm mt-1.5 leading-relaxed text-foreground">
               Earn 1% on Every Trade, with a Maximum Reward of ₦100,000 🎁
             </p>
