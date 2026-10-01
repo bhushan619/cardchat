@@ -220,8 +220,8 @@ export default function CustomerRewards() {
 
       {/* How it works info modal */}
       {showInfo && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50" onClick={() => setShowInfo(false)}>
-          <div className="bg-card w-full max-w-md rounded-t-2xl sm:rounded-2xl flex flex-col max-h-[80dvh] animate-slide-up" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" onClick={() => setShowInfo(false)}>
+          <div className="bg-card w-full max-w-md rounded-2xl flex flex-col max-h-[80dvh] animate-zoom-in" onClick={e => e.stopPropagation()}>
             <div className="flex items-center justify-between px-5 pt-4 pb-3 border-b shrink-0">
               <h3 className="font-heading font-semibold text-base">How Rewards Work</h3>
               <button onClick={() => setShowInfo(false)} className="w-8 h-8 -mr-1 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted transition-colors">
