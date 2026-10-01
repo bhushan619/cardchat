@@ -44,6 +44,7 @@ import {
   nextCode,
   popupStatus,
   savePopups,
+  UTC_OFFSETS,
 } from "@/lib/popups";
 
 type Mode = "add" | "edit" | "copy";
@@ -77,6 +78,7 @@ const emptyForm = (): Popup => ({
   image: "",
   startDate: "",
   endDate: "",
+  timezone: "UTC+4",
   frequency: "once",
   audience: "everyone",
   recipients: [],
@@ -447,6 +449,7 @@ export default function AdminPopups() {
                     <td>{p.audience === "everyone" ? "All" : p.recipients.length}</td>
                     <td className="text-xs">
                       {p.startDate} → {p.endDate}
+                      <span className="text-muted-foreground"> ({p.timezone || "UTC+4"})</span>
                     </td>
                     <td>
                       <span
@@ -716,9 +719,9 @@ export default function AdminPopups() {
               {errors.image && <p className="text-xs text-destructive">{errors.image}</p>}
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-3 gap-4">
               <div className="space-y-1.5">
-                <Label>Validity Start * (UTC+4)</Label>
+                <Label>Validity Start *</Label>
                 <Input
                   type="date"
                   value={form.startDate}
@@ -736,6 +739,24 @@ export default function AdminPopups() {
                   onChange={(e) => setForm({ ...form, endDate: e.target.value })}
                 />
                 {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+              </div>
+              <div className="space-y-1.5">
+                <Label>Timezone *</Label>
+                <Select
+                  value={form.timezone}
+                  onValueChange={(v) => setForm({ ...form, timezone: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-64">
+                    {UTC_OFFSETS.map((tz) => (
+                      <SelectItem key={tz} value={tz}>
+                        {tz}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
 

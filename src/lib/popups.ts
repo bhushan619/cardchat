@@ -39,6 +39,7 @@ export interface Popup {
   image: string; // data URL or remote URL
   startDate: string; // YYYY-MM-DD
   endDate: string;
+  timezone: string; // e.g. "UTC+4"
   frequency: PopupFrequency;
   audience: PopupAudience;
   recipients: string[]; // aliases when audience === "specified"
@@ -67,6 +68,7 @@ const SEED: Popup[] = [
       "https://images.unsplash.com/photo-1607083206968-13611e3d76db?w=800&q=60",
     startDate: "2026-09-01",
     endDate: "2026-09-30",
+    timezone: "UTC+4",
     frequency: "daily",
     audience: "everyone",
     recipients: [],
@@ -90,6 +92,7 @@ const SEED: Popup[] = [
       "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=800&q=60",
     startDate: "2026-10-01",
     endDate: "2026-10-15",
+    timezone: "UTC+4",
     frequency: "once",
     audience: "specified",
     recipients: ["A1B2C3", "M4V9QZ"],
@@ -113,6 +116,7 @@ const SEED: Popup[] = [
       "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=800&q=60",
     startDate: "2026-08-01",
     endDate: "2026-08-31",
+    timezone: "UTC+4",
     frequency: "every_launch",
     audience: "everyone",
     recipients: [],
@@ -196,6 +200,25 @@ export function compareVersion(a: string, b: string): number {
 
 export function isValidSemver(v: string) {
   return /^\d+\.\d+\.\d+$/.test(v.trim());
+}
+
+// ---- Timezones ----
+
+export const UTC_OFFSETS: string[] = (() => {
+  const list: string[] = [];
+  for (let h = -12; h <= 14; h++) {
+    list.push(h === 0 ? "UTC±0" : `UTC${h > 0 ? "+" : "−"}${Math.abs(h)}`);
+  }
+  // Common half-hour offsets
+  const half = ["UTC−9:30", "UTC−3:30", "UTC+3:30", "UTC+4:30", "UTC+5:30", "UTC+5:45", "UTC+6:30", "UTC+8:45", "UTC+9:30", "UTC+10:30", "UTC+12:45"];
+  return [...list, ...half].sort((a, b) => offsetMinutes(a) - offsetMinutes(b));
+})();
+
+export function offsetMinutes(tz: string): number {
+  const m = tz.match(/^UTC([+±−])(\d+)(?::(\d+))?$/);
+  if (!m) return 0;
+  const sign = m[1] === "−" ? -1 : 1;
+  return sign * (Number(m[2]) * 60 + Number(m[3] || 0));
 }
 
 // ---- Customer-side frequency tracking ----
