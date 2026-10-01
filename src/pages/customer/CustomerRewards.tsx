@@ -78,9 +78,12 @@ export default function CustomerRewards() {
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <h2 className="font-heading font-semibold flex-1">Rewards</h2>
-        <Button variant="outline" size="sm" className="h-7 px-3 text-xs shrink-0" onClick={() => setShowInfo(true)}>
+        <button
+          onClick={() => setShowInfo(true)}
+          className="shrink-0 flex items-center h-7 rounded-full border bg-card px-2.5 text-[10px] font-medium text-muted-foreground hover:bg-accent/10 hover:text-accent hover:border-accent/40 transition-colors"
+        >
           View Details
-        </Button>
+        </button>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
