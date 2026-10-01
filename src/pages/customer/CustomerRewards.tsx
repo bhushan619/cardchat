@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, Info, X, XCircle } from "lucide-react";
+import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, X, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -78,9 +78,9 @@ export default function CustomerRewards() {
           <ArrowLeft className="w-4 h-4" /> Back
         </button>
         <h2 className="font-heading font-semibold flex-1">Rewards</h2>
-        <button onClick={() => setShowInfo(true)} className="text-muted-foreground hover:text-foreground transition-colors">
-          <Info className="w-4.5 h-4.5" />
-        </button>
+        <Button variant="outline" size="sm" className="h-7 px-3 text-xs shrink-0" onClick={() => setShowInfo(true)}>
+          View Details
+        </Button>
       </header>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
@@ -116,6 +116,43 @@ export default function CustomerRewards() {
             </Button>
           </div>
           <p className="text-[10px] text-muted-foreground mt-2">{inviteLimitLabel}</p>
+        </div>
+
+        {/* How Referrals Work — step by step, always visible */}
+        <div className="bg-card border rounded-xl p-4 space-y-3">
+          <div className="flex items-center gap-2 text-sm font-semibold">
+            <Users className="w-4 h-4 text-accent" />
+            How Referrals Work
+          </div>
+          <div className="space-y-2.5">
+            {[
+              { title: "Share your code", desc: "Send your referral code to friends who trade gift cards." },
+              { title: "Friend joins & trades", desc: "They register with your code and complete their first trade." },
+              { title: "You both earn", desc: "Bonus rewards are credited to both of you automatically." },
+            ].map((s, i) => (
+              <div key={s.title} className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-accent/15 text-accent text-[10px] font-bold flex items-center justify-center shrink-0 mt-0.5">
+                  {i + 1}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-medium">{s.title}</p>
+                  <p className="text-[10px] text-muted-foreground leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="border-t border-border/50 pt-2.5 space-y-1.5">
+            {[
+              "Earn a bonus for every friend who starts trading",
+              "Your friend gets a welcome bonus too",
+              "Rewards are credited automatically — no claiming needed",
+            ].map((b) => (
+              <div key={b} className="flex items-center gap-2">
+                <CheckCircle className="w-3.5 h-3.5 text-success shrink-0" />
+                <p className="text-[11px] text-muted-foreground">{b}</p>
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Enter Invite Code */}

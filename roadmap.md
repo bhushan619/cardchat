@@ -1,9 +1,6 @@
-# Roadmap — Proactive Features PRD
+# Roadmap — Conversion & Engagement Updates
 
-- [x] Quick Reply Templates — lib, /admin/quick-replies page, composer ⚡ panel + slash commands (App Messages + WhatsApp)
-- [x] Auto Rate Quotation — detection, quote card, 15-min rate lock, accept → pre-fill Sales Order wizard
-- [x] Inactivity Follow-Up — /admin/settings card, silent indicators, auto-reminder bubble, pause/resume per conversation
-- [x] Trading Analytics — /admin/analytics/trading with Overview / Peak Hours / Customers / Card Types tabs
-- [x] Routes + sidebar menu entries (super_admin)
-- [x] Browser verification (all screens, no page errors)
-- [x] PRD bumped to v6.5
+- [x] Registration welcome screen — "Trade & Earn 1% Rewards 🎁" banner at top, "Register now and start earning" button, layout shifted slightly downward
+- [x] New ranking-focused homepage at /customer/home-v2 — ranking hero (rank, reward, volume, next-tier progress bar + %, volume needed) swapped above compact wallet; current home untouched
+- [x] Referral section on /customer/rewards — always-visible 3-step "How Referrals Work" + benefits (no amounts), "!" icon replaced with "View Details" button
+- [x] Browser verification of all three screens
