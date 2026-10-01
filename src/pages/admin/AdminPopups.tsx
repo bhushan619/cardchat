@@ -750,10 +750,15 @@ export default function AdminPopups() {
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-64">
-                    {UTC_OFFSETS.map((tz) => (
-                      <SelectItem key={tz} value={tz}>
-                        {tz}
+                  <SelectContent className="max-h-72">
+                    {UTC_TIMEZONES.map((tz) => (
+                      <SelectItem key={tz.offset} value={tz.offset}>
+                        <span className="flex items-baseline gap-2">
+                          <span className="font-medium">{tz.offset}</span>
+                          <span className="text-muted-foreground text-xs">
+                            {tz.name} · {tz.city}
+                          </span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
