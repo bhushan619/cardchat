@@ -101,24 +101,7 @@ export default function CustomerRewards() {
           </div>
         </div>
 
-        {/* Referral Code */}
-        <div className="bg-card border rounded-xl p-4">
-          <div className="flex items-center gap-2 text-sm font-semibold mb-2">
-            <Users className="w-4 h-4 text-accent" />
-            Your Referral Code
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 bg-muted rounded-lg px-4 py-2.5 font-heading font-bold text-lg tracking-widest text-center">
-              {myReferralCode}
-            </div>
-            <Button size="sm" variant="outline" className="shrink-0" onClick={handleCopyReferral}>
-              {copied ? <CheckCircle className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
-            </Button>
-          </div>
-          <p className="text-[10px] text-muted-foreground mt-2">{inviteLimitLabel}</p>
-        </div>
-
-        {/* How Referrals Work — step by step, always visible */}
+        {/* How Referrals Work — step by step, immediately visible at the top of the referral section */}
         <div className="bg-card border rounded-xl p-4 space-y-3">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <Users className="w-4 h-4 text-accent" />
@@ -154,6 +137,25 @@ export default function CustomerRewards() {
             ))}
           </div>
         </div>
+
+        {/* Referral Code */}
+
+        <div className="bg-card border rounded-xl p-4">
+          <div className="flex items-center gap-2 text-sm font-semibold mb-2">
+            <Users className="w-4 h-4 text-accent" />
+            Your Referral Code
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-muted rounded-lg px-4 py-2.5 font-heading font-bold text-lg tracking-widest text-center">
+              {myReferralCode}
+            </div>
+            <Button size="sm" variant="outline" className="shrink-0" onClick={handleCopyReferral}>
+              {copied ? <CheckCircle className="w-4 h-4 text-success" /> : <Copy className="w-4 h-4" />}
+            </Button>
+          </div>
+          <p className="text-[10px] text-muted-foreground mt-2">{inviteLimitLabel}</p>
+        </div>
+
 
         {/* Enter Invite Code */}
         {!submitted && (
