@@ -125,7 +125,7 @@ export default function CustomerRanking() {
 
           <DialogTrigger asChild>
             <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors">
-              <Info className="w-3.5 h-3.5" /> Rules
+              <Info className="w-3.5 h-3.5" /> <span className="hidden min-[380px]:inline">Rules</span>
             </button>
           </DialogTrigger>
           <DialogContent className="max-w-sm">
