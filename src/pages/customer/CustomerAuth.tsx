@@ -49,7 +49,7 @@ export default function CustomerAuth() {
           <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 text-base" onClick={() => setStep("method")}>
             Register now and start earning
           </Button>
-          <Button variant="outline" className="w-full mt-2 bg-transparent border-border hover:bg-muted/60" onClick={() => setStep("method")}>
+          <Button variant="outline" className="w-full mt-2 bg-transparent border-border !text-foreground hover:!bg-accent/10 hover:!text-accent hover:!border-accent/40" onClick={() => setStep("method")}>
             I already have an account
           </Button>
         </div>
