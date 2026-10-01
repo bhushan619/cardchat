@@ -44,7 +44,8 @@ import {
   nextCode,
   popupStatus,
   savePopups,
-  UTC_OFFSETS,
+  UTC_TIMEZONES,
+  tzName,
 } from "@/lib/popups";
 
 type Mode = "add" | "edit" | "copy";
@@ -449,7 +450,7 @@ export default function AdminPopups() {
                     <td>{p.audience === "everyone" ? "All" : p.recipients.length}</td>
                     <td className="text-xs">
                       {p.startDate} → {p.endDate}
-                      <span className="text-muted-foreground"> ({p.timezone || "UTC+4"})</span>
+                      <span className="text-muted-foreground"> ({p.timezone || "UTC+4"}{tzName(p.timezone) ? ` · ${tzName(p.timezone)}` : ""})</span>
                     </td>
                     <td>
                       <span
@@ -749,10 +750,15 @@ export default function AdminPopups() {
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="max-h-64">
-                    {UTC_OFFSETS.map((tz) => (
-                      <SelectItem key={tz} value={tz}>
-                        {tz}
+                  <SelectContent className="max-h-72">
+                    {UTC_TIMEZONES.map((tz) => (
+                      <SelectItem key={tz.offset} value={tz.offset}>
+                        <span className="flex items-baseline gap-2 whitespace-nowrap">
+                          <span className="font-medium">{tz.offset}</span>
+                          <span className="text-foreground/70 text-xs">
+                            {tz.name} · {tz.city}
+                          </span>
+                        </span>
                       </SelectItem>
                     ))}
                   </SelectContent>
