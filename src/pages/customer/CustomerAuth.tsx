@@ -31,8 +31,8 @@ export default function CustomerAuth() {
   if (step === "welcome") {
     return (
       <div className="flex flex-col h-screen max-w-md mx-auto bg-background border-x text-center">
-        {/* Trade & Earn banner — top of page */}
-        <div className="px-6 pt-6">
+        {/* Centered content — banner above logo with breathing room */}
+        <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="rounded-2xl bg-accent/10 border border-accent/30 px-5 py-4 animate-[fade-in_0.4s_ease-out]">
             <p className="font-heading text-lg font-bold text-accent">Trade & Earn 1% Rewards 🎁</p>
             <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
@@ -41,17 +41,15 @@ export default function CustomerAuth() {
               The more you trade, the more you earn.
             </p>
           </div>
-        </div>
-
-        {/* Centered content — shifted slightly downward */}
-        <div className="flex-1 flex flex-col items-center justify-center p-8 pt-16">
-          <Logo className="w-20 h-20 mb-6" />
+          <div className="mt-12">
+            <Logo className="w-20 h-20 mb-6" />
+          </div>
           <h1 className="font-heading text-3xl font-bold mb-2">CardChat</h1>
           <p className="text-muted-foreground mb-8">Buy & sell gift cards securely</p>
           <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-12 text-base" onClick={() => setStep("method")}>
             Register now and start earning
           </Button>
-          <Button variant="ghost" className="w-full mt-2" onClick={() => setStep("method")}>
+          <Button variant="outline" className="w-full mt-2 bg-transparent border-border hover:bg-muted/60" onClick={() => setStep("method")}>
             I already have an account
           </Button>
         </div>

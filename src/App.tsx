@@ -81,7 +81,7 @@ const App = () => (
 
               {/* Customer App */}
               <Route path="/customer/auth" element={<CustomerAuth />} />
-              <Route path="/customer" element={<CustomerHome />} />
+              <Route path="/customer" element={<CustomerHomeV2 />} />
               <Route path="/customer/home-v2" element={<CustomerHomeV2 />} />
               <Route path="/customer/chat" element={<CustomerChat />} />
               <Route path="/customer/contacts" element={<CustomerContacts />} />
