@@ -3,9 +3,6 @@ import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import {
   cardRates,
-  walletBalance,
-  tradingBalance,
-  rewardsBalance,
   expandDenominations,
 } from "@/data/mock";
 import {
@@ -16,8 +13,6 @@ import {
   Star,
   ArrowRight,
   X,
-  Eye,
-  EyeOff,
   Wallet,
   TrendingUp,
   TrendingDown,
@@ -49,7 +44,6 @@ export default function CustomerHomeV2() {
   const [calcCurrency, setCalcCurrency] = useState("");
   const [calcDenom, setCalcDenom] = useState("");
   const [calcFormat, setCalcFormat] = useState<"Physical" | "E-Code">("E-Code");
-  const [balanceVisible, setBalanceVisible] = useState(false);
   const [expandedRemarks, setExpandedRemarks] = useState<Set<number>>(new Set());
   const isVipCustomer = isVip(CURRENT_CUSTOMER_ALIAS);
 
