@@ -44,7 +44,8 @@ import {
   nextCode,
   popupStatus,
   savePopups,
-  UTC_OFFSETS,
+  UTC_TIMEZONES,
+  tzName,
 } from "@/lib/popups";
 
 type Mode = "add" | "edit" | "copy";
