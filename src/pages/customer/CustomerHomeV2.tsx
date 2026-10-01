@@ -89,7 +89,7 @@ export default function CustomerHomeV2() {
   const coreActions = [
     { icon: Gift, label: "Sell Cards", desc: "Best rates", onClick: () => navigate("/customer/contacts") },
     { icon: Star, label: "Rewards", desc: "Earn more", onClick: () => navigate("/customer/rewards") },
-    { icon: Trophy, label: "Ranking", desc: "Leaderboard", onClick: () => navigate("/customer/ranking") },
+    { icon: Wallet, label: "Wallet", desc: "Balance", onClick: () => navigate("/customer/me", { state: { openWallet: true } }) },
     { icon: Calculator, label: "Calculator", desc: "Rate calc", onClick: () => setShowCalculator(true) },
   ];
 
@@ -215,40 +215,6 @@ export default function CustomerHomeV2() {
               </div>
             </>
           )}
-        </div>
-
-        {/* Wallet Section — compact */}
-        <div className="bg-card border border-border/50 rounded-2xl p-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Wallet className="w-4 h-4 text-accent" />
-              <p className="text-xs text-muted-foreground">Wallet Balance</p>
-            </div>
-            <button
-              onClick={() => setBalanceVisible(!balanceVisible)}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              {balanceVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
-            </button>
-          </div>
-          <div className="flex items-center justify-between mt-2">
-            <div>
-              <p className="text-xl font-heading font-bold">
-                {balanceVisible ? `₦${walletBalance.toLocaleString()}` : "₦ ••••••"}
-              </p>
-              {balanceVisible && (
-                <p className="text-[10px] text-muted-foreground mt-0.5 tabular-nums">
-                  {tradingBalance.toLocaleString()} Trading + {rewardsBalance.toLocaleString()} Rewards
-                </p>
-              )}
-            </div>
-            <button
-              onClick={() => navigate("/customer/me", { state: { openWallet: true } })}
-              className="text-[11px] bg-muted hover:bg-muted/70 px-3 py-1.5 rounded-lg font-medium transition-colors shrink-0"
-            >
-              View Details
-            </button>
-          </div>
         </div>
 
         {/* Search Filters + Live Rates */}
