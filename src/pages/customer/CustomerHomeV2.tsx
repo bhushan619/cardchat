@@ -118,93 +118,103 @@ export default function CustomerHomeV2() {
           ))}
         </div>
 
-        {/* Trading Volume Ranking — hero section (most prominent) */}
-        <div className="bg-gradient-to-br from-accent to-accent/80 rounded-2xl p-4 text-accent-foreground">
-          <div className="flex items-center justify-between mb-3">
+        {/* Trading Volume Ranking — compact hero */}
+        <div className="bg-accent rounded-2xl p-4 text-accent-foreground space-y-3.5">
+          {/* Header */}
+          <div className="flex justify-between items-start">
             <div className="flex items-center gap-2">
-              <Trophy className="w-4 h-4 opacity-80" />
-              <p className="text-xs opacity-80">Trading Volume Ranking</p>
+              <div className="bg-accent-foreground/20 p-1.5 rounded-lg">
+                <Trophy className="w-4 h-4" />
+              </div>
+              <span className="font-heading text-[13px] font-semibold tracking-tight">Trading Volume Ranking</span>
             </div>
-            <span className="text-[9px] opacity-70">{period.label}</span>
+            <span className="text-[10px] font-medium bg-accent-foreground/15 px-2 py-0.5 rounded-full whitespace-nowrap">
+              {period.label}
+            </span>
           </div>
 
           {me ? (
             <>
-              <div className="flex items-end justify-between">
+              {/* Stats row */}
+              <div className="flex justify-between items-end">
                 <div>
-                  <p className="text-3xl font-heading font-bold">Rank #{me.rank}</p>
-                  <p className="text-[11px] opacity-80 mt-0.5 tabular-nums">
-                    ₦{myVolume.toLocaleString()} traded this period
-                  </p>
+                  <h2 className="font-heading text-4xl font-bold tracking-tight leading-none">Rank #{me.rank}</h2>
+                  <p className="text-xs opacity-90 mt-1 tabular-nums">₦{myVolume.toLocaleString()} traded</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-lg font-heading font-bold tabular-nums">₦{myReward.toLocaleString()}</p>
-                  <p className="text-[9px] opacity-70">Current reward</p>
+                  <div className="font-heading text-xl font-bold tabular-nums leading-none">₦{myReward.toLocaleString()}</div>
+                  <p className="text-[10px] uppercase tracking-wider font-semibold opacity-70 mt-1">Current reward</p>
                 </div>
               </div>
 
+              {/* Compact progress */}
               {nextTier ? (
-                <div className="mt-4 bg-accent-foreground/10 rounded-xl p-3">
-                  <div className="flex items-center justify-between text-[11px] mb-1.5">
-                    <span className="opacity-80">Progress to next tier</span>
-                    <span className="font-semibold tabular-nums">{progressPercent}%</span>
+                <div className="space-y-2">
+                  <div className="flex justify-between text-[11px] font-medium">
+                    <span className="opacity-90">Progress to next tier</span>
+                    <span className="tabular-nums">{progressPercent}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-accent-foreground/20 overflow-hidden">
+                  <div className="h-2 bg-accent-foreground/25 rounded-full overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-accent-foreground transition-all"
+                      className="h-full bg-accent-foreground rounded-full transition-all"
                       style={{ width: `${progressPercent}%` }}
                     />
                   </div>
-                  <div className="flex items-center justify-between mt-2 text-[11px]">
-                    <span className="opacity-80 tabular-nums">
-                      ₦{myVolume.toLocaleString()} / ₦{nextTier.threshold.toLocaleString()}
+                  <div className="flex justify-between items-center text-[10px] gap-2">
+                    <span className="flex items-center gap-1 opacity-90 min-w-0">
+                      <Flame className="w-3 h-3 shrink-0" />
+                      <span className="truncate">
+                        Trade ₦{remaining.toLocaleString()} more for ₦{nextTier.reward.toLocaleString()} reward
+                      </span>
                     </span>
-                    <span className="font-semibold tabular-nums">₦{nextTier.reward.toLocaleString()} reward</span>
+                    <span className="font-semibold tabular-nums whitespace-nowrap">
+                      ₦{nextTier.threshold.toLocaleString()} goal
+                    </span>
                   </div>
-                  <p className="mt-2 text-[11px] font-medium flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5 shrink-0" />
-                    Trade ₦{remaining.toLocaleString()} more to unlock the ₦{nextTier.reward.toLocaleString()} reward
-                  </p>
                 </div>
               ) : (
-                <p className="mt-4 text-[11px] font-medium bg-accent-foreground/10 rounded-xl p-3">
-                  🏆 You've unlocked the highest reward tier — keep trading to hold your rank!
+                <p className="text-[11px] font-medium bg-accent-foreground/15 rounded-xl p-2.5 flex items-center gap-1.5">
+                  <Trophy className="w-3.5 h-3.5 shrink-0" />
+                  You've unlocked the highest reward tier — keep trading to hold your rank!
                 </p>
               )}
 
-              <div className="flex gap-2 mt-3">
+              {/* Actions — one primary + text link */}
+              <div className="flex items-center gap-3 pt-0.5">
                 <button
                   onClick={() => navigate("/customer/contacts")}
-                  className="flex-1 text-[11px] bg-accent-foreground/20 hover:bg-accent-foreground/30 text-accent-foreground px-3 py-2 rounded-lg font-semibold transition-colors"
+                  className="flex-1 bg-accent-foreground text-accent font-bold py-3 rounded-xl text-sm active:scale-95 transition-transform"
                 >
                   Trade Now
                 </button>
                 <button
                   onClick={() => navigate("/customer/ranking")}
-                  className="flex-1 text-[11px] bg-accent-foreground/20 hover:bg-accent-foreground/30 text-accent-foreground px-3 py-2 rounded-lg font-medium transition-colors"
+                  className="flex-none flex items-center gap-1 text-sm font-semibold px-1 active:scale-95 transition-transform"
                 >
-                  View Leaderboard
+                  Leaderboard
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </>
           ) : (
             <>
-              <p className="text-lg font-heading font-bold">You're not ranked yet</p>
-              <p className="text-[11px] opacity-80 mt-1 leading-relaxed">
+              <p className="font-heading text-xl font-bold">You're not ranked yet</p>
+              <p className="text-xs opacity-90 leading-relaxed -mt-1.5">
                 Make your first trade this period to enter the leaderboard and start earning ranking rewards.
               </p>
-              <div className="flex gap-2 mt-3">
+              <div className="flex items-center gap-3 pt-0.5">
                 <button
                   onClick={() => navigate("/customer/contacts")}
-                  className="flex-1 text-[11px] bg-accent-foreground/20 hover:bg-accent-foreground/30 text-accent-foreground px-3 py-2 rounded-lg font-semibold transition-colors"
+                  className="flex-1 bg-accent-foreground text-accent font-bold py-3 rounded-xl text-sm active:scale-95 transition-transform"
                 >
                   Trade Now
                 </button>
                 <button
                   onClick={() => navigate("/customer/ranking")}
-                  className="flex-1 text-[11px] bg-accent-foreground/20 hover:bg-accent-foreground/30 text-accent-foreground px-3 py-2 rounded-lg font-medium transition-colors"
+                  className="flex-none flex items-center gap-1 text-sm font-semibold px-1 active:scale-95 transition-transform"
                 >
-                  View Leaderboard
+                  Leaderboard
+                  <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
             </>
