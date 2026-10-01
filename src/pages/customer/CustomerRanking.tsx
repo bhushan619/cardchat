@@ -86,26 +86,26 @@ export default function CustomerRanking() {
       <NotificationPermissionBar />
       {/* Header */}
       <header className="flex items-center justify-between px-4 py-3 border-b bg-card shrink-0 sticky top-0 z-20">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 min-w-0">
           <button
             onClick={() => navigate("/customer")}
-            className="text-sm text-accent flex items-center gap-1"
+            className="text-sm text-accent flex items-center gap-1 shrink-0"
           >
             <ArrowLeft className="w-4 h-4" />
           </button>
-          <div>
-            <h2 className="font-heading font-bold text-base leading-tight">
+          <div className="min-w-0">
+            <h2 className="font-heading font-bold text-sm leading-tight truncate">
               Trading Volume Ranking
             </h2>
-            <p className="text-[11px] text-muted-foreground">
+            <p className="text-[10px] text-muted-foreground whitespace-nowrap">
               {currentPeriod.label}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 shrink-0">
         <Select value={scenario} onValueChange={(v) => setScenario(v as Scenario)}>
           <SelectTrigger
-            className={`h-7 w-[132px] text-[10px] rounded-full px-3 ${
+            className={`h-7 w-[112px] text-[10px] rounded-full px-2.5 ${
               scenario !== "live" ? "bg-warning/15 text-warning border-warning/30" : "text-muted-foreground"
             }`}
           >
