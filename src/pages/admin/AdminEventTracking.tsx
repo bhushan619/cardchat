@@ -222,7 +222,11 @@ export default function AdminEventTracking() {
               {PLATFORMS.find((p) => p.id === platform)!.label}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
+              <Clock className="w-3.5 h-3.5" />
+              Data delayed by 30 minutes as per Firebase · Last updated {fmtTime(lastUpdated)} UTC
+            </span>
             <div className="flex rounded-md border overflow-hidden">
               {RANGES.map((r) => (
                 <button
@@ -236,10 +240,6 @@ export default function AdminEventTracking() {
                 </button>
               ))}
             </div>
-            <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground whitespace-nowrap">
-              <Clock className="w-3.5 h-3.5" />
-              Data delayed by 30 minutes as per Firebase · Last updated {fmtTime(lastUpdated)} UTC
-            </span>
             <Button variant="outline" size="sm" onClick={exportCsv}>
               <Download className="w-4 h-4 mr-2" />
               Export CSV
