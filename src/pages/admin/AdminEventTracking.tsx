@@ -299,7 +299,7 @@ export default function AdminEventTracking() {
 
           <div className="rounded-lg border bg-card overflow-hidden">
             <div className="px-4 py-2.5 border-b bg-muted/40">
-              <h2 className="text-sm font-semibold">Onboarding → first order funnel</h2>
+              <h2 className="text-sm font-semibold">Onboarding → first trade (FTR) funnel</h2>
             </div>
             <div className="p-4 space-y-2.5">
               {funnel.map((s) => (
@@ -307,14 +307,20 @@ export default function AdminEventTracking() {
                   <div className="flex items-center justify-between text-xs mb-1">
                     <span className="truncate">{s.label}</span>
                     <span className="text-muted-foreground shrink-0">
-                      {nf(s.users)} · {s.pct.toFixed(0)}%
+                      {nf(s.users)} · {s.pct.toFixed(1)}%
+                      {s.stepPct < 100 && (
+                        <span className="text-success"> · ↓{s.stepPct.toFixed(0)}%</span>
+                      )}
                     </span>
                   </div>
                   <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                    <div className="h-full bg-success rounded-full" style={{ width: `${s.pct}%` }} />
+                    <div className="h-full bg-success rounded-full" style={{ width: `${Math.min(s.pct, 100)}%` }} />
                   </div>
                 </div>
               ))}
+              <p className="text-[10px] text-muted-foreground pt-1">
+                Overall FTR conversion: {((funnel[funnel.length - 1].users / funnel[0].users) * 100).toFixed(1)}% of app opens complete a first trade.
+              </p>
             </div>
           </div>
         </div>
