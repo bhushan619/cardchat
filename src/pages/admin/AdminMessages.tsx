@@ -601,6 +601,39 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return out.sort((a, b) => Number(starred.has(b.data.id)) - Number(starred.has(a.data.id)));
   }, [filteredConversations, filteredGroups, starred]);
 
+  const favoriteListCount = useMemo(
+    () => listItems.filter((item) => starred.has(item.data.id)).length,
+    [listItems, starred],
+  );
+
+  const renderWhatsAppListSection = (index: number, itemId: string) => {
+    if (channelFilter !== "whatsapp") return null;
+    const isFavorite = starred.has(itemId);
+    const previousWasFavorite = index > 0 && starred.has(listItems[index - 1].data.id);
+    const startsFavorites = index === 0 && isFavorite;
+    const startsAllMessages = !isFavorite && (index === 0 || previousWasFavorite);
+
+    if (startsFavorites) {
+      return (
+        <div className="flex h-8 items-center justify-between border-b border-warning/20 bg-warning/10 px-2.5 text-[10px] font-semibold uppercase text-warning">
+          <span className="flex items-center gap-1.5"><Star className="h-3 w-3 fill-current" /> Favorites</span>
+          <span className="tabular-nums">{favoriteListCount}</span>
+        </div>
+      );
+    }
+
+    if (startsAllMessages) {
+      return (
+        <div className="flex h-8 items-center justify-between border-b border-primary/20 bg-primary/10 px-2.5 text-[10px] font-semibold uppercase text-primary">
+          <span className="flex items-center gap-1.5"><MessageCircle className="h-3 w-3" /> All Messages</span>
+          <span className="tabular-nums">{listItems.length - favoriteListCount}</span>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   const tabCounts = useMemo(() => {
     const counts: Record<string, number> = { consulting: 0, trading: 0 };
     conversationsWithTabs.forEach((c) => {
@@ -1514,14 +1547,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </div>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {listItems.map((item) => {
+              {listItems.map((item, index) => {
+                const sectionHeader = renderWhatsAppListSection(index, item.data.id);
                 if (item.kind === "group") {
                   const g = item.data;
                   const gActive = selectedId === g.id;
                   const isGroupStarred = starred.has(g.id);
                   return (
+                    <Fragment key={g.id}>
+                      {sectionHeader}
                     <div
-                      key={g.id}
                       role="button"
                       tabIndex={0}
                       onClick={() => {
@@ -1577,13 +1612,16 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                       </div>
                     </div>
+                    </Fragment>
                   );
                 }
                 const c = item.data;
                 const isActive = selectedId === c.id;
                 const isStarred = starred.has(c.id);
                 return (
-                  <ContextMenu key={c.id}>
+                  <Fragment key={c.id}>
+                    {sectionHeader}
+                  <ContextMenu>
                     <ContextMenuTrigger asChild>
                   <div
                     role="button"
@@ -1686,6 +1724,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </ContextMenuItem>
                     </ContextMenuContent>
                   </ContextMenu>
+                  </Fragment>
                 );
               })}
               {listItems.length === 0 && (
