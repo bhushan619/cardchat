@@ -399,10 +399,6 @@ export default function AdminEventTracking() {
             <option value="trend">Sort: Trend</option>
             <option value="name">Sort: Event name</option>
           </select>
-          <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground ml-auto whitespace-nowrap">
-            <Clock className="w-3.5 h-3.5" />
-            Data delayed by 30 minutes as per Firebase · Last updated {fmtTime(lastUpdated)} UTC
-          </span>
         </div>
 
         {/* Results table */}
