@@ -146,17 +146,24 @@ export default function AdminEventTracking() {
   const topEvents = useMemo(() => [...allEvents].sort((a, b) => b.count - a.count).slice(0, 6), [allEvents]);
 
   const funnel = useMemo(() => {
-    const pick = (name: string) => allEvents.find((e) => e.name === name);
+    // FTR (first trade) funnel — coherent descending mock cohort
     const steps = [
-      { label: "App opened", ev: pick("app_open") || allEvents[0] },
-      { label: "Registration started", ev: pick("auth_register_started") },
-      { label: "Registration completed", ev: pick("auth_register_completed") },
-      { label: "Login success", ev: pick("auth_login_success") },
-      { label: "Order created", ev: pick("order_created") || pick("order_submit_tapped") },
-    ].filter((s) => s.ev) as { label: string; ev: (typeof allEvents)[number] }[];
-    const first = steps[0]?.ev.users || 1;
-    return steps.map((s) => ({ label: s.label, users: s.ev.users, pct: (s.ev.users / first) * 100 }));
-  }, [allEvents]);
+      { label: "App opened", users: 12480 },
+      { label: "Registration started", users: 8934 },
+      { label: "Registration completed", users: 7621 },
+      { label: "Login success", users: 7402 },
+      { label: "Chat started with agent", users: 5118 },
+      { label: "Card details submitted", users: 3865 },
+      { label: "First order created", users: 2947 },
+      { label: "First order completed (FTR)", users: 2412 },
+    ];
+    const first = steps[0].users;
+    return steps.map((s, i) => ({
+      ...s,
+      pct: (s.users / first) * 100,
+      stepPct: i === 0 ? 100 : (s.users / steps[i - 1].users) * 100,
+    }));
+  }, []);
 
   const exportCsv = () => {
     const rows = [
