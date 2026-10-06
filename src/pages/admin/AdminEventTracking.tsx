@@ -10,6 +10,7 @@ import {
   Zap,
   AlertTriangle,
   Smartphone,
+  Clock,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -63,6 +64,22 @@ function nf(n: number) {
   return n.toLocaleString("en-US");
 }
 
+function floorTo30Min(d: Date) {
+  const c = new Date(d);
+  c.setSeconds(0, 0);
+  c.setMinutes(c.getMinutes() - (c.getMinutes() % 30));
+  return c;
+}
+
+function fmtTime(d: Date) {
+  return d.toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone: "UTC",
+  });
+}
+
 export default function AdminEventTracking() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<string>("all");
@@ -70,6 +87,7 @@ export default function AdminEventTracking() {
   const [range, setRange] = useState<RangeId>("30d");
   const [platform, setPlatform] = useState<PlatformId>("all");
   const [sort, setSort] = useState<"volume" | "users" | "trend" | "name">("volume");
+  const [lastUpdated, setLastUpdated] = useState(() => floorTo30Min(new Date()));
 
   const rangeMult = RANGES.find((r) => r.id === range)!.mult;
   const platformShare = PLATFORMS.find((p) => p.id === platform)!.share;
@@ -381,6 +399,10 @@ export default function AdminEventTracking() {
             <option value="trend">Sort: Trend</option>
             <option value="name">Sort: Event name</option>
           </select>
+          <span className="flex items-center gap-1.5 text-[11px] text-muted-foreground ml-auto whitespace-nowrap">
+            <Clock className="w-3.5 h-3.5" />
+            Data delayed by 30 minutes as per Firebase · Last updated {fmtTime(lastUpdated)} UTC
+          </span>
         </div>
 
         {/* Results table */}
