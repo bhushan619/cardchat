@@ -9,7 +9,6 @@ import {
   chatMessages,
   cardRates,
   orders,
-  adminUsers,
   customerWallets,
   walletTransactions,
   whatsappGroups,
@@ -31,7 +30,6 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
-  UserCheck,
   Smile,
   Info,
   CreditCard,
@@ -359,8 +357,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const [showIdentity, setShowIdentity] = useState(false);
   const [showCardNumber, setShowCardNumber] = useState(false);
-  const [reassignOpen, setReassignOpen] = useState(false);
-  const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
   const [transferCompletedOrders] = useState<Set<string>>(() => {
     try {
       const saved = sessionStorage.getItem("cardchat_transfer_completed");
@@ -527,7 +523,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   // Conversation the transfer modal acts on: auto-resolved in 1:1, manually picked in groups.
   const txConvo = selectedGroup ? groupCustomerConvo : selectedConvo;
   const isGroupChat = groupMembers.length > 0;
-  const canReassign = role === "super_admin" || role === "team_lead";
 
   // Dynamic tab assignment based on order status
   const conversationsWithTabs = useMemo(() => {
@@ -811,13 +806,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     if (remaining.length === 0) setTimeout(() => addEscalationNote(t("Escalation ended")), 0);
   };
 
-
-  const handleReassign = () => {
-    if (!reassignTarget) return;
-    addSystemMessage(`Customer reassigned from You to ${reassignTarget.name}`);
-    setReassignTarget(null);
-    setReassignOpen(false);
-  };
 
   const [detailOrderId, setDetailOrderId] = useState<string | null>(null);
   const [copyFeedback, setCopyFeedback] = useState<string | null>(null);
@@ -1843,75 +1831,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       </div>
                     </TooltipProvider>
 
-                    {canReassign && channelFilter !== "whatsapp" && (
-                      <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
-                        <PopoverTrigger asChild>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="h-7 text-xs gap-1 text-warning border-warning/30 hover:bg-warning/10 hover:text-warning"
-                          >
-                            <UserCheck className="w-3.5 h-3.5" /> Reassign
-                          </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-56 p-0" align="end">
-                          <div className="p-3 border-b">
-                            <p className="text-xs font-semibold">Reassign Customer</p>
-                            <p className="text-[10px] text-muted-foreground">Select an agent</p>
-                          </div>
-                          {reassignTarget ? (
-                            <div className="p-3 space-y-3">
-                              <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
-                                <p className="text-xs text-warning-foreground">
-                                  Reassign <strong>{selectedConvo.alias}</strong> to{" "}
-                                  <strong>{reassignTarget.name}</strong>?
-                                </p>
-                                <p className="text-[10px] text-muted-foreground mt-1">
-                                  Full chat history and order context will be transferred.
-                                </p>
-                              </div>
-                              <div className="flex gap-2">
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  className="flex-1 h-7 text-xs"
-                                  onClick={() => setReassignTarget(null)}
-                                >
-                                  Cancel
-                                </Button>
-                                <Button
-                                  size="sm"
-                                  className="flex-1 h-7 text-xs bg-warning text-warning-foreground hover:bg-warning/90"
-                                  onClick={handleReassign}
-                                >
-                                  Confirm
-                                </Button>
-                              </div>
-                            </div>
-                          ) : (
-                            <div className="p-1.5 space-y-0.5">
-                              {adminUsers
-                                .filter((u) => u.role === "agent")
-                                .map((agent) => (
-                                  <button
-                                    key={agent.id}
-                                    onClick={() => setReassignTarget(agent)}
-                                    className="w-full flex items-center gap-2 p-2 rounded-md hover:bg-muted text-left"
-                                  >
-                                    <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                                      {agent.name[0]}
-                                    </div>
-                                    <div>
-                                      <p className="text-xs font-medium">{agent.name}</p>
-                                      <p className="text-[10px] text-muted-foreground">{agent.status}</p>
-                                    </div>
-                                  </button>
-                                ))}
-                            </div>
-                          )}
-                        </PopoverContent>
-                      </Popover>
-                    )}
 
                     {channelFilter !== "whatsapp" && (
                       <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
