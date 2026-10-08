@@ -332,7 +332,7 @@ export default function AdminChatView() {
             </div>
           </header>
 
-          {/* Group members bar with Reassign */}
+          {/* Group members bar */}
           {isGroupChat && (
             <div className="flex items-center gap-1.5 px-5 py-2 border-b bg-muted/30 shrink-0 overflow-x-auto">
               <span className="text-[10px] text-muted-foreground shrink-0">Members:</span>
