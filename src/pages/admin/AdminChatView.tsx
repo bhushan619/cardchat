@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, UserCheck, Type, Smile, FileText as FileTextIcon, Paperclip, ZoomIn, ZoomOut, ScanText, Copy, Loader2, Coins } from "lucide-react";
+import { ArrowLeft, Send, Image, Users, CheckCircle2, Clock, XCircle, Crown, Shield, X, Banknote, Eye, EyeOff, AlertTriangle, Type, Smile, FileText as FileTextIcon, Paperclip, ZoomIn, ZoomOut, ScanText, Copy, Loader2, Coins } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -57,8 +57,6 @@ export default function AdminChatView() {
   const [groupMembers, setGroupMembers] = useState<typeof adminUsers>([]);
   const [escalateOpen, setEscalateOpen] = useState(false);
   const [showIdentity, setShowIdentity] = useState(false);
-  const [reassignOpen, setReassignOpen] = useState(false);
-  const [reassignTarget, setReassignTarget] = useState<(typeof adminUsers)[0] | null>(null);
 
   // Image viewer state
   const [viewerImage, setViewerImage] = useState<string | null>(null);
@@ -79,7 +77,6 @@ export default function AdminChatView() {
   );
 
   const isGroupChat = groupMembers.length > 0;
-  const canReassign = role === "super_admin" || role === "team_lead";
 
   const handleSendText = () => {
     if (!message.trim()) return;
@@ -179,20 +176,6 @@ export default function AdminChatView() {
     setLocalMessages(prev => [...prev, newMsg]);
   };
 
-  const handleReassign = () => {
-    if (!reassignTarget) return;
-    const newMsg: ChatMessage = {
-      id: Date.now(),
-      sender: "system",
-      senderName: "System",
-      text: `Customer reassigned from You to ${reassignTarget.name}`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-      isOrder: true,
-    };
-    setLocalMessages(prev => [...prev, newMsg]);
-    setReassignTarget(null);
-    setReassignOpen(false);
-  };
 
   // Combine mock orders with completed ones for display
   const allOrders = [
@@ -302,53 +285,6 @@ export default function AdminChatView() {
               <Button size="sm" className="text-xs h-7 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => setShowWizard(true)}>
                 Process Order
               </Button>
-              {canReassign && (
-                <Popover open={reassignOpen} onOpenChange={setReassignOpen}>
-                  <PopoverTrigger asChild>
-                    <Button size="sm" variant="outline" className="text-xs h-7 gap-1 border-warning/30 text-warning hover:bg-warning/10 hover:text-warning">
-                      <UserCheck className="w-3.5 h-3.5" /> Reassign
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-56 p-0" align="end">
-                    <div className="p-3 border-b">
-                      <p className="text-xs font-semibold">Reassign Customer</p>
-                      <p className="text-[10px] text-muted-foreground">Select an agent to take over</p>
-                    </div>
-                    {reassignTarget ? (
-                      <div className="p-3 space-y-3">
-                        <div className="bg-warning/10 border border-warning/30 rounded-lg p-3">
-                          <p className="text-xs text-warning-foreground">
-                            Reassign <strong>A7X3KP</strong> to <strong>{reassignTarget.name}</strong>?
-                          </p>
-                          <p className="text-[10px] text-muted-foreground mt-1">Full chat history and order context will be transferred.</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button size="sm" variant="outline" className="flex-1 h-7 text-xs" onClick={() => setReassignTarget(null)}>Cancel</Button>
-                          <Button size="sm" className="flex-1 h-7 text-xs bg-warning text-warning-foreground hover:bg-warning/90" onClick={handleReassign}>Confirm</Button>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="p-1.5 space-y-0.5">
-                        {adminUsers.filter(u => u.role === "agent").map(agent => (
-                          <button
-                            key={agent.id}
-                            onClick={() => setReassignTarget(agent)}
-                            className="w-full flex items-center gap-2 p-2 rounded-md hover:bg-muted text-left"
-                          >
-                            <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-[10px] font-bold text-primary">
-                              {agent.name[0]}
-                            </div>
-                            <div>
-                              <p className="text-xs font-medium">{agent.name}</p>
-                              <p className="text-[10px] text-muted-foreground">{agent.status}</p>
-                            </div>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </PopoverContent>
-                </Popover>
-              )}
               <Popover open={escalateOpen} onOpenChange={setEscalateOpen}>
                 <PopoverTrigger asChild>
                   <button className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground">
@@ -396,7 +332,7 @@ export default function AdminChatView() {
             </div>
           </header>
 
-          {/* Group members bar with Reassign */}
+          {/* Group members bar */}
           {isGroupChat && (
             <div className="flex items-center gap-1.5 px-5 py-2 border-b bg-muted/30 shrink-0 overflow-x-auto">
               <span className="text-[10px] text-muted-foreground shrink-0">Members:</span>
