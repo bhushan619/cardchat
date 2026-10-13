@@ -1,6 +1,6 @@
 # Roadmap — Conversion & Engagement Updates
 
-- [ ] Add shared conversation search and channel-scoped Mark all read; enable App Messages Favorites grouping and verify both screens.
+- [x] Add shared conversation search and channel-scoped Mark all read; enable App Messages Favorites grouping and verify both screens.
 
 - [x] Registration welcome screen — "Trade & Earn 1% Rewards 🎁" banner at top, "Register now and start earning" button, layout shifted slightly downward
 - [x] New ranking-focused homepage at /customer/home-v2 — ranking hero (rank, reward, volume, next-tier progress bar + %, volume needed) swapped above compact wallet; current home untouched
