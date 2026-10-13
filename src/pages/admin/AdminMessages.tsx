@@ -1575,7 +1575,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-accent" onClick={handleMarkAllRead} aria-label={t("Mark all read")}>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:bg-accent hover:text-accent-foreground" onClick={handleMarkAllRead} aria-label={t("Mark all read")}>
                       <CheckCheck className="h-4 w-4" />
                     </Button>
                   </TooltipTrigger>
