@@ -50,6 +50,9 @@ export function useSetAdminLang(): (l: AdminLang) => void {
 // Shared admin translations (escalation / group chat)
 const adminTranslations: Record<AdminLang, Record<string, string>> = {
   en: {
+    "Search conversations": "Search conversations",
+    "Mark all read": "Mark all read",
+    "All conversations marked as read": "All conversations marked as read",
     Escalate: "Escalate",
     "Add to Chat": "Add to Chat",
     "has joined the chat": "has joined the chat",
@@ -59,6 +62,9 @@ const adminTranslations: Record<AdminLang, Record<string, string>> = {
     "No active escalations": "No active escalations",
   },
   zh: {
+    "Search conversations": "搜索会话",
+    "Mark all read": "全部标为已读",
+    "All conversations marked as read": "所有会话已标为已读",
     Escalate: "升级",
     "Add to Chat": "添加到聊天",
     "has joined the chat": "已加入聊天",
