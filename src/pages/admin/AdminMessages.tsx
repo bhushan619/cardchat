@@ -1,4 +1,5 @@
 import { isVip } from "@/lib/vipCustomers";
+import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { usePaymentChannel } from "@/lib/paymentChannel";
@@ -273,7 +274,26 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return () => window.removeEventListener("customer-tags-updated", refresh);
   }, []);
   const orderStatus = useOrderStatus();
-  const [starred, setStarred] = useState<Set<string>>(new Set());
+  const [starred, setStarred] = useState<Set<string>>(() => {
+    try {
+      return new Set(JSON.parse(sessionStorage.getItem("cardchat_conversation_favorites") || "[]"));
+    } catch {
+      return new Set();
+    }
+  });
+  const [readConversations, setReadConversations] = useState<Set<string>>(() => {
+    try {
+      return new Set(JSON.parse(sessionStorage.getItem("cardchat_read_conversations") || "[]"));
+    } catch {
+      return new Set();
+    }
+  });
+  useEffect(() => {
+    sessionStorage.setItem("cardchat_conversation_favorites", JSON.stringify([...starred]));
+  }, [starred]);
+  useEffect(() => {
+    sessionStorage.setItem("cardchat_read_conversations", JSON.stringify([...readConversations]));
+  }, [readConversations]);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [customerNotes, setCustomerNotes] = useState<CustomerNotes>(() => {
@@ -530,9 +550,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       .filter((c) => c.channel === channelFilter)
       .map((c) => ({
         ...c,
+        unread: readConversations.has(c.id) ? 0 : c.unread,
         dynamicTab: orderStatus.getConversationTab(c.id),
       }));
-  }, [orderStatus, channelFilter]);
+  }, [orderStatus, channelFilter, readConversations]);
 
   const [activeTab, setActiveTab] = useState("consulting");
   const [customerSearch, setCustomerSearch] = useState("");
@@ -575,8 +596,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
         g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
       return matchesTab && matchesSearch;
-    });
-  }, [channelFilter, activeTab, customerSearch, orderStatus]);
+    }).map((g) => ({ ...g, unread: readConversations.has(g.id) ? 0 : g.unread }));
+  }, [channelFilter, activeTab, customerSearch, orderStatus, readConversations]);
+
+  const handleMarkAllRead = () => {
+    const scopedConversations = conversationsWithTabs.filter((c) =>
+      channelFilter !== "whatsapp" || role !== "agent" ||
+      pickBusinessNumberFor(c.id).assignedAgent === currentAgentName,
+    );
+    setReadConversations((previous) => markConversationsRead(previous, [
+      ...scopedConversations,
+      ...(channelFilter === "whatsapp" ? whatsappGroups : []),
+    ]));
+    toast.success(t("All conversations marked as read"));
+  };
 
   // Interleave group rows with the 1:1 conversation rows
   const listItems = useMemo(() => {
@@ -601,8 +634,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     [listItems, starred],
   );
 
-  const renderWhatsAppListSection = (index: number, itemId: string) => {
-    if (channelFilter !== "whatsapp") return null;
+  const renderListSection = (index: number, itemId: string) => {
     const isFavorite = starred.has(itemId);
     const previousWasFavorite = index > 0 && starred.has(listItems[index - 1].data.id);
     const startsFavorites = index === 0 && isFavorite;
@@ -642,8 +674,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     conversationsWithTabs.forEach((c) => {
       if (c.unread > 0) counts[c.dynamicTab] += c.unread;
     });
+    if (channelFilter === "whatsapp") {
+      whatsappGroups.forEach((g) => {
+        const tab = orderStatus.getStatus(g.id) ? orderStatus.getConversationTab(g.id) : g.tab;
+        if (!readConversations.has(g.id)) counts[tab] = (counts[tab] || 0) + g.unread;
+      });
+    }
     return counts;
-  }, [conversationsWithTabs]);
+  }, [conversationsWithTabs, channelFilter, orderStatus, readConversations]);
 
   // Points +/- and Transfer buttons — shared by 1:1 and group composers
   const renderComposerActions = () => (
@@ -1523,20 +1561,31 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           {/* Left panel: customer list */}
           <div className="w-[25%] min-w-[240px] max-w-[336px] shrink-0 border-r flex flex-col">
             {/* Search bar */}
-            <div className="px-2 border-b shrink-0 h-12 flex items-center">
-              <div className="relative">
+            <div className="px-2 border-b shrink-0 h-12 flex items-center gap-1.5">
+              <div className="relative flex-1 min-w-0">
                 <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                 <Input
-                  placeholder="Search customers..."
+                  placeholder={t("Search conversations")}
+                  aria-label={t("Search conversations")}
                   className="pl-8 h-8 text-xs"
                   value={customerSearch}
                   onChange={(e) => setCustomerSearch(e.target.value)}
                 />
               </div>
+              <TooltipProvider>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 text-muted-foreground hover:text-accent" onClick={handleMarkAllRead} aria-label={t("Mark all read")}>
+                      <CheckCheck className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t("Mark all read")}</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
             <div className="flex-1 overflow-y-auto">
               {listItems.map((item, index) => {
-                const sectionHeader = renderWhatsAppListSection(index, item.data.id);
+                const sectionHeader = renderListSection(index, item.data.id);
                 if (item.kind === "group") {
                   const g = item.data;
                   const gActive = selectedId === g.id;
