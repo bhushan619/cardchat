@@ -647,11 +647,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       </span>
     ) : null;
 
-  // Fallback right-aligned row for rows that have no agent line to sit beside.
-  const renderInTradeRow = (id: string, placedInline = false) =>
-    !placedInline && orderStatus.getStatus(id) === "in_trade" ? (
-      <div className="flex items-center justify-end mt-0.5">{renderInTradePill(id)}</div>
-    ) : null;
 
   // Points +/- and Transfer buttons — shared by 1:1 and group composers
   const renderComposerActions = () => (
@@ -1572,14 +1567,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </div>
                           </div>
                           <p className="text-[10px] text-muted-foreground truncate">{g.lastMessage}</p>
-                          <div className="flex items-center justify-between gap-2 mt-0.5">
-                            <p className="text-[9px] text-muted-foreground truncate">
-                              {g.participants.length} members
-                            </p>
-                            {renderInTradePill(g.id)}
-                          </div>
+                          <p className="text-[9px] text-muted-foreground truncate mt-0.5">
+                            {g.participants.length} members
+                          </p>
+
                         </div>
-                        <div className="flex items-center gap-1 shrink-0">
+                        <div className="flex flex-col items-end gap-1 shrink-0">
+                          <div className="flex items-center gap-1">
                           {g.unread > 0 && (
                             <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                               {g.unread}
@@ -1594,7 +1588,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           >
                             <Star className={`w-4 h-4 ${isGroupStarred ? "text-warning fill-warning" : ""}`} />
                           </button>
+                          </div>
+                          {renderInTradePill(g.id)}
                         </div>
+
                       </div>
                     </div>
                     </Fragment>
@@ -1675,20 +1672,15 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           (() => {
                             const line = pickBusinessNumberFor(c.id);
                             return (
-                              <div className="flex items-center justify-between gap-2 mt-0.5">
-                                <p className="text-[9px] text-muted-foreground truncate">
-                                  Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
-                                </p>
-                                {renderInTradePill(c.id)}
-                              </div>
+                              <p className="text-[9px] text-muted-foreground truncate mt-0.5">
+                                Agent: <span className="font-medium">{line.assignedAgent || "Unassigned"}</span>
+                              </p>
                             );
                           })()}
-                        {renderInTradeRow(
-                          c.id,
-                          c.channel === "whatsapp" && (role === "super_admin" || role === "team_lead")
-                        )}
+
                       </div>
-                      <div className="flex items-center gap-1 shrink-0">
+                      <div className="flex flex-col items-end gap-1 shrink-0">
+                        <div className="flex items-center gap-1">
                         {c.unread > 0 && (
                           <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                             {c.unread}
@@ -1703,7 +1695,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         >
                           <Star className={`w-4 h-4 ${isStarred ? "text-warning fill-warning" : ""}`} />
                         </button>
+                        </div>
+                        {renderInTradePill(c.id)}
                       </div>
+
                     </div>
                   </div>
                     </ContextMenuTrigger>
