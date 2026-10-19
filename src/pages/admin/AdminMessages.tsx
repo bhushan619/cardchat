@@ -120,22 +120,6 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CATEGORIES } from "@/lib/quickReplies";
 
-const columns = [
-  {
-    id: "consulting",
-    label: "Consulting",
-    color: "text-white",
-    bg: "bg-gradient-to-r from-amber-500 to-orange-400",
-    activeBg: "bg-gradient-to-r from-amber-600 to-orange-500",
-  },
-  {
-    id: "trading",
-    label: "Processing",
-    color: "text-white",
-    bg: "bg-gradient-to-r from-emerald-500 to-teal-400",
-    activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500",
-  },
-];
 
 type EscalationUser = {
   id: number;
@@ -655,27 +639,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return null;
   };
 
-  const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0 };
-    conversationsWithTabs.forEach((c) => {
-      counts[c.dynamicTab] = (counts[c.dynamicTab] || 0) + 1;
-    });
-    return counts;
-  }, [conversationsWithTabs]);
-
-  const tabUnreadCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0 };
-    conversationsWithTabs.forEach((c) => {
-      if (c.unread > 0) counts[c.dynamicTab] += c.unread;
-    });
-    if (channelFilter === "whatsapp") {
-      whatsappGroups.forEach((g) => {
-        const tab = orderStatus.getStatus(g.id) ? orderStatus.getConversationTab(g.id) : g.tab;
-        if (!readConversations.has(g.id)) counts[tab] = (counts[tab] || 0) + g.unread;
-      });
-    }
-    return counts;
-  }, [conversationsWithTabs, channelFilter, orderStatus, readConversations]);
+  // Small pill shown on a conversation row while its order is In Trade.
+  const renderInTradePill = (id: string) =>
+    orderStatus.getStatus(id) === "in_trade" ? (
+      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold leading-none whitespace-nowrap shrink-0">
+        In Trade
+      </span>
+    ) : null;
 
   // Points +/- and Transfer buttons — shared by 1:1 and group composers
   const renderComposerActions = () => (
