@@ -120,22 +120,6 @@ import {
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { CATEGORIES } from "@/lib/quickReplies";
 
-const columns = [
-  {
-    id: "consulting",
-    label: "Consulting",
-    color: "text-white",
-    bg: "bg-gradient-to-r from-amber-500 to-orange-400",
-    activeBg: "bg-gradient-to-r from-amber-600 to-orange-500",
-  },
-  {
-    id: "trading",
-    label: "Processing",
-    color: "text-white",
-    bg: "bg-gradient-to-r from-emerald-500 to-teal-400",
-    activeBg: "bg-gradient-to-r from-emerald-600 to-teal-500",
-  },
-];
 
 type EscalationUser = {
   id: number;
@@ -555,7 +539,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       }));
   }, [orderStatus, channelFilter, readConversations]);
 
-  const [activeTab, setActiveTab] = useState("consulting");
   const [customerSearch, setCustomerSearch] = useState("");
 
   // Reset selection when channel changes
@@ -568,7 +551,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const filteredConversations = useMemo(() => {
     return conversationsWithTabs.filter((c) => {
-      const matchesTab = c.dynamicTab === activeTab;
       const matchesSearch =
         !customerSearch ||
         c.alias.toLowerCase().includes(customerSearch.toLowerCase()) ||
@@ -580,24 +562,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         const line = pickBusinessNumberFor(c.id);
         matchesAgentScope = line.assignedAgent === currentAgentName;
       }
-      return matchesTab && matchesSearch && matchesAgentScope;
+      return matchesSearch && matchesAgentScope;
     });
-  }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
+  }, [conversationsWithTabs, customerSearch, channelFilter, role]);
 
   const filteredGroups = useMemo(() => {
     if (channelFilter !== "whatsapp") return [];
     return whatsappGroups.filter((g) => {
-      // Once an order is raised for a group it follows the order state machine tab
-      const hasOrder = !!orderStatus.getStatus(g.id);
-      const dynamicTab = hasOrder ? orderStatus.getConversationTab(g.id) : g.tab;
-      const matchesTab = dynamicTab === activeTab;
       const matchesSearch =
         !customerSearch ||
         g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
         g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
-      return matchesTab && matchesSearch;
+      return matchesSearch;
     }).map((g) => ({ ...g, unread: readConversations.has(g.id) ? 0 : g.unread }));
-  }, [channelFilter, activeTab, customerSearch, orderStatus, readConversations]);
+  }, [channelFilter, customerSearch, readConversations]);
 
   const handleMarkAllRead = () => {
     const scopedConversations = conversationsWithTabs.filter((c) =>
@@ -661,27 +639,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return null;
   };
 
-  const tabCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0 };
-    conversationsWithTabs.forEach((c) => {
-      counts[c.dynamicTab] = (counts[c.dynamicTab] || 0) + 1;
-    });
-    return counts;
-  }, [conversationsWithTabs]);
-
-  const tabUnreadCounts = useMemo(() => {
-    const counts: Record<string, number> = { consulting: 0, trading: 0 };
-    conversationsWithTabs.forEach((c) => {
-      if (c.unread > 0) counts[c.dynamicTab] += c.unread;
-    });
-    if (channelFilter === "whatsapp") {
-      whatsappGroups.forEach((g) => {
-        const tab = orderStatus.getStatus(g.id) ? orderStatus.getConversationTab(g.id) : g.tab;
-        if (!readConversations.has(g.id)) counts[tab] = (counts[tab] || 0) + g.unread;
-      });
-    }
-    return counts;
-  }, [conversationsWithTabs, channelFilter, orderStatus, readConversations]);
+  // Small pill shown on a conversation row while its order is In Trade.
+  const renderInTradePill = (id: string) =>
+    orderStatus.getStatus(id) === "in_trade" ? (
+      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent/10 text-accent font-semibold leading-none whitespace-nowrap shrink-0">
+        In Trade
+      </span>
+    ) : null;
 
   // Points +/- and Transfer buttons — shared by 1:1 and group composers
   const renderComposerActions = () => (
@@ -1531,32 +1495,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   return (
     <AdminLayout>
       <div className="flex flex-col h-full">
-        {/* Full-width tab headers */}
-        <div className="flex shrink-0">
-          {columns.map((col) => {
-            const isActive = activeTab === col.id;
-            const count = tabCounts[col.id] || 0;
-            const unreadCount = tabUnreadCounts[col.id] || 0;
-            return (
-              <button
-                key={col.id}
-                onClick={() => setActiveTab(col.id)}
-                className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
-                  isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
-                }`}
-              >
-                {col.label} ({count})
-                {unreadCount > 0 && (
-                  <span className="ml-2 inline-flex min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold items-center justify-center animate-pulse">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Below: customer list | chat | orders */}
+      {/* Below: customer list | chat | orders */}
         <div className="flex flex-1 min-h-0">
           {/* Left panel: customer list */}
           <div className="w-[25%] min-w-[240px] max-w-[336px] shrink-0 border-r flex flex-col">
@@ -1632,6 +1571,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
+                          {renderInTradePill(g.id)}
                           {g.unread > 0 && (
                             <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                               {g.unread}
@@ -1734,6 +1674,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           })()}
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
+                        {renderInTradePill(c.id)}
                         {c.unread > 0 && (
                           <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                             {c.unread}
