@@ -555,7 +555,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       }));
   }, [orderStatus, channelFilter, readConversations]);
 
-  const [activeTab, setActiveTab] = useState("consulting");
   const [customerSearch, setCustomerSearch] = useState("");
 
   // Reset selection when channel changes
@@ -1531,32 +1530,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   return (
     <AdminLayout>
       <div className="flex flex-col h-full">
-        {/* Full-width tab headers */}
-        <div className="flex shrink-0">
-          {columns.map((col) => {
-            const isActive = activeTab === col.id;
-            const count = tabCounts[col.id] || 0;
-            const unreadCount = tabUnreadCounts[col.id] || 0;
-            return (
-              <button
-                key={col.id}
-                onClick={() => setActiveTab(col.id)}
-                className={`relative flex-1 py-3 text-sm font-bold text-center transition-colors ${
-                  isActive ? `${col.activeBg} ${col.color}` : `${col.bg} ${col.color} opacity-80 hover:opacity-100`
-                }`}
-              >
-                {col.label} ({count})
-                {unreadCount > 0 && (
-                  <span className="ml-2 inline-flex min-w-[20px] h-5 px-1.5 rounded-full bg-destructive text-destructive-foreground text-[10px] font-bold items-center justify-center animate-pulse">
-                    {unreadCount}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Below: customer list | chat | orders */}
+      {/* Below: customer list | chat | orders */}
         <div className="flex flex-1 min-h-0">
           {/* Left panel: customer list */}
           <div className="w-[25%] min-w-[240px] max-w-[336px] shrink-0 border-r flex flex-col">
