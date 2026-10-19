@@ -647,11 +647,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       </span>
     ) : null;
 
-  // Fallback right-aligned row for rows that have no agent line to sit beside.
-  const renderInTradeRow = (id: string, placedInline = false) =>
-    !placedInline && orderStatus.getStatus(id) === "in_trade" ? (
-      <div className="flex items-center justify-end mt-0.5">{renderInTradePill(id)}</div>
-    ) : null;
 
   // Points +/- and Transfer buttons — shared by 1:1 and group composers
   const renderComposerActions = () => (
