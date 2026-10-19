@@ -567,7 +567,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   const filteredConversations = useMemo(() => {
     return conversationsWithTabs.filter((c) => {
-      const matchesTab = c.dynamicTab === activeTab;
       const matchesSearch =
         !customerSearch ||
         c.alias.toLowerCase().includes(customerSearch.toLowerCase()) ||
@@ -579,9 +578,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         const line = pickBusinessNumberFor(c.id);
         matchesAgentScope = line.assignedAgent === currentAgentName;
       }
-      return matchesTab && matchesSearch && matchesAgentScope;
+      return matchesSearch && matchesAgentScope;
     });
-  }, [conversationsWithTabs, activeTab, customerSearch, channelFilter, role]);
+  }, [conversationsWithTabs, customerSearch, channelFilter, role]);
 
   const filteredGroups = useMemo(() => {
     if (channelFilter !== "whatsapp") return [];
