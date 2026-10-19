@@ -642,7 +642,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   // Small pill shown on a conversation row while its order is In Trade.
   const renderInTradePill = (id: string) =>
     orderStatus.getStatus(id) === "in_trade" ? (
-      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-accent text-accent-foreground font-semibold leading-none whitespace-nowrap shrink-0">
+      <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-warning text-warning-foreground font-semibold leading-none whitespace-nowrap shrink-0">
         In Trade
       </span>
     ) : null;
