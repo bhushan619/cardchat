@@ -585,17 +585,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const filteredGroups = useMemo(() => {
     if (channelFilter !== "whatsapp") return [];
     return whatsappGroups.filter((g) => {
-      // Once an order is raised for a group it follows the order state machine tab
-      const hasOrder = !!orderStatus.getStatus(g.id);
-      const dynamicTab = hasOrder ? orderStatus.getConversationTab(g.id) : g.tab;
-      const matchesTab = dynamicTab === activeTab;
       const matchesSearch =
         !customerSearch ||
         g.groupName.toLowerCase().includes(customerSearch.toLowerCase()) ||
         g.lastMessage.toLowerCase().includes(customerSearch.toLowerCase());
-      return matchesTab && matchesSearch;
+      return matchesSearch;
     }).map((g) => ({ ...g, unread: readConversations.has(g.id) ? 0 : g.unread }));
-  }, [channelFilter, activeTab, customerSearch, orderStatus, readConversations]);
+  }, [channelFilter, customerSearch, readConversations]);
 
   const handleMarkAllRead = () => {
     const scopedConversations = conversationsWithTabs.filter((c) =>
