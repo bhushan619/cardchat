@@ -1571,6 +1571,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </p>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">
+                          {renderInTradePill(g.id)}
                           {g.unread > 0 && (
                             <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                               {g.unread}
@@ -1673,6 +1674,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           })()}
                       </div>
                       <div className="flex items-center gap-1 shrink-0">
+                        {renderInTradePill(c.id)}
                         {c.unread > 0 && (
                           <span className="w-4 h-4 rounded-full bg-accent text-accent-foreground text-[9px] flex items-center justify-center font-semibold">
                             {c.unread}
