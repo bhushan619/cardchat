@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { Switch } from "@/components/ui/switch";
+import { notificationPreference, saveNotificationPreference } from "@/lib/customerNotifications";
 import CustomerLayout from "@/components/customer/CustomerLayout";
 import { bankAccounts, walletBalance, tradingBalance, rewardsBalance, walletTransactions } from "@/data/mock";
 import { CreditCard, FileText, BarChart3, ChevronRight, Plus, Shield, Settings, LogOut, Trash2, CheckCircle, ArrowLeft, Copy, BookOpen, Sun, Moon, Clock, XCircle, Loader2, Mail, Pencil, ShieldCheck, Wallet, ArrowUpRight, ArrowDownLeft, Send, Eye, EyeOff, Smartphone, Bell, Globe, Palette, KeyRound } from "lucide-react";
@@ -57,19 +59,14 @@ const customerOrders: CustomerOrder[] = [
 ];
 
 function NotificationToggle({ label, desc, defaultOn }: { label: string; desc: string; defaultOn: boolean }) {
-  const [on, setOn] = useState(defaultOn);
+  const [on, setOn] = useState(() => notificationPreference(label, defaultOn));
   return (
     <div className="flex items-center justify-between py-2 border-t">
       <div>
         <p className="text-xs font-medium">{label}</p>
         <p className="text-[10px] text-muted-foreground">{desc}</p>
       </div>
-      <button
-        onClick={() => setOn(!on)}
-        className={`w-10 h-5 rounded-full transition-colors relative ${on ? "bg-accent" : "bg-muted-foreground/30"}`}
-      >
-        <div className={`absolute top-0.5 w-4 h-4 rounded-full bg-white transition-transform ${on ? "left-5" : "left-0.5"}`} />
-      </button>
+      <Switch aria-label={label} checked={on} onCheckedChange={value => { setOn(value); saveNotificationPreference(label, value); }} />
     </div>
   );
 }
@@ -1264,7 +1261,8 @@ export default function CustomerMe() {
             </div>
             {[
               { label: "Order Updates", desc: "Get notified on order status changes", defaultOn: true },
-              { label: "Promotions", desc: "Receive promotional offers and deals", defaultOn: false },
+              { label: "Promotions & Campaigns", desc: "Receive promotional offers and deals", defaultOn: false },
+              { label: "Chat Messages", desc: "Agent replies and chat updates", defaultOn: true },
               { label: "Security Alerts", desc: "Login attempts and password changes", defaultOn: true },
             ].map((item, i) => (
               <NotificationToggle key={i} label={item.label} desc={item.desc} defaultOn={item.defaultOn} />

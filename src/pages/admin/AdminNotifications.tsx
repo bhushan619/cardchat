@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { NotificationAudienceTags, NotificationImageUpload, NotificationAnalytics } from "@/components/admin/NotificationExtras";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { Button } from "@/components/ui/button";
@@ -48,6 +49,8 @@ import {
   NotificationStatus,
   NotificationTrigger,
   clickRate,
+  conversionRate,
+  campaignRuleError,
   formatSendTime,
   loadNotifications,
   nextNotificationCode,
@@ -66,7 +69,13 @@ const emptyForm = (): AppNotification => ({
   title: "",
   body: "",
   site: "cardchat",
-  notificationType: "automatic",
+  notificationType: "manual",
+  minDays: 9,
+  maxDays: 54,
+  conversionGoal: "none",
+  conversionCount: 0,
+  tagIds: [],
+  audienceMode: "tags",
   trigger: "manual",
   messageType: "in_app",
   platforms: ["android"],
@@ -87,8 +96,10 @@ const emptyForm = (): AppNotification => ({
 });
 
 const statusClass: Record<NotificationStatus, string> = {
-  scheduled: "bg-amber-500/15 text-amber-500",
-  sent: "bg-emerald-500/15 text-emerald-500",
+  draft: "bg-muted text-muted-foreground",
+  active: "bg-accent/15 text-accent",
+  scheduled: "bg-warning/15 text-warning",
+  sent: "bg-success/15 text-success",
   ended: "bg-destructive/15 text-destructive",
 };
 
@@ -125,6 +136,7 @@ export default function AdminNotifications() {
   const [form, setForm] = useState<AppNotification>(emptyForm());
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [endOpen, setEndOpen] = useState(false);
+  const [analytics, setAnalytics] = useState<AppNotification | null>(null);
   const [preview, setPreview] = useState<AppNotification | null>(null);
 
   useEffect(() => {
@@ -132,8 +144,8 @@ export default function AdminNotifications() {
   }, []);
 
   const persist = (list: AppNotification[]) => {
-    setItems(list);
     saveNotifications(list);
+    setItems(list);
   };
 
   const rows = useMemo(
@@ -168,7 +180,7 @@ export default function AdminNotifications() {
 
   const openEdit = () => {
     if (!selectedItem) return toast.error("Select a notification first");
-    setForm({ ...selectedItem });
+    setForm({ minDays: 9, maxDays: 54, ...selectedItem });
     setErrors({});
     setModal("edit");
   };
@@ -176,6 +188,8 @@ export default function AdminNotifications() {
   const openCopy = () => {
     if (!selectedItem) return toast.error("Select a notification first");
     setForm({
+      minDays: 9,
+      maxDays: 54,
       ...selectedItem,
       id: "",
       code: nextNotificationCode(items),
@@ -183,6 +197,9 @@ export default function AdminNotifications() {
       endedManually: false,
       deliveredCount: 0,
       clickCount: 0,
+      conversionCount: 0,
+      recipientCount: 0,
+      lifecycle: "draft",
     });
     setErrors({});
     setModal("copy");
@@ -221,22 +238,29 @@ export default function AdminNotifications() {
       e.endVersion = "End version must be ≥ start version";
     if (f.action !== "none" && !f.pathParam.trim())
       e.pathParam = "Path parameters are required for this action";
-    if (f.sendType === "scheduled" && !f.sendAt) e.sendAt = "Pick a send date & time";
-    if (f.audience === "specified" && !f.recipients.length)
-      e.recipients = "Add at least one customer alias";
+    if (f.notificationType === "manual" && f.sendType === "scheduled" && !f.sendAt) e.sendAt = "Pick a send date & time";
+    if (f.audience === "specified" && (f.audienceMode === "tags" ? !f.tagIds?.length : !f.recipients.length))
+      e.recipients = "Select at least one customer tag";
+    const ruleError = campaignRuleError(f);
+    if (ruleError) e.rule = ruleError;
     if (f.remark.length > 1000) e.remark = "Max 1000 characters";
     return e;
   };
 
-  const submit = () => {
-    const e = validate(form);
+  const submit = (draft = false) => {
+    const e = draft ? (!form.title.trim() ? { title: "Message name is required" } : {}) : validate(form);
     setErrors(e);
     if (Object.keys(e).length) return;
     const normalized: AppNotification = {
       ...form,
-      recipientCount:
-        form.audience === "specified" ? form.recipients.length : form.recipientCount,
+      lifecycle: draft ? "draft" : "active",
+      trigger: form.notificationType === "manual" ? "manual" : form.trigger,
+      imageUrl: form.messageType === "external" ? form.imageUrl : undefined,
+      sendType: form.notificationType === "automatic" ? "immediate" : form.sendType,
+      recipients: form.audienceMode === "tags" ? [] : form.recipients,
+      recipientCount: form.audienceMode === "tags" ? 0 : form.audience === "specified" ? form.recipients.length : form.recipientCount,
     };
+    try {
     if (modal === "edit") {
       persist(items.map((n) => (n.id === normalized.id ? { ...normalized } : n)));
       toast.success(`${normalized.code} updated`);
@@ -252,6 +276,9 @@ export default function AdminNotifications() {
       toast.success(`${rec.code} created`);
     }
     setModal(null);
+    } catch {
+      toast.error("Not enough browser storage. Remove or replace the image with a smaller file and try again.");
+    }
   };
 
   const jumpToPage = () => {
@@ -306,6 +333,8 @@ export default function AdminNotifications() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All</SelectItem>
+                <SelectItem value="draft">Draft</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="scheduled">Scheduled</SelectItem>
                 <SelectItem value="sent">Sending</SelectItem>
                 <SelectItem value="ended">Closed</SelectItem>
@@ -354,6 +383,7 @@ export default function AdminNotifications() {
             <Button size="sm" variant="outline" onClick={openCopy}>
               <Copy className="w-4 h-4 mr-1.5" /> Copy Parameters
             </Button>
+            <Button size="sm" variant="outline" onClick={() => selectedItem ? setAnalytics(selectedItem) : toast.error("Select a notification first")}><Eye className="w-4 h-4 mr-1.5" />Analytics</Button>
             <Button size="sm" variant="destructive" onClick={openEnd}>
               <Square className="w-4 h-4 mr-1.5" /> End
             </Button>
@@ -381,6 +411,8 @@ export default function AdminNotifications() {
                 <th>Recipients</th>
                 <th>Delivered</th>
                 <th>Click Rate</th>
+                <th>Conversion Count</th>
+                <th>Conversion Rate</th>
                 <th>Remark</th>
               </tr>
             </thead>
@@ -419,15 +451,15 @@ export default function AdminNotifications() {
                       {n.startVersion} ~ {n.endVersion}
                     </td>
                     <td className="max-w-[220px] truncate text-muted-foreground">
-                      <button
+                      <Button variant="ghost" size="sm"
                         onClick={(e) => {
                           e.stopPropagation();
                           setPreview(n);
                         }}
-                        className="inline-flex items-center gap-1 hover:text-foreground"
+                        className="inline-flex h-auto p-0 items-center gap-1 hover:text-foreground"
                       >
                         <Eye className="w-3.5 h-3.5" /> {n.body}
-                      </button>
+                      </Button>
                     </td>
                     <td className="text-xs font-mono">{formatSendTime(n)}</td>
                     <td>
@@ -441,7 +473,9 @@ export default function AdminNotifications() {
                     <td>{n.audience === "everyone" ? "Everyone" : "Audience User Label"}</td>
                     <td>{n.recipientCount.toLocaleString()}</td>
                     <td>{n.deliveredCount.toLocaleString()}</td>
-                    <td>{clickRate(n)}</td>
+                    <td>{clickRate(n)}%</td>
+                    <td>{n.conversionCount ?? 0}</td>
+                    <td>{conversionRate(n)}%</td>
                     <td className="max-w-[200px] truncate text-muted-foreground">
                       {n.remark || "—"}
                     </td>
@@ -450,7 +484,7 @@ export default function AdminNotifications() {
               })}
               {!pageRows.length && (
                 <tr>
-                  <td colSpan={17} className="px-3 py-10 text-center text-muted-foreground">
+                  <td colSpan={19} className="px-3 py-10 text-center text-muted-foreground">
                     No notifications match the filters.
                   </td>
                 </tr>
@@ -561,9 +595,12 @@ export default function AdminNotifications() {
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Notification Type</Label>
-                <Input value="Automatic" disabled />
+                <RadioGroup value={form.notificationType} className="flex gap-4" onValueChange={v => setForm({ ...form, notificationType: v as AppNotification["notificationType"], trigger: v === "automatic" ? "daily_marketing_scan" : "manual" })}>
+                  <label className="flex items-center gap-2 text-sm"><RadioGroupItem value="manual" />Manual</label>
+                  <label className="flex items-center gap-2 text-sm"><RadioGroupItem value="automatic" />Automatic</label>
+                </RadioGroup>
               </div>
-              <div className="space-y-1.5">
+              {form.notificationType === "automatic" && <div className="space-y-1.5">
                 <Label>Trigger Scenario *</Label>
                 <Select
                   value={form.trigger}
@@ -575,15 +612,20 @@ export default function AdminNotifications() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {(Object.keys(NOTIF_TRIGGER_LABEL) as NotificationTrigger[]).map((t) => (
+                    {(Object.keys(NOTIF_TRIGGER_LABEL) as NotificationTrigger[]).filter(t => t !== "manual").map((t) => (
                       <SelectItem key={t} value={t}>
                         {NOTIF_TRIGGER_LABEL[t]}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
-              </div>
+              </div>}
             </div>
+            {form.notificationType === "automatic" && ["daily_marketing_scan", "new_user_label"].includes(form.trigger) && <div className="grid grid-cols-2 gap-4">
+              <div><Label>Minimum days since last trade</Label><Input aria-label="Minimum days since last trade" type="number" min={0} value={form.minDays ?? 9} onChange={e => setForm({ ...form, minDays: Number(e.target.value) })} /></div>
+              <div><Label>Maximum days since last trade</Label><Input aria-label="Maximum days since last trade" type="number" min={0} value={form.maxDays ?? 54} onChange={e => setForm({ ...form, maxDays: Number(e.target.value) })} /></div>
+            </div>}
+            {errors.rule && <p className="text-xs text-destructive">{errors.rule}</p>}
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
@@ -629,7 +671,8 @@ export default function AdminNotifications() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            {form.messageType === "external" && <NotificationImageUpload form={form} onChange={setForm} />}
+            {form.notificationType === "manual" && <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <Label>Send Type *</Label>
                 <RadioGroup
@@ -640,10 +683,10 @@ export default function AdminNotifications() {
                   className="flex gap-4 pt-1"
                 >
                   <label className="flex items-center gap-2 text-sm">
-                    <RadioGroupItem value="immediate" /> Immediate
+                    <RadioGroupItem value="immediate" /> Send Now
                   </label>
                   <label className="flex items-center gap-2 text-sm">
-                    <RadioGroupItem value="scheduled" /> Scheduled
+                    <RadioGroupItem value="scheduled" /> Schedule
                   </label>
                 </RadioGroup>
               </div>
@@ -660,10 +703,11 @@ export default function AdminNotifications() {
                   )}
                 </div>
               )}
-            </div>
+            </div>}
+            {form.notificationType === "manual" && <div className="space-y-1.5"><Label>Conversion Goal (optional)</Label><Select value={form.conversionGoal ?? "none"} onValueChange={v => setForm({ ...form, conversionGoal: v as AppNotification["conversionGoal"] })}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="none">None</SelectItem><SelectItem value="registration">Registration completed</SelectItem><SelectItem value="first_trade">First trade completed</SelectItem><SelectItem value="order_success">Successful order</SelectItem></SelectContent></Select></div>}
 
             <div className="space-y-1.5">
-              <Label>Action After Click *</Label>
+              <Label>Action After Tap *</Label>
               <RadioGroup
                 value={form.action}
                 onValueChange={(v) => setForm({ ...form, action: v as NotificationAction })}
@@ -722,7 +766,7 @@ export default function AdminNotifications() {
               <RadioGroup
                 value={form.audience}
                 onValueChange={(v) =>
-                  setForm({ ...form, audience: v as NotificationAudience })
+                  setForm({ ...form, audience: v as NotificationAudience, audienceMode: "tags" })
                 }
                 className="flex gap-4"
               >
@@ -734,25 +778,7 @@ export default function AdminNotifications() {
                 </label>
               </RadioGroup>
               {form.audience === "specified" && (
-                <>
-                  <Textarea
-                    rows={3}
-                    placeholder="Customer aliases, comma or newline separated"
-                    value={form.recipients.join(", ")}
-                    onChange={(e) =>
-                      setForm({
-                        ...form,
-                        recipients: e.target.value
-                          .split(/[\s,]+/)
-                          .map((s) => s.trim().toUpperCase())
-                          .filter(Boolean),
-                      })
-                    }
-                  />
-                  <p className="text-xs text-muted-foreground">
-                    {form.recipients.length} recipient(s)
-                  </p>
-                </>
+                <NotificationAudienceTags form={form} onChange={setForm} />
               )}
               {errors.recipients && (
                 <p className="text-xs text-destructive">{errors.recipients}</p>
@@ -779,7 +805,8 @@ export default function AdminNotifications() {
             <Button variant="outline" onClick={() => setModal(null)}>
               Cancel
             </Button>
-            <Button onClick={submit}>Confirm</Button>
+            <Button variant="outline" onClick={() => submit(true)}>Save as Draft</Button>
+            <Button onClick={() => submit()}>{form.notificationType === "automatic" ? "Activate" : form.sendType === "scheduled" ? "Schedule" : "Send Now"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -805,6 +832,7 @@ export default function AdminNotifications() {
         </DialogContent>
       </Dialog>
 
+      <NotificationAnalytics campaign={analytics} onClose={() => setAnalytics(null)} />
       {/* Message preview */}
       <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
         <DialogContent className="max-w-sm">
@@ -814,6 +842,7 @@ export default function AdminNotifications() {
           {preview && (
             <div className="rounded-xl border bg-muted/40 p-4 space-y-1.5">
               <p className="text-sm font-semibold">{preview.title}</p>
+              {preview.imageUrl && <img src={preview.imageUrl} alt={preview.title} className="max-h-64 w-full object-contain rounded-lg" />}
               <p className="text-sm text-muted-foreground whitespace-pre-wrap">
                 {preview.body}
               </p>
