@@ -3891,15 +3891,15 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       <Input
                         className="h-9 pr-9 font-medium bg-muted/40"
                         placeholder="Verify bank account to fetch recipient name"
-                        value={maskName(transferRecipient)}
+                        value={transferRecipient}
                         disabled
                       />
                       {transferVerified && (
                         <CheckCheck className="w-4 h-4 text-emerald-500 absolute right-3 top-1/2 -translate-y-1/2" />
                       )}
-                    </div>
+                     </div>
                     <p className="text-[10px] text-muted-foreground">
-                      Name is masked for privacy; populated only after verification.
+                      Populated automatically after bank account verification.
                     </p>
                   </div>
                 </div>
