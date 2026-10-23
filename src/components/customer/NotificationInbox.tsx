@@ -4,7 +4,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { AppNotification, loadNotifications } from "@/lib/notifications";
+import { AppNotification, loadNotifications, scheduleUtc } from "@/lib/notifications";
 import { INBOX_EVENT, readNotificationIds, saveNotificationRead, notificationPreference, visibleCampaigns } from "@/lib/customerNotifications";
 import { CURRENT_CUSTOMER_ALIAS } from "@/lib/vipCustomers";
 import { getCustomerTags } from "@/lib/customerTags";
@@ -50,9 +50,9 @@ export default function NotificationInbox() {
         <div className="overflow-y-auto flex-1">
           {campaigns.length === 0 && <div className="p-10 text-center text-muted-foreground"><Bell className="h-8 w-8 mx-auto mb-3" /><p>No notifications yet</p></div>}
           {campaigns.map(n => <article key={n.id} className="p-4 border-b last:border-0">
-            <Button variant="ghost" className="w-full h-auto p-0 hover:bg-transparent whitespace-normal text-left justify-start items-start gap-3" onClick={() => tap(n)}>
+            <Button variant="ghost" className="w-full h-auto p-0 hover:bg-transparent hover:text-foreground whitespace-normal text-left justify-start items-start gap-3" onClick={() => tap(n)}>
               <span className="p-2 rounded-lg bg-warning/10 text-warning shrink-0"><Megaphone className="h-5 w-5" /></span>
-              <span className="flex-1 min-w-0 space-y-1"><span className="block text-sm font-semibold">{n.title}</span><span className="block text-xs font-normal text-muted-foreground break-words">{n.body}</span><span className="block text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(n.createdAt || Date.now()), { addSuffix: true })}</span></span>
+              <span className="flex-1 min-w-0 space-y-1"><span className="block text-sm font-semibold">{n.title}</span><span className="block text-xs font-normal text-muted-foreground break-words">{n.body}</span><span className="block text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(n.sendType === "scheduled" ? scheduleUtc(n.sendAt) : n.createdAt || Date.now()), { addSuffix: true })}</span></span>
               {!reads.includes(n.id) && <span className="notification-unread-dot mt-1 shrink-0" aria-label="Unread" />}
               {n.action !== "none" && <ArrowRight className="h-3 w-3 shrink-0 mt-1" />}
             </Button>

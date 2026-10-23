@@ -144,8 +144,8 @@ export default function AdminNotifications() {
   }, []);
 
   const persist = (list: AppNotification[]) => {
-    setItems(list);
     saveNotifications(list);
+    setItems(list);
   };
 
   const rows = useMemo(
@@ -180,7 +180,7 @@ export default function AdminNotifications() {
 
   const openEdit = () => {
     if (!selectedItem) return toast.error("Select a notification first");
-    setForm({ ...selectedItem });
+    setForm({ minDays: 9, maxDays: 54, ...selectedItem });
     setErrors({});
     setModal("edit");
   };
@@ -188,6 +188,8 @@ export default function AdminNotifications() {
   const openCopy = () => {
     if (!selectedItem) return toast.error("Select a notification first");
     setForm({
+      minDays: 9,
+      maxDays: 54,
       ...selectedItem,
       id: "",
       code: nextNotificationCode(items),
@@ -258,6 +260,7 @@ export default function AdminNotifications() {
       recipients: form.audienceMode === "tags" ? [] : form.recipients,
       recipientCount: form.audienceMode === "tags" ? 0 : form.audience === "specified" ? form.recipients.length : form.recipientCount,
     };
+    try {
     if (modal === "edit") {
       persist(items.map((n) => (n.id === normalized.id ? { ...normalized } : n)));
       toast.success(`${normalized.code} updated`);
@@ -273,6 +276,9 @@ export default function AdminNotifications() {
       toast.success(`${rec.code} created`);
     }
     setModal(null);
+    } catch {
+      toast.error("Not enough browser storage. Remove or replace the image with a smaller file and try again.");
+    }
   };
 
   const jumpToPage = () => {

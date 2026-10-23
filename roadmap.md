@@ -8,6 +8,6 @@
 - [x] Browser verification of all three screens
 
 ## Notification UI updates
-- [ ] Mobile inbox, read state, preferences and images
-- [ ] Admin tag audience, campaign types, scheduling, drafts and images
-- [ ] Conversion analytics, tests, browser verification and PRD
+- [x] Mobile inbox, read state, preferences and images
+- [x] Admin tag audience, campaign types, scheduling, drafts and images
+- [x] Conversion analytics, tests, browser verification and PRD
