@@ -1,3 +1,4 @@
+import NotificationInbox from "@/components/customer/NotificationInbox";
 import Logo from "@/components/Logo";
 import { useState } from "react";
 import CustomerLayout from "@/components/customer/CustomerLayout";
@@ -85,6 +86,7 @@ export default function CustomerHome() {
             <h1 className="font-heading text-lg font-bold">CardChat</h1>
             <p className="text-[10px] text-muted-foreground">Your trusted gift card trading platform</p>
           </div>
+          <NotificationInbox />
         </div>
 
         {/* Core Actions — iOS Modular Grid */}
