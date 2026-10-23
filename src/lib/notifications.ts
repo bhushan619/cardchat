@@ -1,6 +1,6 @@
 // Push notification campaign store (prototype: localStorage-backed).
 
-export type NotificationStatus = "scheduled" | "sent" | "ended";
+export type NotificationStatus = "draft" | "active" | "scheduled" | "sent" | "ended";
 export type NotificationAction = "native" | "h5" | "browser" | "none";
 export type NotificationAudience = "everyone" | "specified";
 export type NotificationSendType = "immediate" | "scheduled";
@@ -17,7 +17,16 @@ export interface AppNotification {
   title: string; // message name
   body: string; // message content
   site: string; // cardchat
-  notificationType: "automatic"; // reserved for future manual types
+  notificationType: "manual" | "automatic";
+  lifecycle?: "draft" | "active";
+  tagIds?: string[];
+  imageUrl?: string;
+  imageName?: string;
+  minDays?: number;
+  maxDays?: number;
+  conversionGoal?: "none" | "registration" | "first_trade" | "order_success";
+  conversionCount?: number;
+  audienceMode?: "tags" | "aliases";
   trigger: NotificationTrigger;
   messageType: NotificationMessageType;
   platforms: ("android" | "ios")[];
@@ -292,8 +301,10 @@ export function nextNotificationCode(list: AppNotification[]): string {
 
 export function notificationStatus(n: AppNotification, now = new Date()): NotificationStatus {
   if (n.endedManually) return "ended";
+  if (n.lifecycle === "draft") return "draft";
+  if (n.notificationType === "automatic" && n.lifecycle === "active") return "active";
   if (n.sendType === "immediate") return "sent";
-  const sendAt = new Date(n.sendAt);
+  const sendAt = new Date(scheduleUtc(n.sendAt));
   return now >= sendAt ? "sent" : "scheduled";
 }
 
@@ -309,7 +320,26 @@ export function formatSendTime(n: AppNotification): string {
   return s.length === 16 ? `${s}:00` : s;
 }
 
+// datetime-local values are campaign wall-clock times in UTC+4, never browser time.
+export function scheduleUtc(value: string): string {
+  if (!value) return "";
+  return /(?:Z|[+-]\d{2}:\d{2})$/.test(value) ? value : `${value}:00+04:00`.replace(/:00:00\+/, ":00+");
+}
+
+export function conversionRate(n: AppNotification): string {
+  return n.deliveredCount ? ((n.conversionCount ?? 0) / n.deliveredCount * 100).toFixed(2) : "0.00";
+}
+
+export function campaignRuleError(n: AppNotification): string | null {
+  if (n.notificationType === "automatic" && n.trigger === "manual") return "Select an automatic trigger scenario";
+  if (n.notificationType === "automatic" && ["daily_marketing_scan", "new_user_label"].includes(n.trigger) &&
+    (!Number.isInteger(n.minDays) || !Number.isInteger(n.maxDays) || (n.minDays ?? -1) < 0 || (n.maxDays ?? -1) < (n.minDays ?? 0))) return "Days must be non-negative integers with maximum ≥ minimum";
+  return null;
+}
+
 export const NOTIF_STATUS_LABEL: Record<NotificationStatus, string> = {
+  draft: "Draft",
+  active: "Active",
   scheduled: "Scheduled",
   sent: "Sending",
   ended: "Closed",

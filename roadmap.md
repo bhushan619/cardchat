@@ -6,3 +6,8 @@
 - [x] New ranking-focused homepage at /customer/home-v2 — ranking hero (rank, reward, volume, next-tier progress bar + %, volume needed) swapped above compact wallet; current home untouched
 - [x] Referral section on /customer/rewards — always-visible 3-step "How Referrals Work" + benefits (no amounts), "!" icon replaced with "View Details" button
 - [x] Browser verification of all three screens
+
+## Notification UI updates
+- [ ] Mobile inbox, read state, preferences and images
+- [ ] Admin tag audience, campaign types, scheduling, drafts and images
+- [ ] Conversion analytics, tests, browser verification and PRD
