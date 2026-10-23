@@ -876,7 +876,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [transferVerified, setTransferVerified] = useState(false);
   const [transferVerifying, setTransferVerifying] = useState(false);
   const [transferOrderId, setTransferOrderId] = useState<string>("");
-  const [transferRecordBank, setTransferRecordBank] = useState<string>("all");
+  const [transferRecordAccount, setTransferRecordAccount] = useState<string>("all");
+  // Banks added to the Bank Name dropdown when an account is loaded from a record.
+  const [extraBanks, setExtraBanks] = useState<string[]>([]);
 
 
   const nigerianBanks = [
@@ -890,6 +892,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     "Heritage Bank",
     "Keystone Bank",
     "Kuda Bank",
+    "Moniepoint Microfinance Bank",
     "OPay",
     "PalmPay",
     "Polaris Bank",
@@ -904,6 +907,15 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     "Zenith Bank",
   ];
 
+  // Banks offered in the Bank Name dropdown: the standard list plus any bank an
+  // agent loaded from a transfer record that isn't in the standard list.
+  const bankNameOptions = Array.from(new Set([...nigerianBanks, ...extraBanks]));
+
+  const ensureBankOption = (bank: string) => {
+    if (!bank || nigerianBanks.includes(bank)) return;
+    setExtraBanks((prev) => (prev.includes(bank) ? prev : [...prev, bank]));
+  };
+
   // Detect bank account details in a message. Returns null when nothing matches.
   const bankAliases: Record<string, string> = {
     gtb: "Guaranty Trust Bank (GTBank)",
@@ -915,7 +927,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     opay: "OPay",
     palmpay: "PalmPay",
     kuda: "Kuda Bank",
-    moniepoint: "OPay", // treat as generic; adjust as needed
+    moniepoint: "Moniepoint Microfinance Bank",
     ecobank: "Ecobank",
     zenith: "Zenith Bank",
     access: "Access Bank",
@@ -948,7 +960,18 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const nameMatch = text.match(/\b([A-Z][A-Za-z'-]+(?:\s+[A-Z][A-Za-z'-]+){1,3})\b/);
     const recipient = nameMatch && !bank.includes(nameMatch[1]) ? nameMatch[1] : undefined;
     return { bank, account, recipient };
-  };
+    };
+
+    // Map a bank string from a message or transfer record onto the canonical bank
+    // list so the Bank Name dropdown always shows the loaded bank.
+    const normalizeBankName = (raw: string): string => {
+      const t = (raw || "").trim();
+      if (!t) return t;
+      const exact = nigerianBanks.find((b) => b.toLowerCase() === t.toLowerCase());
+      if (exact) return exact;
+      const aliasKey = Object.keys(bankAliases).find((k) => new RegExp(`\b${k}\b`, "i").test(t));
+      return aliasKey ? bankAliases[aliasKey] : t;
+    };
 
   const resetTransferForm = () => {
     setTransferBank("");
@@ -960,7 +983,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     setTransferVerified(false);
     setTransferVerifying(false);
     setTransferOrderId("");
-    setTransferRecordBank("all");
+    setTransferRecordAccount("all");
+    setExtraBanks([]);
   };
 
   const handleCopy = (text: string, label: string) => {
@@ -3814,7 +3838,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <SelectValue placeholder="Please select bank" />
                       </SelectTrigger>
                       <SelectContent>
-                        {nigerianBanks.map((b) => (
+                        {bankNameOptions.map((b) => (
                           <SelectItem key={b} value={b}>
                             {b}
                           </SelectItem>
@@ -4012,14 +4036,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     at: s.at,
                     orderNo: `X${String(s.at).slice(-16)}`,
                     refNo: `41${String(s.at).slice(-18)}`,
-                    bank: s.bank,
+                    bank: normalizeBankName(s.bank),
                     account: s.account,
                     recipient: s.recipient,
                     amount: s.amount,
                     nickname: txConvo?.alias || "/",
                     status: "Success" as const,
                   })),
-                  ...mock,
+                  ...mock.map((m) => ({ ...m, bank: normalizeBankName(m.bank) })),
                 ];
                 const fmtDate = (t: number) => {
                   const d = new Date(t);
@@ -4027,10 +4051,47 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
                 };
 
-                // Bank filter options are derived from banks actually present in this customer's records.
-                const bankOptions = Array.from(new Set(rows.map((r) => r.bank))).sort((a, b) => a.localeCompare(b));
+                // One option per bank account actually present in this customer's records.
+                const accountMap = new Map<
+                  string,
+                  {
+                    bank: string;
+                    account: string;
+                    recipient: string;
+                    nickname: string;
+                    count: number;
+                    total: number;
+                    lastAt: number;
+                  }
+                >();
+                for (const r of rows) {
+                  const k = `${r.bank}|${r.account}`;
+                  const e = accountMap.get(k);
+                  if (!e) {
+                    accountMap.set(k, {
+                      bank: r.bank,
+                      account: r.account,
+                      recipient: r.recipient,
+                      nickname: r.nickname,
+                      count: 1,
+                      total: r.amount,
+                      lastAt: r.at,
+                    });
+                  } else {
+                    e.count += 1;
+                    e.total += r.amount;
+                    e.lastAt = Math.max(e.lastAt, r.at);
+                  }
+                }
+                const accountOptions = Array.from(accountMap.entries()).sort(
+                  (a, b) => a[1].bank.localeCompare(b[1].bank) || a[1].account.localeCompare(b[1].account),
+                );
+                const selectedAccount =
+                  transferRecordAccount === "all" ? null : accountMap.get(transferRecordAccount) ?? null;
                 const visibleRows =
-                  transferRecordBank === "all" ? rows : rows.filter((r) => r.bank === transferRecordBank);
+                  transferRecordAccount === "all"
+                    ? rows
+                    : rows.filter((r) => `${r.bank}|${r.account}` === transferRecordAccount);
 
                 return (
                   <>
@@ -4046,6 +4107,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                               key={i}
                               type="button"
                               onClick={() => {
+                                ensureBankOption(h.bank);
                                 setTransferBank(h.bank);
                                 setTransferAccount(h.account);
                                 setTransferRecipient(h.recipient);
@@ -4075,28 +4137,86 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         </div>
                       </div>
                       <Select
-                        value={transferRecordBank}
-                        onValueChange={setTransferRecordBank}
-                        disabled={bankOptions.length === 0}
+                        value={transferRecordAccount}
+                        onValueChange={(v) => {
+                          setTransferRecordAccount(v);
+                          const picked = accountMap.get(v);
+                          if (!picked) return;
+                          ensureBankOption(picked.bank);
+                          setTransferBank(picked.bank);
+                          setTransferAccount(picked.account);
+                          setTransferRecipient(picked.recipient);
+                          setTransferVerified(true);
+                          toast.success("Bank details loaded into the transfer form");
+                        }}
+                        disabled={accountOptions.length === 0}
                       >
-                        <SelectTrigger className="h-8 w-[200px] shrink-0 text-xs">
-                          <SelectValue placeholder="All banks" />
+                        <SelectTrigger className="w-[280px] shrink-0 h-auto min-h-9 py-1 text-xs">
+                          <div className="min-w-0 flex-1 flex flex-col items-start leading-tight">
+                            <span className="truncate text-[11px] font-semibold">
+                              {selectedAccount ? selectedAccount.bank : `All bank accounts (${rows.length})`}
+                            </span>
+                            <span className="truncate text-[10px] font-mono text-muted-foreground">
+                              {selectedAccount
+                                ? `${selectedAccount.account} · ${maskName(selectedAccount.recipient)}`
+                                : `${accountOptions.length} account${accountOptions.length === 1 ? "" : "s"} on file`}
+                            </span>
+                          </div>
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="all">All banks ({rows.length})</SelectItem>
-                          {bankOptions.map((b) => (
-                            <SelectItem key={b} value={b}>
-                              {b} ({rows.filter((r) => r.bank === b).length})
+                          <SelectItem value="all" className="py-1.5">
+                            <span className="text-xs font-semibold">All bank accounts ({rows.length})</span>
+                          </SelectItem>
+                          {accountOptions.map(([k, o]) => (
+                            <SelectItem key={k} value={k} className="py-2 items-start">
+                              <div className="flex flex-col gap-0.5 leading-tight">
+                                <span className="text-xs font-semibold">{o.bank}</span>
+                                <span className="text-[11px] font-mono">
+                                  {o.account} · {maskName(o.recipient)}
+                                </span>
+                                <span className="text-[10px] text-muted-foreground">
+                                  {o.count} transfer{o.count === 1 ? "" : "s"} · Pts {o.total.toLocaleString()} · last{" "}
+                                  {fmtDate(o.lastAt)}
+                                </span>
+                              </div>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
+                    {selectedAccount && (
+                      <div className="px-4 py-2 border-b bg-accent/5 flex flex-wrap items-center gap-x-4 gap-y-1 text-[10px]">
+                        <span className="font-semibold uppercase tracking-wide text-muted-foreground">Selected account</span>
+                        <span className="font-mono font-semibold">
+                          {selectedAccount.bank} · {selectedAccount.account}
+                        </span>
+                        <span>{maskName(selectedAccount.recipient)}</span>
+                        {selectedAccount.nickname && selectedAccount.nickname !== "/" && (
+                          <span className="max-w-[240px] truncate" title={selectedAccount.nickname}>
+                            Nickname: {selectedAccount.nickname}
+                          </span>
+                        )}
+                        <span>
+                          {selectedAccount.count} transfer{selectedAccount.count === 1 ? "" : "s"}
+                        </span>
+                        <span>Total Pts {selectedAccount.total.toLocaleString()}</span>
+                        <span className="text-muted-foreground">Last {fmtDate(selectedAccount.lastAt)}</span>
+                        <button
+                          type="button"
+                          className="ml-auto underline hover:text-foreground"
+                          onClick={() => setTransferRecordAccount("all")}
+                        >
+                          Show all
+                        </button>
+                      </div>
+                    )}
                     {visibleRows.length === 0 ? (
                       <div className="text-xs text-muted-foreground text-center py-10">
                         {rows.length === 0
                           ? "No transfer records"
-                          : `No transfer records for ${transferRecordBank}`}
+                          : selectedAccount
+                            ? `No transfer records for ${selectedAccount.bank} · ${selectedAccount.account}`
+                            : "No transfer records"}
                       </div>
                     ) : (
                       <div className="bg-background">
