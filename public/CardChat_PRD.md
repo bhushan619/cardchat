@@ -14,6 +14,7 @@
 
 - The Process Transfer modal's Transfer Records selector lists one option per bank account on file, showing bank, account number, holder name in full (unmasked in the dropdown), transfer count, total Points and last transfer date.
 - Selecting an account filters the records and fills the transfer form (bank, account number, verified masked recipient). A "Selected account" strip repeats those details with a Show all action, and the selection resets when the modal reopens.
+- Account holder names are shown in full inside the account dropdown and on its closed trigger; masking continues to apply to the recipient field, the selected-account strip, the records table and the transfer ledgers.
 
 ### v6.6 — Notification UI completion
 
