@@ -4158,7 +4158,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             </span>
                             <span className="truncate text-[10px] font-mono text-muted-foreground">
                               {selectedAccount
-                                ? `${selectedAccount.account} · ${maskName(selectedAccount.recipient)}`
+                                ? `${selectedAccount.account} · ${selectedAccount.recipient}`
                                 : `${accountOptions.length} account${accountOptions.length === 1 ? "" : "s"} on file`}
                             </span>
                           </div>
@@ -4172,7 +4172,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                               <div className="flex flex-col gap-0.5 leading-tight">
                                 <span className="text-xs font-semibold">{o.bank}</span>
                                 <span className="text-[11px] font-mono">
-                                  {o.account} · {maskName(o.recipient)}
+                                  {o.account} · {o.recipient}
                                 </span>
                                 <span className="text-[10px] text-muted-foreground">
                                   {o.count} transfer{o.count === 1 ? "" : "s"} · Pts {o.total.toLocaleString()} · last{" "}
