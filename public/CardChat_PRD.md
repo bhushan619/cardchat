@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.5  
-**Date:** September 29, 2026
+**Version:** 6.6  
+**Date:** October 23, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -9,6 +9,16 @@
 ---
 
 ## Table of Contents
+
+### v6.6 — Notification UI completion
+
+- Customer Home (including Home V2) has a notification bell, unread count, centered scrollable inbox, campaign icon/content/relative time, blue unread dot, and tap-to-open image preview. Opening a notification marks it read; bulk Mark all read is supported.
+- App Settings includes session-preserved Promotions & Campaigns, Order Updates, Chat Messages, and Security Alerts preferences. Promotions controls promotional inbox visibility independently of order alerts; chat/security preferences are stored for future delivery integration.
+- Admin Notifications supports Manual/Automatic campaigns, conditional automatic triggers and day ranges, manual Send Now/Schedule with UTC+4 wall-clock scheduling, optional conversion goals, drafts, and automatic activation.
+- Audience User Label uses multi-select colored Customer Tags stored by definition ID. Legacy alias audiences remain distinguishable and are retained until replaced by tag selection. Tag audience delivery counts are not fabricated from the number of selected labels.
+- External notifications support PNG/JPG/WebP uploads (up to 1 MB), thumbnail/enlarged preview, replacement/removal, and customer image previews. Uploaded files remain prototype browser data, not production storage.
+- Campaign tables retain filters, Add/Edit/Copy/End actions and pagination; include Draft/Active states and Conversion Count/Conversion Rate columns. Analytics shows recipients, delivery, clicks, conversions, goal, audience and a journey funnel; conversion rate is conversions divided by delivered notifications.
+- Prototype only: automatic activation does not execute daily campaigns or deliver notifications. Metrics are sample record values, not Firebase attribution. Push dispatch, actual audience resolution, cross-device inbox state, production image storage and live conversion journeys require integration. Order and messaging flows are unchanged.
 
 1. [Executive Summary](#1-executive-summary)
 2. [Architecture Overview](#2-architecture-overview)
