@@ -86,6 +86,7 @@ export default function CustomerAuth() {
   if (step === "welcome") {
     return (
       <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x text-center">
+        {supportDialog}
         {/* Centered content — banner above logo with breathing room */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="w-full rounded-xl bg-accent/10 px-5 py-4 text-center animate-[fade-in_0.4s_ease-out]">
@@ -113,6 +114,7 @@ export default function CustomerAuth() {
           >
             I already have an account
           </Button>
+          {troubleLink}
         </div>
       </div>
     );
@@ -121,6 +123,7 @@ export default function CustomerAuth() {
   if (step === "method") {
     return (
       <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x p-8">
+        {supportDialog}
         <h2 className="font-heading text-2xl font-bold mb-2">Sign In</h2>
         <p className="text-muted-foreground text-sm mb-8">Choose your preferred method</p>
         <div className="space-y-3">
