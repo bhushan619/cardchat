@@ -155,6 +155,7 @@ export default function CustomerAuth() {
             <Mail className="w-4 h-4 mr-2" /> Send OTP
           </Button>
         </div>
+        <div className="text-center">{troubleLink}</div>
       </div>
     );
   }

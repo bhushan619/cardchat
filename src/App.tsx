@@ -16,6 +16,7 @@ import NotFound from "./pages/NotFound";
 
 // Customer App
 import CustomerAuth from "./pages/customer/CustomerAuth";
+import CustomerSupportChat from "./pages/customer/CustomerSupportChat";
 import CustomerHome from "./pages/customer/CustomerHome";
 import CustomerHomeV2 from "./pages/customer/CustomerHomeV2";
 import CustomerChat from "./pages/customer/CustomerChat";
