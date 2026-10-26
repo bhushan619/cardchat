@@ -3,9 +3,16 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Mail, Apple, Chrome, Shield } from "lucide-react";
+import { Mail, Apple, Chrome, Shield, LifeBuoy } from "lucide-react";
 import SplashScreen from "@/components/customer/SplashScreen";
 import OnboardingSlides from "@/components/customer/OnboardingSlides";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type Phase = "splash" | "onboarding" | "auth";
 type Step = "welcome" | "method" | "otp" | "alias";
@@ -15,10 +22,58 @@ export default function CustomerAuth() {
   const [step, setStep] = useState<Step>("welcome");
   const [email, setEmail] = useState("");
   const [otp, setOtp] = useState(["", "", "", ""]);
+  const [supportOpen, setSupportOpen] = useState(false);
+  const [supportEmail, setSupportEmail] = useState("");
   const navigate = useNavigate();
 
   const handleSplashComplete = useCallback(() => setPhase("onboarding"), []);
   const handleOnboardingComplete = useCallback(() => setPhase("auth"), []);
+
+  const openSupportChat = () => {
+    setSupportOpen(false);
+    navigate("/customer/support-chat", { state: { email: supportEmail.trim() || undefined } });
+  };
+
+  const supportDialog = (
+    <Dialog open={supportOpen} onOpenChange={setSupportOpen}>
+      <DialogContent className="max-w-sm">
+        <DialogHeader>
+          <DialogTitle className="font-heading">Having trouble signing in?</DialogTitle>
+          <DialogDescription>
+            Enter the email you use for CardChat and we'll connect you with sign-in support.
+          </DialogDescription>
+        </DialogHeader>
+        <div className="space-y-3 pt-1">
+          <div>
+            <label className="text-sm font-medium">Email Address</label>
+            <Input
+              className="mt-1"
+              placeholder="Enter your email"
+              type="email"
+              value={supportEmail}
+              onChange={(e) => setSupportEmail(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && openSupportChat()}
+            />
+          </div>
+          <Button
+            className="w-full bg-accent text-accent-foreground hover:bg-accent/90 h-11"
+            onClick={openSupportChat}
+          >
+            <LifeBuoy className="w-4 h-4 mr-2" /> Chat with support
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+
+  const troubleLink = (
+    <button
+      onClick={() => setSupportOpen(true)}
+      className="mt-6 text-sm text-muted-foreground hover:text-accent transition-colors underline-offset-4 hover:underline"
+    >
+      Having trouble signing in?
+    </button>
+  );
 
   if (phase === "splash") {
     return <SplashScreen onComplete={handleSplashComplete} />;
@@ -31,6 +86,7 @@ export default function CustomerAuth() {
   if (step === "welcome") {
     return (
       <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x text-center">
+        {supportDialog}
         {/* Centered content — banner above logo with breathing room */}
         <div className="flex-1 flex flex-col items-center justify-center p-8">
           <div className="w-full rounded-xl bg-accent/10 px-5 py-4 text-center animate-[fade-in_0.4s_ease-out]">
@@ -58,6 +114,7 @@ export default function CustomerAuth() {
           >
             I already have an account
           </Button>
+          {troubleLink}
         </div>
       </div>
     );
@@ -66,6 +123,7 @@ export default function CustomerAuth() {
   if (step === "method") {
     return (
       <div className="flex flex-col h-[100dvh] max-w-md mx-auto bg-background border-x p-8">
+        {supportDialog}
         <h2 className="font-heading text-2xl font-bold mb-2">Sign In</h2>
         <p className="text-muted-foreground text-sm mb-8">Choose your preferred method</p>
         <div className="space-y-3">
@@ -97,6 +155,7 @@ export default function CustomerAuth() {
             <Mail className="w-4 h-4 mr-2" /> Send OTP
           </Button>
         </div>
+        <div className="text-center">{troubleLink}</div>
       </div>
     );
   }
