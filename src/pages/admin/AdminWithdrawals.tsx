@@ -73,6 +73,7 @@ export default function AdminWithdrawals() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
+  const [refFilter, setRefFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Withdrawal | null>(null);
@@ -86,6 +87,7 @@ export default function AdminWithdrawals() {
         (statusFilter === "all" || w.status === statusFilter) &&
         (channelFilter === "all" || w.channel === channelFilter) &&
         (bankFilter === "all" || w.bankName === bankFilter) &&
+        (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
         w.amount >= min &&
         w.amount <= max &&
         (q === "" ||
@@ -94,7 +96,7 @@ export default function AdminWithdrawals() {
           w.alias.toLowerCase().includes(q) ||
           w.accountName.toLowerCase().includes(q)),
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -233,6 +235,13 @@ export default function AdminWithdrawals() {
             </SelectContent>
           </Select>
           <Input
+            type="text"
+            placeholder="Reference no."
+            className="w-36 font-mono"
+            value={refFilter}
+            onChange={(e) => setRefFilter(e.target.value)}
+          />
+          <Input
             type="number"
             placeholder="Min pts"
             className="w-24"
@@ -261,6 +270,7 @@ export default function AdminWithdrawals() {
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold">Reference</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Current Balance</TableHead>
                 <TableHead className="text-xs font-semibold">Requested</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
@@ -298,6 +308,7 @@ export default function AdminWithdrawals() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{w.reference}</TableCell>
                     <TableCell className="text-right text-xs font-semibold">
                       Pts {(walletByAlias[w.alias]?.balance ?? 0).toLocaleString()}
                     </TableCell>
@@ -312,7 +323,7 @@ export default function AdminWithdrawals() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
                     No withdrawal requests match your filters
                   </TableCell>
                 </TableRow>
@@ -327,7 +338,7 @@ export default function AdminWithdrawals() {
                   <TableCell className="text-right text-sm font-bold">
                     Pts {filtered.reduce((a, w) => a + Number(w.amount || 0), 0).toLocaleString()}
                   </TableCell>
-                  <TableCell colSpan={3} />
+                  <TableCell colSpan={4} />
                   <TableCell className="text-right text-xs font-bold">
                     Pts{" "}
                     {Array.from(new Set(filtered.map((w) => w.alias)))

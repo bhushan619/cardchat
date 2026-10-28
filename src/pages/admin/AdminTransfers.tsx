@@ -81,6 +81,7 @@ export default function AdminTransfers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
+  const [refFilter, setRefFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Transfer | null>(null);
@@ -93,10 +94,11 @@ export default function AdminTransfers() {
       (statusFilter === "all" || w.status === statusFilter) &&
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
+      (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
       w.amount >= min && w.amount <= max &&
       (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -181,6 +183,13 @@ export default function AdminTransfers() {
               {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Input
+            type="text"
+            placeholder="Reference no."
+            className="w-36 font-mono"
+            value={refFilter}
+            onChange={e => setRefFilter(e.target.value)}
+          />
           <Input type="number" placeholder="Min pts" className="w-24" value={minAmount} onChange={e => setMinAmount(e.target.value)} />
           <Input type="number" placeholder="Max pts" className="w-24" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} />
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
@@ -189,7 +198,7 @@ export default function AdminTransfers() {
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
-          <Table>
+          <Table className="min-w-[1150px]">
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
@@ -201,6 +210,7 @@ export default function AdminTransfers() {
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold">Reference</TableHead>
                 <TableHead className="text-xs font-semibold">Requested</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
               </TableRow>
@@ -236,6 +246,7 @@ export default function AdminTransfers() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{w.reference}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>View</Button>
@@ -245,7 +256,7 @@ export default function AdminTransfers() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-10 text-muted-foreground text-sm">
                     No transfers match your filters
                   </TableCell>
                 </TableRow>
@@ -269,7 +280,7 @@ export default function AdminTransfers() {
                       {totals.balance.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={7} />
                 </TableRow>
               </TableFooter>
             )}
