@@ -183,6 +183,13 @@ export default function AdminTransfers() {
               {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
             </SelectContent>
           </Select>
+          <Input
+            type="text"
+            placeholder="Reference no."
+            className="w-36 font-mono"
+            value={refFilter}
+            onChange={e => setRefFilter(e.target.value)}
+          />
           <Input type="number" placeholder="Min pts" className="w-24" value={minAmount} onChange={e => setMinAmount(e.target.value)} />
           <Input type="number" placeholder="Max pts" className="w-24" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} />
           <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
@@ -203,6 +210,7 @@ export default function AdminTransfers() {
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold">Reference</TableHead>
                 <TableHead className="text-xs font-semibold">Requested</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
               </TableRow>

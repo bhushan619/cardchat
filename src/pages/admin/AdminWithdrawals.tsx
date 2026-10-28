@@ -235,6 +235,13 @@ export default function AdminWithdrawals() {
             </SelectContent>
           </Select>
           <Input
+            type="text"
+            placeholder="Reference no."
+            className="w-36 font-mono"
+            value={refFilter}
+            onChange={(e) => setRefFilter(e.target.value)}
+          />
+          <Input
             type="number"
             placeholder="Min pts"
             className="w-24"
@@ -263,6 +270,7 @@ export default function AdminWithdrawals() {
                 <TableHead className="text-xs font-semibold">Bank</TableHead>
                 <TableHead className="text-xs font-semibold">Channel</TableHead>
                 <TableHead className="text-xs font-semibold">Status</TableHead>
+                <TableHead className="text-xs font-semibold">Reference</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Current Balance</TableHead>
                 <TableHead className="text-xs font-semibold">Requested</TableHead>
                 <TableHead className="text-xs font-semibold text-right">Actions</TableHead>
