@@ -13,9 +13,9 @@ import {
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
 } from "@/components/ui/dialog";
-import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins, Radio } from "lucide-react";
+import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins, Radio, Eraser, CornerDownLeft } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { maskName, accountNumberMatches } from "@/lib/utils";
+import { maskName, accountNumberMatches, withinDateRange } from "@/lib/utils";
 import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
 type Status = "pending" | "successful" | "failed" | "processing";
@@ -74,33 +74,69 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
   failed: { label: "Failed", className: "bg-rose-500/10 text-rose-600", icon: XCircle },
 };
 
+type AppliedFilters = {
+  id: string; alias: string; order: string;
+  status: string; channel: string; bank: string;
+  account: string; reference: string;
+  min: string; max: string; from: string; to: string;
+};
+
+const emptyFilters: AppliedFilters = {
+  id: "", alias: "", order: "",
+  status: "all", channel: "all", bank: "all",
+  account: "", reference: "",
+  min: "", max: "", from: "", to: "",
+};
+
 export default function AdminTransfers() {
   const { label: activeChannelLabel } = usePaymentChannel();
   const [items] = useState<Transfer[]>(seed);
-  const [search, setSearch] = useState("");
+  const [idFilter, setIdFilter] = useState("");
+  const [aliasFilter, setAliasFilter] = useState("");
+  const [orderFilter, setOrderFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
-  const [refFilter, setRefFilter] = useState<string>("");
   const [accountFilter, setAccountFilter] = useState<string>("");
+  const [refFilter, setRefFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+  const [applied, setApplied] = useState<AppliedFilters>(emptyFilters);
   const [selected, setSelected] = useState<Transfer | null>(null);
 
+  const applyFilters = () => setApplied({
+    id: idFilter, alias: aliasFilter, order: orderFilter,
+    status: statusFilter, channel: channelFilter, bank: bankFilter,
+    account: accountFilter, reference: refFilter,
+    min: minAmount, max: maxAmount, from: fromDate, to: toDate,
+  });
+
+  const clearFilters = () => {
+    setIdFilter(""); setAliasFilter(""); setOrderFilter("");
+    setStatusFilter("all"); setChannelFilter("all"); setBankFilter("all");
+    setAccountFilter(""); setRefFilter(""); setMinAmount(""); setMaxAmount("");
+    setFromDate(""); setToDate("");
+    setApplied(emptyFilters);
+  };
+
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    const min = minAmount === "" ? -Infinity : Number(minAmount);
-    const max = maxAmount === "" ? Infinity : Number(maxAmount);
+    const min = applied.min === "" ? -Infinity : Number(applied.min);
+    const max = applied.max === "" ? Infinity : Number(applied.max);
     return items.filter(w =>
-      (statusFilter === "all" || w.status === statusFilter) &&
-      (channelFilter === "all" || w.channel === channelFilter) &&
-      (bankFilter === "all" || w.bankName === bankFilter) &&
-      (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
-      accountNumberMatches(accountFilter, w.accountNumber) &&
-      w.amount >= min && w.amount <= max &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
+      (applied.status === "all" || w.status === applied.status) &&
+      (applied.channel === "all" || w.channel === applied.channel) &&
+      (applied.bank === "all" || w.bankName === applied.bank) &&
+      (applied.id === "" || w.id.toLowerCase().includes(applied.id.trim().toLowerCase())) &&
+      (applied.alias === "" || w.alias.toLowerCase().includes(applied.alias.trim().toLowerCase())) &&
+      (applied.order === "" || w.orderId.toLowerCase().includes(applied.order.trim().toLowerCase())) &&
+      (applied.reference === "" || w.reference.toLowerCase().includes(applied.reference.trim().toLowerCase())) &&
+      accountNumberMatches(applied.account, w.accountNumber) &&
+      withinDateRange(w.requestedAt, applied.from, applied.to) &&
+      w.amount >= min && w.amount <= max
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, accountFilter, minAmount, maxAmount]);
+  }, [items, applied]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -154,57 +190,48 @@ export default function AdminTransfers() {
           <SummaryCard label="Successful" value={totals.successful} hint="Disbursed" tone="success" points />
         </div>
 
-        <div className="flex items-center gap-3 mb-4 flex-wrap">
-          <div className="relative flex-1 max-w-sm min-w-[220px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-            <Input
-              placeholder="Search alias, transfer ID, bank, account, ref..."
-              className="pl-10"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+        <div className="space-y-2 mb-4">
+          <div className="flex items-center gap-2 flex-wrap">
+            <FilterInput placeholder="Transfer ID" value={idFilter} onChange={setIdFilter} onEnter={applyFilters} className="w-36" />
+            <FilterInput placeholder="Customer alias" value={aliasFilter} onChange={setAliasFilter} onEnter={applyFilters} className="w-40" />
+            <FilterInput placeholder="LightChat ID" value={orderFilter} onChange={setOrderFilter} onEnter={applyFilters} className="w-40" />
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-32"><SelectValue placeholder="Status" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All statuses</SelectItem>
+                {statuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={channelFilter} onValueChange={setChannelFilter}>
+              <SelectTrigger className="w-36"><SelectValue placeholder="Channel" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All channels</SelectItem>
+                {channels.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Select value={bankFilter} onValueChange={setBankFilter}>
+              <SelectTrigger className="w-32"><SelectValue placeholder="Bank" /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All banks</SelectItem>
+                {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
+              </SelectContent>
+            </Select>
+            <Input type="number" placeholder="Min pts" className="w-24" value={minAmount} onChange={e => setMinAmount(e.target.value)} onKeyDown={e => e.key === "Enter" && applyFilters()} />
+            <Input type="number" placeholder="Max pts" className="w-24" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} onKeyDown={e => e.key === "Enter" && applyFilters()} />
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-36"><SelectValue placeholder="Status" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All statuses</SelectItem>
-              {statuses.map(s => <SelectItem key={s} value={s} className="capitalize">{s}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={channelFilter} onValueChange={setChannelFilter}>
-            <SelectTrigger className="w-40"><SelectValue placeholder="Channel" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All channels</SelectItem>
-              {channels.map(c => <SelectItem key={c} value={c}>{c}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Select value={bankFilter} onValueChange={setBankFilter}>
-            <SelectTrigger className="w-36"><SelectValue placeholder="Bank" /></SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All banks</SelectItem>
-              {banks.map(b => <SelectItem key={b} value={b}>{b}</SelectItem>)}
-            </SelectContent>
-          </Select>
-          <Input
-            type="text"
-            placeholder="Reference no."
-            className="w-36 font-mono"
-            value={refFilter}
-            onChange={e => setRefFilter(e.target.value)}
-          />
-          <Input
-            type="text"
-            inputMode="numeric"
-            placeholder="Bank account no."
-            className="w-40 font-mono"
-            value={accountFilter}
-            onChange={e => setAccountFilter(e.target.value)}
-          />
-          <Input type="number" placeholder="Min pts" className="w-24" value={minAmount} onChange={e => setMinAmount(e.target.value)} />
-          <Input type="number" placeholder="Max pts" className="w-24" value={maxAmount} onChange={e => setMaxAmount(e.target.value)} />
-          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
-            <Search className="w-3.5 h-3.5" /> Search
-          </Button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <Input type="datetime-local" aria-label="From date & time" className="w-52" value={fromDate} onChange={e => setFromDate(e.target.value)} onKeyDown={e => e.key === "Enter" && applyFilters()} />
+            <span className="text-xs text-muted-foreground">to</span>
+            <Input type="datetime-local" aria-label="To date & time" className="w-52" value={toDate} onChange={e => setToDate(e.target.value)} onKeyDown={e => e.key === "Enter" && applyFilters()} />
+            <FilterInput placeholder="Bank Account" value={accountFilter} onChange={setAccountFilter} onEnter={applyFilters} className="w-44" mono />
+            <FilterInput placeholder="Payment Reference" value={refFilter} onChange={setRefFilter} onEnter={applyFilters} className="w-48" mono />
+            <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={applyFilters}>
+              <Search className="w-3.5 h-3.5" /> Search <CornerDownLeft className="w-3 h-3 opacity-70" />
+            </Button>
+            <Button size="sm" variant="outline" className="gap-1.5" onClick={clearFilters}>
+              <Eraser className="w-3.5 h-3.5" /> Clear
+            </Button>
+          </div>
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
@@ -331,6 +358,28 @@ export default function AdminTransfers() {
         </DialogContent>
       </Dialog>
     </AdminLayout>
+  );
+}
+
+function FilterInput({ placeholder, value, onChange, onEnter, className, mono }: {
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  onEnter: () => void;
+  className?: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className={`relative ${className ?? ""}`}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+      <Input
+        placeholder={placeholder}
+        className={`pl-8 ${mono ? "font-mono" : ""}`}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onKeyDown={e => e.key === "Enter" && onEnter()}
+      />
+    </div>
   );
 }
 
