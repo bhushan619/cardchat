@@ -198,7 +198,7 @@ export default function AdminTransfers() {
         </div>
 
         <div className="bg-card border rounded-xl overflow-hidden">
-          <Table>
+          <Table className="min-w-[1150px]">
             <TableHeader>
               <TableRow className="bg-muted/50">
                 <TableHead className="text-xs font-semibold">Transfer ID</TableHead>
