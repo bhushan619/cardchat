@@ -74,6 +74,20 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
   failed: { label: "Failed", className: "bg-rose-500/10 text-rose-600", icon: XCircle },
 };
 
+type AppliedFilters = {
+  id: string; alias: string; order: string;
+  status: string; channel: string; bank: string;
+  account: string; reference: string;
+  min: string; max: string; from: string; to: string;
+};
+
+const emptyFilters: AppliedFilters = {
+  id: "", alias: "", order: "",
+  status: "all", channel: "all", bank: "all",
+  account: "", reference: "",
+  min: "", max: "", from: "", to: "",
+};
+
 export default function AdminTransfers() {
   const { label: activeChannelLabel } = usePaymentChannel();
   const [items] = useState<Transfer[]>(seed);
