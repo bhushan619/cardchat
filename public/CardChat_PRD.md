@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.9  
+**Version:** 6.10  
 **Date:** October 28, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -9,6 +9,11 @@
 ---
 
 ## Table of Contents
+
+### v6.10 — Withdrawal filter parity
+
+- `/admin/withdrawals` matches Transfers: Request ID, Customer alias, LightChat ID (linked customer order), status/channel/bank, min/max Points, date range, Bank Account and Payment Reference.
+- Search or Enter applies staged filters; Clear resets all fields and results. Totals and exports use applied results.
 
 ### v6.9 — Transfers screen filter layout
 
@@ -1797,6 +1802,12 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.9 → v6.10 — October 28, 2026
+
+| Change | Description |
+|--------|-------------|
+| **Withdrawal Filter Parity** | Withdrawals uses the same two-row filters as Transfers, retaining Request ID terminology. LightChat ID matches an order linked to the customer alias. Search/Enter applies staged filters; Clear restores all results. Date range, account, reference, dropdown and Points filters combine, with summaries, totals and CSV following applied results. |
 
 ### v6.8 → v6.9 — October 28, 2026
 
