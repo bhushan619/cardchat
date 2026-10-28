@@ -361,6 +361,28 @@ export default function AdminTransfers() {
   );
 }
 
+function FilterInput({ placeholder, value, onChange, onEnter, className, mono }: {
+  placeholder: string;
+  value: string;
+  onChange: (v: string) => void;
+  onEnter: () => void;
+  className?: string;
+  mono?: boolean;
+}) {
+  return (
+    <div className={`relative ${className ?? ""}`}>
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+      <Input
+        placeholder={placeholder}
+        className={`pl-8 ${mono ? "font-mono" : ""}`}
+        value={value}
+        onChange={e => onChange(e.target.value)}
+        onKeyDown={e => e.key === "Enter" && onEnter()}
+      />
+    </div>
+  );
+}
+
 function SummaryCard({ label, value, hint, tone, points }: { label: string; value: string | number; hint: string; tone?: "success" | "warning"; points?: boolean }) {
   const toneClass = tone === "success" ? "text-emerald-600" : tone === "warning" ? "text-amber-600" : "text-foreground";
   return (
