@@ -74,6 +74,7 @@ export default function AdminWithdrawals() {
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
   const [refFilter, setRefFilter] = useState<string>("");
+  const [accountFilter, setAccountFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Withdrawal | null>(null);
@@ -88,6 +89,8 @@ export default function AdminWithdrawals() {
         (channelFilter === "all" || w.channel === channelFilter) &&
         (bankFilter === "all" || w.bankName === bankFilter) &&
         (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
+        (accountFilter === "" ||
+          w.accountNumber.replace(/\D/g, "").includes(accountFilter.replace(/\D/g, ""))) &&
         w.amount >= min &&
         w.amount <= max &&
         (q === "" ||
@@ -96,7 +99,7 @@ export default function AdminWithdrawals() {
           w.alias.toLowerCase().includes(q) ||
           w.accountName.toLowerCase().includes(q)),
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, accountFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -240,6 +243,14 @@ export default function AdminWithdrawals() {
             className="w-36 font-mono"
             value={refFilter}
             onChange={(e) => setRefFilter(e.target.value)}
+          />
+          <Input
+            type="text"
+            inputMode="numeric"
+            placeholder="Bank account no."
+            className="w-40 font-mono"
+            value={accountFilter}
+            onChange={(e) => setAccountFilter(e.target.value)}
           />
           <Input
             type="number"
