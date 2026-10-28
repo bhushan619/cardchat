@@ -59,3 +59,36 @@ export function accountNumberMatches(filter: string, value: string | null | unde
   if (!digits) return true;
   return (value || "").replace(/\D/g, "").includes(digits);
 }
+
+/**
+ * Parse a ledger timestamp formatted as "dd/mm/yyyy · hh:mm AM/PM".
+ * Returns null when the value does not match the expected format.
+ */
+export function parseLedgerDate(value: string | null | undefined): Date | null {
+  if (!value) return null;
+  const m = value.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})\s*·\s*(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return null;
+  let hours = Number(m[4]) % 12;
+  if (m[6].toUpperCase() === "PM") hours += 12;
+  const d = new Date(Number(m[3]), Number(m[2]) - 1, Number(m[1]), hours, Number(m[5]));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+/**
+ * Check a ledger timestamp against an optional from/to range (datetime-local values).
+ * Empty bounds are ignored; unparseable timestamps are kept so records never vanish.
+ */
+export function withinDateRange(value: string, from: string, to: string): boolean {
+  if (!from && !to) return true;
+  const d = parseLedgerDate(value);
+  if (!d) return true;
+  if (from) {
+    const f = new Date(from);
+    if (!isNaN(f.getTime()) && d < f) return false;
+  }
+  if (to) {
+    const t = new Date(to);
+    if (!isNaN(t.getTime()) && d > t) return false;
+  }
+  return true;
+}
