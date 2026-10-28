@@ -48,3 +48,14 @@ export function formatDate(value: Date | string | number | null | undefined): st
   const year = d.getFullYear();
   return `${day}/${month}/${year}`;
 }
+
+/**
+ * Match a typed bank account number filter against a stored account value.
+ * Compares digits only, so spaces, dashes and masking characters are ignored.
+ * An empty/whitespace-only filter matches everything.
+ */
+export function accountNumberMatches(filter: string, value: string | null | undefined): boolean {
+  const digits = (filter || "").replace(/\D/g, "");
+  if (!digits) return true;
+  return (value || "").replace(/\D/g, "").includes(digits);
+}
