@@ -13,4 +13,4 @@
 - [x] Conversion analytics, tests, browser verification and PRD
 
 ## Withdrawal filter parity
-- [ ] Match Transfers filter fields, two-row layout and Search/Enter/Clear behavior; verify filtering and totals.
+- [x] Match Transfers filter fields, two-row layout and Search/Enter/Clear behavior; verify filtering and totals.
