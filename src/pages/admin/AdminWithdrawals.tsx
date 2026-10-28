@@ -16,6 +16,7 @@ import {
 import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Radio } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
+import { accountNumberMatches } from "@/lib/utils";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
@@ -89,8 +90,7 @@ export default function AdminWithdrawals() {
         (channelFilter === "all" || w.channel === channelFilter) &&
         (bankFilter === "all" || w.bankName === bankFilter) &&
         (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
-        (accountFilter === "" ||
-          w.accountNumber.replace(/\D/g, "").includes(accountFilter.replace(/\D/g, ""))) &&
+        accountNumberMatches(accountFilter, w.accountNumber) &&
         w.amount >= min &&
         w.amount <= max &&
         (q === "" ||
