@@ -16,6 +16,7 @@ import {
 import { ArrowDownToLine, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Radio } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
+import { accountNumberMatches } from "@/lib/utils";
 
 type Status = "pending" | "successful" | "failed" | "processing";
 
@@ -74,6 +75,7 @@ export default function AdminWithdrawals() {
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
   const [refFilter, setRefFilter] = useState<string>("");
+  const [accountFilter, setAccountFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Withdrawal | null>(null);
@@ -88,6 +90,7 @@ export default function AdminWithdrawals() {
         (channelFilter === "all" || w.channel === channelFilter) &&
         (bankFilter === "all" || w.bankName === bankFilter) &&
         (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
+        accountNumberMatches(accountFilter, w.accountNumber) &&
         w.amount >= min &&
         w.amount <= max &&
         (q === "" ||
@@ -96,7 +99,7 @@ export default function AdminWithdrawals() {
           w.alias.toLowerCase().includes(q) ||
           w.accountName.toLowerCase().includes(q)),
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, accountFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
@@ -240,6 +243,14 @@ export default function AdminWithdrawals() {
             className="w-36 font-mono"
             value={refFilter}
             onChange={(e) => setRefFilter(e.target.value)}
+          />
+          <Input
+            type="text"
+            inputMode="numeric"
+            placeholder="Bank account no."
+            className="w-40 font-mono"
+            value={accountFilter}
+            onChange={(e) => setAccountFilter(e.target.value)}
           />
           <Input
             type="number"

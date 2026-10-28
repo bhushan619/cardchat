@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.7  
-**Date:** October 23, 2026
+**Version:** 6.8  
+**Date:** October 28, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -9,6 +9,12 @@
 ---
 
 ## Table of Contents
+
+### v6.8 — Bank account number filter on transfer ledgers
+
+- `/admin/withdrawals` and `/admin/transfers` add a dedicated **Bank account no.** input to the filter row.
+- Matching ignores spaces and dashes and compares digits only, so a partial account number narrows the list.
+- The filter combines with status, channel, bank, reference and amount filters; totals stay filter-aware.
 
 ### v6.7 — Transfer records bank account details
 
@@ -1786,6 +1792,14 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.7 → v6.8 — October 28, 2026
+
+Bank account number filter added to both transfer ledgers:
+
+| Change | Description |
+|--------|-------------|
+| **Bank Account Number Filter** | `/admin/withdrawals` and `/admin/transfers` add a **Bank account no.** input to the filter row (font-mono, numeric keyboard on mobile). Matching strips spaces and dashes and compares **digits only** against the stored account number, so any part of the number works. It stacks with status, channel, bank, reference and amount filters; an unmatched number shows the existing "no match" empty state, and the summary cards and totals row stay filter-aware. |
 
 ### v6.6 → v6.7 — October 23, 2026
 
