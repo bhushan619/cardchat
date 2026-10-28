@@ -11,3 +11,6 @@
 - [x] Mobile inbox, read state, preferences and images
 - [x] Admin tag audience, campaign types, scheduling, drafts and images
 - [x] Conversion analytics, tests, browser verification and PRD
+
+## Withdrawal filter parity
+- [x] Match Transfers filter fields, two-row layout and Search/Enter/Clear behavior; verify filtering and totals.
