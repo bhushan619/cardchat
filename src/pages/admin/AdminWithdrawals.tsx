@@ -308,6 +308,7 @@ export default function AdminWithdrawals() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{w.reference}</TableCell>
                     <TableCell className="text-right text-xs font-semibold">
                       Pts {(walletByAlias[w.alias]?.balance ?? 0).toLocaleString()}
                     </TableCell>
@@ -322,7 +323,7 @@ export default function AdminWithdrawals() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={9} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
                     No withdrawal requests match your filters
                   </TableCell>
                 </TableRow>
@@ -337,7 +338,7 @@ export default function AdminWithdrawals() {
                   <TableCell className="text-right text-sm font-bold">
                     Pts {filtered.reduce((a, w) => a + Number(w.amount || 0), 0).toLocaleString()}
                   </TableCell>
-                  <TableCell colSpan={3} />
+                  <TableCell colSpan={4} />
                   <TableCell className="text-right text-xs font-bold">
                     Pts{" "}
                     {Array.from(new Set(filtered.map((w) => w.alias)))

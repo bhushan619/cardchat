@@ -246,6 +246,7 @@ export default function AdminTransfers() {
                         <Icon className="w-3 h-3" /> {cfg.label}
                       </span>
                     </TableCell>
+                    <TableCell className="font-mono text-xs text-muted-foreground">{w.reference}</TableCell>
                     <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>View</Button>
@@ -255,7 +256,7 @@ export default function AdminTransfers() {
               })}
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={10} className="text-center py-10 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-10 text-muted-foreground text-sm">
                     No transfers match your filters
                   </TableCell>
                 </TableRow>
@@ -279,7 +280,7 @@ export default function AdminTransfers() {
                       {totals.balance.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={7} />
                 </TableRow>
               </TableFooter>
             )}
