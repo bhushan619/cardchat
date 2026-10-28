@@ -77,30 +77,52 @@ const statusConfig: Record<Status, { label: string; className: string; icon: typ
 export default function AdminTransfers() {
   const { label: activeChannelLabel } = usePaymentChannel();
   const [items] = useState<Transfer[]>(seed);
-  const [search, setSearch] = useState("");
+  const [idFilter, setIdFilter] = useState("");
+  const [aliasFilter, setAliasFilter] = useState("");
+  const [orderFilter, setOrderFilter] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
-  const [refFilter, setRefFilter] = useState<string>("");
   const [accountFilter, setAccountFilter] = useState<string>("");
+  const [refFilter, setRefFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
+  const [fromDate, setFromDate] = useState<string>("");
+  const [toDate, setToDate] = useState<string>("");
+  const [applied, setApplied] = useState<AppliedFilters>(emptyFilters);
   const [selected, setSelected] = useState<Transfer | null>(null);
 
+  const applyFilters = () => setApplied({
+    id: idFilter, alias: aliasFilter, order: orderFilter,
+    status: statusFilter, channel: channelFilter, bank: bankFilter,
+    account: accountFilter, reference: refFilter,
+    min: minAmount, max: maxAmount, from: fromDate, to: toDate,
+  });
+
+  const clearFilters = () => {
+    setIdFilter(""); setAliasFilter(""); setOrderFilter("");
+    setStatusFilter("all"); setChannelFilter("all"); setBankFilter("all");
+    setAccountFilter(""); setRefFilter(""); setMinAmount(""); setMaxAmount("");
+    setFromDate(""); setToDate("");
+    setApplied(emptyFilters);
+  };
+
   const filtered = useMemo(() => {
-    const q = search.toLowerCase();
-    const min = minAmount === "" ? -Infinity : Number(minAmount);
-    const max = maxAmount === "" ? Infinity : Number(maxAmount);
+    const min = applied.min === "" ? -Infinity : Number(applied.min);
+    const max = applied.max === "" ? Infinity : Number(applied.max);
     return items.filter(w =>
-      (statusFilter === "all" || w.status === statusFilter) &&
-      (channelFilter === "all" || w.channel === channelFilter) &&
-      (bankFilter === "all" || w.bankName === bankFilter) &&
-      (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
-      accountNumberMatches(accountFilter, w.accountNumber) &&
-      w.amount >= min && w.amount <= max &&
-      (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
+      (applied.status === "all" || w.status === applied.status) &&
+      (applied.channel === "all" || w.channel === applied.channel) &&
+      (applied.bank === "all" || w.bankName === applied.bank) &&
+      (applied.id === "" || w.id.toLowerCase().includes(applied.id.trim().toLowerCase())) &&
+      (applied.alias === "" || w.alias.toLowerCase().includes(applied.alias.trim().toLowerCase())) &&
+      (applied.order === "" || w.orderId.toLowerCase().includes(applied.order.trim().toLowerCase())) &&
+      (applied.reference === "" || w.reference.toLowerCase().includes(applied.reference.trim().toLowerCase())) &&
+      accountNumberMatches(applied.account, w.accountNumber) &&
+      withinDateRange(w.requestedAt, applied.from, applied.to) &&
+      w.amount >= min && w.amount <= max
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, accountFilter, minAmount, maxAmount]);
+  }, [items, applied]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);
