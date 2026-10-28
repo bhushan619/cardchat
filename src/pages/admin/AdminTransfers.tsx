@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { Send, Search, Download, CheckCircle2, XCircle, Clock, Wallet, Coins, Radio } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { maskName } from "@/lib/utils";
+import { maskName, accountNumberMatches } from "@/lib/utils";
 import { PAYMENT_CHANNELS, usePaymentChannel } from "@/lib/paymentChannel";
 
 type Status = "pending" | "successful" | "failed" | "processing";
@@ -96,7 +96,7 @@ export default function AdminTransfers() {
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
       (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
-      (accountFilter === "" || w.accountNumber.replace(/\D/g, "").includes(accountFilter.replace(/\D/g, ""))) &&
+      accountNumberMatches(accountFilter, w.accountNumber) &&
       w.amount >= min && w.amount <= max &&
       (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
