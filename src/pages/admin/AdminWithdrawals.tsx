@@ -73,6 +73,7 @@ export default function AdminWithdrawals() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [bankFilter, setBankFilter] = useState<string>("all");
+  const [refFilter, setRefFilter] = useState<string>("");
   const [minAmount, setMinAmount] = useState<string>("");
   const [maxAmount, setMaxAmount] = useState<string>("");
   const [selected, setSelected] = useState<Withdrawal | null>(null);
