@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.8  
+**Version:** 6.9  
 **Date:** October 28, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -9,6 +9,11 @@
 ---
 
 ## Table of Contents
+
+### v6.9 — Transfers screen filter layout
+
+- `/admin/transfers` filters are reorganised into two rows: Transfer ID, Customer alias, LightChat ID (linked order), status, channel, bank and min/max Points on top; date range, Bank Account, Payment Reference, Search and Clear below.
+- Filters apply on Search or Enter (not live), and Clear resets every field; summary cards and the totals row follow the applied filters.
 
 ### v6.8 — Bank account number filter on transfer ledgers
 
@@ -1792,6 +1797,16 @@ src/
 ---
 
 ## 12. Full Changelog
+
+### v6.8 → v6.9 — October 28, 2026
+
+Transfers screen filters reorganised into a two-row, search-on-demand layout:
+
+| Change | Description |
+|--------|-------------|
+| **Two-Row Filter Layout** | `/admin/transfers` replaces the single search box with dedicated inputs. Row 1: **Transfer ID**, **Customer alias**, **LightChat ID** (matches the linked order ID), status, channel and bank dropdowns, **Min pts** / **Max pts**. Row 2: **From date & time** → **To date & time** range pickers, **Bank Account**, **Payment Reference**, a green **Search** button (Enter also applies) and a **Clear** button that resets every field. |
+| **Search-on-Demand** | Filters no longer apply live — typing stages the values and the table updates only on Search/Enter; Clear restores the full list. Summary cards and the totals row follow the applied filters. |
+| **Date Range Filter** | The from/to pickers compare against each transfer's Requested timestamp (`dd/mm/yyyy · hh:mm AM/PM`) via the pure `withinDateRange` helper; unparseable timestamps are kept so records never vanish. Unit tests cover the parser and range matching. |
 
 ### v6.7 → v6.8 — October 28, 2026
 
