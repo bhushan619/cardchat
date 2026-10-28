@@ -94,10 +94,11 @@ export default function AdminTransfers() {
       (statusFilter === "all" || w.status === statusFilter) &&
       (channelFilter === "all" || w.channel === channelFilter) &&
       (bankFilter === "all" || w.bankName === bankFilter) &&
+      (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
       w.amount >= min && w.amount <= max &&
       (q === "" || w.alias.toLowerCase().includes(q) || w.id.toLowerCase().includes(q) || w.reference.toLowerCase().includes(q) || w.bankName.toLowerCase().includes(q) || w.accountNumber.toLowerCase().includes(q))
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter(w => w.status === s).reduce((a, w) => a + w.amount, 0);

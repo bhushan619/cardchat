@@ -87,6 +87,7 @@ export default function AdminWithdrawals() {
         (statusFilter === "all" || w.status === statusFilter) &&
         (channelFilter === "all" || w.channel === channelFilter) &&
         (bankFilter === "all" || w.bankName === bankFilter) &&
+        (refFilter === "" || w.reference.toLowerCase().includes(refFilter.trim().toLowerCase())) &&
         w.amount >= min &&
         w.amount <= max &&
         (q === "" ||
@@ -95,7 +96,7 @@ export default function AdminWithdrawals() {
           w.alias.toLowerCase().includes(q) ||
           w.accountName.toLowerCase().includes(q)),
     );
-  }, [items, search, statusFilter, channelFilter, bankFilter, minAmount, maxAmount]);
+  }, [items, search, statusFilter, channelFilter, bankFilter, refFilter, minAmount, maxAmount]);
 
   const totals = useMemo(() => {
     const sum = (s: Status) => filtered.filter((w) => w.status === s).reduce((a, w) => a + w.amount, 0);
