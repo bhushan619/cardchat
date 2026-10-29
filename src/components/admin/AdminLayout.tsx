@@ -30,7 +30,11 @@ import {
   Zap,
   LineChart,
   Settings,
+  PanelLeftClose,
+  PanelLeftOpen,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useAdminLang, useSetAdminLang } from "@/contexts/AdminLangContext";
@@ -196,6 +200,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   const location = useLocation();
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [menuHidden, setMenuHidden] = useState(() => sessionStorage.getItem("cc_admin_menu_hidden") === "true");
   const { role, setRole } = useAdminRole();
   const { theme, toggleTheme } = useTheme();
   const lang = useAdminLang();
@@ -234,7 +239,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <aside className="w-60 bg-sidebar text-sidebar-foreground flex flex-col shrink-0">
+      <aside id="admin-menu" hidden={menuHidden} className={`w-60 bg-sidebar text-sidebar-foreground flex-col shrink-0 ${menuHidden ? "hidden" : "flex"}`}>
         <div className="p-5 border-b border-sidebar-border">
           <h1 className="font-heading text-lg font-bold text-sidebar-primary">CardChat</h1>
           <p className="text-xs text-sidebar-foreground/60 mt-0.5">Admin Panel</p>
@@ -315,6 +320,27 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
         {/* Top bar */}
         <header className="h-14 border-b flex items-center justify-between px-5 bg-card shrink-0">
           <div className="flex items-center gap-3 flex-1">
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8 shrink-0 text-muted-foreground"
+                    aria-label={menuHidden ? "Show menu" : "Hide menu"}
+                    aria-expanded={!menuHidden}
+                    aria-controls="admin-menu"
+                    onClick={() => setMenuHidden((hidden) => {
+                      sessionStorage.setItem("cc_admin_menu_hidden", String(!hidden));
+                      return !hidden;
+                    })}
+                  >
+                    {menuHidden ? <PanelLeftOpen /> : <PanelLeftClose />}
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>{menuHidden ? "Show menu" : "Hide menu"}</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
             <Search className="w-4 h-4 text-muted-foreground" />
             <Input
               placeholder="Search customers, orders, transactions..."
@@ -380,7 +406,7 @@ export default function AdminLayout({ children, topRight }: { children: ReactNod
 
         {/* Search overlay */}
         {searchOpen && (
-          <div className="absolute top-14 left-60 right-0 z-50 bg-card border-b shadow-lg p-4 animate-slide-up">
+          <div className={`absolute top-14 ${menuHidden ? "left-0" : "left-60"} right-0 z-50 bg-card border-b shadow-lg p-4 animate-slide-up`}>
             <div className="max-w-2xl mx-auto space-y-3">
               {!searchResults ? (
                 <>

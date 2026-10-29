@@ -1,5 +1,6 @@
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
 import { orders } from "@/data/mock";
 import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -148,6 +149,7 @@ function CopyableValue({ value }: { value: string }) {
 }
 
 export default function AdminOrders() {
+  const orderScroll = useHorizontalDragScroll();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [shownCardNumbers, setShownCardNumbers] = useState<Set<string>>(new Set());
@@ -277,8 +279,8 @@ export default function AdminOrders() {
           </Button>
         </div>
 
-        <div className="bg-card border rounded-xl overflow-hidden">
-          <table className="w-full">
+        <div {...orderScroll} aria-label="Orders list" className={`bg-card border rounded-xl overflow-x-auto overscroll-x-contain ${orderScroll.className}`}>
+          <table className="w-full min-w-[1400px]">
             <thead>
               <tr className="border-b bg-muted/50">
                 <th className="w-8 px-2"></th>
