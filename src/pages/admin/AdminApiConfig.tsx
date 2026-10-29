@@ -1,14 +1,19 @@
 import AdminLayout from "@/components/admin/AdminLayout";
-import { Lock } from "lucide-react";
+import { Lock, Save } from "lucide-react";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getUnregisteredUserAgent, saveUnregisteredUserAgent, unregisteredUserAgents } from "@/lib/unregisteredUserAgent";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { getCustomerIntroductionMessage, saveCustomerIntroductionMessage } from "@/lib/customerIntroductionMessage";
 
 export default function AdminApiConfig() {
   const { role } = useAdminRole();
   const [agentId, setAgentId] = useState(getUnregisteredUserAgent);
+  const [savedIntroduction, setSavedIntroduction] = useState(getCustomerIntroductionMessage);
+  const [introduction, setIntroduction] = useState(savedIntroduction);
   const canView = role === "super_admin";
 
   if (!canView) {
@@ -51,6 +56,27 @@ export default function AdminApiConfig() {
             </SelectContent>
           </Select>
         </div>
+
+        <form className="space-y-3 border-t pt-6" onSubmit={(event) => {
+          event.preventDefault();
+          saveCustomerIntroductionMessage(introduction);
+          setSavedIntroduction(introduction);
+          toast.success("Customer introduction message saved");
+        }}>
+          <label htmlFor="customer-introduction-message" className="block text-sm font-medium">
+            Introduction message for customers
+          </label>
+          <Textarea
+            id="customer-introduction-message"
+            value={introduction}
+            onChange={(event) => setIntroduction(event.target.value)}
+            placeholder="Enter your introduction message"
+            className="min-h-36"
+          />
+          <Button type="submit" disabled={introduction === savedIntroduction}>
+            <Save className="h-4 w-4 mr-2" />Save Message
+          </Button>
+        </form>
       </div>
     </AdminLayout>
   );
