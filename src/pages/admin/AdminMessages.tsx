@@ -78,6 +78,7 @@ import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
+import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
 import {
   AgentOrderStatus,
   agentStatusLabels,
@@ -250,6 +251,7 @@ const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827
 type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
+  const panelScroll = useHorizontalDragScroll();
   const { role } = useAdminRole();
   const [tagDefs, setTagDefs] = useState<CustomerTagDef[]>(() => getActiveCustomerTags());
   useEffect(() => {
@@ -1523,9 +1525,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     <AdminLayout>
       <div className="flex flex-col h-full">
       {/* Below: customer list | chat | orders */}
-        <div className="flex flex-1 min-h-0">
+        <div {...panelScroll} aria-label="Messages and orders panels" className={`flex flex-1 min-h-0 overflow-x-auto overscroll-x-contain ${panelScroll.className}`}>
           {/* Left panel: customer list */}
-          <div className="w-[25%] min-w-[240px] max-w-[336px] shrink-0 border-r flex flex-col">
+          <div className="w-[25%] min-w-[300px] max-w-[336px] shrink-0 border-r flex flex-col">
             {/* Search bar */}
             <div className="px-2 border-b shrink-0 h-12 flex items-center gap-1.5">
               <div className="relative flex-1 min-w-0">
@@ -1749,7 +1751,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </div>
 
           {/* Middle: Chat window */}
-          <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+          <div className="flex-1 flex flex-col min-w-[600px] overflow-hidden">
             {selectedGroup ? (
               <GroupThread
                 group={selectedGroup}
@@ -2471,7 +2473,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           )}
 
           {/* Right panel: Tabbed Orders & Sales Order */}
-          <div className="w-[35%] min-w-[320px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden hidden xl:flex">
+          <div className="w-[35%] min-w-[440px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
 
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
