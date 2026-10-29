@@ -93,9 +93,15 @@ export default function AdminApiConfig() {
             value={introduction}
             onChange={(event) => setIntroduction(event.target.value)}
             placeholder="Enter your introduction message"
-            className="min-h-36 disabled:opacity-50"
+            className="min-h-36 disabled:bg-muted/40 disabled:text-muted-foreground"
             disabled={!introductionEnabled}
           />
+          {!introductionEnabled && (
+            <p className="text-xs text-muted-foreground">
+              Editing is paused while the introduction message is switched off.
+            </p>
+          )}
+
 
           <Button type="submit" disabled={introduction === savedIntroduction}>
             <Save className="h-4 w-4 mr-2" />Save Message
