@@ -38,7 +38,7 @@ export default function WhatsAppGatewayCard() {
     <div className="bg-card border rounded-xl p-5 space-y-4">
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <Activity className="w-4 h-4 text-emerald-600" />
+          <Activity className="w-4 h-4 text-accent" />
           <h2 className="font-heading font-semibold text-sm">WhatsApp Gateway Health</h2>
         </div>
         <Button
@@ -49,10 +49,10 @@ export default function WhatsAppGatewayCard() {
         </Button>
       </div>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {stats.map(s => (
           <div key={s.label} className="rounded-lg bg-muted/40 p-3 text-center">
-            <p className={`text-lg font-bold ${s.green ? "text-emerald-600" : ""}`}>{s.value}</p>
+            <p className={`text-sm font-bold ${s.green ? "text-accent" : ""}`}>{s.value}</p>
             <p className="text-[11px] text-muted-foreground mt-0.5">{s.label}</p>
             {s.sub && <p className="text-[10px] text-muted-foreground/70 mt-0.5">{s.sub}</p>}
           </div>

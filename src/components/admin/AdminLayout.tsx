@@ -29,6 +29,7 @@ import {
   Tags,
   Zap,
   LineChart,
+  Settings,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -137,6 +138,7 @@ const navItems = [
     path: "/admin/whatsapp-sessions",
     roles: ["super_admin"],
   },
+  { id: "wa-gateway-config", label: "WA Gateway Config", icon: Settings, path: "/admin/wa-gateway-config", roles: ["super_admin"] },
   {
     id: "app-versions",
     label: "App Versions",

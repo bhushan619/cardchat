@@ -14,3 +14,7 @@
 
 ## Withdrawal filter parity
 - [x] Match Transfers filter fields, two-row layout and Search/Enter/Clear behavior; verify filtering and totals.
+
+## Gateway configuration separation
+- [x] Add WA Gateway Config navigation and screenshot-matched gateway health/policy page.
+- [x] Replace Settings configurations with the unregistered-user agent dropdown; verify session saving and page separation.

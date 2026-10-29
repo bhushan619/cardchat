@@ -22,7 +22,7 @@ export default function WarmupAntiBanCard() {
   return (
     <div className="bg-card border rounded-xl p-5 space-y-4">
       <div className="flex items-center gap-2">
-        <Shield className="w-4 h-4 text-emerald-600" />
+        <Shield className="w-4 h-4 text-accent" />
         <h2 className="font-heading font-semibold text-sm">Warmup / Anti-Ban Settings</h2>
       </div>
 
@@ -30,7 +30,7 @@ export default function WarmupAntiBanCard() {
         Daily caps per warmup phase — set via Gateway environment variables at startup, not editable here
       </p>
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {policy.dailyCaps.map((cap) => (
           <div key={cap.day} className="rounded-lg bg-muted/40 p-3 text-center">
             <p className="text-sm font-semibold">{cap.day}</p>
@@ -50,13 +50,14 @@ export default function WarmupAntiBanCard() {
             </p>
           </div>
           <Switch
+            aria-label="Warmup enforcement"
             checked={policy.warmupEnforcement}
             onCheckedChange={(v) => setPolicy({ ...policy, warmupEnforcement: v })}
           />
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
           <label className="text-xs font-medium text-muted-foreground">Min Reply Ratio (%)</label>
           <Input
