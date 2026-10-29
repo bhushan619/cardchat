@@ -7,13 +7,16 @@ import { getUnregisteredUserAgent, saveUnregisteredUserAgent, unregisteredUserAg
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { getCustomerIntroductionMessage, saveCustomerIntroductionMessage } from "@/lib/customerIntroductionMessage";
+import { Switch } from "@/components/ui/switch";
+import { getCustomerIntroductionMessage, isCustomerIntroductionMessageEnabled, saveCustomerIntroductionMessage, setCustomerIntroductionMessageEnabled } from "@/lib/customerIntroductionMessage";
 
 export default function AdminApiConfig() {
   const { role } = useAdminRole();
   const [agentId, setAgentId] = useState(getUnregisteredUserAgent);
   const [savedIntroduction, setSavedIntroduction] = useState(getCustomerIntroductionMessage);
   const [introduction, setIntroduction] = useState(savedIntroduction);
+  const [introductionEnabled, setIntroductionEnabled] = useState(isCustomerIntroductionMessageEnabled);
+
   const canView = role === "super_admin";
 
   if (!canView) {
@@ -63,16 +66,43 @@ export default function AdminApiConfig() {
           setSavedIntroduction(introduction);
           toast.success("Customer introduction message saved");
         }}>
+          <div className="flex items-center justify-between gap-4 rounded-lg border bg-muted/30 p-3">
+            <div className="space-y-0.5">
+              <label htmlFor="customer-introduction-enabled" className="block text-sm font-medium">
+                Send introduction message to customers
+              </label>
+              <p className="text-xs text-muted-foreground">
+                When switched off, customers do not receive the introduction message.
+              </p>
+            </div>
+            <Switch
+              id="customer-introduction-enabled"
+              checked={introductionEnabled}
+              onCheckedChange={(checked) => {
+                setIntroductionEnabled(checked);
+                setCustomerIntroductionMessageEnabled(checked);
+                toast.success(checked ? "Introduction message enabled" : "Introduction message disabled");
+              }}
+            />
+          </div>
           <label htmlFor="customer-introduction-message" className="block text-sm font-medium">
-            Introduction message for customers
+            Introduction message
           </label>
           <Textarea
             id="customer-introduction-message"
             value={introduction}
             onChange={(event) => setIntroduction(event.target.value)}
             placeholder="Enter your introduction message"
-            className="min-h-36"
+            className="min-h-36 disabled:bg-muted/40 disabled:text-muted-foreground"
+            disabled={!introductionEnabled}
           />
+          {!introductionEnabled && (
+            <p className="text-xs text-muted-foreground">
+              Editing is paused while the introduction message is switched off.
+            </p>
+          )}
+
+
           <Button type="submit" disabled={introduction === savedIntroduction}>
             <Save className="h-4 w-4 mr-2" />Save Message
           </Button>

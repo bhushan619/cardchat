@@ -1,6 +1,6 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.11  
+**Version:** 6.12  
 **Date:** October 29, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
@@ -10,7 +10,14 @@
 
 ## Table of Contents
 
+### v6.12 — Introduction message switch
+
+- Settings adds a **Send introduction message to customers** switch above the message box. It is ON by default and is saved for the current prototype session.
+- When switched off, the message box is read-only with a "Editing is paused…" note; the saved text is retained and restores when the switch is turned back on.
+- The switch changes only the stored setting; no message is automatically sent to customers in this prototype.
+
 ### v6.11 — Gateway configuration separation
+
 
 - New Super Admin menu **WA Gateway Config** at `/admin/wa-gateway-config` contains WhatsApp Gateway Health, Ping Gateway and the screenshot-matched warmup/anti-ban policy controls.
 - Settings at `/admin/api-config` removes all previous configuration panels and contains only **Select Agent for unregistered users**. Selection is saved for the current prototype session using shared staff IDs; this does not implement live support routing.
@@ -1186,7 +1193,14 @@ Two-section management page:
 - Webhook callback URL settings
 - Connection testing functionality
 
+#### Customer Introduction Message (v6.12)
+- **Switch — "Send introduction message to customers"** (ON by default) enables or disables the customer introduction message; state persisted via `cc_customer_introduction_message_enabled` in sessionStorage.
+- **Message textarea** (`cc_customer_introduction_message`) holds the copy and is saved with **Save Message**; it becomes read-only while the switch is off, with a note explaining editing is paused.
+- The saved text is retained while disabled and restored when the switch is turned back on; the setting survives navigation within the session.
+- Prototype only: toggling stores the preference and does not automatically send anything to customers.
+
 #### Withdrawal Kill Switch (v5.2)
+
 A dedicated card at the top of the page lets Super Admins globally disable all customer withdrawal requests:
 - **Toggle switch** — flips `cc_withdrawals_disabled` flag (sessionStorage in prototype; backend config in production)
 - **Destructive alert banner** appears when the switch is ON
