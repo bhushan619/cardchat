@@ -1,5 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { getCustomerIntroductionMessage, saveCustomerIntroductionMessage } from "@/lib/customerIntroductionMessage";
+import {
+  getCustomerIntroductionMessage,
+  isCustomerIntroductionMessageEnabled,
+  saveCustomerIntroductionMessage,
+  setCustomerIntroductionMessageEnabled,
+} from "@/lib/customerIntroductionMessage";
 
 beforeEach(() => sessionStorage.clear());
 
@@ -14,5 +19,23 @@ describe("customer introduction message configuration", () => {
     saveCustomerIntroductionMessage("Welcome!");
     saveCustomerIntroductionMessage("");
     expect(getCustomerIntroductionMessage()).toBe("");
+  });
+
+  it("sends the introduction message by default", () => {
+    expect(isCustomerIntroductionMessageEnabled()).toBe(true);
+  });
+
+  it("keeps the message switched off until it is switched back on", () => {
+    setCustomerIntroductionMessageEnabled(false);
+    expect(isCustomerIntroductionMessageEnabled()).toBe(false);
+    setCustomerIntroductionMessageEnabled(true);
+    expect(isCustomerIntroductionMessageEnabled()).toBe(true);
+  });
+
+  it("keeps the saved message while the switch is off", () => {
+    saveCustomerIntroductionMessage("Welcome to CardChat!");
+    setCustomerIntroductionMessageEnabled(false);
+    expect(getCustomerIntroductionMessage()).toBe("Welcome to CardChat!");
+    expect(isCustomerIntroductionMessageEnabled()).toBe(false);
   });
 });
