@@ -52,7 +52,7 @@ export function useHorizontalDragScroll() {
       suppressClick.current = false;
       const viewport = ref.current;
       if (!viewport || event.button !== 0 || event.pointerType === "touch" || viewport.scrollWidth <= viewport.clientWidth) return;
-      if (event.target instanceof Element && event.target.closest("button, a, input, textarea, select, [role='button'], [role='tab'], [contenteditable='true'], [draggable='true']")) return;
+      if (event.target instanceof Element && event.target.closest("button, a, input, textarea, select, [role='tab'], [contenteditable='true'], [draggable='true']")) return;
       gesture.current = { id: event.pointerId, x: event.clientX, y: event.clientY, scroll: viewport.scrollLeft, moved: false };
     },
     onClickCapture: (event: MouseEvent<HTMLDivElement>) => {

@@ -20,5 +20,5 @@
 - [x] Replace Settings configurations with the unregistered-user agent dropdown; verify session saving and page separation.
 
 ## Menu and kanban navigation
-- [ ] Add a shared admin menu hide/show toggle.
-- [ ] Enable horizontal drag-to-scroll on Messages and Orders kanban boards; verify dragging and card clicks.
+- [x] Add a shared admin menu hide/show toggle.
+- [x] Enable horizontal drag-to-scroll on Messages panels and the Orders list without rearranging records; verify dragging and card clicks.
