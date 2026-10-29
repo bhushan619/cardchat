@@ -138,6 +138,7 @@ const navItems = [
     path: "/admin/whatsapp-sessions",
     roles: ["super_admin"],
   },
+  { id: "wa-gateway-config", label: "WA Gateway Config", icon: Settings, path: "/admin/wa-gateway-config", roles: ["super_admin"] },
   {
     id: "app-versions",
     label: "App Versions",
