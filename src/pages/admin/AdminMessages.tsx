@@ -78,7 +78,7 @@ import CustomerAliasSelector from "@/components/admin/CustomerAliasSelector";
 import { pickBusinessNumberFor } from "@/lib/waBusinessNumbers";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import { useOrderStatus } from "@/hooks/useOrderStatus";
-import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import {
   AgentOrderStatus,
   agentStatusLabels,
@@ -251,7 +251,6 @@ const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827
 type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
-  const panelScroll = useHorizontalDragScroll();
   const { role } = useAdminRole();
   const [tagDefs, setTagDefs] = useState<CustomerTagDef[]>(() => getActiveCustomerTags());
   useEffect(() => {
@@ -1525,9 +1524,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     <AdminLayout>
       <div className="flex flex-col h-full">
       {/* Below: customer list | chat | orders */}
-        <div {...panelScroll} aria-label="Messages and orders panels" className={`flex flex-1 min-h-0 overflow-x-auto overscroll-x-contain ${panelScroll.className}`}>
+        <div aria-label="Messages and orders panels" className="flex flex-1 min-h-0 overflow-x-auto overscroll-x-contain">
+          <ResizablePanelGroup direction="horizontal" className="min-w-[1100px]" >
           {/* Left panel: customer list */}
-          <div className="w-[25%] min-w-[300px] max-w-[336px] shrink-0 border-r flex flex-col">
+          <ResizablePanel id="conversations" order={1} defaultSize={25} minSize={20} className="flex flex-col" >
             {/* Search bar */}
             <div className="px-2 border-b shrink-0 h-12 flex items-center gap-1.5">
               <div className="relative flex-1 min-w-0">
@@ -1748,10 +1748,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 </div>
               )}
             </div>
-          </div>
+          </ResizablePanel>
+
+          <ResizableHandle withHandle aria-label="Resize conversation list" className="w-1.5 hover:bg-accent/40 data-[resize-handle-state=drag]:bg-accent" />
 
           {/* Middle: Chat window */}
-          <div className="flex-1 flex flex-col min-w-[600px] overflow-hidden">
+          <ResizablePanel id="chat" order={2} defaultSize={45} minSize={30} className="flex flex-col overflow-hidden">
             {selectedGroup ? (
               <GroupThread
                 group={selectedGroup}
@@ -2403,11 +2405,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 </div>
               </div>
             )}
-          </div>
+          </ResizablePanel>
 
           {/* QR-02: Quick reply sidebar panel */}
           {qrPanelOpen && selectedId && !selectedGroup && (
-            <div className="w-72 border-l bg-card flex-col h-full shrink-0 hidden xl:flex">
+            <>
+            <ResizableHandle withHandle aria-label="Resize quick replies" className="w-1.5 hover:bg-accent/40 data-[resize-handle-state=drag]:bg-accent" />
+            <ResizablePanel id="quick-replies" order={3} defaultSize={20} minSize={15} className="bg-card flex flex-col h-full">
               <div className="h-12 border-b flex items-center justify-between px-4 shrink-0">
                 <p className="text-xs font-semibold flex items-center gap-1.5">
                   <Zap className="w-3.5 h-3.5 text-accent" /> Quick Replies
@@ -2469,11 +2473,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 Tip: type <span className="font-mono font-semibold text-foreground">/</span> in the message box to
                 search templates.
               </div>
-            </div>
+            </ResizablePanel>
+            </>
           )}
 
           {/* Right panel: Tabbed Orders & Sales Order */}
-          <div className="w-[35%] min-w-[440px] max-w-[504px] border-l bg-card flex flex-col h-full shrink-0 overflow-hidden">
+          <ResizableHandle withHandle aria-label="Resize orders section" className="w-1.5 hover:bg-accent/40 data-[resize-handle-state=drag]:bg-accent" />
+          <ResizablePanel id="orders" order={4} defaultSize={30} minSize={25} className="bg-card flex flex-col h-full overflow-hidden">
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
 
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
@@ -2772,7 +2778,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
             </Tabs>
 
-          </div>
+          </ResizablePanel>
+          </ResizablePanelGroup>
         </div>
       </div>
 

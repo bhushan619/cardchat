@@ -22,3 +22,4 @@
 ## Menu and kanban navigation
 - [x] Add a shared admin menu hide/show toggle.
 - [x] Enable horizontal drag-to-scroll on Messages panels and the Orders list without rearranging records; verify dragging and card clicks.
+- [ ] Replace Messages whole-layout dragging with draggable section dividers as marked in the reference; verify both dividers and chat selection.
