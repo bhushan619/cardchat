@@ -1,7 +1,7 @@
 # CardChat — Product Requirements Document (PRD)
 
-**Version:** 6.10  
-**Date:** October 28, 2026
+**Version:** 6.11  
+**Date:** October 29, 2026
 **Status:** Interactive Prototype (Frontend Only — Mock Data)  
 **Platform:** React 18 + Vite + Tailwind CSS + TypeScript  
 **Live Preview:** https://cardchat.lovable.app
@@ -9,6 +9,12 @@
 ---
 
 ## Table of Contents
+
+### v6.11 — Gateway configuration separation
+
+- New Super Admin menu **WA Gateway Config** at `/admin/wa-gateway-config` contains WhatsApp Gateway Health, Ping Gateway and the screenshot-matched warmup/anti-ban policy controls.
+- Settings at `/admin/api-config` removes all previous configuration panels and contains only **Select Agent for unregistered users**. Selection is saved for the current prototype session using shared staff IDs; this does not implement live support routing.
+- Gateway statistics and ping remain prototype simulations; existing policy values and session telemetry are retained.
 
 ### v6.10 — Withdrawal filter parity
 
