@@ -12,7 +12,7 @@ function setup() {
   render(<Harness onClick={onClick} />);
   const viewport = screen.getByTestId("viewport");
   Object.defineProperties(viewport, { scrollWidth: { value: 1600 }, clientWidth: { value: 800 } });
-  const pointer = (target: EventTarget, type: string, x: number, y = 20, pointerType = "mouse") => {
+  const pointer = (target: Element | Window, type: string, x: number, y = 20, pointerType = "mouse") => {
     const event = new Event(type, { bubbles: true, cancelable: true });
     Object.assign(event, { pointerId: 1, button: 0, clientX: x, clientY: y, pointerType });
     fireEvent(target, event);
