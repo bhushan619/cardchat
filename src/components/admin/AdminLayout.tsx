@@ -29,6 +29,7 @@ import {
   Tags,
   Zap,
   LineChart,
+  Settings,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
