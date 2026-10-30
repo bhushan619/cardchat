@@ -26,4 +26,4 @@
 
 ## Independent order simulation
 - [x] Add an isolated order-only simulation to the shared Messages and WhatsApp orders panel.
-- [ ] Verify completing one order while other orders remain unfinished, reset, and session retention.
+- [x] Verify completing one order while other orders remain unfinished, reset, and session retention.
