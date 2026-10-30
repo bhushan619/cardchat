@@ -10,3 +10,4 @@
 - Withdrawal filters stage input separately from applied values and match linked orders by customer alias; this keeps Search/Clear consistent with Transfers without inventing unrelated order links.
 - Keep gateway health and warmup policy on the dedicated WA Gateway Config page; general Settings uses session-scoped helpers for the staff-ID selector and customer introduction message so configuration survives navigation without changing live routing or delivery.
 - Track prototype processing by order ID in a shared session store used by chat order cards and the Orders screen; buyer readiness and completion affect only that order and must not trigger payment or wallet effects.
+- Derive conversation order alerts from all customers' per-order states before selection filtering; acknowledge status signatures per order in sessionStorage so viewing or marking a chat read never clears unhandled updates.
