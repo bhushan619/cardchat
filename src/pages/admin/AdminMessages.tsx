@@ -1040,7 +1040,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   });
   const allOrders = allCustomerOrders.filter((o) => o.customer === panelConvo?.alias);
   const pendingAttention = pendingOrderAttention(allCustomerOrders, orderAcknowledgements);
-  const channelAttentionCount = conversationsWithTabs.filter((c) => pendingAttention.some((o) => o.customer === c.alias)).length;
   const orderSummary = summarizeOrders(allOrders);
   const groupedOrders = groupProcessingOrders(allOrders);
 
