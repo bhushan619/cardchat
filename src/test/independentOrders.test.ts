@@ -1,8 +1,14 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { canCompleteOrder, loadProcessingState, resolveProcessingEntry, saveProcessingState, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
+import { canCompleteOrder, groupProcessingOrders, loadProcessingState, resolveProcessingEntry, saveProcessingState, summarizeOrders, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
 
 beforeEach(() => sessionStorage.clear());
 describe("per-order processing in the order list", () => {
+  it("keeps the customer summary active after completing only one of three orders", () => {
+    const entries = [{ status: "success" as const, buyerComplete: true }, { status: "in_trade" as const, buyerComplete: false }, { status: "in_trade" as const, buyerComplete: true }];
+    expect(summarizeOrders(entries)).toEqual({ active: 2, ready: 1, completed: 1, cancelled: 0 });
+    expect(groupProcessingOrders(entries).map((entry) => entry.status)).toEqual(["in_trade", "in_trade", "success"]);
+    expect(entries[0].status).toBe("success");
+  });
   it("completes a ready order while an earlier order of the same customer stays in trade", () => {
     const state = { earlier: { status: "in_trade" as const, buyerComplete: false }, later: { status: "in_trade" as const, buyerComplete: true } };
     const next = updateProcessingOrder(state, "later", state.later, "complete");

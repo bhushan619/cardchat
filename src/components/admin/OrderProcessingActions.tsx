@@ -13,7 +13,7 @@ export default function OrderProcessingActions({ entry, onAction }: { entry: Pro
       <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onAction("start")}><Play />{entry.status === "pending_sale" ? "Submit order" : "Start trade"}</Button> :
       <>
         {!entry.buyerComplete && <Button size="sm" variant="outline" className="w-full text-xs" onClick={() => onAction("buyer_complete")}>Simulate buyer completion</Button>}
-        <Button size="sm" className="w-full text-xs" disabled={!canCompleteOrder(entry)} onClick={() => onAction("complete")}><CheckCircle2 /> Complete Order</Button>
+        {canCompleteOrder(entry) && <Button size="sm" className="w-full text-xs" onClick={() => onAction("complete")}><CheckCircle2 /> Complete Order</Button>}
       </>}
   </div>;
 }

@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import OrderProcessingActions from "@/components/admin/OrderProcessingActions";
 import { useIndependentOrders } from "@/hooks/useIndependentOrders";
-import { resolveProcessingEntry, workflowOrders } from "@/lib/independentOrders";
+import { groupProcessingOrders, orderSection, resolveProcessingEntry, summarizeOrders, workflowOrders } from "@/lib/independentOrders";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
 import { useAdminT } from "@/contexts/AdminLangContext";
@@ -1033,6 +1033,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const processing = resolveProcessingEntry(o.id, legacy?.status ?? o.status, independentOrders.state, buyerComplete);
     return { ...o, financialStatus: legacy?.status ?? o.status, status: processing.status, buyerComplete: processing.buyerComplete };
   }).filter((o) => o.customer === panelConvo?.alias);
+  const orderSummary = summarizeOrders(allOrders);
+  const groupedOrders = groupProcessingOrders(allOrders);
 
   const processListedOrder = (order: typeof allOrders[number], action: "start" | "buyer_complete" | "complete") => {
     if (!independentOrders.update(order.id, order.status, order.buyerComplete, action)) return;
@@ -2526,27 +2528,27 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 {selectedId && panelConvo ? (
                   <>
 
-                    {/* Status action buttons */}
-                    {currentListedOrder && (
-                      <div className="p-4 border-b">
-                        <h3 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
-                          Order Status
-                          {currentOrderId && (
-                            <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>
-                          )}
-                        </h3>
-                        <OrderProcessingActions entry={currentListedOrder} onAction={(action) => processListedOrder(currentListedOrder, action)} />
+                    <section aria-label="Customer order summary" className="p-4 border-b">
+                      <h3 className="font-heading font-semibold text-sm mb-3">Order Overview</h3>
+                      <div className="grid grid-cols-3 gap-2 text-xs" aria-live="polite">
+                        <div><span className="block text-muted-foreground">Active</span><strong className="mt-1 block text-base">{orderSummary.active}</strong></div>
+                        <div><span className="block text-muted-foreground">Ready</span><strong className="mt-1 block text-base text-accent">{orderSummary.ready}</strong></div>
+                        <div><span className="block text-muted-foreground">Completed</span><strong className="mt-1 block text-base text-success">{orderSummary.completed}</strong></div>
                       </div>
-                    )}
+                    </section>
 
                     {/* Orders */}
                     <div className="p-4 border-b">
                       <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
                       <div className="space-y-1.5">
-                        {allOrders.map((o) => {
+                        {groupedOrders.map((o, index) => {
                           const isSelected = selectedOrderId === o.id;
+                          const section = orderSection(o.status);
+                          const showSection = index === 0 || orderSection(groupedOrders[index - 1].status) !== section;
                           return (
-                            <div key={o.id} aria-label={`Order ${o.id}`}>
+                            <Fragment key={o.id}>
+                              {showSection && <h4 className="text-xs font-semibold text-muted-foreground pt-3 pb-2">{section} ({section === "Active" ? orderSummary.active : section === "Completed" ? orderSummary.completed : orderSummary.cancelled})</h4>}
+                            <div aria-label={`Order ${o.id}`}>
                               <div
                                 onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
                                 className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
@@ -2567,8 +2569,8 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                           <span className="text-muted-foreground font-normal">/ {o.cardCurrency}</span>
                                         )}
                                       </span>
-                                      <span className="text-[9px] font-medium px-1.5 py-0.5 rounded-full bg-primary/10 text-primary shrink-0 ml-1">
-                                        {o.status}
+                                      <span className={`text-[9px] font-medium px-1.5 py-0.5 rounded shrink-0 ml-1 ${agentStatusStyles[o.status].bg} ${agentStatusStyles[o.status].color}`}>
+                                        {o.status === "success" ? "Completed" : agentStatusLabels[o.status]}
                                       </span>
                                     </div>
                                     <div className="flex items-center justify-between text-[10px] text-muted-foreground">
@@ -2614,9 +2616,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   </div>
                                 </div>
                               </div>
-                              <div className="px-2.5 pb-2.5">
+                              {section === "Active" && <div className="px-2.5 pb-2.5">
                                 <OrderProcessingActions entry={o} onAction={(action) => processListedOrder(o, action)} />
-                              </div>
+                              </div>}
                               {isSelected && (
                                 <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
                                   <div className="flex items-center justify-between">
@@ -2680,6 +2682,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                 </div>
                               )}
                             </div>
+                            </Fragment>
                           );
                         })}
                       </div>

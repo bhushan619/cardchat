@@ -34,6 +34,24 @@ export function canCompleteOrder(entry: ProcessingEntry): boolean {
   return entry.status === "in_trade" && entry.buyerComplete;
 }
 
+export function summarizeOrders(entries: ProcessingEntry[]) {
+  return {
+    active: entries.filter((entry) => entry.status !== "success" && entry.status !== "order_cancelled").length,
+    ready: entries.filter(canCompleteOrder).length,
+    completed: entries.filter((entry) => entry.status === "success").length,
+    cancelled: entries.filter((entry) => entry.status === "order_cancelled").length,
+  };
+}
+
+export function orderSection(status: AgentOrderStatus): "Active" | "Completed" | "Cancelled" {
+  return status === "success" ? "Completed" : status === "order_cancelled" ? "Cancelled" : "Active";
+}
+
+export function groupProcessingOrders<T extends ProcessingEntry>(entries: T[]): T[] {
+  const priority = { Active: 0, Completed: 1, Cancelled: 2 };
+  return [...entries].sort((a, b) => priority[orderSection(a.status)] - priority[orderSection(b.status)]);
+}
+
 export function updateProcessingOrder(state: ProcessingState, id: string, current: ProcessingEntry, action: "start" | "buyer_complete" | "complete"): ProcessingState {
   const entry = state[id] ?? current;
   if (action === "complete") {
