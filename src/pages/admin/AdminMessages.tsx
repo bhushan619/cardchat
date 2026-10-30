@@ -1044,7 +1044,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const orderSummary = summarizeOrders(allOrders);
   const groupedOrders = groupProcessingOrders(allOrders);
   const readyPopupOrder = pickReadyPopupOrder(allCustomerOrders);
-  const confirmReadyPopupOrder = (order: NonNullable<ReturnType<typeof pickReadyPopupOrder>>) => {
+  const confirmReadyPopupOrder = (order: typeof allCustomerOrders[number]) => {
     if (!independentOrders.update(order.id, order.status, order.buyerComplete, "complete")) return;
     setOrderAcknowledgements((previous) => acknowledgeOrders(previous, [{ ...order, status: "success", buyerComplete: true }]));
     if (order.customer === panelConvo?.alias) addSystemMessage(`📌 Order #${order.id} completed.`);
