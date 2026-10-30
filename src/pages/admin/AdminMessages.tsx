@@ -2546,15 +2546,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 {selectedId && panelConvo ? (
                   <>
 
-                    <section aria-label="Customer order summary" className="p-4 border-b">
-                      <h3 className="font-heading font-semibold text-sm mb-3">Order Overview</h3>
-                      <div className="grid grid-cols-3 gap-2 text-xs" aria-live="polite">
-                        <div><span className="block text-muted-foreground">Active</span><strong className="mt-1 block text-base">{orderSummary.active}</strong></div>
-                        <div><span className="block text-muted-foreground">Ready</span><strong className="mt-1 block text-base text-accent">{orderSummary.ready}</strong></div>
-                        <div><span className="block text-muted-foreground">Completed</span><strong className="mt-1 block text-base text-success">{orderSummary.completed}</strong></div>
-                      </div>
-                    </section>
-
                     {/* Orders */}
                     <div className="p-4 border-b">
                       <h3 className="font-heading font-semibold text-sm mb-3">Orders ({allOrders.length})</h3>
