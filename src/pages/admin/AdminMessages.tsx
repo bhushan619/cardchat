@@ -3,9 +3,10 @@ import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import OrderProcessingActions from "@/components/admin/OrderProcessingActions";
+import OrderReadyModal from "@/components/admin/OrderReadyModal";
 import { useIndependentOrders } from "@/hooks/useIndependentOrders";
 import { acknowledgeOrders, loadOrderAcknowledgements, ORDER_ATTENTION_KEY, pendingOrderAttention } from "@/lib/orderAttention";
-import { groupProcessingOrders, orderSection, resolveProcessingEntry, summarizeOrders, workflowOrders } from "@/lib/independentOrders";
+import { groupProcessingOrders, orderSection, pickReadyPopupOrder, resolveProcessingEntry, summarizeOrders, workflowOrders } from "@/lib/independentOrders";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
 import { useAdminT } from "@/contexts/AdminLangContext";
@@ -1042,6 +1043,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const pendingAttention = pendingOrderAttention(allCustomerOrders, orderAcknowledgements);
   const orderSummary = summarizeOrders(allOrders);
   const groupedOrders = groupProcessingOrders(allOrders);
+  const readyPopupOrder = pickReadyPopupOrder(allCustomerOrders);
+  const confirmReadyPopupOrder = (order: NonNullable<ReturnType<typeof pickReadyPopupOrder>>) => {
+    if (!independentOrders.update(order.id, order.status, order.buyerComplete, "complete")) return;
+    setOrderAcknowledgements((previous) => acknowledgeOrders(previous, [{ ...order, status: "success", buyerComplete: true }]));
+    if (order.customer === panelConvo?.alias) addSystemMessage(`📌 Order #${order.id} completed.`);
+    toast.success(`Order ${order.id} completed`);
+  };
 
   const processListedOrder = (order: typeof allOrders[number], action: "start" | "buyer_complete" | "complete") => {
     if (!independentOrders.update(order.id, order.status, order.buyerComplete, action)) return;
