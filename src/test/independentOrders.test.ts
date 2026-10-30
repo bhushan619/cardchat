@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { canCompleteOrder, groupProcessingOrders, loadProcessingState, resolveProcessingEntry, saveProcessingState, summarizeOrders, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
+import { canCompleteOrder, groupProcessingOrders, loadProcessingState, pickReadyPopupOrder, resolveProcessingEntry, saveProcessingState, summarizeOrders, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
 
 beforeEach(() => sessionStorage.clear());
 describe("per-order processing in the order list", () => {

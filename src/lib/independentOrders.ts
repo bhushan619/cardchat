@@ -30,6 +30,10 @@ export function resolveProcessingEntry(id: string, status: string, state: Proces
   return state[id] ?? { status: normalized, buyerComplete: buyerComplete || normalized === "success" };
 }
 
+export function pickReadyPopupOrder<T extends ProcessingEntry>(orders: (T & { id: string })[]): (T & { id: string }) | null {
+  return orders.find(canCompleteOrder) ?? null;
+}
+
 export function canCompleteOrder(entry: ProcessingEntry): boolean {
   return entry.status === "in_trade" && entry.buyerComplete;
 }
