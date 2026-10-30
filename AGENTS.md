@@ -9,3 +9,4 @@
 - Put ledger filter matching in pure helpers under src/lib (e.g. accountNumberMatches) rather than inline in pages, so each rule has a unit test next to the existing tests.
 - Withdrawal filters stage input separately from applied values and match linked orders by customer alias; this keeps Search/Clear consistent with Transfers without inventing unrelated order links.
 - Keep gateway health and warmup policy on the dedicated WA Gateway Config page; general Settings uses session-scoped helpers for the staff-ID selector and customer introduction message so configuration survives navigation without changing live routing or delivery.
+- Keep independent-order simulation isolated from real orders and wallet effects; reuse the order state machine with per-order transitions and customer-scoped session state so unfinished sibling orders never block completion.
