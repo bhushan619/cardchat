@@ -1249,6 +1249,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           ? simulatedResult
           : results[Math.floor(Math.random() * results.length)];
       setCardlightResults((prev) => ({ ...prev, [orderId]: resolvedResult }));
+      if (resolvedResult === "successful") {
+        independentOrders.update(orderId, "in_trade", false, "buyer_complete");
+      }
     }, webhookDelay);
   };
 

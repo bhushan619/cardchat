@@ -25,5 +25,5 @@
 - [x] Replace Messages whole-layout dragging with draggable section dividers as marked in the reference; verify both dividers and chat selection.
 
 ## Independent order simulation
-- [ ] Replace the standalone simulation with independently tracked orders and actions in the actual chat order list.
-- [ ] Demonstrate multiple orders for one customer, reflect each completion on Orders, and verify unfinished siblings remain unchanged without payments.
+- [x] Replace the standalone simulation with independently tracked orders and actions in the actual chat order list.
+- [x] Demonstrate multiple orders for one customer, reflect each completion on Orders, and verify unfinished siblings remain unchanged without payments.
