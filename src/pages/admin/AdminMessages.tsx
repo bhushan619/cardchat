@@ -4390,6 +4390,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           </div>
         </DialogContent>
       </Dialog>
+      <OrderReadyModal order={readyPopupOrder ?? null} onConfirm={confirmReadyPopupOrder} />
     </AdminLayout>
   );
 }
