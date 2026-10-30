@@ -23,3 +23,7 @@
 - [x] Add a shared admin menu hide/show toggle.
 - [x] Enable horizontal drag-to-scroll on Messages panels and the Orders list without rearranging records; verify dragging and card clicks.
 - [x] Replace Messages whole-layout dragging with draggable section dividers as marked in the reference; verify both dividers and chat selection.
+
+## Independent order simulation
+- [x] Add an isolated order-only simulation to the shared Messages and WhatsApp orders panel.
+- [x] Verify completing one order while other orders remain unfinished, reset, and session retention.

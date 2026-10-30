@@ -2,6 +2,7 @@ import { isVip } from "@/lib/vipCustomers";
 import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
+import IndependentOrderSimulation from "@/components/admin/IndependentOrderSimulation";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
 import { useAdminT } from "@/contexts/AdminLangContext";
@@ -2480,6 +2481,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           {/* Right panel: Tabbed Orders & Sales Order */}
           <ResizableHandle withHandle aria-label="Resize orders section" className="w-1.5 hover:bg-accent/40 data-[resize-handle-state=drag]:bg-accent" />
           <ResizablePanel id="orders" order={4} defaultSize={30} minSize={25} className="bg-card flex flex-col h-full overflow-hidden">
+            <div className="border-b p-3">
+              <IndependentOrderSimulation key={panelConvo?.alias ?? "DEMO01"} customer={panelConvo?.alias ?? "DEMO01"} />
+            </div>
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
 
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
