@@ -25,5 +25,5 @@
 - [x] Replace Messages whole-layout dragging with draggable section dividers as marked in the reference; verify both dividers and chat selection.
 
 ## Independent order simulation
-- [x] Add an isolated order-only simulation to the shared Messages and WhatsApp orders panel.
-- [x] Verify completing one order while other orders remain unfinished, reset, and session retention.
+- [ ] Replace the standalone simulation with independently tracked orders and actions in the actual chat order list.
+- [ ] Demonstrate multiple orders for one customer, reflect each completion on Orders, and verify unfinished siblings remain unchanged without payments.
