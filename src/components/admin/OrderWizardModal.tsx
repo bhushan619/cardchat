@@ -102,7 +102,7 @@ interface CardlightPanelProps {
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
   embedded?: boolean;
-  onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
+  onBuyerSelected?: (simulatedResult?: CardlightResult, orderId?: string) => void;
   /** Optional customer selector rendered at the top of the form once logged in (group chats). */
   groupSelector?: React.ReactNode;
   /** AQ-03: pre-fill from an accepted rate quote (rate locked at quoted value). */
@@ -370,7 +370,7 @@ export default function CardlightPanel({
         });
       }, webhookDelay);
 
-      onBuyerSelected?.(plannedResult);
+      onBuyerSelected?.(plannedResult, capturedOrderId);
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);

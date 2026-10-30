@@ -3,6 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
 import { useIndependentOrders } from "@/hooks/useIndependentOrders";
 import { resolveProcessingEntry, workflowOrders } from "@/lib/independentOrders";
+import type { CompletedOrder } from "@/components/admin/OrderWizardModal";
 import { Search, ChevronDown, ChevronUp, Download, Copy, CreditCard, Eye, EyeOff, Coins } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -151,7 +152,13 @@ function CopyableValue({ value }: { value: string }) {
 
 export default function AdminOrders() {
   const independentOrders = useIndependentOrders();
-  const orders = workflowOrders.map((order) => ({ ...order, status: resolveProcessingEntry(order.id, order.status, independentOrders.state, "buyerComplete" in order && order.buyerComplete === true).status }));
+  const [createdOrders] = useState(() => {
+    try {
+      const stored: (CompletedOrder & { customer?: string })[] = JSON.parse(sessionStorage.getItem("cardchat_completed_orders") ?? "[]");
+      return stored.map((order) => ({ id: order.orderId, customer: order.customer ?? "", cardType: order.cards.map((card) => card.cardType).join(", "), amount: order.totalFaceValue, nairaRate: 289, unitPrice: order.cr2 ?? 0, status: order.status as string, source: "in-app" as const, transferStatus: "not_transferred" as const, created: order.timestamp }));
+    } catch { return []; }
+  });
+  const orders = [...createdOrders, ...workflowOrders].map((order) => ({ ...order, status: resolveProcessingEntry(order.id, order.status, independentOrders.state, "buyerComplete" in order && order.buyerComplete === true).status }));
   const orderScroll = useHorizontalDragScroll();
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedId, setExpandedId] = useState<string | null>(null);

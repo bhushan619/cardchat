@@ -1252,17 +1252,13 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   };
 
   // Handle buyer selection callback from OrderWizardModal
-  const handleBuyerSelected = (conversationId: string, simulatedResult?: CardlightResult) => {
-    // Skip pending and go directly to in_trade so the agent can act immediately
-    orderStatus.transitionStatus(conversationId, "pending");
-    const linkedOrderId = orderStatus.getOrderId(conversationId);
-    if (linkedOrderId) {
-      simulateCardlightWebhook(linkedOrderId, simulatedResult);
-    }
-    // Use a microtask to ensure state updates, then advance
-    setTimeout(() => {
-      orderStatus.transitionStatus(conversationId, "in_trade");
-    }, 500);
+  const handleBuyerSelected = (conversationId: string, simulatedResult?: CardlightResult, submittedOrderId?: string) => {
+    const linkedOrderId = submittedOrderId ?? orderStatus.getOrderId(conversationId);
+    const listed = allOrders.find((o) => o.id === linkedOrderId);
+    if (!listed || !linkedOrderId) return;
+    independentOrders.update(linkedOrderId, listed.status, listed.buyerComplete, "start");
+    independentOrders.update(linkedOrderId, "pending", listed.buyerComplete, "start");
+    simulateCardlightWebhook(linkedOrderId, simulatedResult);
   };
 
   // Unified status + card info renderer
@@ -2793,7 +2789,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       ) : undefined
                     }
                     onBuyerSelected={
-                      selectedId ? (simulatedResult) => handleBuyerSelected(selectedId, simulatedResult) : undefined
+                      selectedId ? (simulatedResult, orderId) => handleBuyerSelected(selectedId, simulatedResult, orderId) : undefined
                     }
                   />
                 </div>
