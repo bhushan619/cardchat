@@ -1031,7 +1031,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const legacy = Object.values(orderStatus.entries).find((entry) => entry.orderId === o.id);
     const buyerComplete = cardlightResults[o.id] === "successful" || ("buyerComplete" in o && o.buyerComplete === true);
     const processing = resolveProcessingEntry(o.id, legacy?.status ?? o.status, independentOrders.state, buyerComplete);
-    return { ...o, status: processing.status, buyerComplete: processing.buyerComplete };
+    return { ...o, financialStatus: legacy?.status ?? o.status, status: processing.status, buyerComplete: processing.buyerComplete };
   }).filter((o) => o.customer === panelConvo?.alias);
 
   const processListedOrder = (order: typeof allOrders[number], action: "start" | "buyer_complete" | "complete") => {
@@ -1206,19 +1206,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           customer: o.customer,
         });
       });
-    if (currentOrderId && !map.has(currentOrderId)) {
-      const current = allOrders.find((o) => o.id === currentOrderId);
+    const financialOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
+    if (financialOrderId && !map.has(financialOrderId)) {
+      const current = allOrders.find((o) => o.id === financialOrderId && o.isNew);
       if (current) {
         // Prefer the live status from the order state machine so that
         // wallet credits become available as soon as the order is marked
         // "success" (rather than reflecting the stale snapshot status).
         const liveStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
-        map.set(currentOrderId, {
-          id: currentOrderId,
+        map.set(financialOrderId, {
+          id: financialOrderId,
           amount: current.amount,
           payout: current.payout,
           cardType: current.cardType,
-          status: liveStatus || current.status,
+          status: liveStatus || current.financialStatus,
           customer: convo.alias,
         });
       }
