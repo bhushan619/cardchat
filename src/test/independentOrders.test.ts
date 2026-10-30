@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from "vitest";
-import { canCompleteOrder, groupProcessingOrders, loadProcessingState, resolveProcessingEntry, saveProcessingState, summarizeOrders, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
+import { canCompleteOrder, groupProcessingOrders, loadProcessingState, pickReadyPopupOrder, resolveProcessingEntry, saveProcessingState, summarizeOrders, updateProcessingOrder, workflowOrders } from "@/lib/independentOrders";
 
 beforeEach(() => sessionStorage.clear());
 describe("per-order processing in the order list", () => {
@@ -41,5 +41,17 @@ describe("per-order processing in the order list", () => {
     expect(sameCustomer.map((o) => o.id)).toContain("ORD-DEMO-2-02");
     expect(resolveProcessingEntry("ORD-DEMO-2-01", "in_trade", {}, false).buyerComplete).toBe(false);
     expect(resolveProcessingEntry("ORD-DEMO-2-02", "in_trade", {}, true).buyerComplete).toBe(true);
+  });
+  it("picks the first ready order across all customers for the confirm pop-up", () => {
+    const orders = [
+      { id: "ORD-1", customer: "A7X3KP", status: "in_trade" as const, buyerComplete: false },
+      { id: "ORD-2", customer: "K9M2BL", status: "in_trade" as const, buyerComplete: true },
+      { id: "ORD-3", customer: "B5N1QW", status: "in_trade" as const, buyerComplete: true },
+    ];
+    expect(pickReadyPopupOrder(orders)?.id).toBe("ORD-2");
+  });
+  it("shows no confirm pop-up when no order is ready to complete", () => {
+    expect(pickReadyPopupOrder([{ id: "ORD-1", customer: "A7X3KP", status: "in_trade" as const, buyerComplete: false }])).toBeNull();
+    expect(pickReadyPopupOrder([])).toBeNull();
   });
 });
