@@ -102,7 +102,7 @@ interface CardlightPanelProps {
   onComplete?: (order: CompletedOrder) => void;
   customerAlias?: string;
   embedded?: boolean;
-  onBuyerSelected?: (simulatedResult?: CardlightResult) => void;
+  onBuyerSelected?: (simulatedResult?: CardlightResult, orderId?: string) => void;
   /** Optional customer selector rendered at the top of the form once logged in (group chats). */
   groupSelector?: React.ReactNode;
   /** AQ-03: pre-fill from an accepted rate quote (rate locked at quoted value). */
@@ -277,9 +277,10 @@ export default function CardlightPanel({
     if (!cardType) return;
 
     const alias = customerAlias || supplier || "";
+    const canonicalOrderId = `ORD-${Date.now().toString(36).toUpperCase()}`;
     const totalFace = cards.reduce((sum, c) => sum + (Number(c.cardAmount) || 0), 0);
     const newOrder: OrderEntry = {
-      id: Date.now().toString(),
+      id: canonicalOrderId,
       cardCode: Math.random().toString().slice(2, 22),
       description: `${cardType} / ${cardSource}`,
       denom: cards.length,
@@ -304,7 +305,7 @@ export default function CardlightPanel({
       // Total Release = Points Rate × Card Rate (CNY) × Card Amount
       const totalPayout = pointsRateNum * cr3Value * totalFaceValue;
       const order: CompletedOrder = {
-        orderId: `ORD-${Date.now().toString(36).toUpperCase()}`,
+        orderId: canonicalOrderId,
         cards: cards.map((c) => ({
           cardType,
           cardAmount: c.cardAmount || "0",
@@ -370,7 +371,7 @@ export default function CardlightPanel({
         });
       }, webhookDelay);
 
-      onBuyerSelected?.(plannedResult);
+      onBuyerSelected?.(plannedResult, capturedOrderId);
     }
     setConfirmSeller(null);
     setSellerModalOpen(false);
