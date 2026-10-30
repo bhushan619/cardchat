@@ -4,6 +4,7 @@ import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import OrderProcessingActions from "@/components/admin/OrderProcessingActions";
 import { useIndependentOrders } from "@/hooks/useIndependentOrders";
+import { acknowledgeOrders, loadOrderAcknowledgements, ORDER_ATTENTION_KEY, pendingOrderAttention } from "@/lib/orderAttention";
 import { groupProcessingOrders, orderSection, resolveProcessingEntry, summarizeOrders, workflowOrders } from "@/lib/independentOrders";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
@@ -263,6 +264,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   }, []);
   const orderStatus = useOrderStatus();
   const independentOrders = useIndependentOrders();
+  const [orderAcknowledgements, setOrderAcknowledgements] = useState(loadOrderAcknowledgements);
+  useEffect(() => {
+    sessionStorage.setItem(ORDER_ATTENTION_KEY, JSON.stringify(orderAcknowledgements));
+  }, [orderAcknowledgements]);
   const [starred, setStarred] = useState<Set<string>>(() => {
     try {
       return new Set(JSON.parse(sessionStorage.getItem("cardchat_conversation_favorites") || "[]"));
@@ -998,7 +1003,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     setTimeout(() => setCopyFeedback(null), 1500);
   };
 
-  const allOrders = [
+  const allCustomerOrders = [
     ...completedOrders.map((o) => ({
       id: o.orderId,
       customer: o.customer ?? rawConversations.find((c) => orderStatus.getOrderId(c.id) === o.orderId)?.alias ?? "",
@@ -1032,13 +1037,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     const buyerComplete = cardlightResults[o.id] === "successful" || ("buyerComplete" in o && o.buyerComplete === true);
     const processing = resolveProcessingEntry(o.id, legacy?.status ?? o.status, independentOrders.state, buyerComplete);
     return { ...o, financialStatus: legacy?.status ?? o.status, status: processing.status, buyerComplete: processing.buyerComplete };
-  }).filter((o) => o.customer === panelConvo?.alias);
+  });
+  const allOrders = allCustomerOrders.filter((o) => o.customer === panelConvo?.alias);
+  const pendingAttention = pendingOrderAttention(allCustomerOrders, orderAcknowledgements);
+  const channelAttentionCount = conversationsWithTabs.filter((c) => pendingAttention.some((o) => o.customer === c.alias)).length;
+  const acknowledgeCustomerOrders = (alias: string) => {
+    setOrderAcknowledgements((previous) => acknowledgeOrders(previous, pendingAttention.filter((o) => o.customer === alias)));
+  };
   const orderSummary = summarizeOrders(allOrders);
   const groupedOrders = groupProcessingOrders(allOrders);
 
   const processListedOrder = (order: typeof allOrders[number], action: "start" | "buyer_complete" | "complete") => {
     if (!independentOrders.update(order.id, order.status, order.buyerComplete, action)) return;
     if (action === "complete") {
+      setOrderAcknowledgements((previous) => acknowledgeOrders(previous, [{ ...order, status: "success", buyerComplete: true }]));
       addSystemMessage(`📌 Order #${order.id} completed.`);
       toast.success(`Order ${order.id} completed`);
     }
@@ -1574,6 +1586,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TooltipProvider>
             </div>
             <div className="flex-1 overflow-y-auto">
+              {channelAttentionCount > 0 && (
+                <div role="status" className="sticky top-0 z-10 flex items-center gap-2 border-b border-warning/30 bg-card px-3 py-2 text-xs font-medium text-warning">
+                  <AlertTriangle className="h-4 w-4 shrink-0" />
+                  {channelAttentionCount} {channelAttentionCount === 1 ? "chat needs" : "chats need"} order attention
+                </div>
+              )}
               {listItems.map((item, index) => {
                 const sectionHeader = renderListSection(index, item.data.id);
                 if (item.kind === "group") {
@@ -1650,6 +1668,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                 const c = item.data;
                 const isActive = selectedId === c.id;
                 const isStarred = starred.has(c.id);
+                const customerAttention = pendingAttention.filter((o) => o.customer === c.alias);
                 return (
                   <Fragment key={c.id}>
                     {sectionHeader}
@@ -1658,6 +1677,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   <div
                     role="button"
                     tabIndex={0}
+                    data-order-attention={customerAttention.length > 0 ? c.alias : undefined}
                     onClick={() => setSelectedId(c.id)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
@@ -1667,7 +1687,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     }}
                     onMouseEnter={() => setHoveredId(c.id)}
                     onMouseLeave={() => setHoveredId(null)}
-                    className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${
+                    className={`w-full text-left p-3 border-b hover:bg-muted/50 transition-colors ${customerAttention.length > 0 ? "order-attention-blink" : ""} ${
                       isActive ? "bg-accent/5 border-l-2 border-l-accent ring-1 ring-inset ring-ring" : ""
                     }`}
                   >
@@ -1712,6 +1732,12 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
+                        {customerAttention.length > 0 && (
+                          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
+                            <span className="flex items-center gap-1 text-[10px] font-semibold text-warning"><AlertTriangle className="h-3 w-3 shrink-0" />{customerAttention.length} successful {customerAttention.length === 1 ? "order update" : "order updates"}</span>
+                            <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px] text-warning" aria-label={`Acknowledge order updates for ${c.alias}`} onClick={(event) => { event.stopPropagation(); acknowledgeCustomerOrders(c.alias); }}><CheckCheck className="h-3 w-3" /> Acknowledge</Button>
+                          </div>
+                        )}
                         {getSilentMinutes(c.id) != null && (
                           <p className="text-[9px] text-warning mt-0.5 flex items-center gap-1 font-medium">
                             <Clock className="w-2.5 h-2.5" /> {getSilentMinutes(c.id)} min silent

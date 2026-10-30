@@ -183,3 +183,15 @@
 .campaign-progress::-webkit-progress-bar { background: hsl(var(--muted)); border-radius: 4px; }
 .campaign-progress::-webkit-progress-value { background: hsl(var(--accent)); border-radius: 4px; }
 .campaign-progress::-moz-progress-bar { background: hsl(var(--accent)); border-radius: 4px; }
+
+.order-attention-blink {
+  animation: order-attention-pulse 1.8s ease-in-out infinite;
+  border-left: 3px solid hsl(var(--warning));
+}
+@keyframes order-attention-pulse {
+  0%, 100% { background-color: hsl(var(--warning) / 0.06); }
+  50% { background-color: hsl(var(--warning) / 0.22); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .order-attention-blink { animation: none; background-color: hsl(var(--warning) / 0.15); }
+}
