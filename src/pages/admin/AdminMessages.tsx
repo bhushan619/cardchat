@@ -2,7 +2,9 @@ import { isVip } from "@/lib/vipCustomers";
 import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
-import IndependentOrderSimulation from "@/components/admin/IndependentOrderSimulation";
+import OrderProcessingActions from "@/components/admin/OrderProcessingActions";
+import { useIndependentOrders } from "@/hooks/useIndependentOrders";
+import { resolveProcessingEntry, workflowOrders } from "@/lib/independentOrders";
 import { usePaymentChannel } from "@/lib/paymentChannel";
 import { maskName, formatDate } from "@/lib/utils";
 import { useAdminT } from "@/contexts/AdminLangContext";
@@ -260,6 +262,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     return () => window.removeEventListener("customer-tags-updated", refresh);
   }, []);
   const orderStatus = useOrderStatus();
+  const independentOrders = useIndependentOrders();
   const [starred, setStarred] = useState<Set<string>>(() => {
     try {
       return new Set(JSON.parse(sessionStorage.getItem("cardchat_conversation_favorites") || "[]"));
@@ -314,7 +317,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const [ocrLoading, setOcrLoading] = useState(false);
   const [ocrText, setOcrText] = useState<string | null>(null);
   const [rightTab, setRightTab] = useState<string>("orders");
-  const [completedOrders, setCompletedOrders] = useState<CompletedOrder[]>(() => {
+  const [completedOrders, setCompletedOrders] = useState<(CompletedOrder & { customer?: string })[]>(() => {
     try {
       const saved = sessionStorage.getItem("cardchat_completed_orders");
       return saved ? JSON.parse(saved) : [];
@@ -744,7 +747,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   };
 
   const handleOrderComplete = (order: CompletedOrder) => {
-    setCompletedOrders((prev) => [order, ...prev]);
+    setCompletedOrders((prev) => [{ ...order, customer: panelConvo?.alias }, ...prev]);
     if (selectedId) {
       orderStatus.createOrder(selectedId, order.orderId);
       addSystemMessage(`📌 Order status: ${customerStatusLabels["order_created"]}`);
@@ -998,6 +1001,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   const allOrders = [
     ...completedOrders.map((o) => ({
       id: o.orderId,
+      customer: o.customer ?? rawConversations.find((c) => orderStatus.getOrderId(c.id) === o.orderId)?.alias ?? "",
       cardType: o.cards.map((c) => c.cardType).join(", "),
       amount: o.totalFaceValue,
       nairaRate: 289,
@@ -1012,7 +1016,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       cardNumbers: o.cardNumbers || [],
       createdAt: o.timestamp,
     })),
-    ...orders.map((o) => ({
+    ...workflowOrders.map((o) => ({
       ...o,
       payout: o.amount * o.unitPrice,
       bank: "",
@@ -1023,7 +1027,20 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       cardNumbers: [`${Math.floor(Math.random() * 9000000000 + 1000000000)}`],
       createdAt: o.created,
     })),
-  ];
+  ].map((o) => {
+    const legacy = Object.values(orderStatus.entries).find((entry) => entry.orderId === o.id);
+    const buyerComplete = cardlightResults[o.id] === "successful" || ("buyerComplete" in o && o.buyerComplete === true);
+    const processing = resolveProcessingEntry(o.id, legacy?.status ?? o.status, independentOrders.state, buyerComplete);
+    return { ...o, status: processing.status, buyerComplete: processing.buyerComplete };
+  }).filter((o) => o.customer === panelConvo?.alias);
+
+  const processListedOrder = (order: typeof allOrders[number], action: "start" | "buyer_complete" | "complete") => {
+    if (!independentOrders.update(order.id, order.status, order.buyerComplete, action)) return;
+    if (action === "complete") {
+      addSystemMessage(`📌 Order #${order.id} completed.`);
+      toast.success(`Order ${order.id} completed`);
+    }
+  };
 
   const getSenderColor = (sender: string, senderName: string) => {
     if (sender === "customer") return "text-primary";
@@ -1072,8 +1089,10 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   }, [selectedId]);
 
   // Current order status for selected conversation
-  const currentOrderStatus = selectedId ? orderStatus.getStatus(selectedId) : null;
-  const currentOrderId = selectedId ? orderStatus.getOrderId(selectedId) : null;
+  const currentOrderId = selectedOrderId ?? (selectedId ? orderStatus.getOrderId(selectedId) : null);
+  const currentListedOrder = allOrders.find((order) => order.id === currentOrderId);
+  const currentOrderStatus = currentListedOrder?.status ?? (selectedId ? orderStatus.getStatus(selectedId) : null);
+  useEffect(() => setSelectedOrderId(null), [selectedId, groupCustomerAlias]);
 
   // ---- Quick reply helpers (QR-02) ----
   const agentDisplayName =
@@ -2481,9 +2500,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
           {/* Right panel: Tabbed Orders & Sales Order */}
           <ResizableHandle withHandle aria-label="Resize orders section" className="w-1.5 hover:bg-accent/40 data-[resize-handle-state=drag]:bg-accent" />
           <ResizablePanel id="orders" order={4} defaultSize={30} minSize={25} className="bg-card flex flex-col h-full overflow-hidden">
-            <div className="border-b p-3">
-              <IndependentOrderSimulation key={panelConvo?.alias ?? "DEMO01"} customer={panelConvo?.alias ?? "DEMO01"} />
-            </div>
             <Tabs value={rightTab} onValueChange={setRightTab} className="flex flex-col h-full">
 
               <TabsList className="w-full rounded-none border-b bg-muted/30 h-12 p-0">
@@ -2511,7 +2527,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   <>
 
                     {/* Status action buttons */}
-                    {currentOrderStatus && (
+                    {currentListedOrder && (
                       <div className="p-4 border-b">
                         <h3 className="font-heading font-semibold text-sm mb-3 flex items-center gap-2">
                           Order Status
@@ -2519,7 +2535,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             <span className="text-[10px] text-muted-foreground font-normal">#{currentOrderId}</span>
                           )}
                         </h3>
-                        {renderStatusActions()}
+                        <OrderProcessingActions entry={currentListedOrder} onAction={(action) => processListedOrder(currentListedOrder, action)} />
                       </div>
                     )}
 
@@ -2530,7 +2546,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         {allOrders.map((o) => {
                           const isSelected = selectedOrderId === o.id;
                           return (
-                            <div key={o.id}>
+                            <div key={o.id} aria-label={`Order ${o.id}`}>
                               <div
                                 onClick={() => setSelectedOrderId(isSelected ? null : o.id)}
                                 className={`w-full text-left rounded-lg p-2.5 transition-colors cursor-pointer ${
@@ -2598,6 +2614,9 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   </div>
                                 </div>
                               </div>
+                              <div className="px-2.5 pb-2.5">
+                                <OrderProcessingActions entry={o} onAction={(action) => processListedOrder(o, action)} />
+                              </div>
                               {isSelected && (
                                 <div className="mt-1.5 rounded-lg border border-accent/20 bg-card p-3 space-y-2">
                                   <div className="flex items-center justify-between">
@@ -2645,7 +2664,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                   </div>
 
                                   {/* Payout indicator — wallet is credited for all customers */}
-                                  {currentOrderStatus === "success" && (
+                                  {o.status === "success" && !independentOrders.state[o.id] && (
                                     <div className="mt-2 bg-success/10 border border-success/30 rounded-lg p-2.5 text-center">
                                       <CheckCircle2 className="w-4 h-4 text-success mx-auto mb-1" />
                                       <p className="text-xs font-medium text-success">
