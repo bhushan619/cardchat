@@ -1040,10 +1040,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
   });
   const allOrders = allCustomerOrders.filter((o) => o.customer === panelConvo?.alias);
   const pendingAttention = pendingOrderAttention(allCustomerOrders, orderAcknowledgements);
-  const channelAttentionCount = conversationsWithTabs.filter((c) => pendingAttention.some((o) => o.customer === c.alias)).length;
-  const acknowledgeCustomerOrders = (alias: string) => {
-    setOrderAcknowledgements((previous) => acknowledgeOrders(previous, pendingAttention.filter((o) => o.customer === alias)));
-  };
   const orderSummary = summarizeOrders(allOrders);
   const groupedOrders = groupProcessingOrders(allOrders);
 
@@ -1586,12 +1582,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
               </TooltipProvider>
             </div>
             <div className="flex-1 overflow-y-auto">
-              {channelAttentionCount > 0 && (
-                <div role="status" className="sticky top-0 z-10 flex items-center gap-2 border-b border-warning/30 bg-card px-3 py-2 text-xs font-medium text-warning">
-                  <AlertTriangle className="h-4 w-4 shrink-0" />
-                  {channelAttentionCount} {channelAttentionCount === 1 ? "chat needs" : "chats need"} order attention
-                </div>
-              )}
               {listItems.map((item, index) => {
                 const sectionHeader = renderListSection(index, item.data.id);
                 if (item.kind === "group") {
@@ -1732,12 +1722,6 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           </div>
                         </div>
                         <p className="text-[10px] text-muted-foreground truncate">{c.lastMessage}</p>
-                        {customerAttention.length > 0 && (
-                          <div className="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1">
-                            <span className="flex items-center gap-1 text-[10px] font-semibold text-warning"><AlertTriangle className="h-3 w-3 shrink-0" />{customerAttention.length} successful {customerAttention.length === 1 ? "order update" : "order updates"}</span>
-                            <Button variant="ghost" size="sm" className="h-6 px-1.5 text-[10px] text-warning" aria-label={`Acknowledge order updates for ${c.alias}`} onClick={(event) => { event.stopPropagation(); acknowledgeCustomerOrders(c.alias); }}><CheckCheck className="h-3 w-3" /> Acknowledge</Button>
-                          </div>
-                        )}
                         {getSilentMinutes(c.id) != null && (
                           <p className="text-[9px] text-warning mt-0.5 flex items-center gap-1 font-medium">
                             <Clock className="w-2.5 h-2.5" /> {getSilentMinutes(c.id)} min silent
