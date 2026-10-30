@@ -28,3 +28,4 @@
 - [x] Replace the standalone simulation with independently tracked orders and actions in the actual chat order list.
 - [x] Demonstrate multiple orders for one customer, reflect each completion on Orders, and verify unfinished siblings remain unchanged without payments.
 - [x] Replace misleading single-order summary with aggregate counts and separate active/completed sections; verify after completing one order.
+- [ ] Show persistent successful-order alerts for every customer's conversation, clear only on staff action, and verify cross-customer updates.
