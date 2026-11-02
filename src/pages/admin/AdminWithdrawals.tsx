@@ -140,7 +140,7 @@ export default function AdminWithdrawals() {
       w.channel,
       w.status,
       w.reference,
-      w.requestedAt,
+      formatDateTime(w.requestedAt),
     ]);
     const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });

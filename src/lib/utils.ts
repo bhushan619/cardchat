@@ -37,7 +37,7 @@ export function maskAlias(alias: string | null | undefined): string {
 }
 
 /**
- * Format a date value as dd/mm/yyyy.
+ * Format a date value using the shared absolute system timestamp format.
  * Accepts Date objects or ISO/date strings.
  */
 export function formatDate(value: Date | string | number | null | undefined): string {

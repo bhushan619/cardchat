@@ -9,9 +9,11 @@ describe("system dates", () => {
     expect(formatDateTime("18/03/2026 · 02:30 PM")).toBe("18-Mar-2026 14:30");
     expect(formatDateAndTime("18/03/2026", "02:30 PM")).toBe("18-Mar-2026 14:30");
     expect(formatDateAndTime("18-Mar-2026 14:30", "02:30 PM")).toBe("18-Mar-2026 14:30");
+    expect(formatDateTime("Mar 2026")).toBe("01-Mar-2026 00:00");
   });
   it("resolves relative prototype times to stable absolute dates", () => {
     expect(parseDateTime("2m ago", new Date(2026, 10, 2, 9, 23))).toEqual(new Date(2026, 10, 2, 9, 21));
+    expect(parseDateTime("1 hr ago", new Date(2026, 10, 2, 9, 23))).toEqual(new Date(2026, 10, 2, 8, 23));
   });
   it("does not invent a date for an invalid or missing timestamp", () => {
     expect(formatDateTime("invalid")).toBe("—");

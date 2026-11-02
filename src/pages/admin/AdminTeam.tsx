@@ -305,7 +305,7 @@ export default function AdminTeam() {
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Agent</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Customer</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Participants</th>
-                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Duration</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Escalated at</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Action</th>
                 </tr>
