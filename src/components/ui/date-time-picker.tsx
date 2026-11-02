@@ -1,5 +1,5 @@
 import * as React from "react";
-import { format } from "date-fns";
+import { formatDateTime } from "@/lib/dateTime";
 import { CalendarIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -49,7 +49,7 @@ export function DateTimePicker({ value, onChange, placeholder = "Pick date & tim
           )}
         >
           <CalendarIcon className="mr-1.5 h-3.5 w-3.5" />
-          {value ? format(value, "dd/MM/yyyy, HH:mm") : <span>{placeholder}</span>}
+          {value ? formatDateTime(value) : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0" align="start">

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
@@ -217,7 +218,7 @@ export default function AdminOrders() {
         `$${o.amount}`,
         `Pts ${totalRelease.toFixed(2)}`,
         o.status,
-        o.created,
+        formatDateTime(o.created),
       ];
     });
     const csv = [headers, ...rows].map((r) => r.join(",")).join("\n");
@@ -378,7 +379,7 @@ export default function AdminOrders() {
                           {o.status.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-right text-muted-foreground">{o.created}</td>
+                      <td className="px-4 py-3 text-xs text-right text-muted-foreground">{formatDateTime(o.created)}</td>
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>
@@ -395,7 +396,7 @@ export default function AdminOrders() {
                                 <div className="space-y-2.5">
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Creation time</span>
-                                    <span className="font-medium">{details.creationTime}</span>
+                                    <span className="font-medium">{formatDateTime(details.creationTime)}</span>
                                   </div>
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Card type</span>
@@ -443,7 +444,7 @@ export default function AdminOrders() {
                                 <div className="space-y-2.5">
                                   <div className="flex justify-between text-sm">
                                     <span className="text-muted-foreground">Order receiving time</span>
-                                    <span className="font-medium">{details.orderReceivingTime}</span>
+                                    <span className="font-medium">{formatDateTime(details.orderReceivingTime)}</span>
                                   </div>
                                   <div className="flex justify-between text-sm items-center">
                                     <span className="text-muted-foreground">Order id</span>
@@ -547,7 +548,7 @@ export default function AdminOrders() {
                                 </div>
                                 <div className="flex justify-between text-sm">
                                   <span className="text-muted-foreground">Create Time</span>
-                                  <span className="font-medium">{details.createTime}</span>
+                                  <span className="font-medium">{formatDateTime(details.createTime)}</span>
                                 </div>
                               </div>
                             </div>

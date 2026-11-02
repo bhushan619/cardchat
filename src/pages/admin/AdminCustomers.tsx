@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { conversations, customerWallets, walletTransactions } from "@/data/mock";
-import { Search, Users, Eye, ArrowDownLeft, ArrowUpRight, Coins, Landmark, Plus, Trash2, Loader2, CheckCircle2 } from "lucide-react";
+import { Search, Users, Eye, ArrowDownLeft, ArrowUpRight, Coins, Landmark, Plus, Trash2, Loader2, CheckCircle2, Download, Eraser } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -17,8 +17,11 @@ import { toast } from "sonner";
 import { maskName } from "@/lib/utils";
 import { setVip, listVipAliases, onVipChange } from "@/lib/vipCustomers";
 import { Crown } from "lucide-react";
+import { DateTimePicker } from "@/components/ui/date-time-picker";
+import { formatDateTime, formatDateAndTime, parseDateTime } from "@/lib/dateTime";
+import { customerMatchesDates, customersCsv, type CustomerDateFilters } from "@/lib/customerFilters";
 
-const customers = conversations.map((c) => {
+const customers = conversations.map((c, index) => {
   const wallet = customerWallets.find((w) => w.alias === c.alias);
   const inboundLine = c.channel === "whatsapp" ? pickBusinessNumberFor(c.id) : null;
   return {
@@ -29,9 +32,9 @@ const customers = conversations.map((c) => {
     totalValue: c.totalValue,
     tags: c.tags,
     lastMessage: c.lastMessage,
-    lastActive: c.time,
+    lastActive: parseDateTime(c.time)?.toISOString() ?? "",
     totalOrders: Math.floor(Math.random() * 20) + 1,
-    joinedDate: "Mar 2026",
+    joinedDate: new Date(2026, 2, 1 + index * 2, 9 + index, 15).toISOString(),
     walletBalance: wallet?.balance ?? 0,
     totalCredits: wallet?.totalCredits ?? 0,
     totalWithdrawals: wallet?.totalWithdrawals ?? 0,
@@ -65,6 +68,7 @@ export default function AdminCustomers() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [channelFilter, setChannelFilter] = useState<string>("all");
   const [lineFilter, setLineFilter] = useState<string>("all");
+  const [dateFilters, setDateFilters] = useState<CustomerDateFilters>({});
   const [selectedCustomer, setSelectedCustomer] = useState<(typeof customers)[0] | null>(null);
   const [vipFilter, setVipFilter] = useState<string>("all");
   const [vipAliases, setVipAliases] = useState<string[]>(() => listVipAliases());
@@ -98,7 +102,7 @@ export default function AdminCustomers() {
     const matchesLine = lineFilter === "all" || c.inboundLineId === lineFilter;
     const vip = vipAliases.includes(c.alias);
     const matchesVip = vipFilter === "all" || (vipFilter === "vip" ? vip : !vip);
-    return matchesSearch && matchesStatus && matchesChannel && matchesLine && matchesVip;
+    return matchesSearch && matchesStatus && matchesChannel && matchesLine && matchesVip && customerMatchesDates(c, dateFilters);
   });
 
   // Bulk VIP selection — VIP applies to in-app (TRTC) customers only.
@@ -120,6 +124,16 @@ export default function AdminCustomers() {
   // Get transactions for selected customer (mock: show all wallet transactions)
   const customerTransactions = walletTransactions;
 
+  const exportCsv = () => {
+    const url = URL.createObjectURL(new Blob(["\uFEFF", customersCsv(filtered, vipAliases)], { type: "text/csv;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `customers-${Date.now()}.csv`;
+    link.click();
+    URL.revokeObjectURL(url);
+    toast.success(`${filtered.length} customers exported`);
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
@@ -130,9 +144,10 @@ export default function AdminCustomers() {
             </h1>
             <p className="text-sm text-muted-foreground">View and search all customers</p>
           </div>
-          <Badge variant="secondary" className="text-xs">
-            {customers.length} total
-          </Badge>
+          <div className="flex items-center gap-3">
+            <Badge variant="secondary" className="text-xs">{filtered.length} / {customers.length}</Badge>
+            <Button variant="outline" size="sm" onClick={exportCsv}><Download className="w-4 h-4 mr-2" />Export CSV</Button>
+          </div>
         </div>
 
         <div className="flex items-center gap-3 mb-4 flex-wrap">
@@ -188,9 +203,19 @@ export default function AdminCustomers() {
               <SelectItem value="normal">Non-VIP only</SelectItem>
             </SelectContent>
           </Select>
-          <Button size="sm" className="gap-1.5 bg-accent text-accent-foreground hover:bg-accent/90" onClick={() => {}}>
-            <Search className="w-3.5 h-3.5" /> Search
-          </Button>
+        </div>
+
+        <div className="flex items-end gap-3 flex-wrap mb-4">
+          {([
+            ["Last Active — From", "lastActiveFrom"], ["Last Active — To", "lastActiveTo"],
+            ["Joined — From", "joinedFrom"], ["Joined — To", "joinedTo"],
+          ] as const).map(([label, key]) => (
+            <div key={key} className="space-y-1">
+              <label className="block text-xs text-muted-foreground">{label}</label>
+              <DateTimePicker value={dateFilters[key]} onChange={value => setDateFilters(prev => ({ ...prev, [key]: value }))} placeholder={label} />
+            </div>
+          ))}
+          <Button variant="outline" size="sm" onClick={() => { setSearch(""); setStatusFilter("all"); setChannelFilter("all"); setLineFilter("all"); setVipFilter("all"); setDateFilters({}); }}><Eraser className="w-3.5 h-3.5 mr-1.5" />Clear</Button>
         </div>
 
         {selectedIds.length > 0 && (
@@ -315,8 +340,8 @@ export default function AdminCustomers() {
                       <Coins className="w-3 h-3 text-accent" />{c.walletBalance.toLocaleString()}
                     </span>
                   </TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground">{c.lastActive} ago</TableCell>
-                  <TableCell className="text-right text-xs text-muted-foreground">{c.joinedDate}</TableCell>
+                  <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(c.lastActive)}</TableCell>
+                  <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(c.joinedDate)}</TableCell>
                   <TableCell className="text-right">
                     <button
                       onClick={() => setSelectedCustomer(c)}
@@ -428,8 +453,8 @@ export default function AdminCustomers() {
                   ["Good Rate", `${selectedCustomer.goodRate}%`],
                   ["Total Orders", `${selectedCustomer.totalOrders}`],
                   ["Total points", String(selectedCustomer.totalValue).replace(/₦/g, "")],
-                  ["Last Active", `${selectedCustomer.lastActive} ago`],
-                  ["Joined", selectedCustomer.joinedDate],
+                  ["Last Active", formatDateTime(selectedCustomer.lastActive)],
+                  ["Joined", formatDateTime(selectedCustomer.joinedDate)],
                   ["Last Message", selectedCustomer.lastMessage],
                 ].map(([label, value]) => (
                   <div key={label} className="flex justify-between text-sm">
@@ -476,7 +501,7 @@ export default function AdminCustomers() {
                           {selectedCustomer.channel === "whatsapp" ? t.description.replace(/Withdrawal/gi, "Transfer") : t.description}
                         </p>
                         <p className="text-[10px] text-muted-foreground">
-                          {t.date} · {t.time}
+                          {formatDateAndTime(t.date, t.time)}
                         </p>
                       </div>
                       <p className={`text-xs font-bold inline-flex items-center gap-0.5 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
@@ -618,7 +643,7 @@ function BankAccountsTab({ alias }: { alias: string }) {
                 <TableCell className="text-xs font-medium">{a.bankName}</TableCell>
                 <TableCell className="text-xs font-mono">{a.accountNumber}</TableCell>
                 <TableCell className="text-xs font-mono" title="Name masked for privacy">{maskName(a.holderName)}</TableCell>
-                <TableCell className="text-[10px] text-muted-foreground">{new Date(a.addedAt).toLocaleDateString()}</TableCell>
+                <TableCell className="text-[10px] text-muted-foreground">{formatDateTime(a.addedAt)}</TableCell>
                 <TableCell className="text-right">
                   <button onClick={() => setConfirmDel(a)} className="text-muted-foreground hover:text-destructive">
                     <Trash2 className="w-3.5 h-3.5" />

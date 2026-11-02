@@ -1,4 +1,5 @@
 import { Fragment, useMemo, useState } from "react";
+import { formatDateTime } from "@/lib/dateTime";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
 import {
@@ -293,8 +294,8 @@ export default function AdminTradingAnalytics() {
                 />
               </svg>
               <div className="flex items-center justify-between text-[10px] text-muted-foreground mt-1">
-                <span>{chartSeries.current[0]?.date ?? ""}</span>
-                <span>{chartSeries.current[chartSeries.current.length - 1]?.date ?? ""}</span>
+                <span>{formatDateTime(chartSeries.current[0]?.date)}</span>
+                <span>{formatDateTime(chartSeries.current[chartSeries.current.length - 1]?.date)}</span>
               </div>
             </div>
 
@@ -327,7 +328,7 @@ export default function AdminTradingAnalytics() {
             <div className="bg-card border rounded-xl p-5 overflow-x-auto">
               <h2 className="text-sm font-semibold mb-1">Peak Hours Heatmap</h2>
               <p className="text-xs text-muted-foreground mb-4">
-                Order count by day of week and hour — {rangeStart.toDateString()} to {rangeEnd.toDateString()}
+                Order count by day of week and hour — {formatDateTime(rangeStart)} to {formatDateTime(rangeEnd)}
               </p>
               <div className="min-w-[820px]">
                 <div className="grid" style={{ gridTemplateColumns: "48px repeat(24, minmax(0, 1fr))" }}>

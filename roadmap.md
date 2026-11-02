@@ -1,5 +1,9 @@
 # Roadmap — Conversion & Engagement Updates
 
+## Customer date filters and system dates
+- [x] Add Last Active and Joined from/to filters and filtered customer CSV export.
+- [x] Standardize displayed timestamps across admin and customer screens to dd-MMM-yyyy HH:mm; test and verify.
+
 - [x] Add shared conversation search and channel-scoped Mark all read; enable App Messages Favorites grouping and verify both screens.
 
 - [x] Registration welcome screen — "Trade & Earn 1% Rewards 🎁" banner at top, "Register now and start earning" button, layout shifted slightly downward

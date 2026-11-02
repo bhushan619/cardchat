@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import CustomerLayout from "@/components/customer/CustomerLayout";
@@ -43,7 +44,7 @@ export default function CustomerChat() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
                   <p className="text-sm font-medium">{chat.name}</p>
-                  <span className="text-[10px] text-muted-foreground">{chat.time}</span>
+                  <span className="text-[10px] text-muted-foreground">{formatDateTime(chat.time)}</span>
                 </div>
                 <div className="flex items-center justify-between mt-0.5">
                   <p className="text-xs text-muted-foreground truncate pr-2">{chat.lastMsg}</p>

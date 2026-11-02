@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -209,7 +210,7 @@ export default function AdminContentReports() {
                   <TableCell>
                     <Badge variant="outline" className={statusStyles[r.status]}>{statusLabel[r.status]}</Badge>
                   </TableCell>
-                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{r.createdAt}</TableCell>
+                  <TableCell className="text-xs text-muted-foreground whitespace-nowrap">{formatDateTime(r.createdAt)}</TableCell>
                   <TableCell className="text-right">
                     <button
                       onClick={() => setActive(r)}
@@ -240,7 +241,7 @@ export default function AdminContentReports() {
                 <DialogTitle className="flex items-center gap-2">
                   <Flag className="w-4 h-4 text-destructive" /> {active.id}
                 </DialogTitle>
-                <DialogDescription>{active.createdAt}</DialogDescription>
+                <DialogDescription>{formatDateTime(active.createdAt)}</DialogDescription>
               </DialogHeader>
 
               <div className="space-y-4">

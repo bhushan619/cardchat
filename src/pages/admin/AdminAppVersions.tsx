@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useRef, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -452,8 +453,8 @@ export default function AdminAppVersions() {
   };
 
   const estReturnLabel = maintEnd
-    ? `${formatDate(new Date(maintEnd))} · ${new Date(maintEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
-    : "3:00 PM";
+    ? formatDateTime(new Date(maintEnd))
+    : "—";
 
   return (
     <AdminLayout>
@@ -552,7 +553,7 @@ export default function AdminAppVersions() {
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium truncate">{currentApk.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    {currentApk.size} · {t("uploaded")} {currentApk.uploaded} · {currentApk.downloads} {t("downloads")}
+                    {currentApk.size} · {t("uploaded")} {formatDateTime(currentApk.uploaded)} · {currentApk.downloads} {t("downloads")}
                   </p>
                 </div>
                 <Button variant="outline" size="sm" onClick={() => copyLink(currentApk.name)} className="gap-1">
@@ -580,7 +581,7 @@ export default function AdminAppVersions() {
                     <div className="flex-1 min-w-0">
                       <p className="text-sm font-medium truncate">{apk.name}</p>
                       <p className="text-xs text-muted-foreground">
-                        {apk.size} · {apk.uploaded} · {apk.downloads} {t("downloads")}
+                        {apk.size} · {formatDateTime(apk.uploaded)} · {apk.downloads} {t("downloads")}
                       </p>
                     </div>
                     <Button variant="ghost" size="sm" onClick={() => copyLink(apk.name)}>
@@ -675,7 +676,7 @@ export default function AdminAppVersions() {
                 <tbody>
                   {history.map((h, i) => (
                     <tr key={i} className="border-b last:border-0">
-                      <td className="py-2.5">{h.date}</td>
+                      <td className="py-2.5">{formatDateTime(h.date)}</td>
                       <td className="py-2.5">
                         <span className="inline-flex items-center gap-1">
                           {h.platform === "Android" ? (
@@ -757,7 +758,7 @@ export default function AdminAppVersions() {
                 <p className="text-xs text-muted-foreground mb-2">{t("apkDownloads")}</p>
                 <p className="text-2xl font-bold font-heading">142</p>
                 <p className="text-xs text-muted-foreground mt-1">{t("directDownloads")}</p>
-                <p className="text-xs text-muted-foreground mt-2">{t("sinceJul15")}</p>
+                <p className="text-xs text-muted-foreground mt-2">{formatDateTime("2026-07-15T00:00")}</p>
               </div>
 
               <div className="border rounded-lg p-4">
@@ -802,7 +803,7 @@ export default function AdminAppVersions() {
           <DialogHeader>
             <DialogTitle>{t("restoreTitle")}</DialogTitle>
             <DialogDescription>
-              {t("restoreDesc")} ({restoreTarget?.date} · {restoreTarget?.platform} v{restoreTarget?.version})
+              {t("restoreDesc")} ({formatDateTime(restoreTarget?.date)} · {restoreTarget?.platform} v{restoreTarget?.version})
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

@@ -1,6 +1,6 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useEffect, useState } from "react";
 import { Bell, Megaphone, ArrowRight, CheckCheck } from "lucide-react";
-import { formatDistanceToNow } from "date-fns";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
@@ -52,7 +52,7 @@ export default function NotificationInbox() {
           {campaigns.map(n => <article key={n.id} className="p-4 border-b last:border-0">
             <Button variant="ghost" className="w-full h-auto p-0 hover:bg-transparent hover:text-foreground whitespace-normal text-left justify-start items-start gap-3" onClick={() => tap(n)}>
               <span className="p-2 rounded-lg bg-warning/10 text-warning shrink-0"><Megaphone className="h-5 w-5" /></span>
-              <span className="flex-1 min-w-0 space-y-1"><span className="block text-sm font-semibold">{n.title}</span><span className="block text-xs font-normal text-muted-foreground break-words">{n.body}</span><span className="block text-[10px] text-muted-foreground">{formatDistanceToNow(new Date(n.sendType === "scheduled" ? scheduleUtc(n.sendAt) : n.createdAt || Date.now()), { addSuffix: true })}</span></span>
+              <span className="flex-1 min-w-0 space-y-1"><span className="block text-sm font-semibold">{n.title}</span><span className="block text-xs font-normal text-muted-foreground break-words">{n.body}</span><span className="block text-[10px] text-muted-foreground">{formatDateTime(new Date(n.sendType === "scheduled" ? scheduleUtc(n.sendAt) : n.createdAt || Date.now()))}</span></span>
               {!reads.includes(n.id) && <span className="notification-unread-dot mt-1 shrink-0" aria-label="Unread" />}
               {n.action !== "none" && <ArrowRight className="h-3 w-3 shrink-0 mt-1" />}
             </Button>

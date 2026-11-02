@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { customerWallets, orders } from "@/data/mock";
@@ -139,7 +140,7 @@ export default function AdminWithdrawals() {
       w.channel,
       w.status,
       w.reference,
-      w.requestedAt,
+      formatDateTime(w.requestedAt),
     ]);
     const csv = [headers, ...rows].map((r) => r.map((c) => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -286,7 +287,7 @@ export default function AdminWithdrawals() {
                     <TableCell className="text-right text-xs font-semibold">
                       Pts {(walletByAlias[w.alias]?.balance ?? 0).toLocaleString()}
                     </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{formatDateTime(w.requestedAt)}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>
                         View
@@ -346,7 +347,7 @@ export default function AdminWithdrawals() {
                 ["Account Name", selected.accountName],
                 ["Channel", selected.channel],
                 ["Reference", selected.reference],
-                ["Requested", selected.requestedAt],
+                ["Requested", formatDateTime(selected.requestedAt)],
                 ["Status", statusConfig[selected.status].label],
               ].map(([k, v]) => (
                 <div key={k} className="flex justify-between">

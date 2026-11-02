@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState, useEffect } from "react";
 import {
   X,
@@ -319,7 +320,7 @@ export default function CardlightPanel({
         bankAccount: "",
         holderName: "",
         transferAmount: "0",
-        timestamp: `${formatDate(new Date())} · ${new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`,
+        timestamp: new Date().toISOString(),
         status: "processing",
         cardCurrency: cardCurrency,
         cardNumbers: cards.map((c) => c.cardNo).filter(Boolean),
@@ -830,7 +831,7 @@ export default function CardlightPanel({
                           <td className="py-2 px-1">
                             <div className="font-medium">{o.cardCode.slice(0, 12)}...</div>
                             <div className="text-muted-foreground">{o.description}</div>
-                            <div className="text-muted-foreground">{o.date}</div>
+                            <div className="text-muted-foreground">{formatDateTime(o.date)}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
                           <td className="py-2 px-1 text-right">

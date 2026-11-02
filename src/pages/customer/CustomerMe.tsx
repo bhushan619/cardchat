@@ -1,3 +1,4 @@
+import { formatDateTime, formatDateAndTime } from "@/lib/dateTime";
 import { useState, useEffect } from "react";
 import { Switch } from "@/components/ui/switch";
 import { notificationPreference, saveNotificationPreference } from "@/lib/customerNotifications";
@@ -291,7 +292,7 @@ export default function CustomerMe() {
           amount: Number(withdrawAmount),
           bank: bank ? `${bank.bankName} ${bank.accountNumber}` : withdrawBank,
           date: formatDate(now),
-          time: now.toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" }),
+          time: formatDateTime(now),
         },
       ]);
       setWithdrawComplete(true);
@@ -359,7 +360,7 @@ export default function CustomerMe() {
                         <p className="text-[10px] text-muted-foreground">{pw.bank}</p>
                       </div>
                     </div>
-                    <p className="text-[10px] text-muted-foreground">{pw.date} · {pw.time}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatDateAndTime(pw.date, pw.time)}</p>
                   </div>
                 ))}
               </div>
@@ -456,7 +457,7 @@ export default function CustomerMe() {
                     </div>
                     <div className="flex-1 min-w-0 text-left">
                       <p className="text-xs font-medium truncate">{t.description}</p>
-                      <p className="text-[10px] text-muted-foreground">{t.date} · {t.time}</p>
+                      <p className="text-[10px] text-muted-foreground">{formatDateAndTime(t.date, t.time)}</p>
                     </div>
                     <p className={`text-sm font-bold shrink-0 ${t.type === "credit" ? "text-success" : "text-warning"}`}>
                       {t.type === "credit" ? "+" : "-"}₦{t.amount.toLocaleString()}
@@ -515,8 +516,7 @@ export default function CustomerMe() {
                 <div className="rounded-xl border bg-card divide-y">
                   {[
                     { label: "Destination", value: selectedWithdrawal.description.replace(/^Withdrawal to\s*/i, "") },
-                    { label: "Date", value: selectedWithdrawal.date },
-                    { label: "Time", value: selectedWithdrawal.time },
+                    { label: "Date", value: formatDateAndTime(selectedWithdrawal.date, selectedWithdrawal.time) },
                     { label: "Reference ID", value: selectedWithdrawal.id, copy: true },
                     { label: "Transaction Fee", value: "₦0.00" },
                     { label: "Payment Method", value: "Bank Transfer" },
@@ -582,8 +582,7 @@ export default function CustomerMe() {
                           { label: "Face Value", value: matchedOrder.totalFaceValue },
                           { label: "Rate", value: matchedOrder.rate },
                         ] : []),
-                        { label: "Date", value: selectedCreditTx.date },
-                        { label: "Time", value: selectedCreditTx.time },
+                        { label: "Date", value: formatDateAndTime(selectedCreditTx.date, selectedCreditTx.time) },
                         { label: "Reference ID", value: selectedCreditTx.id, copy: true },
                         { label: "Transaction Type", value: "Wallet Credit" },
                         { label: "Payment Method", value: "Gift Card Sale" },
@@ -806,7 +805,7 @@ export default function CustomerMe() {
             <div className="bg-muted/50 rounded-xl p-3 space-y-2">
               {[
                 { label: "Order ID", value: selectedOrder.id, copy: true },
-                { label: "Date", value: selectedOrder.date },
+                { label: "Date", value: formatDateTime(selectedOrder.date) },
               ].map(item => (
                 <div key={item.label} className="flex items-center justify-between">
                   <p className="text-xs text-muted-foreground">{item.label}</p>
@@ -863,7 +862,7 @@ export default function CustomerMe() {
                         {step.isFail ? <XCircle className="w-2.5 h-2.5 text-destructive-foreground" /> : <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
                       </div>
                       <p className="text-xs font-medium">{step.event}</p>
-                      <p className="text-[10px] text-muted-foreground">{selectedOrder.date}</p>
+                      <p className="text-[10px] text-muted-foreground">{formatDateTime(selectedOrder.date)}</p>
                     </div>
                   ))}
                 </>
@@ -876,7 +875,7 @@ export default function CustomerMe() {
                       {i <= currentIdx && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
                     </div>
                     <p className="text-xs font-medium">{event}</p>
-                    <p className="text-[10px] text-muted-foreground">{selectedOrder.date}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatDateTime(selectedOrder.date)}</p>
                   </div>
                 ))
               )}
@@ -940,7 +939,7 @@ export default function CustomerMe() {
                     </span>
                   </div>
                   <p className="text-xs text-muted-foreground">{order.totalFaceValue} · {order.totalPayout}</p>
-                  <p className="text-[10px] text-muted-foreground mt-0.5">{order.date}</p>
+                  <p className="text-[10px] text-muted-foreground mt-0.5">{formatDateTime(order.date)}</p>
                 </div>
                 <ChevronRight className="w-4 h-4 text-muted-foreground shrink-0" />
               </button>
@@ -1216,14 +1215,14 @@ export default function CustomerMe() {
             </div>
             <div className="space-y-2">
               {[
-                { device: "Chrome · Windows", location: "Lagos, NG", time: "Active now", active: true },
+                { device: "Chrome · Windows", location: "Lagos, NG", time: new Date().toISOString(), active: true },
                 { device: "Safari · iPhone", location: "Lagos, NG", time: "2 hours ago", active: false },
                 { device: "Chrome · MacOS", location: "Abuja, NG", time: "3 days ago", active: false },
               ].map((session, i) => (
                 <div key={i} className="flex items-center justify-between py-2 border-t first:border-0">
                   <div>
                     <p className="text-xs font-medium">{session.device}</p>
-                    <p className="text-[10px] text-muted-foreground">{session.location} · {session.time}</p>
+                    <p className="text-[10px] text-muted-foreground">{session.location} · {formatDateTime(session.time)}</p>
                   </div>
                   {session.active ? (
                     <span className="text-[10px] font-medium px-2 py-0.5 rounded-full bg-success/10 text-success">Active</span>

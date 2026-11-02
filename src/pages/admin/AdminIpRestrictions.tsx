@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Plus, Trash2, Shield, AlertTriangle, Clock } from "lucide-react";
@@ -311,7 +312,7 @@ export default function AdminIpRestrictions() {
                 <tbody>
                   {audit.map(a => (
                     <tr key={a.id} className="border-b last:border-0">
-                      <td className="px-4 py-3 text-xs">{a.timestamp}</td>
+                      <td className="px-4 py-3 text-xs">{formatDateTime(a.timestamp)}</td>
                       <td className="px-4 py-3 text-xs font-mono">{a.ip}</td>
                       <td className="px-4 py-3 text-xs">{a.country}</td>
                       <td className="px-4 py-3 text-xs text-muted-foreground">{a.rule}</td>

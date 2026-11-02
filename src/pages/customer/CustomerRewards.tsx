@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import { ArrowLeft, Gift, Users, Copy, CheckCircle, Trophy, ArrowDownLeft, X, XCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -206,7 +207,7 @@ export default function CustomerRewards() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs font-medium truncate">{displayDescription}</p>
-                  <p className="text-[10px] text-muted-foreground">{r.date}</p>
+                  <p className="text-[10px] text-muted-foreground">{formatDateTime(r.date)}</p>
                 </div>
                 <p className="text-sm font-bold text-success shrink-0 flex items-center gap-0.5">
                   <ArrowDownLeft className="w-3 h-3" />

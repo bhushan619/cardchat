@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import NotificationInbox from "@/components/customer/NotificationInbox";
 import Logo from "@/components/Logo";
 import { useState } from "react";
@@ -267,7 +268,7 @@ export default function CustomerHomeV2() {
                           {rate.cardFormat}
                         </span>
                         <span className="text-[10px] text-muted-foreground">
-                          {rate.currency} · {rate.lastUpdated}
+                          {rate.currency} · {formatDateTime(rate.lastUpdated)}
                         </span>
                       </div>
                       <div className="mt-1 flex items-center gap-1.5 flex-wrap">

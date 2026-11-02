@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import AdminLayout from "@/components/admin/AdminLayout";
@@ -449,7 +450,7 @@ export default function AdminPopups() {
                     <td>{p.audience === "everyone" ? "Everyone" : "Specified Users"}</td>
                     <td>{p.audience === "everyone" ? "All" : p.recipients.length}</td>
                     <td className="text-xs">
-                      {p.startDate} → {p.endDate}
+                      {formatDateTime(p.startDate)} → {formatDateTime(p.endDate)}
                       <span className="text-muted-foreground"> ({p.timezone || "UTC+4"}{tzName(p.timezone) ? ` · ${tzName(p.timezone)}` : ""})</span>
                     </td>
                     <td>
@@ -725,21 +726,21 @@ export default function AdminPopups() {
                 <Label>Validity Start *</Label>
                 <Input
                   type="date"
-                  value={form.startDate}
+                  value={formatDateTime(form.startDate)}
                   onChange={(e) => setForm({ ...form, startDate: e.target.value })}
                 />
                 {errors.startDate && (
-                  <p className="text-xs text-destructive">{errors.startDate}</p>
+                  <p className="text-xs text-destructive">{formatDateTime(errors.startDate)}</p>
                 )}
               </div>
               <div className="space-y-1.5">
                 <Label>Validity End *</Label>
                 <Input
                   type="date"
-                  value={form.endDate}
+                  value={formatDateTime(form.endDate)}
                   onChange={(e) => setForm({ ...form, endDate: e.target.value })}
                 />
-                {errors.endDate && <p className="text-xs text-destructive">{errors.endDate}</p>}
+                {errors.endDate && <p className="text-xs text-destructive">{formatDateTime(errors.endDate)}</p>}
               </div>
               <div className="space-y-1.5">
                 <Label>Timezone *</Label>

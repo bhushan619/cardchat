@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -505,16 +506,16 @@ function AnalyticsPanel({ templates }: { templates: QuickReplyTemplate[] }) {
 
       <div className="rounded-xl border bg-card p-4 space-y-3">
         <h2 className="font-heading text-sm font-semibold">Usage Trend (Last 14 Days)</h2>
-        <div className="flex items-end gap-1.5 h-32">
+        <div className="flex items-end gap-1.5 h-48 pb-16">
           {trend.map((d) => (
-            <div key={d.date} className="flex-1 flex flex-col items-center gap-1">
+            <div key={formatDateTime(d.date)} className="flex-1 flex flex-col items-center gap-1">
               <div
                 className="w-full rounded-t bg-primary"
                 style={{ height: `${Math.max(4, (d.count / maxTrendCount) * 100)}%` }}
-                title={`${d.date}: ${d.count}`}
+                title={`${formatDateTime(d.date)}: ${d.count}`}
               />
-              <span className="text-[9px] text-muted-foreground rotate-0">
-                {d.date.slice(5)}
+              <span className="text-[9px] text-muted-foreground -rotate-45 origin-top-left whitespace-nowrap">
+                {formatDateTime(d.date)}
               </span>
             </div>
           ))}

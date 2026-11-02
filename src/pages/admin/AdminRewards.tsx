@@ -1,3 +1,4 @@
+import { formatDateTime, formatDateAndTime, parseDateTime } from "@/lib/dateTime";
 import { useState, useMemo } from "react";
 import { parse } from "date-fns";
 import { formatDate } from "@/lib/utils";
@@ -134,9 +135,9 @@ export default function AdminRewards() {
     const matchType = typeFilter === "all" || r.type === typeFilter;
     let matchDate = true;
     if (dateFrom || dateTo) {
-      const recordDate = parse(`${r.date} ${r.time}`, "dd/MM/yyyy hh:mm aa", new Date());
-      if (dateFrom && recordDate < dateFrom) matchDate = false;
-      if (dateTo && recordDate > dateTo) matchDate = false;
+      const recordDate = parseDateTime(formatDateAndTime(r.date, r.time));
+      if (dateFrom && recordDate && recordDate < dateFrom) matchDate = false;
+      if (dateTo && recordDate && recordDate > dateTo) matchDate = false;
     }
     return matchSearch && matchType && matchDate;
   });
@@ -171,15 +172,14 @@ export default function AdminRewards() {
 
 
   const handleExportRecords = () => {
-    const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date", "Time"];
+    const headers = ["ID", "Customer", "Type", "Description", "Amount (Pts)", "Date & Time"];
     const rows = filtered.map(r => [
       r.id,
       r.alias,
       r.type,
       `"${r.description.replace(/"/g, '""')}"`,
       r.amount,
-      r.date,
-      r.time,
+      formatDateAndTime(r.date, r.time),
     ]);
     const csv = [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
@@ -465,7 +465,7 @@ export default function AdminRewards() {
                       <TableCell className="text-right text-sm font-bold text-success">
                         <PointsAmount value={r.amount} className="justify-end" prefix="+" />
                       </TableCell>
-                      <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{formatDateAndTime(r.date, r.time)}</TableCell>
 
                     </TableRow>
                   ))}

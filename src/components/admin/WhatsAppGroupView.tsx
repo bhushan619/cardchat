@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState, useRef, useEffect } from "react";
 import type { ReactNode } from "react";
 import { Users, Send, Smile, Paperclip } from "lucide-react";
@@ -71,7 +72,7 @@ export function GroupThread({
         id: Date.now(),
         sender: "agent",
         text: message.trim(),
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatDateTime(new Date()),
       },
     ]);
     setMessage("");
@@ -136,7 +137,7 @@ export function GroupThread({
                 ) : (
                   <p>{msg.text}</p>
                 )}
-                <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
               </div>
             </div>
           );
@@ -146,13 +147,13 @@ export function GroupThread({
             <div key={`sys-${m.id}`} className="flex justify-end">
               <div className="space-y-1">
                 <TransferReceiptImage receipt={m.receipt} />
-                <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {m.time}</p>
+                <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {formatDateTime(m.time)}</p>
               </div>
             </div>
           ) : (
             <div key={`sys-${m.id}`} className="flex justify-center">
               <div className="max-w-[80%] text-center text-[11px] px-3 py-1.5 rounded-full bg-muted text-muted-foreground">
-                {m.text} <span className="opacity-60 ml-1">{m.time}</span>
+                {m.text} <span className="opacity-60 ml-1">{formatDateTime(m.time)}</span>
               </div>
             </div>
           ),

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
@@ -72,12 +73,7 @@ function floorTo30Min(d: Date) {
 }
 
 function fmtTime(d: Date) {
-  return d.toLocaleTimeString("en-GB", {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-    timeZone: "UTC",
-  });
+  return formatDateTime(d);
 }
 
 export default function AdminEventTracking() {
@@ -112,7 +108,7 @@ export default function AdminEventTracking() {
           users,
           trend,
           errorRate,
-          lastSeen: minsAgo < 60 ? `${Math.max(1, minsAgo)}m ago` : `${Math.round(minsAgo / 60)}h ago`,
+          lastSeen: formatDateTime(Date.now() - minsAgo * 60000),
         };
       }),
     );
@@ -460,7 +456,7 @@ export default function AdminEventTracking() {
                         <span className="text-muted-foreground">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-2.5 text-xs text-right text-muted-foreground">{e.lastSeen}</td>
+                    <td className="px-4 py-2.5 text-xs text-right text-muted-foreground">{formatDateTime(e.lastSeen)}</td>
                   </tr>
                 ))}
               </tbody>

@@ -1,3 +1,4 @@
+import { formatDateTime, formatDateAndTime, parseDateTime } from "@/lib/dateTime";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
@@ -128,7 +129,7 @@ const initialRecords: PlatformRecord[] = [
 
 function parseRecordDate(r: PlatformRecord): Date {
   try {
-    return parse(`${r.date} ${r.time}`, "MMM dd, yyyy hh:mm aa", new Date());
+    return parseDateTime(formatDateAndTime(r.date, r.time)) ?? new Date(0);
   } catch {
     return new Date(0);
   }
@@ -200,8 +201,8 @@ export default function AdminWallets() {
       amount,
       nairaRate: 289,
       description: depositDescription || "Admin deposit",
-      date: formatDate(new Date()),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      date: new Date().toISOString(),
+      time: "",
       remark: depositRemark || "Manual deposit",
     };
     setRecords((prev) => [record, ...prev]);
@@ -221,8 +222,7 @@ export default function AdminWallets() {
       "Description",
       "Points Rate",
       "Amount (Points)",
-      "Date",
-      "Time",
+      "Date & Time",
       "Remark",
     ];
     const rows = filtered.map((r) => [
@@ -233,8 +233,7 @@ export default function AdminWallets() {
       `"${r.description}"`,
       r.nairaRate.toString(),
       r.amount.toString(),
-      r.date,
-      r.time,
+      formatDateAndTime(r.date, r.time),
       `"${r.remark}"`,
     ]);
     const csv = [header.join(","), ...rows.map((r) => r.join(","))].join("\n");
@@ -342,7 +341,7 @@ export default function AdminWallets() {
               </div>
               <p className="text-xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
+                <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {formatDateTime(p.lastSync)}
               </p>
             </div>
           ))} */}
@@ -526,7 +525,7 @@ export default function AdminWallets() {
                     <PointsAmount value={r.amount} className="justify-end" prefix={r.type === "deposit" ? "+" : "-"} />
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
-                    {r.date} · {r.time}
+                    {formatDateAndTime(r.date, r.time)}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
                 </TableRow>

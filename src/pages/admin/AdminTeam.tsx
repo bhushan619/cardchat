@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Link } from "react-router-dom";
@@ -127,7 +128,7 @@ export default function AdminTeam() {
 
   const exportCsv = () => {
     const head = ["Date", "Agent", "Shift", "Source", "Average response time (s)", "Delayed response times", "Number of missing replies", "Total number of chat users"];
-    const body = filtered.map((r) => [r.date, r.agent, r.shift, r.source === "app" ? "App" : "WhatsApp", r.avgResponse, r.delayed, r.missing, r.chatUsers]);
+    const body = filtered.map((r) => [formatDateTime(r.date), r.agent, r.shift, r.source === "app" ? "App" : "WhatsApp", r.avgResponse, r.delayed, r.missing, r.chatUsers]);
     const csv = [head, ...body, ["Total", "", "", "", totals.avg, totals.delayed, totals.missing, totals.users]]
       .map((line) => line.map((c) => `"${c}"`).join(",")).join("\n");
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv" }));
@@ -244,8 +245,8 @@ export default function AdminTeam() {
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={`${r.date}-${r.agent}-${r.shift}`} className="border-b hover:bg-muted/30">
-                  <td className="px-4 py-3 text-sm">{r.date}</td>
+                <tr key={`${formatDateTime(r.date)}-${r.agent}-${r.shift}`} className="border-b hover:bg-muted/30">
+                  <td className="px-4 py-3 text-sm">{formatDateTime(r.date)}</td>
                   <td className="px-4 py-3 text-sm font-medium">{r.agent}</td>
                   <td className="px-4 py-3 text-sm text-center">{r.shift}</td>
                   <td className="px-4 py-3 text-sm text-center">{fmtSec(r.avgResponse)}</td>
@@ -304,7 +305,7 @@ export default function AdminTeam() {
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Agent</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Customer</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Participants</th>
-                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Duration</th>
+                  <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Escalated at</th>
                   <th className="text-left text-xs font-semibold text-muted-foreground px-4 py-3">Status</th>
                   <th className="text-right text-xs font-semibold text-muted-foreground px-4 py-3">Action</th>
                 </tr>
@@ -315,7 +316,7 @@ export default function AdminTeam() {
                     <td className="px-4 py-3 text-sm font-medium">{e.agent}</td>
                     <td className="px-4 py-3 text-sm font-mono">{e.customer}</td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">{e.participants.join(", ")}</td>
-                    <td className="px-4 py-3 text-sm text-muted-foreground">{e.duration}</td>
+                    <td className="px-4 py-3 text-sm text-muted-foreground">{formatDateTime(e.duration)}</td>
                     <td className="px-4 py-3">
                       <span className="status-badge bg-success/10 text-success text-[10px]">Active</span>
                     </td>
@@ -343,7 +344,7 @@ export default function AdminTeam() {
                     : <><AlertTriangle className="w-4 h-4 text-destructive" /> Missing replies</>}
                 </DialogTitle>
                 <DialogDescription>
-                  {drill.row.agent} · {drill.row.date} · {drill.row.shift} shift ·{" "}
+                  {drill.row.agent} · {formatDateTime(drill.row.date)} · {drill.row.shift} shift ·{" "}
                   {drill.row.source === "app" ? "App" : "WhatsApp"}
                 </DialogDescription>
               </DialogHeader>
@@ -352,12 +353,12 @@ export default function AdminTeam() {
                   <div key={i} className="rounded-lg border bg-muted/30 p-3">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-xs">{d.alias}</span>
-                      <span className="text-xs text-muted-foreground">{d.receivedAt}</span>
+                      <span className="text-xs text-muted-foreground">{formatDateTime(d.receivedAt)}</span>
                     </div>
                     <p className="text-sm mt-1">{d.message}</p>
                     <p className="text-xs mt-2">
                       {d.repliedAt
-                        ? <span className="text-warning">Replied {d.repliedAt} · waited {fmtSec(d.waitedSec ?? 0)}</span>
+                        ? <span className="text-warning">Replied {formatDateTime(d.repliedAt)} · waited {fmtSec(d.waitedSec ?? 0)}</span>
                         : <span className="text-destructive">No reply during the shift</span>}
                     </p>
                   </div>
