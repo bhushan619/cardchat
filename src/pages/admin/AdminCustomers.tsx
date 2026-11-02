@@ -263,7 +263,6 @@ export default function AdminCustomers() {
                 </TableHead>
                 <TableHead className="text-xs font-semibold">Alias</TableHead>
                 <TableHead className="text-xs font-semibold text-center">VIP</TableHead>
-                <TableHead className="text-xs font-semibold">Status</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Channel</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Good Rate</TableHead>
                 <TableHead className="text-xs font-semibold text-center">Total Orders</TableHead>
@@ -307,13 +306,6 @@ export default function AdminCustomers() {
                       <span className="text-[10px] text-muted-foreground">—</span>
                     )}
                   </TableCell>
-                  <TableCell>
-                    <span
-                      className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${statusColors[c.status] || "bg-muted text-muted-foreground"}`}
-                    >
-                      {statusLabels[c.status] || c.status}
-                    </span>
-                  </TableCell>
                   <TableCell className="text-center">
                     <div className="flex flex-col items-center gap-1">
                       <ChannelBadge channel={c.channel} size="sm" />
@@ -355,7 +347,7 @@ export default function AdminCustomers() {
 
               {filtered.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={12} className="text-center py-8 text-muted-foreground text-sm">
+                  <TableCell colSpan={11} className="text-center py-8 text-muted-foreground text-sm">
                     No customers found
                   </TableCell>
                 </TableRow>
