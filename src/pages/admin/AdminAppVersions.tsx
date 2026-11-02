@@ -453,8 +453,8 @@ export default function AdminAppVersions() {
   };
 
   const estReturnLabel = maintEnd
-    ? `${formatDate(formatDateTime(new Date(maintEnd))} · ${new Date(maintEnd))}`
-    : "3:00 PM";
+    ? formatDateTime(new Date(maintEnd))
+    : "—";
 
   return (
     <AdminLayout>
@@ -803,7 +803,7 @@ export default function AdminAppVersions() {
           <DialogHeader>
             <DialogTitle>{t("restoreTitle")}</DialogTitle>
             <DialogDescription>
-              {t("restoreDesc")} ({restoreTarget?.date} · {restoreTarget?.platform} v{restoreTarget?.version})
+              {t("restoreDesc")} ({formatDateTime(restoreTarget?.date)} · {restoreTarget?.platform} v{restoreTarget?.version})
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

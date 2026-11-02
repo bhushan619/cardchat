@@ -320,7 +320,7 @@ export default function CardlightPanel({
         bankAccount: "",
         holderName: "",
         transferAmount: "0",
-        timestamp: `${formatDate(formatDateTime(new Date())} · ${new Date())}`,
+        timestamp: new Date().toISOString(),
         status: "processing",
         cardCurrency: cardCurrency,
         cardNumbers: cards.map((c) => c.cardNo).filter(Boolean),

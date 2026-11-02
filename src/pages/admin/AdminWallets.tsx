@@ -1,4 +1,4 @@
-import { formatDateTime, formatDateAndTime } from "@/lib/dateTime";
+import { formatDateTime, formatDateAndTime, parseDateTime } from "@/lib/dateTime";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
@@ -129,7 +129,7 @@ const initialRecords: PlatformRecord[] = [
 
 function parseRecordDate(r: PlatformRecord): Date {
   try {
-    return parse(`${formatDateTime(r.date)} ${formatDateTime(r.time)}`, "MMM dd, yyyy hh:mm aa", new Date());
+    return parseDateTime(formatDateAndTime(r.date, r.time)) ?? new Date(0);
   } catch {
     return new Date(0);
   }
@@ -201,8 +201,8 @@ export default function AdminWallets() {
       amount,
       nairaRate: 289,
       description: depositDescription || "Admin deposit",
-      date: formatDate(new Date()),
-      time: formatDateTime(new Date()),
+      date: new Date().toISOString(),
+      time: "",
       remark: depositRemark || "Manual deposit",
     };
     setRecords((prev) => [record, ...prev]);
@@ -222,8 +222,7 @@ export default function AdminWallets() {
       "Description",
       "Points Rate",
       "Amount (Points)",
-      "Date",
-      "Time",
+      "Date & Time",
       "Remark",
     ];
     const rows = filtered.map((r) => [
@@ -234,8 +233,7 @@ export default function AdminWallets() {
       `"${r.description}"`,
       r.nairaRate.toString(),
       r.amount.toString(),
-      r.date,
-      r.time,
+      formatDateAndTime(r.date, r.time),
       `"${r.remark}"`,
     ]);
     const csv = [header.join(","), ...rows.map((r) => r.join(","))].join("\n");

@@ -1,5 +1,8 @@
 # Project architecture
 
+- Use the shared dateTime display helpers for timestamps and exports, retaining machine-readable storage and existing schedule timezone rules so presentation never changes filtering or delivery.
+- Keep customer date matching and CSV generation in customerFilters so independent Last Active/Joined ranges and filtered exports remain testable.
+
 - Keep App Messages and WhatsApp conversation-list controls in the shared AdminMessages screen so channel behavior stays consistent.
 - Reuse useHorizontalDragScroll for admin horizontal viewports, preserving native touch scrolling and clicks; store shared menu visibility in sessionStorage to retain it across page navigation.
 - Use the shared resizable panels for Messages section dividers instead of whole-layout drag-to-scroll, so dragging a divider only resizes adjacent sections without intercepting conversation or chat gestures.

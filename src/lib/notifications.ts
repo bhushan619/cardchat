@@ -316,8 +316,7 @@ export function clickRate(n: AppNotification): string {
 export function formatSendTime(n: AppNotification): string {
   const raw = n.sendType === "immediate" ? n.createdAt : n.sendAt;
   if (!raw) return "—";
-  const s = raw.slice(0, 19).replace("T", " ");
-  return s.length === 16 ? `${s}:00` : s;
+  return formatDateTime(raw);
 }
 
 // datetime-local values are campaign wall-clock times in UTC+4, never browser time.

@@ -2870,7 +2870,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const rawCreateTime = (detailOrder as any).createTime;
                   const createTime = rawCreateTime
                     ? formatDate(new Date(Number(rawCreateTime)))
-                    : detailOrder.createdAt || detailOrder.timestamp;
+                    : formatDateTime(detailOrder.createdAt || detailOrder.timestamp);
                   const cardFaceValue = detailOrder.amount;
                   const purchaseFaceValue = detailOrder.amount;
                   const purchaseRate = detailOrder.unitPrice || detailOrder.nairaRate || 0;
@@ -2886,7 +2886,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       : [];
 
                   const productRowsAll: [string, React.ReactNode, boolean?][] = [
-                    ["Creation time", detailOrder.createdAt || detailOrder.timestamp],
+                    ["Creation time", formatDateTime(detailOrder.createdAt || detailOrder.timestamp)],
                     ["Card type", shoTypeName],
                     ["Card face value", `${cardFaceValue}`],
                   ];
@@ -2896,7 +2896,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   const orderAmountCalc = Number(purchaseFaceValue) * unitPriceCalc;
                   const settlementAmountCalc = Number(settleRate) * Number(settleFaceValue);
                   const orderRowsAll: [string, React.ReactNode, boolean?, string?][] = [
-                    ["Order receiving time", detailOrder.createdAt || detailOrder.timestamp],
+                    ["Order receiving time", formatDateTime(detailOrder.createdAt || detailOrder.timestamp)],
                     ["Order id", orderCode, true],
                     ["Order face value", `${purchaseFaceValue}`],
                     ["Order unit price", unitPriceCalc.toLocaleString(undefined, { maximumFractionDigits: 4 })],
