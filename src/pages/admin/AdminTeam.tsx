@@ -353,12 +353,12 @@ export default function AdminTeam() {
                   <div key={i} className="rounded-lg border bg-muted/30 p-3">
                     <div className="flex items-center justify-between">
                       <span className="font-mono text-xs">{d.alias}</span>
-                      <span className="text-xs text-muted-foreground">{d.receivedAt}</span>
+                      <span className="text-xs text-muted-foreground">{formatDateTime(d.receivedAt)}</span>
                     </div>
                     <p className="text-sm mt-1">{d.message}</p>
                     <p className="text-xs mt-2">
                       {d.repliedAt
-                        ? <span className="text-warning">Replied {d.repliedAt} · waited {fmtSec(d.waitedSec ?? 0)}</span>
+                        ? <span className="text-warning">Replied {formatDateTime(d.repliedAt)} · waited {fmtSec(d.waitedSec ?? 0)}</span>
                         : <span className="text-destructive">No reply during the shift</span>}
                     </p>
                   </div>

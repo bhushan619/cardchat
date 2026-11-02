@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { formatDateTime } from "@/lib/dateTime";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { adminUsers as initialUsers } from "@/data/mock";
 import { useRef } from "react";
@@ -358,7 +359,7 @@ export default function AdminUsers() {
                       <span className={`w-2 h-2 rounded-full inline-block ${u.status === "active" ? "bg-success" : "bg-muted-foreground"}`} />
                     )}
                   </td>
-                  <td className="px-4 py-3 text-xs text-right text-muted-foreground">{u.lastLogin}</td>
+                  <td className="px-4 py-3 text-xs text-right text-muted-foreground">{formatDateTime(u.lastLogin)}</td>
                   <td className="px-4 py-3 text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>

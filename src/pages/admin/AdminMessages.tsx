@@ -4087,11 +4087,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                   })),
                   ...mock.map((m) => ({ ...m, bank: normalizeBankName(m.bank) })),
                 ];
-                const fmtDate = (t: number) => {
-                  const d = new Date(t);
-                  const p = (n: number) => String(n).padStart(2, "0");
-                  return `${d.getFullYear()}/${p(d.getMonth() + 1)}/${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`;
-                };
+                const fmtDate = formatDateTime;
 
                 // One option per bank account actually present in this customer's records.
                 const accountMap = new Map<

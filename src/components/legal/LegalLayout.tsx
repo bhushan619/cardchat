@@ -1,4 +1,5 @@
 import Logo from "@/components/Logo";
+import { formatDateTime } from "@/lib/dateTime";
 import { Link } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import { ReactNode } from "react";
@@ -20,7 +21,7 @@ export default function LegalLayout({ title, updated, children }: { title: strin
       <article className="max-w-3xl mx-auto px-6 py-12">
         <header className="mb-10">
           <h1 className="font-heading text-4xl font-bold">{title}</h1>
-          <p className="text-sm text-muted-foreground mt-2">Last updated: {updated}</p>
+          <p className="text-sm text-muted-foreground mt-2">Last updated: {formatDateTime(updated)}</p>
         </header>
         <div className="prose prose-invert max-w-none space-y-8 [&_h2]:font-heading [&_h2]:text-xl [&_h2]:font-semibold [&_h2]:mb-3 [&_p]:text-muted-foreground [&_p]:leading-relaxed [&_ul]:text-muted-foreground [&_ul]:list-disc [&_ul]:pl-5 [&_ul]:space-y-1.5 [&_li]:leading-relaxed">
           {children}

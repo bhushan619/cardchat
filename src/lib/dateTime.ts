@@ -9,7 +9,7 @@ export function parseDateTime(value: Date | string | number | null | undefined, 
   if (value instanceof Date) return isValid(value) ? value : null;
   if (typeof value === "number") return isValid(new Date(value)) ? new Date(value) : null;
   const text = value.trim();
-  const relative = text.match(/^(\d+)\s*(s|sec(?:ond)?s?|m|min(?:ute)?s?|h|hours?|d|days?)\s*(?:ago)?$/i);
+  const relative = text.match(/^(\d+)\s*(s|sec(?:ond)?s?|m|min(?:ute)?s?|h|hrs?|hours?|d|days?)\s*(?:ago)?$/i);
   if (relative) {
     const unit = relative[2].toLowerCase()[0];
     return new Date(reference.getTime() - Number(relative[1]) * ({ s: 1000, m: 60000, h: 3600000, d: 86400000 }[unit] ?? 0));

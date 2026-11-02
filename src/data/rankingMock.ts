@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 export type RankingChannel = "trtc" | "whatsapp";
 
 export type RankingTier = {
@@ -113,12 +114,12 @@ export function getBiWeeklyPeriods(year: number, month: number): [BiWeeklyPeriod
     {
       start,
       end: midDate,
-      label: `${mn} 01 – ${mn} ${String(midDate.getDate()).padStart(2, "0")}, ${year} (H1)`,
+      label: `${formatDateTime(start)} – ${formatDateTime(midDate)} (H1)`,
     },
     {
       start: midDate,
       end: nextMonthStart,
-      label: `${mn} ${String(midDate.getDate()).padStart(2, "0")} – ${nextMn} 01, ${nextMonthStart.getFullYear()} (H2)`,
+      label: `${formatDateTime(midDate)} – ${formatDateTime(nextMonthStart)} (H2)`,
     },
   ];
 }
