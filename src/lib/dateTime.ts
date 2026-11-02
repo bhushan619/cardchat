@@ -17,7 +17,7 @@ export function parseDateTime(value: Date | string | number | null | undefined, 
   if (/^(now|just now|today)$/i.test(text)) return new Date(reference);
   if (/^yesterday$/i.test(text)) { const date = new Date(reference); date.setDate(date.getDate() - 1); return date; }
   const normalized = text.replace(/\s*[·|]\s*/g, " ").replace(/\s+/g, " ");
-  for (const pattern of [DATE_TIME_FORMAT, "dd/MM/yyyy hh:mm a", "dd/MM/yyyy HH:mm", "dd/MM/yyyy", "MMM dd, yyyy hh:mm a", "MMM d, yyyy HH:mm", "MMM d, yyyy", "dd MMM yyyy HH:mm", "dd MMM yyyy", "yyyy-MM-dd HH:mm", "yyyy-MM-dd", "MMM yyyy", "hh:mm a", "HH:mm"]) {
+  for (const pattern of [DATE_TIME_FORMAT, "dd/MM/yyyy hh:mm a", "dd/MM/yyyy HH:mm", "dd/MM/yyyy", "MMM dd, yyyy hh:mm a", "MMM d, yyyy HH:mm", "MMM d, yyyy", "MMM d, hh:mm a", "dd MMM yyyy HH:mm", "dd MMM yyyy", "yyyy-MM-dd HH:mm", "yyyy-MM-dd", "MMM yyyy", "hh:mm a", "HH:mm"]) {
     const date = parse(normalized, pattern, reference);
     if (isValid(date)) return date;
   }

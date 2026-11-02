@@ -1,8 +1,8 @@
 # Roadmap — Conversion & Engagement Updates
 
 ## Customer date filters and system dates
-- [ ] Add Last Active and Joined from/to filters and filtered customer CSV export.
-- [ ] Standardize displayed timestamps across admin and customer screens to dd-MMM-yyyy HH:mm; test and verify.
+- [x] Add Last Active and Joined from/to filters and filtered customer CSV export.
+- [x] Standardize displayed timestamps across admin and customer screens to dd-MMM-yyyy HH:mm; test and verify.
 
 - [x] Add shared conversation search and channel-scoped Mark all read; enable App Messages Favorites grouping and verify both screens.
 
