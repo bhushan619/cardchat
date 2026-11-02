@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import { formatDateTime } from "@/lib/dateTime";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -40,13 +41,7 @@ export function maskAlias(alias: string | null | undefined): string {
  * Accepts Date objects or ISO/date strings.
  */
 export function formatDate(value: Date | string | number | null | undefined): string {
-  if (!value) return "";
-  const d = typeof value === "object" ? value : new Date(value);
-  if (isNaN(d.getTime())) return String(value);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const year = d.getFullYear();
-  return `${day}/${month}/${year}`;
+  return formatDateTime(value);
 }
 
 /**
