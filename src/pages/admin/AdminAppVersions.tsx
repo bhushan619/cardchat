@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useRef, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -452,7 +453,7 @@ export default function AdminAppVersions() {
   };
 
   const estReturnLabel = maintEnd
-    ? `${formatDate(new Date(maintEnd))} · ${new Date(maintEnd).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`
+    ? `${formatDate(formatDateTime(new Date(maintEnd))} · ${new Date(maintEnd))}`
     : "3:00 PM";
 
   return (
@@ -675,7 +676,7 @@ export default function AdminAppVersions() {
                 <tbody>
                   {history.map((h, i) => (
                     <tr key={i} className="border-b last:border-0">
-                      <td className="py-2.5">{h.date}</td>
+                      <td className="py-2.5">{formatDateTime(h.date)}</td>
                       <td className="py-2.5">
                         <span className="inline-flex items-center gap-1">
                           {h.platform === "Android" ? (

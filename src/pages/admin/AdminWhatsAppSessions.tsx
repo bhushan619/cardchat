@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useEffect, useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { Button } from "@/components/ui/button";
@@ -88,10 +89,7 @@ const maskPhone = (p: string) => {
   return `+${clean.slice(0, 3)}\u2009•••••\u2009${clean.slice(-4)}`;
 };
 
-const absTime = (iso: string) =>
-  new Date(iso).toLocaleString("en-US", {
-    month: "short", day: "numeric", hour: "numeric", minute: "2-digit",
-  });
+const absTime = (iso: string) => formatDateTime(iso);
 
 const AUDIT_TITLES: Record<string, string> = {
   created: "Created",
@@ -112,13 +110,7 @@ const auditTitle = (event: string) =>
 const auditPayload = (e: { actor: string; note?: string }) =>
   JSON.stringify(e.note ? { actor: e.actor, note: e.note } : { actor: e.actor });
 
-const timeAgo = (iso: string) => {
-  const diff = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (diff < 60) return `${Math.floor(diff)}s ago`;
-  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
-  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
-  return `${Math.floor(diff / 86400)}d ago`;
-};
+const timeAgo = (iso: string) => formatDateTime(iso);
 
 // Deterministic mock QR — a checkerboard SVG that changes per phone
 function MockQR({ seed }: { seed: string }) {

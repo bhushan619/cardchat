@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -13,7 +14,7 @@ interface ChatMessage {
 }
 
 const now = () =>
-  new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+  formatDateTime(new Date());
 
 export default function CustomerSupportChat() {
   const navigate = useNavigate();
@@ -93,7 +94,7 @@ export default function CustomerSupportChat() {
                   m.from === "customer" ? "text-accent-foreground/70" : "text-muted-foreground"
                 }`}
               >
-                {m.time}
+                {formatDateTime(m.time)}
               </p>
             </div>
           </div>

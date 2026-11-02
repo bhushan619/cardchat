@@ -1,3 +1,4 @@
+import { formatDateTime, formatDateAndTime } from "@/lib/dateTime";
 import { useState, useMemo } from "react";
 import { parse } from "date-fns";
 import { formatDate } from "@/lib/utils";
@@ -134,7 +135,7 @@ export default function AdminRewards() {
     const matchType = typeFilter === "all" || r.type === typeFilter;
     let matchDate = true;
     if (dateFrom || dateTo) {
-      const recordDate = parse(`${r.date} ${r.time}`, "dd/MM/yyyy hh:mm aa", new Date());
+      const recordDate = parse(`${formatDateTime(r.date)} ${formatDateTime(r.time)}`, "dd/MM/yyyy hh:mm aa", new Date());
       if (dateFrom && recordDate < dateFrom) matchDate = false;
       if (dateTo && recordDate > dateTo) matchDate = false;
     }
@@ -465,7 +466,7 @@ export default function AdminRewards() {
                       <TableCell className="text-right text-sm font-bold text-success">
                         <PointsAmount value={r.amount} className="justify-end" prefix="+" />
                       </TableCell>
-                      <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{r.date} · {r.time}</TableCell>
+                      <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">{formatDateAndTime(r.date, r.time)}</TableCell>
 
                     </TableRow>
                   ))}

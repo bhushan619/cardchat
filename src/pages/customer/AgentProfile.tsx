@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 import { useParams, useNavigate } from "react-router-dom";
 import { customerContacts } from "@/data/mock";
@@ -47,7 +48,7 @@ export default function AgentProfile() {
           </div>
           <div className="text-center">
             <h1 className="text-xl font-bold text-foreground">{agent.name}</h1>
-            <p className="text-sm text-muted-foreground">{agent.lastSeen}</p>
+            <p className="text-sm text-muted-foreground">{formatDateTime(agent.lastSeen)}</p>
           </div>
         </div>
       </div>
@@ -99,7 +100,7 @@ export default function AgentProfile() {
               <div>
                 <p className="text-xs text-muted-foreground">Availability</p>
                 <p className="text-sm font-medium text-foreground">
-                  {isOnline ? "Available now" : agent.lastSeen}
+                  {isOnline ? "Available now" : formatDateTime(agent.lastSeen)}
                 </p>
               </div>
             </div>

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState, useRef } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { chatMessages, orders, bankAccounts, adminUsers } from "@/data/mock";
@@ -85,7 +86,7 @@ export default function AdminChatView() {
       sender: "agent",
       senderName: "You",
       text: message.trim(),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
     }]);
     setMessage("");
   };
@@ -101,7 +102,7 @@ export default function AdminChatView() {
         sender: "agent",
         senderName: "You",
         text: "",
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatDateTime(new Date()),
         image: true,
         imageUrl: url,
       }]);
@@ -154,7 +155,7 @@ export default function AdminChatView() {
       sender: "system",
       senderName: "System",
       text: `${user.name} (${ROLE_META[user.role]?.label || user.role}) has joined the chat`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
       isOrder: true,
     };
     setLocalMessages(prev => [...prev, newMsg]);
@@ -170,7 +171,7 @@ export default function AdminChatView() {
       sender: "system",
       senderName: "System",
       text: `${user.name} has left the chat`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
       isOrder: true,
     };
     setLocalMessages(prev => [...prev, newMsg]);
@@ -241,7 +242,7 @@ export default function AdminChatView() {
       sender: "system",
       senderName: "System",
       text: `💸 Transfer executed — Pts ${billingTotal.toLocaleString()} sent to customer's verified accounts`,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
       isOrder: true,
     };
     setLocalMessages(prev => [...prev, newMsg]);
@@ -353,7 +354,7 @@ export default function AdminChatView() {
                 return (
                   <div key={msg.id} className="pinned-order animate-slide-up">
                     <p className="text-xs font-medium">📌 {msg.text}</p>
-                    <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
                   </div>
                 );
               }
@@ -385,7 +386,7 @@ export default function AdminChatView() {
                         </div>
                       </button>
                     ) : <p>{msg.text}</p>}
-                    <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
                   </div>
                 </div>
               );
@@ -495,7 +496,7 @@ export default function AdminChatView() {
                   ["Points price", <span key="pp" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{((selectedOrder as any).unitPrice ?? selectedOrder.nairaRate).toLocaleString()}</span>],
                   ["Release", <span key="rel" className="inline-flex items-center gap-0.5"><Coins className="w-3 h-3" />{selectedOrder.payout.toLocaleString()}</span>],
                   ...(selectedOrder.cardNumbers && selectedOrder.cardNumbers.length > 0 ? [["Card No.", selectedOrder.cardNumbers.join(", ")]] : []),
-                  ["Time", selectedOrder.timestamp],
+                  ["Time", formatDateTime(selectedOrder.timestamp)],
                 ] as Array<[string, React.ReactNode]>).map(([k, v]) => (
                   <div key={k} className="flex justify-between text-xs">
                     <span className="text-muted-foreground">{k}</span>

@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useMemo, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { customerWallets, orders } from "@/data/mock";
@@ -153,7 +154,7 @@ export default function AdminTransfers() {
 
   const exportCsv = () => {
     const headers = ["ID", "Alias", "Amount", "Current Balance", "Pts Rate", "Bank", "Account", "Channel", "Status", "Reference", "Requested"];
-    const rows = filtered.map(w => [w.id, w.alias, w.amount, balanceByAlias[w.alias] ?? 0, w.pointsRate, w.bankName, w.accountNumber, w.channel, w.status, w.reference, w.requestedAt]);
+    const rows = filtered.map(w => [w.id, w.alias, w.amount, balanceByAlias[w.alias] ?? 0, w.pointsRate, w.bankName, w.accountNumber, w.channel, w.status, w.reference, formatDateTime(w.requestedAt)]);
     const csv = [headers, ...rows].map(r => r.map(c => `"${String(c).replace(/"/g, '""')}"`).join(",")).join("\n");
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
@@ -284,7 +285,7 @@ export default function AdminTransfers() {
                       </span>
                     </TableCell>
                     <TableCell className="font-mono text-xs text-muted-foreground">{w.reference}</TableCell>
-                    <TableCell className="text-xs text-muted-foreground">{w.requestedAt}</TableCell>
+                    <TableCell className="text-xs text-muted-foreground">{formatDateTime(w.requestedAt)}</TableCell>
                     <TableCell className="text-right">
                       <Button variant="ghost" size="sm" onClick={() => setSelected(w)}>View</Button>
                     </TableCell>
@@ -345,7 +346,7 @@ export default function AdminTransfers() {
                 ["Account Name", maskName(selected.accountName)],
                 ["Channel", selected.channel],
                 ["Reference", selected.reference],
-                ["Requested", selected.requestedAt],
+                ["Requested", formatDateTime(selected.requestedAt)],
                 ["Status", statusConfig[selected.status].label],
               ].map(([k, v]) => (
                 <div key={k as string} className="flex justify-between">

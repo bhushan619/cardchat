@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useHorizontalDragScroll } from "@/hooks/useHorizontalDragScroll";
@@ -378,7 +379,7 @@ export default function AdminOrders() {
                           {o.status.replace("_", " ")}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-xs text-right text-muted-foreground">{o.created}</td>
+                      <td className="px-4 py-3 text-xs text-right text-muted-foreground">{formatDateTime(o.created)}</td>
                     </tr>
                     {isExpanded && details && (
                       <tr key={`${o.id}-detail`}>

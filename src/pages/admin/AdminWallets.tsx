@@ -1,3 +1,4 @@
+import { formatDateTime, formatDateAndTime } from "@/lib/dateTime";
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import {
@@ -128,7 +129,7 @@ const initialRecords: PlatformRecord[] = [
 
 function parseRecordDate(r: PlatformRecord): Date {
   try {
-    return parse(`${r.date} ${r.time}`, "MMM dd, yyyy hh:mm aa", new Date());
+    return parse(`${formatDateTime(r.date)} ${formatDateTime(r.time)}`, "MMM dd, yyyy hh:mm aa", new Date());
   } catch {
     return new Date(0);
   }
@@ -201,7 +202,7 @@ export default function AdminWallets() {
       nairaRate: 289,
       description: depositDescription || "Admin deposit",
       date: formatDate(new Date()),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
       remark: depositRemark || "Manual deposit",
     };
     setRecords((prev) => [record, ...prev]);
@@ -342,7 +343,7 @@ export default function AdminWallets() {
               </div>
               <p className="text-xl font-heading font-bold text-accent">₦{p.balance.toLocaleString()}</p>
               <p className="text-[10px] text-muted-foreground mt-0.5 flex items-center gap-1">
-                <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {p.lastSync}
+                <span className="w-1.5 h-1.5 rounded-full bg-success" /> Connected · {formatDateTime(p.lastSync)}
               </p>
             </div>
           ))} */}
@@ -526,7 +527,7 @@ export default function AdminWallets() {
                     <PointsAmount value={r.amount} className="justify-end" prefix={r.type === "deposit" ? "+" : "-"} />
                   </TableCell>
                   <TableCell className="text-right text-xs text-muted-foreground whitespace-nowrap">
-                    {r.date} · {r.time}
+                    {formatDateAndTime(r.date, r.time)}
                   </TableCell>
                   <TableCell className="text-xs text-muted-foreground max-w-[150px] truncate">{r.remark}</TableCell>
                 </TableRow>

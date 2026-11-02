@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import NotificationPermissionBar from "@/components/customer/NotificationPermissionBar";
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -290,7 +291,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
             return (
               <div key={msg.id} className="bg-accent/5 border border-accent/20 rounded-lg p-3 text-center">
                 <p className="text-xs text-accent font-medium">{msg.text}</p>
-                <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
               </div>
             );
           }
@@ -331,7 +332,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                         <ShieldAlert className="w-2.5 h-2.5" /> Reported
                       </span>
                     )}
-                    <p className="text-[10px] text-muted-foreground text-right">{msg.time}</p>
+                    <p className="text-[10px] text-muted-foreground text-right">{formatDateTime(msg.time)}</p>
                   </div>
                 </div>
                 {canReport && (
@@ -427,7 +428,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
                       {i <= currentIdx && <CheckCircle className="w-2.5 h-2.5 text-accent-foreground" />}
                     </div>
                     <p className="text-xs font-medium">{step.event}</p>
-                    <p className="text-[10px] text-muted-foreground">{step.time}</p>
+                    <p className="text-[10px] text-muted-foreground">{formatDateTime(step.time)}</p>
                   </div>
                 ))}
               </div>
@@ -451,7 +452,7 @@ export default function CustomerChatView({ onBack }: { onBack: () => void }) {
 
           {reportedMessage && (
             <div className="rounded-lg border bg-muted/50 p-2.5">
-              <p className="text-[10px] text-muted-foreground mb-1">Reported message · {reportedMessage.time}</p>
+              <p className="text-[10px] text-muted-foreground mb-1">Reported message · {formatDateTime(reportedMessage.time)}</p>
               <p className="text-xs line-clamp-3">
                 {reportedMessage.image ? "📷 Image attachment" : reportedMessage.text}
               </p>

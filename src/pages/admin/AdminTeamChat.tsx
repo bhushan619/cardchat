@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { useState, useRef, useEffect, useMemo } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { useAdminRole } from "@/contexts/AdminRoleContext";
@@ -147,7 +148,7 @@ export default function AdminTeamChat() {
       sender: profile.name,
       role: profile.label,
       text: input.trim(),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
     };
     setGroupMessages(prev => ({
       ...prev,
@@ -162,7 +163,7 @@ export default function AdminTeamChat() {
       id: Date.now().toString(),
       sender: profile.name,
       text: dmInput.trim(),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
     };
     setDmConversations(prev => ({
       ...prev,
@@ -220,7 +221,7 @@ export default function AdminTeamChat() {
                         isMe ? "bg-accent text-accent-foreground" : "bg-muted"
                       }`}>
                         <p className="text-sm">{msg.text}</p>
-                        <p className={`text-[10px] mt-1 text-right ${isMe ? "text-accent-foreground/60" : "text-muted-foreground"}`}>{msg.time}</p>
+                        <p className={`text-[10px] mt-1 text-right ${isMe ? "text-accent-foreground/60" : "text-muted-foreground"}`}>{formatDateTime(msg.time)}</p>
                       </div>
                     </div>
                   );
@@ -299,7 +300,7 @@ export default function AdminTeamChat() {
                           <span className={`text-[10px] font-medium ${roleColors[msg.role] || "text-muted-foreground"}`}>
                             {msg.role}
                           </span>
-                          <span className="text-[10px] text-muted-foreground">{msg.time}</span>
+                          <span className="text-[10px] text-muted-foreground">{formatDateTime(msg.time)}</span>
                         </div>
                         <p className="text-sm text-foreground/90 mt-0.5">{msg.text}</p>
                       </div>

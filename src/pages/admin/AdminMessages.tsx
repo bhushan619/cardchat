@@ -1,3 +1,4 @@
+import { formatDateTime } from "@/lib/dateTime";
 import { isVip } from "@/lib/vipCustomers";
 import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
@@ -482,7 +483,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         sender: "agent",
         senderName: "You",
         text: "",
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatDateTime(new Date()),
         image: true,
         imageUrl: reader.result as string,
       };
@@ -702,7 +703,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Helper: add system message
   const addSystemMessage = (text: string, receipt?: TransferReceipt) => {
-    const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const time = formatDateTime(new Date());
     if (selectedGroup) {
       const gid = selectedGroup.id;
       setGroupSystemMsgs((prev) => {
@@ -717,7 +718,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       sender: "system",
       senderName: "System",
       text,
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
       isOrder: true,
       receipt,
     };
@@ -768,7 +769,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
         sender: "system",
         senderName: "System",
         text,
-        time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        time: formatDateTime(new Date()),
         isSystemNote: true,
       },
     ]);
@@ -780,7 +781,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     );
     if (toAdd.length === 0) return;
     setGroupMembers((prev) => [...prev, ...toAdd]);
-    const now = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    const now = formatDateTime(new Date());
     const notes: ChatMessage[] = toAdd.map((u, i) => ({
       id: Date.now() + i,
       sender: "system",
@@ -1165,7 +1166,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       sender: "agent",
       senderName: "You",
       text: message.trim(),
-      time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+      time: formatDateTime(new Date()),
     };
     setLocalMessages((prev) => [...prev, newMsg]);
     if (pendingTemplateId) {
@@ -2082,7 +2083,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <div key={msg.id} className="flex justify-end">
                           <div className="space-y-1">
                             <TransferReceiptImage receipt={msg.receipt} />
-                            <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {msg.time}</p>
+                            <p className="text-[10px] text-muted-foreground text-right">Receipt sent · {formatDateTime(msg.time)}</p>
                           </div>
                         </div>
                       );
@@ -2091,7 +2092,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                       return (
                         <div key={msg.id} className="pinned-order animate-slide-up">
                           <p className="text-xs font-medium">📌 {msg.text}</p>
-                          <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                          <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
                         </div>
                       );
                     }
@@ -2145,7 +2146,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                             ) : (
                               <p>{msg.text}</p>
                             )}
-                            <p className="text-[10px] text-muted-foreground mt-1">{msg.time}</p>
+                            <p className="text-[10px] text-muted-foreground mt-1">{formatDateTime(msg.time)}</p>
                           </div>
                         </div>
                         {/* Detected bank details chip */}
@@ -2201,10 +2202,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                     sender: "agent",
                                     senderName: "You",
                                     text: buildQuoteMessage(q),
-                                    time: new Date().toLocaleTimeString([], {
-                                      hour: "2-digit",
-                                      minute: "2-digit",
-                                    }),
+                                    time: formatDateTime(new Date()),
                                   };
                                   setLocalMessages((prev) => [...prev, newMsg]);
                                   if (selectedId) lockQuote(selectedId, q);
@@ -2271,7 +2269,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                           <p className="text-[9px] font-semibold mb-0.5 text-primary">You</p>
                           <p>{inactSettings.reminderMessage}</p>
                           <p className="text-[10px] text-muted-foreground mt-1">
-                            {new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                            {formatDateTime(new Date())}
                           </p>
                         </div>
                         <p className="text-[9px] text-warning text-right font-medium flex items-center justify-end gap-1">
@@ -2664,7 +2662,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                                           </span>,
                                         ],
                                         ...(o.cardNumbers.length > 0 ? [["Card No.", o.cardNumbers.join(", ")]] : []),
-                                        ["Time", o.timestamp],
+                                        ["Time", formatDateTime(o.timestamp)],
                                       ] as Array<[string, React.ReactNode]>
                                     ).map(([k, v]) => (
                                       <div key={k} className="flex justify-between text-xs">
