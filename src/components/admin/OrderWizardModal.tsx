@@ -827,7 +827,7 @@ export default function CardlightPanel({
                             <div className="text-muted-foreground">{formatDateTime(o.date)}</div>
                           </td>
                           <td className="py-2 px-1 text-right">${o.totalFaceValue?.toLocaleString() ?? "—"}</td>
-                          <td className="py-2 px-1 text-right">
+                          {/* <td className="py-2 px-1 text-right">
                             <span className="inline-flex items-center gap-0.5 justify-end">
                               <Coins className="w-3 h-3" />
                               {o.purchaseRate.toLocaleString()}
@@ -869,7 +869,7 @@ export default function CardlightPanel({
                             ) : (
                               <span className="text-[9px] text-muted-foreground">—</span>
                             )}
-                          </td>
+                          </td> */}
                           <td className="py-2 px-1">
                             {o.status === "Wait For Sale" && (
                               <Button
