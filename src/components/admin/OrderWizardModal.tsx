@@ -12,7 +12,6 @@ import {
   ChevronRight,
   Coins,
   ShieldAlert,
-
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -33,7 +32,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { systemNairaRate, systemDenomination } from "@/data/mock";
 import MfaChallenge from "@/components/admin/MfaChallenge";
 import { isMfaBound } from "@/lib/mfaEnrollment";
-
 
 // Card brands with their available currencies
 const cardBrands: { name: string; currencies: string[] }[] = [
@@ -181,7 +179,6 @@ export default function CardlightPanel({
   const [mfaRequired, setMfaRequired] = useState(false);
   const [mfaEnrollRequired, setMfaEnrollRequired] = useState(false);
 
-
   // Order form state
   const [cardType, setCardType] = useState("");
   const [cardCurrency, setCardCurrency] = useState("");
@@ -253,7 +250,6 @@ export default function CardlightPanel({
     sessionStorage.setItem("cardlight_logged_in", "true");
     sessionStorage.setItem("cardlight_account", account);
   };
-
 
   // Persist order list changes
   const updateOrderList = (newList: OrderEntry[]) => {
@@ -439,8 +435,8 @@ export default function CardlightPanel({
               <div className="space-y-1">
                 <h4 className="font-heading font-bold text-base">MFA not set up</h4>
                 <p className="text-xs text-muted-foreground">
-                  This Cardlight account ({account}) has no authenticator bound. Set up MFA in Cardlight
-                  first, then return here to log in with your 6-digit code.
+                  This Cardlight account ({account}) has no authenticator bound. Set up MFA in Cardlight first, then
+                  return here to log in with your 6-digit code.
                 </p>
               </div>
               <div className="space-y-2">
@@ -451,10 +447,8 @@ export default function CardlightPanel({
                   Back to password login
                 </Button>
               </div>
-
             </div>
           </div>
-
         ) : !isLoggedIn && mfaRequired ? (
           <div className="p-6">
             <MfaChallenge
@@ -466,7 +460,6 @@ export default function CardlightPanel({
           </div>
         ) : !isLoggedIn ? (
           <div className="p-6 space-y-6">
-
             <div className="text-center space-y-1">
               <h4 className="font-heading font-bold text-base">Login Sales System</h4>
               <p className="text-xs text-muted-foreground">Connect to Cardlight to create orders</p>
@@ -811,11 +804,11 @@ export default function CardlightPanel({
                       <th className="text-left py-2 px-2 font-medium text-muted-foreground">Alias</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Card Number</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Amount</th>
-                      <th className="text-right py-2 px-1 font-medium text-muted-foreground">Points price</th>
+                      {/* <th className="text-right py-2 px-1 font-medium text-muted-foreground">Points price</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Card Rate (CNY)</th>
                       <th className="text-right py-2 px-1 font-medium text-muted-foreground">Release</th>
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Status</th>
-                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th>
+                      <th className="text-left py-2 px-1 font-medium text-muted-foreground">Result</th> */}
                       <th className="text-left py-2 px-1 font-medium text-muted-foreground">Operate</th>
                     </tr>
                   </thead>
