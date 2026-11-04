@@ -1,7 +1,7 @@
 # Roadmap — Conversion & Engagement Updates
 
 ## Card rate warning
-- [ ] Warn when the created order's Card Rate exceeds the selected buyer quote; verify cancel and proceed paths.
+- [x] Warn when the created order's Card Rate exceeds the selected buyer quote; verify cancel and proceed paths.
 
 ## Customer date filters and system dates
 - [x] Add Last Active and Joined from/to filters and filtered customer CSV export.
