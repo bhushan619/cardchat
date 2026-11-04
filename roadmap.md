@@ -1,5 +1,8 @@
 # Roadmap — Conversion & Engagement Updates
 
+## Card rate warning
+- [x] Warn when the created order's Card Rate exceeds the selected buyer quote; verify cancel and proceed paths.
+
 ## Customer date filters and system dates
 - [x] Add Last Active and Joined from/to filters and filtered customer CSV export.
 - [x] Standardize displayed timestamps across admin and customer screens to dd-MMM-yyyy HH:mm; test and verify.
