@@ -1,4 +1,5 @@
 import { formatDateTime } from "@/lib/dateTime";
+import { exceedsAdvertisedRate, getOrderCardRate } from "@/lib/cardRateWarning";
 import { useState, useEffect } from "react";
 import {
   X,
@@ -71,6 +72,7 @@ interface OrderEntry {
   denom: number;
   totalFaceValue: number;
   purchaseRate: number;
+  pointsRate?: number;
   supplier: string;
   status: string;
   date: string;
@@ -228,6 +230,11 @@ export default function CardlightPanel({
   const [sellerModalOpen, setSellerModalOpen] = useState(false);
   const [saleOrderId, setSaleOrderId] = useState<string | null>(null);
   const [confirmSeller, setConfirmSeller] = useState<SellerEntry | null>(null);
+  const [rateWarningSeller, setRateWarningSeller] = useState<SellerEntry | null>(null);
+  const saleOrder = orderList.find((order) => order.id === saleOrderId);
+  const saleCardRate = saleOrder
+    ? getOrderCardRate(saleOrder.purchaseRate, saleOrder.pointsRate ?? systemNairaRate)
+    : null;
   const [simulatedResult, setSimulatedResult] = useState<CardlightResult | "random">("random");
 
   const handleLogin = () => {
@@ -283,6 +290,7 @@ export default function CardlightPanel({
       denom: cards.length,
       totalFaceValue: totalFace,
       purchaseRate: Number(cardRate) || 0,
+      pointsRate: Number(nairaPrice) || 0,
       supplier: alias,
       status: "Wait For Sale",
       date: new Date().toISOString().replace("T", " ").slice(0, 19),
@@ -333,6 +341,11 @@ export default function CardlightPanel({
   };
 
   const handleChooseSeller = (seller: SellerEntry) => {
+    if (!saleOrder) return;
+    if (exceedsAdvertisedRate(saleCardRate, seller.rate)) {
+      setRateWarningSeller(seller);
+      return;
+    }
     setConfirmSeller(seller);
   };
 
@@ -931,6 +944,8 @@ export default function CardlightPanel({
           if (!open) {
             setSellerModalOpen(false);
             setSaleOrderId(null);
+            setRateWarningSeller(null);
+            setConfirmSeller(null);
           }
         }}
       >
@@ -996,6 +1011,38 @@ export default function CardlightPanel({
       </Dialog>
 
       {/* Confirmation Alert */}
+      <AlertDialog open={!!rateWarningSeller} onOpenChange={(open) => {
+        if (!open) setRateWarningSeller(null);
+      }}>
+        <AlertDialogContent className="border-warning">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2 text-warning">
+              <ShieldAlert className="h-6 w-6 shrink-0" />
+              Card rate exceeds advertised price
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              This order’s Card Rate is higher than {rateWarningSeller?.seller}’s advertised price.
+              Cancel this transaction attempt or proceed to the next step to confirm the sale.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <dl className="space-y-2 rounded-md border border-warning/40 bg-warning/10 p-4 text-sm">
+            <div className="flex justify-between gap-4"><dt>Order</dt><dd className="font-medium break-all">{saleOrderId}</dd></div>
+            <div className="flex justify-between gap-4"><dt>Card Rate (CNY)</dt><dd className="font-semibold text-warning">{saleCardRate?.toFixed(4)}</dd></div>
+            <div className="flex justify-between gap-4"><dt>Advertised price (CNY)</dt><dd className="font-semibold">{rateWarningSeller?.rate.toFixed(4)}</dd></div>
+          </dl>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setRateWarningSeller(null);
+              setSellerModalOpen(false);
+              setSaleOrderId(null);
+            }}>Cancel transaction</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setConfirmSeller(rateWarningSeller);
+              setRateWarningSeller(null);
+            }}>Proceed to next step</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <AlertDialog
         open={!!confirmSeller}
         onOpenChange={(open) => {

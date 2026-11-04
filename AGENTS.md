@@ -1,5 +1,7 @@
 # Project architecture
 
+- Compare buyer quotes with the created order's CNY rate through cardRateWarning, snapshotting its points conversion rate so later form edits cannot change the warning.
+
 - Use the shared dateTime display helpers for timestamps and exports, retaining machine-readable storage and existing schedule timezone rules so presentation never changes filtering or delivery.
 - Keep customer date matching and CSV generation in customerFilters so independent Last Active/Joined ranges and filtered exports remain testable.
 
