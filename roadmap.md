@@ -1,5 +1,8 @@
 # Roadmap — Conversion & Engagement Updates
 
+## Sign-in support guests
+- [x] Show Guest badges in App Messages for users messaging through Having trouble; verify the customer-to-admin flow.
+
 ## Card rate warning
 - [x] Warn when the created order's Card Rate exceeds the selected buyer quote; verify cancel and proceed paths.
 
