@@ -1,4 +1,5 @@
 # Project architecture
+- Identify sign-in-help guests by explicit conversation origin in the shared session-scoped guestSupport store; customer support messages and App Messages consume the same threads so badges never rely on email guesses.
 
 - Compare buyer quotes with the created order's CNY rate through cardRateWarning, snapshotting its points conversion rate so later form edits cannot change the warning.
 

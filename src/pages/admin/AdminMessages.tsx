@@ -1,4 +1,6 @@
 import { formatDateTime } from "@/lib/dateTime";
+import { appendGuestMessage, guestConversations, isGuestConversation, useGuestThreads } from "@/lib/guestSupport";
+import { Badge } from "@/components/ui/badge";
 import { isVip } from "@/lib/vipCustomers";
 import { markConversationsRead } from "@/lib/conversationReadState";
 import { useState, useMemo, useEffect, useRef, Fragment } from "react";
@@ -257,6 +259,8 @@ const MOCK_OCR_CODES = ["XJVK-2P9M-4QHR-7TLB", "X7N3-9LMK-2WQV-8CHP", "AAPL-4827
 type CustomerNotes = Record<string, { remark: string; tags: string[] }>;
 
 export default function AdminMessages({ channelFilter = "trtc" }: { channelFilter?: "trtc" | "whatsapp" } = {}) {
+  const guestThreads = useGuestThreads();
+  const appConversations = useMemo(() => [...rawConversations, ...guestConversations(guestThreads)], [guestThreads]);
   const { role } = useAdminRole();
   const [tagDefs, setTagDefs] = useState<CustomerTagDef[]>(() => getActiveCustomerTags());
   useEffect(() => {
@@ -509,7 +513,19 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
     }, 1200);
   };
 
-  const selectedConvo = rawConversations.find((c) => c.id === selectedId);
+  const selectedConvo = appConversations.find((c) => c.id === selectedId);
+  const selectedGuestThread = guestThreads.find((thread) => thread.id === selectedId);
+  useEffect(() => {
+    if (selectedGuestThread) {
+      setLocalMessages(selectedGuestThread.messages.map((msg) => ({
+        id: msg.id, sender: msg.from === "customer" ? "customer" : "agent",
+        senderName: msg.from === "customer" ? selectedGuestThread.email || "Guest" : "You",
+        text: msg.text, time: msg.time,
+      })));
+    } else {
+      setLocalMessages(chatMessages.map((msg) => ({ ...msg, senderName: msg.sender === "customer" ? selectedConvo?.alias ?? "Customer" : msg.sender === "agent" ? "You" : "System" })));
+    }
+  }, [selectedId, selectedGuestThread]);
   // WhatsApp GROUP conversations (multi-participant, read-only right panel)
   const selectedGroup =
     channelFilter === "whatsapp" ? whatsappGroups.find((g) => g.id === selectedId) ?? null : null;
@@ -542,14 +558,14 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
 
   // Dynamic tab assignment based on order status
   const conversationsWithTabs = useMemo(() => {
-    return rawConversations
+    return appConversations
       .filter((c) => c.channel === channelFilter)
       .map((c) => ({
         ...c,
         unread: readConversations.has(c.id) ? 0 : c.unread,
         dynamicTab: orderStatus.getConversationTab(c.id),
       }));
-  }, [orderStatus, channelFilter, readConversations]);
+  }, [appConversations, orderStatus, channelFilter, readConversations]);
 
   const [customerSearch, setCustomerSearch] = useState("");
 
@@ -1168,7 +1184,11 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
       text: message.trim(),
       time: formatDateTime(new Date()),
     };
-    setLocalMessages((prev) => [...prev, newMsg]);
+    if (selectedGuestThread) {
+      appendGuestMessage(selectedGuestThread.id, { id: newMsg.id, from: "support", text: newMsg.text, time: new Date().toISOString() });
+    } else {
+      setLocalMessages((prev) => [...prev, newMsg]);
+    }
     if (pendingTemplateId) {
       recordTemplateUsage(pendingTemplateId, agentDisplayName);
       setPendingTemplateId(null);
@@ -1706,6 +1726,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                         <div className="flex items-center">
                           <div className="flex items-center gap-1.5 min-w-0">
                             <span className="text-xs font-semibold truncate">{c.alias}</span>
+                            {isGuestConversation(c) && <Badge variant="outline" className="shrink-0 border-warning/40 bg-warning/10 text-warning px-1.5 py-0 text-[10px]">Guest</Badge>}
                             {c.channel === "whatsapp" && c.waNickname && (
                               <span
                                 className="text-[10px] text-muted-foreground truncate max-w-[90px]"
@@ -1813,6 +1834,7 @@ export default function AdminMessages({ channelFilter = "trtc" }: { channelFilte
                     <div>
                       <div className="flex items-center gap-1.5">
                         <p className="text-sm font-semibold whitespace-nowrap">{panelConvo.alias}</p>
+                        {isGuestConversation(selectedConvo) && <Badge variant="outline" className="shrink-0 border-warning/40 bg-warning/10 text-warning px-1.5 py-0 text-[10px]">Guest</Badge>}
                         {selectedConvo.channel === "whatsapp" && selectedConvo.waNickname && (
                           <span
                             className="text-[11px] text-muted-foreground whitespace-nowrap"

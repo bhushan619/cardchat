@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ArrowLeft, Headset, Send } from "lucide-react";
 import Logo from "@/components/Logo";
+import { appendGuestMessage, startGuestThread, useGuestThreads } from "@/lib/guestSupport";
 
 interface ChatMessage {
   id: number;
@@ -20,6 +21,9 @@ export default function CustomerSupportChat() {
   const navigate = useNavigate();
   const location = useLocation();
   const email = (location.state as { email?: string } | null)?.email;
+  const [thread] = useState(() => startGuestThread(email));
+  const threads = useGuestThreads();
+  const sentMessages = threads.find((item) => item.id === thread.id)?.messages ?? [];
 
   const [messages, setMessages] = useState<ChatMessage[]>([
     {
@@ -42,10 +46,7 @@ export default function CustomerSupportChat() {
   const send = () => {
     const text = draft.trim();
     if (!text) return;
-    setMessages((prev) => [
-      ...prev,
-      { id: prev.length + 1, from: "customer", text, time: now() },
-    ]);
+    appendGuestMessage(thread.id, { id: Date.now(), from: "customer", text, time: new Date().toISOString() });
     setDraft("");
   };
 
@@ -76,7 +77,7 @@ export default function CustomerSupportChat() {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
-        {messages.map((m) => (
+        {[...messages, ...sentMessages].map((m) => (
           <div
             key={m.id}
             className={`flex ${m.from === "customer" ? "justify-end" : "justify-start"}`}
